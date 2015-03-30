@@ -332,6 +332,31 @@ define(function() {
             });
             isOpen = false;
         }
+
+        this.getItemAssetData = function(url,cb)
+        {
+           $.ajax(url,{
+                type:'GET',
+                success:function(err,d,xhr)
+                {
+                    try{
+                        
+                    var item = JSON.parse(xhr.responseText);
+                    }catch(e)
+                    {
+                        cb(null);
+                        return;
+                    }
+                    cb(item);
+                },error:function()
+                {
+                    cb(null);
+                }
+            });
+        
+        }
+
+
         this.create = function(data, evt) {
             //if its a 3d file or a node prototype
             if (data.type == 'asset') {
@@ -345,8 +370,10 @@ define(function() {
 
                 
                 $.getJSON(data.url, function(proto) {
-
-                    //very important to clean the node! Might have accidently left a name or id in the libarary
+                      if (typeof proto == "string"){
+                        proto = JSON.parse(proto);
+                       }
+                   //very important to clean the node! Might have accidently left a name or id in the libarary
                     proto = _DataManager.getCleanNodePrototype(proto);
                     if (!proto.properties)
                         proto.properties = {};
@@ -374,6 +401,7 @@ define(function() {
 
                 })
             }
+
             if (data.type == 'child') {
 
 
