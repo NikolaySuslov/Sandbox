@@ -30,14 +30,27 @@ function translate(req) {
     var currentLng = req.locale;
     var i18n = req.i18n;
 
-    if (req.query.lang !== undefined)
-        i18n.setLng(req.query.lang, function(t) { /* loading done */ });
+		if (req.cookies.i18next == undefined)
+				i18n.setLng ='ru';
+
+ 		if(req.query.lang!==undefined)
+ 			i18n.setLng(req.query.lang, function(t) { /* loading done */ });
+
+
 
     return function() {
         return function(text, render) {
             return i18n.t(text);
         }
     };
+}
+
+function getLangRu(req){
+
+		if (req.cookies.i18next == 'ru')
+				return '_ru';
+
+		return '';
 }
 
 
@@ -60,25 +73,26 @@ function getRoot() {
 
 }
 
-exports.acceptedRoutes = ['about', 'features', 'demos', 'createNotLoggedIn', 'home', 'tools', 'performancetest', 'examples', 'settings', 'restore', 'createNew', 'welcome', 'search', 'forgotPassword', 'editProfile', 'updatePassword', 'test', 'avatar', 'sandbox', 'index', 'create', 'signup', 'login', 'logout', 'edit', 'remove', 'history', 'user', 'worlds', 'admin', 'admin/users', 'admin/worlds', 'admin/edit', 'publish'];
+exports.acceptedRoutes = ['about', 'features', 'demos', 'createNotLoggedIn', 'home', 'tools', 'performancetest', 'examples', 'settings', 'restore', 'createNew', 'welcome', 'search', 'forgotPassword', 'editProfile', 'updatePassword', 'test', 'avatar', 'sandbox', 'index', 'create', 'signup', 'login', 'logout', 'edit', 'remove', 'history', 'user', 'worlds', 'admin', 'admin/users', 'admin/worlds', 'admin/edit', 'publish', 'index_ru'];
+
 routesMap = {
     'sandbox': {
-        template: 'index'
+        template: 'template_vle'
     },
     'test': {
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'tools': {
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'performancetest': {
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'examples': {
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'settings': {
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'home': {
         template: 'index'
@@ -95,33 +109,33 @@ routesMap = {
     'edit': {
         sid: true,
         requiresLogin: true,
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'restore': {
         sid: true,
         requiresLogin: true,
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'publish': {
         sid: true,
         requiresLogin: true,
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'history': {
         sid: true,
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'remove': {
         sid: true,
         title: 'Warning!',
         requiresLogin: true,
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'user': {
         sid: true,
         title: 'Account',
         requiresLogin: true,
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'admin': {
         sid: true,
@@ -145,43 +159,48 @@ routesMap = {
         requiresLogin: true
     },
     'logout': {
-        layout: 'plain',
+        layout: 'template_vle',
         requiresLogin: true
     },
     'login': {
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'signup': {
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'updatePassword': {
-        layout: 'plain',
+        layout: 'template_vle',
         requiresLogin: true
     },
     'editProfile': {
-        layout: 'plain',
+        layout: 'template_vle',
         requiresLogin: true
     },
     'forgotPassword': {
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'search': {
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'welcome': {
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'home': {
-        layout: 'home'
+        layout: 'template_vle'
     },
     'createNotLoggedIn': {
-        layout: 'plain'
+        layout: 'template_vle'
+    },
+    'index_ru': {
+        home:true
     }
+
 
 };
 
 
 exports.statsHandler = function(req, res, next) {
+
 
     sessions.GetSessionData(req, function(sessionData) {
 
@@ -205,7 +224,7 @@ exports.statsHandler = function(req, res, next) {
                 federal_analytics: global.configuration.federal_analytics
             };
             res.render('stats', {
-                layout: 'plain'
+                layout: 'template_vle'
             });
 
 
@@ -267,7 +286,7 @@ exports.redirectPasswordEmail = function(req, res, next) {
                     res.locals.message = "We've updated our database, and now require email address for users. Please update your email address below.";
                 }
                 res.render(newroute, {
-                    layout: 'plain'
+                    layout: 'template_vle'
                 });
 
             } else {
@@ -277,13 +296,16 @@ exports.redirectPasswordEmail = function(req, res, next) {
 
 
     });
+
 }
+
 exports.generalHandler = function(req, res, next) {
+
 
     sessions.GetSessionData(req, function(sessionData) {
         var postGetUser = function(user) {
             if (!req.params.page)
-                req.params.page = 'home';
+                req.params.page = 'index';
 
             if (req.params.page.indexOf('admin') > -1 && (!sessionData || sessionData.UID != global.adminUID)) {
                 next();
@@ -306,12 +328,17 @@ exports.generalHandler = function(req, res, next) {
                     title = routesMap[currentAcceptedRoute].title ? routesMap[currentAcceptedRoute].title : '';
                     sid = routesMap[currentAcceptedRoute].sid ? root + '/' + (req.query.id ? req.query.id : '') + '/' : '';
                     template = routesMap[currentAcceptedRoute].template ? routesMap[currentAcceptedRoute].template : currentAcceptedRoute;
+
+                    if (template == 'index') {
+                        template = template + getLangRu(req);
+                    }
+
                     fileList = routesMap[currentAcceptedRoute].fileList ? routesMap[currentAcceptedRoute].fileList : [];
                     home = routesMap[currentAcceptedRoute].home ? routesMap[currentAcceptedRoute].home : false;
                     avatar = routesMap[currentAcceptedRoute].avatar ? routesMap[currentAcceptedRoute].avatar : false;
                 }
 
-                var layout = (routesMap[currentAcceptedRoute] && routesMap[currentAcceptedRoute].layout) || 'layout';
+                var layout = (routesMap[currentAcceptedRoute] && routesMap[currentAcceptedRoute].layout) || 'template_vle';
 
                 //note the must come before the redirect to login below
                 if (req.params.page == 'logout') {
@@ -374,7 +401,9 @@ exports.generalHandler = function(req, res, next) {
             postGetUser(null);
         }
     });
+
 };
+
 
 exports._404 = function(req, res, next) {
 
@@ -386,9 +415,12 @@ exports._404 = function(req, res, next) {
             root: getRoot(),
             federal_analytics: global.configuration.federal_analytics
         };
-        res.status(404).render('_404');
+
+        res.status(404).render('template_vle');
         next();
+
     })
+
 };
 
 exports.help = function(req, res) {
@@ -437,6 +469,7 @@ function prettyDate(time) {
 
 exports.world = function(req, res, next) {
 
+
     sessions.GetSessionData(req, function(sessionData) {
         DAL.getInstance(global.appPath.replace(/\//g, "_") + "_" + req.params.page + "_", function(doc) {
             if (!doc) {
@@ -482,14 +515,16 @@ exports.world = function(req, res, next) {
                 federal_analytics: global.configuration.federal_analytics
             };
             res.render('worldTemplate', {
-                layout: 'plain'
+                layout: 'template_vle'
             });
 
         });
     });
+
 };
 
 function ShowSearchPage(mode, req, res, next) {
+
     sessions.GetSessionData(req, function(sessionData) {
         function foundStates(allinstances) {
 
@@ -521,6 +556,7 @@ function ShowSearchPage(mode, req, res, next) {
                     return Date.parse(b.created || b.lastUpdate) - Date.parse(a.created || a.lastUpdate);
                 });
             }
+
 
             if (mode == 'search') {
                 for (var i in allinstances) {
@@ -589,6 +625,7 @@ function ShowSearchPage(mode, req, res, next) {
                 results.splice(10);
             }
 
+
             var total = results.length;
             var next = page + 1;
 
@@ -623,7 +660,7 @@ function ShowSearchPage(mode, req, res, next) {
             };
             res.locals[mode] = true;
             res.render('searchResults', {
-                layout: 'plain'
+                layout: 'template_vle'
             });
 
 
@@ -646,6 +683,7 @@ function ShowSearchPage(mode, req, res, next) {
         if (mode == "search")
             DAL.searchStates(search, foundStates)
     })
+
 
 }
 
@@ -690,7 +728,7 @@ exports.createNew2 = function(req, res, next) {
                     federal_analytics: global.configuration.federal_analytics
                 };
                 res.render('createNew2', {
-                    layout: 'plain'
+                    layout: 'template_vle'
                 });
             }
             logger.debug(worlddata);
@@ -701,6 +739,7 @@ exports.createNew2 = function(req, res, next) {
                 });
             } else
                 postWorldData();
+
 
 
         });
@@ -731,6 +770,7 @@ exports.getVWFCore = function() {
     }
     return cachedVWFCore;
 
+
 }
 exports.serveVWFcore = function(req, res, next) {
 
@@ -745,6 +785,7 @@ exports.serveVWFcore = function(req, res, next) {
 }
 
 exports.createNew = function(req, res, next) {
+
     var search = decodeURIComponent(req.params.term).toLowerCase();
     var perpage = req.params.perpage;
     var page = parseInt(req.params.page);
@@ -807,11 +848,12 @@ exports.createNew = function(req, res, next) {
             };
 
             res.render('createNew', {
-                layout: 'plain'
+                layout: 'template_vle'
             });
 
         })
     })
+
 }
 
 exports.handlePostRequest = function(req, res, next) {
@@ -905,9 +947,9 @@ exports.handlePostRequest = function(req, res, next) {
                 logger.debug(data);
                 delete data.Salt;
                 delete data.Username;
-                //delete data.inventoryKey;				
+                //delete data.inventoryKey;
 
-                //delete data.inventoryKey;	
+                //delete data.inventoryKey;
                 //DAL.updateUser(userId, data, function(e){
 
 

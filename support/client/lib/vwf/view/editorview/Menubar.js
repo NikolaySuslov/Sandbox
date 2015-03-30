@@ -431,7 +431,7 @@ define({
         });
 
 
-        
+
 
         //trigger section
         $('#MenuCreateTriggerDistance').click(function(e) {
@@ -470,7 +470,7 @@ define({
         });
         $('#ChatInput').keypress(function(e) {
             e.stopPropagation();
-            
+
         });
         $('#ChatInput').keydown(function(e) {
             e.stopPropagation();
@@ -488,7 +488,7 @@ define({
             }
         });
 
-        
+
         $('#MenuViewOctree').click(function(e) {
             _SceneManager.setShowRegions(!_SceneManager.getShowRegions());
         });
@@ -675,9 +675,9 @@ define({
             require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
             require("vwf/view/threejs/editorCameraController").setCameraMode('Free');
         });
-        
 
-        
+
+
         $('#MenuViewFullscreen').click(function(e) {
            _dView.toggleFullScreen();
         });
@@ -775,6 +775,10 @@ define({
 
         });
 
+        $('#MenuCreateTurtle').click(function(e) {
+            _Editor.CreateTurtle('turtle', _Editor.GetInsertPoint(), [.5, 1, 1], 'checker.jpg', document.PlayerNumber, '');
+
+        });
 
         $('#MenuCreateSphere').click(function(e) {
             _Editor.CreatePrim('sphere', _Editor.GetInsertPoint(), [.5, 1, 1], 'checker.jpg', document.PlayerNumber, '');
@@ -832,10 +836,10 @@ define({
             p = require("vwf/view/editorview/JSONPrompt");
             var data = _DataManager.getSaveStateData();
             p.prompt(data);
-            
+
         });
 
-        
+
 
 
 

@@ -1,4 +1,7 @@
 {
+    "L-System generator": {
+        "url": "./contentlibraries/lsystem.json"
+    },
     "Demo Entities": {
         "url": "./contentlibraries/entities.json"
     },

@@ -331,8 +331,9 @@
                 { library: "vwf/view/webrtc", linkedLibraries: ["vwf/view/webrtc/adapter"],  active: false },
           
                 { library: "vwf/utility", active: true },
-          
-                
+
+                { library: "ometa", active: true },
+
               
                 { library: "vwf/model/ammo.js/ammo", active: true },
                 { library: "vwf/view/webrtc/adapter", active: false },
@@ -356,6 +357,7 @@
                     { library: "vwf/model/glge", active: false },
                     { library: "vwf/model/threejs", active: true },
                     { library: "vwf/model/cesium", active: false },
+                    { library: "ometa", active: true },
                     { library: "vwf/model/object", active: true },
                     { library: "vwf/model/wires", active: true },
                     { library: "vwf/model/jqueryui", active: true }
@@ -494,6 +496,7 @@
                         "vwf/model/wires",
                         "vwf/model/threejs",
                         "vwf/model/jqueryui",
+                        "ometa",
                         "vwf/model/object",
                     ];
 

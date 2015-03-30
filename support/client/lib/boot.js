@@ -36,6 +36,7 @@ define([
     // simulation to a WebGL scene manager.
     "vwf/kernel/model",
     "vwf/model/javascript",
+    "ometa",
     "vwf/model/jiglib",
     "vwf/model/threejs",
     "vwf/model/scenejs",
@@ -62,7 +63,9 @@ define([
     'vwf/model/threejs/GeometryExporter',
     'vwf/model/threejs/helvetiker_regular.typeface.js'
 
+
 ], function(ready,pools,io) {
+
 
     window.io = io;
     return function(stateData) {

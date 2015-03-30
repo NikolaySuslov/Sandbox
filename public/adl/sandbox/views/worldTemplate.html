@@ -14,6 +14,7 @@
 			window.location.href = '{{root}}/searchResults/' + encodeURIComponent(terms) + '/0'; 
 			o.preventDefault();	
 		});
+
 		$('#embedlink').click(function()
 		{
 			var worldid = "{{worldid}}";
@@ -22,7 +23,9 @@
 			$('#embedinfo').slideDown();
 
 		})
+
 	});	
+
 
 	
 	
@@ -32,9 +35,11 @@
 	<div class="col-md-5" style="margin:10px auto;float:none;text-align:center;">
 		
 		<div class='' style=''>
+
 		
 			<div style='font-size: 2em;font-weight: bold;text-transform: capitalize;'> {{worldData.title}} </div>
 			<div style='font-size: .75em;color: lightgray;'> {{#translate}}Created By{{/translate}} {{worldData.owner}} {{worldData.prettyDate}}. {{#translate}}Updated{{/translate}} {{worldData.updates}} {{#translate}}times, most recently{{/translate}} {{worldData.prettyUpdated}}. {{#translate}}Contains{{/translate}} {{worldData.objects}} {{#translate}}objects{{/translate}}. </div>
+
 			<div style='font-size: .75em;'>  </div>
 		<form id='form' >
 			<fieldset>	
@@ -43,7 +48,8 @@
 			</a>
 
 			{{#totalusers}}
-			<div style='font-size: .75em;color: lightgray;'> {{#users.length}}{{#users}}{{.}}, {{/users}} {{#translate}}and{{/translate}} {{/users.length}} {{anonymous.length}} {{#translate}}anonymous users are in this world{{/translate}}.</div>
+
+			<div style='font-size: 1.4em;color: #BA8484;'> {{#users.length}}{{#users}}{{.}}, {{/users}} {{#translate}}and{{/translate}} {{/users.length}} {{anonymous.length}} {{#translate}}anonymous users are in this world{{/translate}}.</div>
 			{{/totalusers}}
 			{{^totalusers}}
 			<div style='font-size: .75em;color: lightgray;'> This world is currently suspended.</div>
@@ -76,6 +82,7 @@
 
 
 	</div>
+
 	<div id='embedinfo' style='display:none;text-align:center'>
 			Copy and paste the code below into your website to embed a Sandbox player for this world.
 			<div id='embedcode' style="display: block;
@@ -90,3 +97,4 @@ color: #B63333;">
 			</div>
 		</div>
 </div>
+

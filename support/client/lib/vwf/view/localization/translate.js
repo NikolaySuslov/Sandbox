@@ -1,4 +1,8 @@
-function translateMenu(){
+define({
+
+    initialize: function() {
+
+	window.translateMenu = function(){
 
 var toTranslateElements = document.getElementsByTagName("a");
 
@@ -10,3 +14,7 @@ for (var i=0; i<toTranslateElements.length; i++){
 		}
 	}
 }
+
+}
+
+});

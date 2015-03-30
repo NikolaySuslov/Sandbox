@@ -13,7 +13,9 @@ jQuery.extend({
     }
 });
 
-define(["module", "version", "vwf/view", "vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify", "vwf/view/editorview/Menubar", "vwf/view/editorview/ObjectPools", "vwf/view/editorview/LocationTools", "vwf/view/editorview/WindowResize", "vwf/view/editorview/_PermissionsManager", "vwf/view/editorview/InputSetup", "vwf/view/editorview/SaveLoadTimer", "vwf/view/editorview/TouchHandler", "vwf/view/editorview/SidePanel", "vwf/view/editorview/Toolbar", "vwf/view/editorview/ChatSystemGUI", "vwf/view/editorview/PrimitiveEditor", "vwf/view/editorview/MaterialEditor", "vwf/view/editorview/Notifier", "vwf/view/editorview/ScriptEditor", "vwf/view/editorview/Editor", "vwf/view/editorview/_3DRIntegration", "vwf/view/editorview/InventoryManager", "vwf/view/editorview/HeirarchyManager", "vwf/view/editorview/DataManager", "vwf/view/editorview/UserManager", "vwf/view/editorview/help", "vwf/view/editorview/SideTabs", "vwf/view/editorview/wireeditor", "vwf/view/editorview/selectionEditor", "vwf/view/editorview/UndoManager", "vwf/view/editorview/Publisher", "vwf/view/editorview/EntityLibrary", "vwf/view/editorview/PhysicsEditor","vwf/view/editorview/PerformanceManager","vwf/view/editorview/JSONPrompt","touch.js"], function(module, version, view) {
+
+define(["module", "version", "vwf/view", "vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify", "vwf/view/editorview/Menubar", "vwf/view/editorview/ObjectPools", "vwf/view/editorview/LocationTools", "vwf/view/editorview/WindowResize", "vwf/view/editorview/_PermissionsManager", "vwf/view/editorview/InputSetup", "vwf/view/editorview/SaveLoadTimer", "vwf/view/editorview/TouchHandler", "vwf/view/editorview/SidePanel", "vwf/view/editorview/Toolbar", "vwf/view/editorview/ChatSystemGUI", "vwf/view/editorview/PrimitiveEditor", "vwf/view/editorview/MaterialEditor", "vwf/view/editorview/Notifier", "vwf/view/editorview/ScriptEditor", "vwf/view/editorview/Editor", "vwf/view/editorview/_3DRIntegration", "vwf/view/editorview/InventoryManager", "vwf/view/editorview/HeirarchyManager", "vwf/view/editorview/DataManager", "vwf/view/editorview/UserManager", "vwf/view/editorview/help", "vwf/view/editorview/SideTabs", "vwf/view/editorview/wireeditor", "vwf/view/editorview/selectionEditor", "vwf/view/editorview/UndoManager", "vwf/view/editorview/Publisher", "vwf/view/editorview/EntityLibrary", "vwf/view/editorview/PhysicsEditor","vwf/view/editorview/PerformanceManager","vwf/view/editorview/JSONPrompt","touch.js","vwf/view/localization/translate"], function(module, version, view) {
+
     return view.load(module, {
         // == Module Definition ====================================================================
 
@@ -29,12 +31,11 @@ define(["module", "version", "vwf/view", "vwf/view/editorview/lib/alertify.js-0.
 
 
 
-            window._EditorView = this; 
+            window._EditorView = this;
             if (!window._EditorInitialized) {
 
 
 
-               
 
                 window._DataManager = require("vwf/view/editorview/DataManager").getSingleton();;
 
@@ -77,6 +78,7 @@ define(["module", "version", "vwf/view", "vwf/view/editorview/lib/alertify.js-0.
                     window._EntityLibrary = require("vwf/view/editorview/EntityLibrary").getSingleton();
                     require("vwf/view/editorview/JSONPrompt").initialize();
 
+
                     this.addManager(_ScriptEditor);
                     this.addManager(_UndoManager);
                     this.addManager(_ModelLibrary);
@@ -90,7 +92,7 @@ define(["module", "version", "vwf/view", "vwf/view/editorview/lib/alertify.js-0.
                     this.addManager(_Publisher);
                     this.addManager(_EntityLibrary);
                     this.addManager(_PhysicsEditor);
-                    
+
                 }
                 window._LocationTools = require("vwf/view/editorview/LocationTools").getSingleton();
                 window._UserManager = require("vwf/view/editorview/UserManager").getSingleton();
@@ -234,7 +236,7 @@ define(["module", "version", "vwf/view", "vwf/view/editorview/lib/alertify.js-0.
         },
         ticked:function()
         {
-            this.viewAPINotify('ticked', arguments);  
+            this.viewAPINotify('ticked', arguments);
         }
     });
 });
@@ -242,7 +244,7 @@ define(["module", "version", "vwf/view", "vwf/view/editorview/lib/alertify.js-0.
 function InitializeEditor() {
 
     var instanceData = _DataManager.getInstanceData() || {};
-    
+
 
     document._UserManager = _UserManager;
     $('#vwf-root').css('overflow', 'hidden');
@@ -258,8 +260,10 @@ function InitializeEditor() {
     }
 
     require("vwf/view/editorview/InputSetup").initialize();
+
     require("vwf/view/editorview/ChatSystemGUI").initialize();
-    
+
+
     if (_EditorView.needTools()) {
         $('#sidepanel').css('height', $(window).height() - ($('#statusbar').height() + $('#toolbar').height() + $('#smoothmenu1').height()) + 'px')
         $('#sidepanel').jScrollPane();
@@ -267,9 +271,11 @@ function InitializeEditor() {
 
         require("vwf/view/editorview/Menubar").initialize();
         require("vwf/view/editorview/SideTabs").initialize();
-        
-        $(document.head).append('<script type="text/javascript" src="vwf/view/localization/translate.js"></script>');
-        translateMenu();
+
+        require("vwf/view/localization/translate").initialize();
+        //$(document.head).append('<script type="text/javascript" src="vwf/view/localization/translate.js"></script>');
+        window.translateMenu();
+
         //default to select mode
         _Editor.SetSelectMode('Pick');
     }else

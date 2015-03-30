@@ -462,7 +462,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             }
 
             this.MouseLeftDown = false;
-           
+
             this.mouseUpScreenPoint = [e.clientX, e.clientY];
 
             if (document.AxisSelected == -1 && e.button == 0) {
@@ -540,7 +540,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                             var glyphs = $('.glyph');
                             for(var i = 0; i < glyphs.length; i++)
                             {
-                                
+
                                 if(hitTest( $(this.selectionMarquee),$(glyphs[i])))
                                 {
                                     vwfhits.push($(glyphs[i]).attr('vwfid'));
@@ -698,7 +698,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             }
         }.bind(this);
         this.blur = function() {
-            // we need to let the event propagate, then check that the new focused element is not a glyph. 
+            // we need to let the event propagate, then check that the new focused element is not a glyph.
             //if it is a glyph, focus back on the canvas
             var self = this;
             setTimeout(function(){
@@ -788,7 +788,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                     var bound = peerselection.bounds[i];
                     if (bound) {
                         bound.parent.remove(bound);
-                       
+
                         bound.children[0].geometry.dispose();
                     }
                 }
@@ -800,7 +800,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             if (method == 'PeerSelection') {
                 if (vwf.client() != vwf.moniker()) {
                     var ids = args[0];
-                    //why does this happen? 
+                    //why does this happen?
                     if (!ids) {
                         return;
                     }
@@ -864,8 +864,8 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 $('#StatusSelectedName').text(val);
             }
 
-            
-            
+
+
             //when an object moves, check that it's not hilighted by the peer selection display.
             //if it is, update the matrix of the selection rectangle.
             if (vwf.client() != vwf.moniker() && propname == 'transform') {
@@ -1548,7 +1548,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                                     var success = this.setTransformCallback(SelectedVWFNodes[s].id, transform);
                                 }
                                 if (SelectedVWFNodes.length > 1) {
-                                    //if more than one object is selected, update the new transform to 
+                                    //if more than one object is selected, update the new transform to
                                     //rotate around the gizmo
                                     var parentmat = toGMat(self.findviewnode(SelectedVWFNodes[s].id).parent.matrixWorld);
                                     var parentmatinv = MATH.inverseMat4(parentmat);
@@ -1709,7 +1709,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             this.SelectOnNextCreate([newname]);
         }
         this.snapPosition = function(pos)
-        {   
+        {
             var newpos = pos.slice(0);
             newpos[0] = this.SnapTo(newpos[0], MoveSnap);
             newpos[1] = this.SnapTo(newpos[1], MoveSnap);
@@ -1768,6 +1768,91 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             this.createChild('index-vwf', newname, ConstraintProto, null, null);
             this.SelectOnNextCreate([newname]);
         };
+
+        this.CreateTurtle = function(type, translation, size, texture, owner, id) {
+         var turtleProto = this.CreatePrimProto(type, translation, size, texture, owner, id);
+         var penID = GUID();
+         debugger;
+         var penProto = this.CreatePrimProto('line', [0, 0, 0], size, texture, owner, penID);
+         penProto.properties.DisplayName = 'pen';
+         turtleProto.children = {};
+         turtleProto.children[penID] = penProto;
+
+         var newname = GUID();
+         this.createChild('index-vwf', newname, turtleProto, null, null);
+         this.SelectOnNextCreate([newname]);
+      }.bind(this);
+
+      this.CreatePrimProto = function(type, translation, size, texture, owner, id) {
+          translation[0] = this.SnapTo(translation[0], MoveSnap);
+          translation[1] = this.SnapTo(translation[1], MoveSnap);
+          translation[2] = this.SnapTo(translation[2], MoveSnap);
+          translation[2] += .001;
+          var BoxProto = {
+              extends: type + '2.vwf',
+              properties: {}
+          };
+          BoxProto.type = 'subDriver/threejs';
+          BoxProto.source = 'vwf/model/threejs/' + type + '.js';
+          var proto = BoxProto;
+
+          var defaultmaterialDef = {
+              shininess: 15,
+              alpha: 1,
+              ambient: {
+                  r: 1,
+                  g: 1,
+                  b: 1
+              },
+              color: {
+                  r: 1,
+                  g: 1,
+                  b: 1,
+                  a: 1
+              },
+              emit: {
+                  r: 0,
+                  g: 0,
+                  b: 0
+              },
+              reflect: 0.8,
+              shadeless: false,
+              shadow: true,
+              specularColor: {
+                  r: 0.5773502691896258,
+                  g: 0.5773502691896258,
+                  b: 0.5773502691896258
+              },
+              specularLevel: 1,
+              layers: [{
+                  alpha: 1,
+                  blendMode: 0,
+                  mapInput: 0,
+                  mapTo: 1,
+                  offsetx: 0,
+                  offsety: 0,
+                  rot: 0,
+                  scalex: 1,
+                  scaley: 1,
+                  src: "checker.jpg"
+              }]
+          }
+
+          proto.properties.materialDef = defaultmaterialDef;
+          proto.properties.size = size;
+          proto.properties.transform = MATH.transposeMat4(MATH.translateMatrix(translation));
+          proto.properties.scale = [1, 1, 1];
+          proto.properties.rotation = [0, 0, 1, 0];
+          proto.properties.owner = owner;
+          proto.properties.texture = texture;
+          proto.properties.type = 'primitive';
+          proto.properties.tempid = id;
+          proto.properties.DisplayName = self.GetUniqueName(type);
+          //proto.properties.children = {};
+          return proto;
+      }
+
+
         this.CreatePrim = function(type, translation, size, texture, owner, id) {
             translation[0] = this.SnapTo(translation[0], MoveSnap);
             translation[1] = this.SnapTo(translation[1], MoveSnap);
@@ -1844,7 +1929,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             var ModProto = {
                 extends: 'http://vwf.example.com/behavior.vwf',
                 properties: {
-                    
+
                 }
             };
             var proto = ModProto;
@@ -1870,7 +1955,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             var ModProto = {
                 extends: type + '.vwf',
                  properties: {
-                    
+
                 }
             };
             var proto = ModProto;
@@ -2249,12 +2334,12 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             boundingbox.matrixAutoUpdate = false;
             boundingbox.matrix.elements = MATH.transposeMat4(mat);
             boundingbox.updateMatrixWorld(true);
-            
+
             boundingbox.children[0].renderDepth = -10000 - 3;
-      
+
             boundingbox.children[0].PickPriority = -1;
             boundingbox.children[0].InvisibleToCPUPick = true;
-            
+
             boundingbox.vwfid = id;
             box.release();
             return boundingbox;
@@ -2346,7 +2431,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 } else if (typeof(VWFNode) == 'object') VWFNode = [VWFNode];
                 else if (typeof(VWFNode) == 'string') VWFNode = [_Editor.getNode(VWFNode)];
 
-                //this causes too much drama. look into solution in future	
+                //this causes too much drama. look into solution in future
                 //	if(!skipUndo)
                 //		_UndoManager.recordSelection(VWFNode);
 
@@ -2584,7 +2669,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             rotz.rotation.z = 90;
 
 
-            MoveGizmo.allChildren.push(this.BuildBox([.5, .5, .5], [10.25, 0, 0], red)); //scale x		
+            MoveGizmo.allChildren.push(this.BuildBox([.5, .5, .5], [10.25, 0, 0], red)); //scale x
             MoveGizmo.allChildren.push(this.BuildBox([.5, .5, .5], [0, 10.25, 0], green)); //scale y
             MoveGizmo.allChildren.push(this.BuildBox([.5, .5, .5], [0, 0, 10.25], blue)); //scale z
             MoveGizmo.allChildren.push(this.BuildBox([.85, .85, .85], [9.25, 0, 0], red)); //scale xyz
@@ -2625,7 +2710,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             MoveGizmo.allChildren.push(this.BuildBox([5, 5, .30], [0, 0, 5], blue)); //scale uniform
             MoveGizmo.allChildren.push(this.BuildBox([.30, 5, 5], [-5, 0, 0], red)); //scale uniform
             MoveGizmo.allChildren.push(this.BuildBox([5, .30, 5], [0, -5, 0], green)); //scale uniform
-            MoveGizmo.allChildren.push(this.BuildBox([5, 5, .30], [0, 0, -5], blue)); //scale uniform		
+            MoveGizmo.allChildren.push(this.BuildBox([5, 5, .30], [0, 0, -5], blue)); //scale uniform
             MoveGizmo.allChildren[0].name = 'XRotation';
             MoveGizmo.allChildren[1].name = 'YRotation';
             MoveGizmo.allChildren[2].name = 'ZRotation';
@@ -2706,7 +2791,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             }
             if (type == Scale) {
                 $('#StatusTransform').text('Scale');
-                //SetCoordSystem(LocalCoords);			
+                //SetCoordSystem(LocalCoords);
                 for (var i = 0; i < MoveGizmo.allChildren.length; i++) {
                     if (i == 19) {
                         MoveGizmo.add(MoveGizmo.allChildren[i], true);
@@ -2856,7 +2941,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                     if (id != parent) {
                         if (vwf.parent(id) != parent) {
                             if (vwf.decendants(id).indexOf(parent) == -1) {
-                                
+
 
                                 var node = _DataManager.getCleanNodePrototype(id);
                                 var childmat = toGMat(this.findviewnode(id).matrixWorld);
@@ -3060,7 +3145,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 var t = $(div).offset().top;
                 val[12] -= l ;
                 val[13] -= t  ;
-              
+
                 val[12] /=  $(div).width() || 1;
                 val[13] /=  $(div).height() || 1;
 
@@ -3466,7 +3551,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
         }
         this.loadMesh = function(url, type) {
             var self = this;
-            //ok, here, let's preload the asset. If there is an error during parse, the preloader will never hit the callback and 
+            //ok, here, let's preload the asset. If there is an error during parse, the preloader will never hit the callback and
             // we won't end up with a broken VWF entity.
             _assetLoader.loadAssets([{
                 type: type,
