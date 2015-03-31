@@ -1,15 +1,15 @@
 
-	
+
 @-webkit-keyframes pulsing {
   0% {
     background-color:rgb(32, 85, 155);;
   }
   50% {
-    
+
     background-color:rgb(102, 155, 225);;
   }
   100% {
-    
+
     background-color:rgb(132, 185, 255);;
   }
 }
@@ -19,11 +19,11 @@
     background-color:rgb(32, 85, 155);;
   }
   50% {
-    
+
     background-color:rgb(102, 155, 225);;
   }
   100% {
-    
+
     background-color:rgb(132, 185, 255);;
   }
 }
@@ -106,7 +106,7 @@ max-width: 190px;
 .timeControlActive
 {
 	background-color:blue;
-}	
+}
 #TimeControl
 {
 height: 59px;
@@ -171,7 +171,7 @@ border-radius: 6px;
 	background-color:#dfdfdf;
 }.timeControl:active {
 	background-color:#dfdfff;
-	
+
 }
 /* This button was generated using CSSButtonGenerator.com */
 
@@ -190,7 +190,7 @@ border-radius: 6px;
 	}
 	#FunctionTip
 	{
-	
+
 		top: 804.1875px;
 		left: 295px;
 		position: absolute;
@@ -202,7 +202,7 @@ border-radius: 6px;
 		box-shadow: 2px 2px 2px gray;
 		font-style: italic;
 		color:white;
-	
+
 	}
 	.AutoCompleteOption
 	{
@@ -214,9 +214,9 @@ border-radius: 6px;
 	}
 	.AutoCompleteOption:hover
 	{
-		
+
 		color: rgb(90, 180, 230);
-		
+
 	}
 	.AutoCompleteOptionFunction
 	{
@@ -225,7 +225,7 @@ border-radius: 6px;
 	}
 	#AutoComplete
 	{
-	
+
 		position: absolute;
 		z-index: 10000000;
 		background: black;
@@ -240,16 +240,16 @@ border-radius: 6px;
 	{
 		box-shadow: 0px 0px 5px rgba(130, 184, 255,1);
 	}
-	
+
 	#alertify
 	{
-		font-size: 1.7em;
+		/* font-size: 1.7em; */
 		top: 38%;
 	}
 	#alertify-logs
 	{
 		font-size: 2em;
-		
+
 	}
 	canvas:focus
 	{
@@ -270,7 +270,7 @@ border-radius: 6px;
   color: #eee;
   font-family: 'Open Sans';
 	}
-	
+
 	.loadchoice
 	{
 		background-color: #DDD;
@@ -283,7 +283,7 @@ border-radius: 6px;
 	{
 		padding:3px 4px 3px 4px;
 		font:1.5em sans-serif;
-		
+
 	}
 	.SidePanelWindowBottomBorder
 	{
@@ -302,7 +302,7 @@ border-radius: 6px;
 		border: 1px black solid;
 		margin: 3px 3px 3px 3px;
 		height:auto
-	
+
 	}
 	.inventoryItem
 	{
@@ -334,7 +334,7 @@ border-radius: 6px;
 		margin-right: auto;
 		display: block;
 		border: 1px solid black;
-		
+
 		margin-bottom: 10px;
 		cursor:pointer;
 		word-break: break-all;
@@ -352,7 +352,7 @@ border-radius: 6px;
 		font-size: 1.5em;
 		color: white;
 		font-family: 'Open Sans',sans-serif;
-		
+
 		box-shadow: 2px 2px 5px black;
 		border: 1px solid gray;
 		cursor:default;
@@ -396,7 +396,7 @@ border-radius: 6px;
 		vertical-align: middle;
 		line-height: 50px;
 		font-size: 0.85em;
-		
+
 		display: inline-block;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -466,11 +466,11 @@ transition: background 1s, opacity 1s;
 	.TransformEditorInput
 	{
 		width: 4em;
-		
+
 	}
 	.EditorLabel
 	{
-		
+
 	}
 	.statusbar
 	{
@@ -550,7 +550,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#636363', end
 	{
 		background-color:#555555;
 	}
-	
+
 	.seperator
 	{
 		width:25px;
@@ -565,12 +565,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#636363', end
 	}
 	.usertable tr td
 	{
-	
+
 		font: 8pt 'Open Sans' ;
 	}
 	.usertable tr
 	{
-		
+
 		display: block;
 		border-radius: 5px;
 		width: 100%;
@@ -604,7 +604,7 @@ border-left: 1px solid;
 	.EditorDataSectionTitle
 	{
 		text-align: center;
-		
+
 		margin: 3em 0px 0px 0px;
 		border-bottom: 1px solid #444444;
 		font-size: 1.3em;
@@ -620,11 +620,11 @@ border-left: 1px solid;
 		padding: 0px 0px 0px 0px;
 		display: block;
 		position: fixed;
-		
-		
+
+
 		width: 100%;
 		left: 0px;
-	
+
 	}
 	#toolbar
 	{
@@ -644,7 +644,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#636363', end
 
 overflow: hidden;
 white-space: nowrap;
-		
+
 	}
 	.GLGEStat
 	{
@@ -654,7 +654,7 @@ white-space: nowrap;
 		border: 1px solid white;
 		border-radius: 10px;
 		opacity: .8;
-		
+
 	}
 	.GLGEStat table tbody tr td
 	{
@@ -663,7 +663,7 @@ white-space: nowrap;
 	.vectorinputfront
 	{
 		display: inline;
-		
+
 		padding: 0;
 		width: 50px;
 		border-radius: 6px 0px 0px 6px;
@@ -677,7 +677,7 @@ white-space: nowrap;
 	.vectorinput
 	{
 		display: inline;
-		
+
 		padding: 0;
 		width: 50px;
 		border-radius: 0px 0px 0px 0px;
@@ -700,7 +700,7 @@ white-space: nowrap;
 		border-width: 1px;
 		color:white;
 		height:16px;
-		
+
 	}
 	@media only screen and (max-height:1200px)
 	{
@@ -720,13 +720,13 @@ white-space: nowrap;
 	}
 	@media only screen and (max-width:1280px)
 	{
-		
+
 		.seperator
 		{
 			margin-left: 5px;
 			margin-right: 0px;
 			padding: 0px;
-			
+
 		}
 		.icon
 		{
@@ -757,7 +757,7 @@ white-space: nowrap;
 			margin-left: 5px;
 			margin-right: 0px;
 			padding: 0px;
-			
+
 		}
 		.icon
 		{
@@ -769,7 +769,7 @@ white-space: nowrap;
 	{
 		#toolbar
 		{
-			
+
 		}
 		#ScriptEditor
 		{
@@ -793,7 +793,7 @@ white-space: nowrap;
 			margin-left: 0px;
 		}
 	}
-	
+
 	/*
  * CSS Styles that are needed by jScrollPane for it to operate correctly.
  *
@@ -1004,7 +1004,7 @@ margin: 0px;
   position: absolute;
   width: 98%;
   top: 0%;
-  
+
 
 }
 .PrivateMessageWindow input
@@ -1050,7 +1050,7 @@ box-shadow: 3px 2px 10px lightgray inset;
   /* width: 50%; */
   /* margin-left: auto; */
   /* background: rgb(143,233,167); */
- 
+
   /* border: 1px solid lightgray; */
   /* border-bottom-right-radius: 0px; */
   /* border-top-right-radius: 25px; */
@@ -1132,7 +1132,7 @@ box-shadow: 3px 2px 10px lightgray inset;
 }
 #ChatBodyInner
 {
-	
+
 
 
 
@@ -1386,7 +1386,7 @@ color:black;
 	height: auto;
 	background-size: 1% 100%;
 	font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
-	
+
 	padding-left: 5px;
 }
 
@@ -1534,7 +1534,7 @@ font-family: 'Open Sans',sans-serif;
 #selectionEditorMenu
 {
 
-	
+
 }
 #selectionEditorSelectNone
 {
@@ -1544,27 +1544,27 @@ font-family: 'Open Sans',sans-serif;
 #selectionEditorFilterLights
 {
 
-	
+
 }
 #selectionEditorFilter3Dmodels
 {
 
-	
+
 }
 #selectionEditorFilterBehaviors
 {
 
-	
+
 }
 #selectionEditorFilterPrimitives
 {
 
-	
+
 }
 #selectionEditorFilterModifiers
 {
 
-	
+
 }
 
 #EntityLibrary
@@ -1651,7 +1651,7 @@ height: 75px;
 
 .libraryAsset img
 {
-	
+
 	width: 75px;
 height: 75px;
 box-sizing:border-box;
@@ -1667,20 +1667,20 @@ box-shadow: 2px 2px 5px gray;
 ::-webkit-scrollbar {
     width: 8px;
 }
- 
+
 /* Track */
 ::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     -webkit-border-radius: 5px;
     border-radius: 5px;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
     -webkit-border-radius: 5px;
     border-radius: 5px;
     background: rgba(130, 184, 255,1);
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
     width: 8px;
 }
 ::-webkit-scrollbar-thumb:window-inactive {
@@ -1735,10 +1735,10 @@ border: 2px solid rgb(130,184,255);
 
 .BigTextureThumb:hover, .BigTextureThumbSrc:hover
 	{
-		
-		
+
+
 		border: 3px solid rgb(140,185,255);
-	
+
 	}
 
 
@@ -1909,7 +1909,7 @@ margin: 2px;
 
 .jstree-default .jstree-wholerow-hovered {
   background: #5B89B6 ;
- 
+
   /* color: black !important; */
 }
 
