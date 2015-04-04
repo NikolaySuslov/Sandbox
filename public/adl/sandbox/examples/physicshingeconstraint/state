@@ -1,1 +1,453 @@
-[{"DisplayName":null,"placemarks":{"Origin":[0,0,0]},"navmode":"none","sunColor":[1,1,1],"sunDirection":[0,0,1],"sunIntensity":0.5,"ambientColor":[0.35,0.35,0.35],"fogColor":[155,155,155],"fogNear":100,"fogFar":1000,"fogType":0,"fogDensity":0.005,"fogVFalloff":1.3,"fogVFalloffStart":0,"skyColorBlend":0,"skyFogBlend":0,"skyApexColor":[0,0.5,1],"skyHorizonColor":[0,0.5,1],"vAtmosphereDensity":0.0005,"owner":"Rob","type":"scene","publishSettings":{"singlePlayer":false,"camera":"","allowAnonymous":false,"createAvatar":false,"allowTools":false}}]
+[{
+        "extends": "hingeConstraint.vwf",
+        "properties": {
+            "DisplayName": "hinge Constraint1",
+            "___physics_joint_body_A": "cylinder2-vwf-a521b44-520f-63f2-348f-caf128033b1f",
+            "___physics_joint_body_B": "box2-vwf-a247556d-af7b-205a-b2f3-5f5059be4d3",
+            "owner": "Rob",
+            "transform": [-7.575992277963906e-9, 1, 0, 0, -1, -7.575992277963906e-9, 0, 0, 0, 0, 1, 0, -0.5999996066093445, 1.399999976158142, 4.201000213623047, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.967069563921541,
+            "s1": 0.384490509750322,
+            "s2": 0.103338502813131
+        },
+        "sequence": 0,
+        "name": "38387a57-6ad9-60e6-a439-41268f8247c8"
+    }, {
+        "extends": "box2.vwf",
+        "properties": {
+            "DisplayName": "box3",
+            "___physics_activation_state": 1,
+            "___physics_angular_velocity": [0, 0, 0],
+            "___physics_deactivation_time": 0,
+            "___physics_enabled": true,
+            "___physics_linear_velocity": [0, 0, 0],
+            "___physics_mass": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "_length": 10,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "a": 1,
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "blendMode": 0,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "rot": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "checker.jpg"
+                    }
+                ],
+                "morphTargets": false,
+                "reflect": 0.8,
+                "shadeless": false,
+                "shadow": true,
+                "shadows": true,
+                "shininess": 15,
+                "skinning": false,
+                "specularColor": {
+                    "b": 0.577350269189626,
+                    "g": 0.577350269189626,
+                    "r": 0.577350269189626
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "owner": "Rob",
+            "transform": [0.9396926760673523, 0, -0.342020183801651, 0, 0, 1, 0, 0, 0.342020183801651, 0, 0.9396926760673523, 0, -12.40000057220459, 1.4000000953674316, 1.8010002374649048, 1],
+            "type": "Primitive",
+            "width": 3.11
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.970392876071855,
+            "s1": 0.77810594229959,
+            "s2": 0.809816058026627
+        },
+        "sequence": 0,
+        "source": "vwf/model/threejs/box.js",
+        "type": "subDriver/threejs",
+        "name": "879d5a62-c76b-ad7-a93f-f60d76252597"
+    }, {
+        "extends": "SandboxCamera.vwf",
+        "properties": {
+            "DisplayName": "Camera1",
+            "owner": "Rob",
+            "transform": [-0.9848077297210693, -0.17364826798439026, 0, 0, 0.17364826798439026, -0.9848077297210693, 0, 0, 0, 0, 1, 0, -11.199996948242188, 17.39999771118164, 5.599998950958252, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.460704156663269,
+            "s1": 0.0164013784378767,
+            "s2": 0.814108367310837
+        },
+        "sequence": 0,
+        "source": "vwf/model/threejs/camera.js",
+        "type": "subDriver/threejs",
+        "name": "8a8c99c-4b69-5495-2ac5-55eb38be6d47"
+    }, {
+        "extends": "box2.vwf",
+        "properties": {
+            "DisplayName": "box2",
+            "___physics_activation_state": 1,
+            "___physics_angular_velocity": [0, 0, 0],
+            "___physics_deactivation_time": 0,
+            "___physics_enabled": true,
+            "___physics_linear_velocity": [0, 0, 0],
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "a": 1,
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "blendMode": 0,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "rot": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "checker.jpg"
+                    }
+                ],
+                "morphTargets": false,
+                "reflect": 0.8,
+                "shadeless": false,
+                "shadow": true,
+                "shadows": true,
+                "shininess": 15,
+                "skinning": false,
+                "specularColor": {
+                    "b": 0.577350269189626,
+                    "g": 0.577350269189626,
+                    "r": 0.577350269189626
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "owner": "Rob",
+            "transform": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.19999949634075165, 1.399999976158142, 5.000997543334961, 1],
+            "type": "Primitive"
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.463547266321257,
+            "s1": 0.867323872167617,
+            "s2": 0.652822281932458
+        },
+        "sequence": 0,
+        "source": "vwf/model/threejs/box.js",
+        "type": "subDriver/threejs",
+        "name": "a247556d-af7b-205a-b2f3-5f5059be4d3"
+    }, {
+        "extends": "cylinder2.vwf",
+        "properties": {
+            "DisplayName": "cylinder1",
+            "___physics_activation_state": 1,
+            "___physics_angular_velocity": [0, 0, 0],
+            "___physics_deactivation_time": 0,
+            "___physics_enabled": true,
+            "___physics_linear_velocity": [0, 0, 0],
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "height": 2.67,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "a": 1,
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "blendMode": 0,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "rot": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "checker.jpg"
+                    }
+                ],
+                "morphTargets": false,
+                "reflect": 0.8,
+                "shadeless": false,
+                "shadow": true,
+                "shadows": true,
+                "shininess": 15,
+                "skinning": false,
+                "specularColor": {
+                    "b": 0.577350269189626,
+                    "g": 0.577350269189626,
+                    "r": 0.577350269189626
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "owner": "Rob",
+            "radius": 0.28,
+            "transform": [1, 0, 0, 0, 0, -1.7352505210510571e-7, 0.9999999403953552, 0, 0, -0.9999999403953552, -1.7352505210510571e-7, 0, -0.5999996066093445, 1.399999976158142, 4.201000213623047, 1],
+            "type": "Primitive"
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.845721419667825,
+            "s1": 0.667154432972893,
+            "s2": 0.952736890409142
+        },
+        "sequence": 0,
+        "source": "vwf/model/threejs/cylinder.js",
+        "type": "subDriver/threejs",
+        "name": "a521b44-520f-63f2-348f-caf128033b1f"
+    }, {
+        "extends": "hingeConstraint.vwf",
+        "properties": {
+            "DisplayName": "hinge Constraint2",
+            "___physics_joint_body_A": "cylinder2-vwf-e12c60b-d8ad-69ff-812e-32edd3602142",
+            "___physics_joint_body_B": "box2-vwf-a247556d-af7b-205a-b2f3-5f5059be4d3",
+            "owner": "Rob",
+            "transform": [-7.575992277963906e-9, 1, 0, 0, -1, -7.575992277963906e-9, 0, 0, 0, 0, 1, 0, 1.0000003576278687, 1.399999976158142, 4.201000213623047, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.07960199797526,
+            "s1": 0.685319917043671,
+            "s2": 0.561320851324126
+        },
+        "sequence": 0,
+        "name": "a6b26636-dd10-78fe-adf5-de8feb4d6650"
+    }, {
+        "extends": "box2.vwf",
+        "properties": {
+            "DisplayName": "box1",
+            "___physics_activation_state": 1,
+            "___physics_angular_velocity": [0, 0, 0],
+            "___physics_deactivation_time": 0,
+            "___physics_enabled": true,
+            "___physics_linear_velocity": [0, 0, 0],
+            "___physics_mass": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "_length": 10,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "a": 1,
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "blendMode": 0,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "rot": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "checker.jpg"
+                    }
+                ],
+                "morphTargets": false,
+                "reflect": 0.8,
+                "shadeless": false,
+                "shadow": true,
+                "shadows": true,
+                "shininess": 15,
+                "skinning": false,
+                "specularColor": {
+                    "b": 0.577350269189626,
+                    "g": 0.577350269189626,
+                    "r": 0.577350269189626
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "owner": "Rob",
+            "transform": [0.9659258723258972, 0, 0.258819043636322, 0, 0, 1, 0, 0, -0.258819043636322, 0, 0.9659258723258972, 0, -3.200000047683716, 1.4000000953674316, 1.601000189781189, 1],
+            "type": "Primitive",
+            "width": 3.11
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.970392876071855,
+            "s1": 0.77810594229959,
+            "s2": 0.809816058026627
+        },
+        "sequence": 0,
+        "source": "vwf/model/threejs/box.js",
+        "type": "subDriver/threejs",
+        "name": "d411d52c-db3f-a9b7-32f3-851ba19eca82"
+    }, {
+        "extends": "cylinder2.vwf",
+        "properties": {
+            "DisplayName": "cylinder2",
+            "___physics_activation_state": 1,
+            "___physics_angular_velocity": [0, 0, 0],
+            "___physics_deactivation_time": 0,
+            "___physics_enabled": true,
+            "___physics_linear_velocity": [0, 0, 0],
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "height": 2.67,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "a": 1,
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "blendMode": 0,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "rot": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "checker.jpg"
+                    }
+                ],
+                "morphTargets": false,
+                "reflect": 0.8,
+                "shadeless": false,
+                "shadow": true,
+                "shadows": true,
+                "shininess": 15,
+                "skinning": false,
+                "specularColor": {
+                    "b": 0.577350269189626,
+                    "g": 0.577350269189626,
+                    "r": 0.577350269189626
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "owner": "Rob",
+            "radius": 0.28,
+            "transform": [1, 0, 0, 0, 0, -1.7352505210510571e-7, 0.9999999403953552, 0, 0, -0.9999999403953552, -1.7352505210510571e-7, 0, 1.0000003576278687, 1.399999976158142, 4.201000213623047, 1],
+            "type": "Primitive"
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.845721419667825,
+            "s1": 0.667154432972893,
+            "s2": 0.952736890409142
+        },
+        "sequence": 0,
+        "source": "vwf/model/threejs/cylinder.js",
+        "type": "subDriver/threejs",
+        "name": "e12c60b-d8ad-69ff-812e-32edd3602142"
+    }, {
+        "DisplayName": null,
+        "glyphURL": "../vwf/view/editorview/images/icons/scene.png",
+        "simTime": 0,
+        "placemarks": {
+            "Origin": [0, 0, 0]
+        },
+        "navmode": "none",
+        "sunColor": [1, 1, 1],
+        "sunDirection": [0.5, 0.5, 1],
+        "sunIntensity": 0.8,
+        "shadowDarkness": 0.5,
+        "ambientColor": [0.35, 0.35, 0.35],
+        "fogColor": [1, 1, 1],
+        "fogNear": 100,
+        "fogFar": 1000,
+        "fogType": 0,
+        "fogDensity": 0.005,
+        "fogVFalloff": 1.3,
+        "fogVFalloffStart": 0,
+        "skyColorBlend": 0,
+        "skyFogBlend": 0,
+        "skyApexColor": [0, 0.5, 1],
+        "skyHorizonColor": [0, 0.5, 1],
+        "___physics_gravity": [0, 0, -9.8],
+        "___physics_accuracy": 10,
+        "___physics_active": true,
+        "vAtmosphereDensity": 0.0005,
+        "playMode": "stop",
+        "octreeObjects": 5,
+        "octreeDepth": 16,
+        "octreeExtents": 640,
+        "skyTexture": "white",
+        "owner": "Rob",
+        "type": "scene"
+    }
+]

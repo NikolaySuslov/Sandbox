@@ -1282,6 +1282,14 @@ define(["module", "vwf/model", "vwf/configuration"], function(module, model, con
                 for (var j in this.jointBodyMap[i])
                     if (this.jointBodyMap[i][j] == nodeID) this.allNodes[i].setDirty();
         },
+        isJoined : function(nodeID)
+        {
+            for (var i in this.jointBodyMap)
+                for (var j in this.jointBodyMap[i])
+                    if (this.jointBodyMap[i][j] == nodeID)
+                        return true;
+            return false;        
+        },
         creatingNode: function(nodeID, childID, childExtendsID, childImplementsIDs, childSource, childType, childIndex, childName, callback /* ( ready ) */ ) {
             if (childID === vwf.application()) {
                 this.nodes[vwf.application()] = {
@@ -1552,6 +1560,17 @@ define(["module", "vwf/model", "vwf/configuration"], function(module, model, con
             }
             if (methodName === '___physics_addTorque') {
                 node.addTorque(args[0]);
+            }
+            //we cannot resync on the transform property of joined bodies or joints
+            //this is because the relative transforms between the transforms of hte bodies are important
+            //if you're going to sync one, need to do all
+            if(methodName == "filterResyncData")
+            {
+                    if(this.isJoined(nodeID) || this.allNodes[nodeID] instanceof phyJoint)
+                    {
+                        return [];
+                    }
+                    return args;
             }
             if (methodName == '___physics_world_reset') {
                 //if a client joins (who is not myself), I need to reset.

@@ -73,51 +73,62 @@
      }
      editorCameraController.prototype.prerender = function(e)
      {
+         if(!this.cameraControllers[this.cameramode]) return;
          this.cameraControllers[this.cameramode].prerender(e)
      }
      editorCameraController.prototype.updateCamera = function(e)
      {
+        if(!this.cameraControllers[this.cameramode]) return;
          this.cameraControllers[this.cameramode].updateCamera(e)
      }
      editorCameraController.prototype.orientationEvent = function(e)
      {
+        if(!this.cameraControllers[this.cameramode]) return;
          this.cameraControllers[this.cameramode].orientationEvent(e);
      }
      editorCameraController.prototype.localpointerMove = function(e)
      {
-        
+        if(!this.cameraControllers[this.cameramode]) return;
          this.cameraControllers[this.cameramode].localpointerMove(e);
      }
      editorCameraController.prototype.localpointerUp = function(e)
      {
+        if(!this.cameraControllers[this.cameramode]) return;
          this.cameraControllers[this.cameramode].localpointerUp(e);
      }
      editorCameraController.prototype.localpointerWheel = function(e)
      {
+        if(!this.cameraControllers[this.cameramode]) return;
          this.cameraControllers[this.cameramode].localpointerWheel(e);
      }
      editorCameraController.prototype.localpointerDown = function(e)
      {
+        if(!this.cameraControllers[this.cameramode]) return;
          this.cameraControllers[this.cameramode].localpointerDown(e);
      }
      editorCameraController.prototype.localKeyUp = function(e)
      {
+        if(!this.cameraControllers[this.cameramode]) return;
          this.cameraControllers[this.cameramode].localKeyUp(e);
      }
      editorCameraController.prototype.localKeyDown = function(e)
      {
+        if(!this.cameraControllers[this.cameramode]) return;
          this.cameraControllers[this.cameramode].localKeyDown(e);
      }
      editorCameraController.prototype.localTouchMove = function(e)
      {
+        if(!this.cameraControllers[this.cameramode]) return;
          this.cameraControllers[this.cameramode].localTouchMove(e);
      }
      editorCameraController.prototype.localTouchEnd = function(e)
      {
+        if(!this.cameraControllers[this.cameramode]) return;
          this.cameraControllers[this.cameramode].localTouchEnd(e);
      }
      editorCameraController.prototype.localTouchStart = function(e)
      {
+        if(!this.cameraControllers[this.cameramode]) return;
          this.cameraControllers[this.cameramode].localTouchStart(e);
      }
      editorCameraController.prototype.setCameraMode = function(mode)

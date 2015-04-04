@@ -295,7 +295,7 @@ SceneManager.prototype.CPUPick = function(o, d, opts) {
 SceneManager.prototype.FrustrumCast = function(f, opts) {
 
     //let's lazy update only on demand;
-    this.update();
+    
     var hitlist = this.root.FrustrumCast(f, opts || this.defaultPickOptions);
     hitlist = hitlist.concat(this.staticRoot.FrustrumCast(f, opts || this.defaultPickOptions));
     for (var i = 0; i < this.specialCaseObjects.length; i++) {
@@ -310,7 +310,7 @@ SceneManager.prototype.FrustrumCast = function(f, opts) {
 SceneManager.prototype.SphereCast = function(center, r, opts) {
     //console.profile("PickProfile");
     //let's lazy update only on demand;
-    this.update();
+   
     var hitlist = this.root.SphereCast(center, r, opts || this.defaultPickOptions);
     hitlist = hitlist.concat(this.staticRoot.SphereCast(center, opts || this.defaultPickOptions));
     for (var i = 0; i < this.specialCaseObjects.length; i++) {
@@ -833,7 +833,8 @@ SceneManager.prototype.removeChild = function(c) {
     var removed = this.root.removeChild(c);
     this.staticRoot.removeChild(c);
 
-
+    if(this.specialCaseObjects.indexOf(c) > -1)
+        this.specialCaseObjects.splice(this.specialCaseObjects.indexOf(c),1);
 }
 
 function SceneManagerRegion(min, max, depth, scene, order) {

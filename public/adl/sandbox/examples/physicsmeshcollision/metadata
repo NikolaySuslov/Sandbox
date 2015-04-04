@@ -5,7 +5,7 @@
 		"allowAnonymous":true,
 		"published":true,
 		"createAvatar":false,
-		"singlePlayer":true,
+		"singlePlayer":false,
 		"allowTools":true
 	}
 }

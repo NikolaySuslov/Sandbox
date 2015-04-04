@@ -5,7 +5,8 @@
 		"allowAnonymous":true,
 		"published":true,
 		"createAvatar":false,
-		"singlePlayer":true,
-		"allowTools":true
+		"singlePlayer":false,
+		"allowTools":false,
+		"camera":"SandboxCamera-vwf-8f735404-592f-434f-9e7b-cd5e1dfd4936"
 	}
 }

@@ -45,6 +45,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
     var VRRENDER = 2;
     var everyOtherFrame = false;
     var glext_ft = null;
+
     return view.load(module, {
 
         renderMode: NORMALRENDER,
@@ -56,6 +57,34 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         vrHMD: null,
         vrRenderer: null,
         editorCamera: new THREE.PerspectiveCamera(35, $(document).width() / $(document).height(), .01, 10000),
+        shareCamera:false,
+        receiveSharedCamera:false,
+        cameraShareLoop:function(){
+            if(this.shareCamera)
+            {
+                vwf_view.kernel.callMethod(vwf.application(),'cameraShareInfo',[vwf.moniker(),this.getCamera().matrixWorld.elements])
+                window.setTimeout(this.cameraShareLoop.bind(this),33);
+            }
+        },
+        shareCameraView:function()
+        {
+            this.shareCamera = true;
+            this.receiveSharedCamera = false;
+            vwf_view.kernel.callMethod(vwf.application(),'startCameraShare',[vwf.moniker()]);
+            this.cameraShareLoop();
+        },
+        receiveSharedCameraView:function()
+        {
+            this.shareCamera = false;
+            this.receiveSharedCamera = true;
+            require("vwf/view/threejs/editorCameraController").setCameraMode(null);
+        },
+        stopShareCameraView:function()
+        {
+            this.shareCamera = false;
+            this.receiveSharedCamera = true;
+            vwf_view.kernel.callMethod(vwf.application(),'stopCameraShare',[vwf.moniker()]);
+        },
         simulateContextLoss: function() {
             var cx = _dRenderer.context.getExtension('WEBGL_lose_context');
             cx.loseContext();
@@ -729,6 +758,39 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 if (vwf.moniker() == args[0]) {
                     this.setCamera_internal(args[1]);
                 }
+            }
+            if(id == vwf.application() && method == 'cameraShareInfo')
+            {
+                if(this.receiveSharedCamera)
+                {
+                    this.setCamera();
+                    this.getCamera().matrixAutoUpdate = false;
+                    this.getCamera().matrixWorld.fromArray(args[1]);
+                    this.getCamera().matrix.fromArray(args[1]);
+                  
+                }
+            }
+            if(id == vwf.application() && method == 'startCameraShare')
+            {
+                if(!this.receiveSharedCamera && vwf.moniker() !== args[0])
+                {
+                    var self = this;
+                    alertify.confirm('A user would like to share their camera view. Accept?',function(ok)
+                    {
+                        if(ok)
+                        {
+                            self.receiveSharedCameraView();
+                        }
+                    })
+                }
+            }
+            if(id == vwf.application() && method == 'stopCameraShare')
+            {
+                this.receiveSharedCamera = false;
+             //   require("vwf/view/threejs/editorCameraController").getController('Orbit').orbitPoint(newintersectxy);
+                require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
+                require("vwf/view/threejs/editorCameraController").updateCamera();
+                this.getCamera().matrixAutoUpdate = false;
             }
         },
         createdProperty: function(nodeID, propertyName, propertyValue) {

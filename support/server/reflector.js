@@ -526,21 +526,7 @@ function runningInstance(id)
 
             while (self.accum > .05)
             {
-                self.resyncCounter++;
-                if (self.resyncCounter == 10)
-                {
-                    self.resyncCounter = 0;
-                    var syncClient = self.getLoadClient();
-                    var syncmessage = messageCompress.pack(JSON.stringify(
-                    {
-                        "action": "activeResync",
-                        "parameters": [],
-                        "time": self.time,
-                        "respond": true
-                    }));
-                    if (syncClient)
-                        syncClient.emit('message', syncmessage)
-                }
+              
                 self.accum -= .05;
                 self.time += .05;
                 self.ticknum ++;
@@ -554,6 +540,24 @@ function runningInstance(id)
                 };
 
                 self.messageClients(tickmessage);
+
+                self.resyncCounter++;
+                if (self.resyncCounter == 10)
+                {
+                    self.resyncCounter = 0;
+                    var syncClient = self.getLoadClient();
+                    var syncmessage = messageCompress.pack(JSON.stringify(
+                    {
+                        "action": "activeResync",
+                        "parameters": [],
+                        "time": self.time, //mark so the client will process before any ticks
+                        "respond": true,
+                        "origin": "reflector",
+                    }));
+                    if (syncClient)
+                        syncClient.emit('message', syncmessage)
+                }
+
             }
             self.lasttime = now;
             
@@ -1138,7 +1142,7 @@ function ClientConnected(socket, namespace, instancedata)
                     {
                         //here we deal with continual resycn messages
                         var node = message.result.node;
-                        if (node)
+                        if (false && !global.configuration.disableResync && node)
                         {
                             if (message.time >= thisInstance.time)
                             {
@@ -1147,13 +1151,15 @@ function ClientConnected(socket, namespace, instancedata)
                                 {
                                     "action": "resyncNode",
                                     "parameters": [node.id, node],
-                                    "time": thisInstance.time
+                                    "time": thisInstance.time, //process before any ticks
+                                    "origin":"reflector"
                                 });
+                               
                             }
                             else
                             {
-                                //logger.info('rejecting resync data from the past');
-                                //logger.info(message.time,thisInstance.time);
+                                logger.info('rejecting resync data from the past');
+                                logger.info(message.time,thisInstance.time);
                             }
                         }
                     }
