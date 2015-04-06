@@ -5,7 +5,7 @@ var GUID = require('node-uuid')
 var logger = new winston.Logger({
     transports: [
         new winston.transports.Console({
-            level: 'info',
+            level: 'warn',
             handleExceptions: true,
             json: false,
             colorize: 'all',

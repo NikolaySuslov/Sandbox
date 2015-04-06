@@ -80,10 +80,10 @@ if (!window.jQuery) {
 
 //ok, at this point, we have all the libraries. Let's do a bit of gui logic and setup
 function startup(boot) {
-    //TODO: Try to read this and set from config.json in the build process
-    //window.appPath = "/adl/sandbox/";
-    window.appPath = "/adl/sandbox/";
-
+    
+    //read this from the server at runtime
+    window.appPath = $.trim($.ajax({url:"./vwfdatamanager.svc/appPath",async:false}).responseText) +"/";
+    
     $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
 
         var p = window.location.pathname;

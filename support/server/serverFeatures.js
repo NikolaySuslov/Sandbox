@@ -125,7 +125,15 @@ function prettyWorldURL(req, res, next)
         else
           next();
       }
-
+//allow setup of server to display a URL that does not include they /adl/sandbox by internally rewriting a configurable string to 
+//adl/sandbox
+function customAppUrl (req,res,next)
+{
+    var teststring = global.appPath;
+    req.url = req.url.replace(teststring,'/adl/sandbox');
+    
+    next();
+}
 //check the URL for the version string. IF the version string is found and we are using versioning and the url contains the current version string, then
 //serve. Otherwise, redirect to the proper version
 //this is to defeat client caches
@@ -178,6 +186,7 @@ exports.versioning = versioning;
 exports.prettyWorldURL = prettyWorldURL;
 exports.waitForAllBody = waitForAllBody;
 exports.CORSSupport = CORSSupport;
+exports.customAppUrl = customAppUrl;
 exports.setDAL = function(d)
 {
 DAL = d;

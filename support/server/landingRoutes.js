@@ -14,7 +14,7 @@ var sessions = require('./sessions');
 exports.init = function() {
     root = global.appPath,
     console.log(root);
-    fs.readdir(__dirname + '/../../public' + root + '/views/help', function(err, files) {
+    fs.readdir(__dirname + '/../../public' + '/adl/sandbox' + '/views/help', function(err, files) {
         var tempArr = [];
 
         for (var i = 0; i < files.length; i++) {
@@ -471,7 +471,7 @@ exports.world = function(req, res, next) {
 
 
     sessions.GetSessionData(req, function(sessionData) {
-        DAL.getInstance(global.appPath.replace(/\//g, "_") + "_" + req.params.page + "_", function(doc) {
+        DAL.getInstance("/adl/sandbox".replace(/\//g, "_") + "_" + req.params.page + "_", function(doc) {
             if (!doc) {
                 res.locals = {
                     sessionData: sessionData,
@@ -483,7 +483,7 @@ exports.world = function(req, res, next) {
                 res.redirect(global.appPath);
                 return;
             }
-            var instance = global.instances ? global.instances.get(global.appPath + "/" + req.params.page + "/") : false;
+            var instance = global.instances ? global.instances.get("/adl/sandbox" + "/" + req.params.page + "/") : false;
             var anonymous = [];
             var users = [];
 
@@ -546,7 +546,7 @@ function ShowSearchPage(mode, req, res, next) {
                     var inst = allinstances[i];
                     if (!inst) continue;
                     inst.id = i;
-                    inst.shortid = i.substr(global.appPath.length + 1, 16);
+                    inst.shortid = i.substr("/adl/sandbox".length + 1, 16);
                     if (global.instances) {
                         if (global.instances.get(i.replace(/_/g, "/")))
                             results.push(inst);
@@ -563,7 +563,7 @@ function ShowSearchPage(mode, req, res, next) {
                     var inst = allinstances[i];
                     if (!inst) continue;
                     inst.id = i;
-                    inst.shortid = i.substr(global.appPath.length + 1, 16);
+                    inst.shortid = i.substr("/adl/sandbox".appPath.length + 1, 16);
                     if (inst.title.toLowerCase().indexOf(search) != -1 || inst.description.toLowerCase().indexOf(search) != -1 || inst.owner.toLowerCase().indexOf(search) != -1 || inst.shortid.toLowerCase().indexOf(search) != -1)
                         results.push(inst);
                 }
@@ -577,7 +577,7 @@ function ShowSearchPage(mode, req, res, next) {
                     var inst = allinstances[i];
                     if (!inst) continue;
                     inst.id = i;
-                    inst.shortid = i.substr(global.appPath.length + 1, 16)
+                    inst.shortid = i.substr("/adl/sandbox".length + 1, 16)
                     if (inst.owner == sessionData.UID)
                         results.push(inst);
                 }
@@ -590,7 +590,7 @@ function ShowSearchPage(mode, req, res, next) {
                     var inst = allinstances[i];
                     if (!inst) continue;
                     inst.id = i;
-                    inst.shortid = i.substr(global.appPath.length + 1, 16)
+                    inst.shortid = i.substr("/adl/sandbox".length + 1, 16)
                     if (inst.featured)
                         results.push(inst);
                 }
@@ -604,7 +604,7 @@ function ShowSearchPage(mode, req, res, next) {
                     var inst = allinstances[i];
                     if (!inst) continue;
                     inst.id = i;
-                    inst.shortid = i.substr(global.appPath.length + 1, 16)
+                    inst.shortid = i.substr("/adl/sandbox".length + 1, 16)
                     results.push(inst);
                 }
                 results.sort(function(a, b) {
@@ -616,7 +616,7 @@ function ShowSearchPage(mode, req, res, next) {
                     var inst = allinstances[i];
                     if (!inst) continue;
                     inst.id = i;
-                    inst.shortid = i.substr(global.appPath.length + 1, 16)
+                    inst.shortid = i.substr("/adl/sandbox".length + 1, 16)
                     results.push(inst);
                 }
                 results.sort(function(a, b) {
@@ -715,7 +715,7 @@ exports.createNew2 = function(req, res, next) {
             res.redirect(root + '/login?return=createNew/0')
         }
         var template = req.params.template;
-        var normalizedSID = global.appPath.replace(/\//g, "_") + "_" + template + "_";
+        var normalizedSID = "/adl/sandbox".replace(/\//g, "_") + "_" + template + "_";
         logger.debug(normalizedSID);
         DAL.getInstance(normalizedSID, function(worlddata) {
 
@@ -805,7 +805,7 @@ exports.createNew = function(req, res, next) {
                 var inst = allinstances[i];
                 if (!inst) continue;
                 inst.id = i;
-                inst.shortid = i.substr(global.appPath.length + 1, 16)
+                inst.shortid = i.substr("/adl/sandbox".length + 1, 16)
                 if (inst.featured)
                     results.push(inst);
             }

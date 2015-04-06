@@ -194,9 +194,16 @@ function startVWF() {
                 global.configuration.versioning = versioning;
                 global.configuration.version = global.version;
 
-                appPath = global.configuration.appPath ? global.configuration.appPath : '/adl/sandbox';
-                global.appPath = appPath;
-                global.configuration.appPath = appPath;
+                //set the default URL for the site
+                p = process.argv.indexOf('-ap');
+                appPath = global.appPath = p >= 0 ? (process.argv[p + 1]) : (global.configuration.appPath ? global.configuration.appPath : '/adl/sandbox');
+                if(appPath.length < 3)
+                {
+                    logger.error('appPath too short. Use at least 2 characters plus the slash');
+                    process.exit();
+                }
+
+                global.configuration.appPath = global.appPath;
                 logger.info('Set appPath to ' + global.appPath);
 
 
@@ -546,7 +553,7 @@ function startVWF() {
                     return;
                 }
                 app.set('layout', 'layout');
-                app.set('views', __dirname + '/../../public' + global.appPath + '/views');
+                app.set('views', __dirname + '/../../public/adl/sandbox/views');
                 app.set('view engine', 'html');
                 app.engine('.html', require('hogan-express'));
 
@@ -564,6 +571,8 @@ function startVWF() {
                 // we append a version to the front if every request to keep the clients fresh
                 // otherwise, a user would have to know to refresh the cache every time we release
                 app.use(ServerFeatures.versioning);
+
+                app.use(ServerFeatures.customAppUrl);
 
                 //find pretty world URL's, and redirect to the non-pretty url for the world
                 app.use(ServerFeatures.prettyWorldURL);
@@ -618,14 +627,14 @@ function startVWF() {
                     });
 
                 if (global.configuration.facebook_app_id) {
-                    app.get(global.appPath + '/auth/facebook',
+                    app.get("/adl/sandbox" + '/auth/facebook',
                         passport.authenticate('facebook', {
                             scope: 'email'
                         }));
 
-                    app.get(global.appPath + '/auth/facebook/callback',
+                    app.get("/adl/sandbox" + '/auth/facebook/callback',
                         passport.authenticate('facebook', {
-                            failureRedirect: global.appPath + '/login'
+                            failureRedirect: "/adl/sandbox" + '/login'
                         }),
                         function(req, res) {
                             handleRedirectAfterLogin(req, res);
@@ -634,11 +643,11 @@ function startVWF() {
 
                 if (global.configuration.twitter_consumer_key) {
                     // Twitter authentication routing
-                    app.get(global.appPath + '/auth/twitter', passport.authenticate('twitter'));
+                    app.get("/adl/sandbox" + '/auth/twitter', passport.authenticate('twitter'));
 
-                    app.get(global.appPath + '/auth/twitter/callback',
+                    app.get("/adl/sandbox" + '/auth/twitter/callback',
                         passport.authenticate('twitter', {
-                            failureRedirect: global.appPath + '/login'
+                            failureRedirect: "/adl/sandbox" + '/login'
                         }),
                         function(req, res) {
                             handleRedirectAfterLogin(req, res);
@@ -646,14 +655,14 @@ function startVWF() {
                 }
                 if (global.configuration.google_client_id) {
                     // Google authentication routing
-                    app.get(global.appPath + '/auth/google',
+                    app.get("/adl/sandbox" + '/auth/google',
                         passport.authenticate('google', {
                             scope: ['profile', 'email']
                         }));
 
-                    app.get(global.appPath + '/auth/google/callback',
+                    app.get("/adl/sandbox" + '/auth/google/callback',
                         passport.authenticate('google', {
-                            failureRedirect: global.appPath + '/login'
+                            failureRedirect: "/adl/sandbox" + '/login'
                         }),
                         function(req, res) {
                             handleRedirectAfterLogin(req, res);
@@ -666,28 +675,28 @@ function startVWF() {
                     res.redirect('/');
                 });
 
-                app.get(global.appPath + '/:page([a-zA-Z\\0-9\?/]*)', Landing.redirectPasswordEmail);
-                app.get(global.appPath, Landing.redirectPasswordEmail);
+                app.get("/adl/sandbox" + '/:page([a-zA-Z\\0-9\?/]*)', Landing.redirectPasswordEmail);
+                app.get("/adl/sandbox", Landing.redirectPasswordEmail);
 
-                app.get(global.appPath + '/help', Landing.help);
-                app.get(global.appPath + '/help/:page([a-zA-Z]+)', Landing.help);
-                app.get(global.appPath + '/world/:page([_a-zA-Z0-9]+)', Landing.world);
-                app.get(global.appPath + '/searchResults/:term([^/]+)/:page([0-9]+)', Landing.searchResults);
-                app.get(global.appPath + '/newWorlds', Landing.newWorlds);
-                app.get(global.appPath + '/allWorlds/:page([0-9]+)', Landing.allWorlds);
-                app.get(global.appPath + '/myWorlds/:page([0-9]+)', Landing.myWorlds);
-                app.get(global.appPath + '/featuredWorlds/:page([0-9]+)', Landing.featuredWorlds);
-                app.get(global.appPath + '/activeWorlds/:page([0-9]+)', Landing.activeWorlds);
-                app.get(global.appPath, Landing.generalHandler);
-                app.get(global.appPath + '/:page([a-zA-Z/]+)', Landing.generalHandler);
-                app.get(global.appPath + '/stats', Landing.statsHandler);
-                app.get(global.appPath + '/createNew/:page([0-9/]+)', Landing.createNew);
-                app.get(global.appPath + '/createNew2/:template([_a-zA-Z0-9/]+)', Landing.createNew2);
+                app.get("/adl/sandbox" + '/help', Landing.help);
+                app.get("/adl/sandbox" + '/help/:page([a-zA-Z]+)', Landing.help);
+                app.get("/adl/sandbox" + '/world/:page([_a-zA-Z0-9]+)', Landing.world);
+                app.get("/adl/sandbox" + '/searchResults/:term([^/]+)/:page([0-9]+)', Landing.searchResults);
+                app.get("/adl/sandbox" + '/newWorlds', Landing.newWorlds);
+                app.get("/adl/sandbox" + '/allWorlds/:page([0-9]+)', Landing.allWorlds);
+                app.get("/adl/sandbox" + '/myWorlds/:page([0-9]+)', Landing.myWorlds);
+                app.get("/adl/sandbox" + '/featuredWorlds/:page([0-9]+)', Landing.featuredWorlds);
+                app.get("/adl/sandbox" + '/activeWorlds/:page([0-9]+)', Landing.activeWorlds);
+                app.get("/adl/sandbox", Landing.generalHandler);
+                app.get("/adl/sandbox" + '/:page([a-zA-Z/]+)', Landing.generalHandler);
+                app.get("/adl/sandbox" + '/stats', Landing.statsHandler);
+                app.get("/adl/sandbox" + '/createNew/:page([0-9/]+)', Landing.createNew);
+                app.get("/adl/sandbox" + '/createNew2/:template([_a-zA-Z0-9/]+)', Landing.createNew2);
 
-                app.get(global.appPath + '/vwf.js', Landing.serveVWFcore);
+                app.get("/adl/sandbox" + '/vwf.js', Landing.serveVWFcore);
 
-                app.post(global.appPath + '/admin/:page([a-zA-Z]+)', Landing.handlePostRequest);
-                app.post(global.appPath + '/data/:action([a-zA-Z_]+)', Landing.handlePostRequest);
+                app.post("/adl/sandbox" + '/admin/:page([a-zA-Z]+)', Landing.handlePostRequest);
+                app.post("/adl/sandbox" + '/data/:action([a-zA-Z_]+)', Landing.handlePostRequest);
 
                 app.use(appserver.admin_instances);
                 app.use(appserver.routeToAPI);

@@ -314,6 +314,7 @@ function handleRequest(request, response, next) {
     var uri = URL.pathname.replace(safePathRE);
     
     if (URL.pathname == '/' || URL.pathname == '') {
+        console.log(global.appPath + '/');
         redirect(global.appPath + '/', response);
         return;
     }

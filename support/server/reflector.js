@@ -72,8 +72,11 @@ function getNamespace(socket)
             var namespace = referer;
             if (namespace[namespace.length - 1] != "/")
                 namespace += "/";
+            //account for customizable client url
+            namespace = namespace.replace(global.appPath,'/adl/sandbox');
             namespace = namespace.substr(namespace.indexOf("/adl/"));
             namespace = namespace.replace(/[\\\/]/g, '_');
+            logger.warn(namespace);
             return namespace;
         }
         catch (e)
@@ -152,7 +155,7 @@ function getBlankScene(state, instanceData, cb)
 {
 
     var state2 = JSON.parse(JSON.stringify(state));
-    fs.readFile("./public" + global.appPath + "/index.vwf.yaml", 'utf8', function(err, blankscene)
+    fs.readFile("./public" + "/adl/sandbox" + "/index.vwf.yaml", 'utf8', function(err, blankscene)
     {
         var err = null;
         try

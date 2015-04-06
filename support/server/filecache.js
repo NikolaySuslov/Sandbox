@@ -237,7 +237,7 @@ function _FileCache() {
                                     //minify is currently not compatable with auto-watch of files
                                     if (!FileCache.minify && !global.configuration.cluster) {
                                         //reload files that change on disk
-                                        console.warn('new watcher');
+                                        
                                         var watcher = fs.watch(path, {}, function(event, filename) {
 
 

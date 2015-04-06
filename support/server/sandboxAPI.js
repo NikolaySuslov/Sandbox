@@ -1424,9 +1424,15 @@ function serve(request, response)
 			UID = URL.loginData.UID;
 		if (URL.query.UID)
 			UID = URL.query.UID;
+
+		//rewrite the SID so the phycial path is always /adl/sandbox, even if clientside code computes a different instanceiID
+		if(URL.query.SID)
+			 URL.query.SID = URL.query.SID.replace(global.appPath,'/adl/sandbox')
 		var SID = URL.query.SID;
 		if (SID)
+		{
 			SID = SID.replace(/[\\,\/]/g, '_');
+		}
 		//Normalize the path for max/unix
 		pathAfterCommand = pathAfterCommand.replace(/\//g, libpath.sep);
 		var basedir = datapath + libpath.sep;
@@ -1474,6 +1480,10 @@ function serve(request, response)
 				case "3drtexture":
 					{
 						_3DR_proxy.proxyTexture(URL, response);
+					}
+				case "apppath":
+					{
+						respond(response, 200, global.appPath);
 					}
 					break;
 				case "3drthumbnail":
