@@ -1395,7 +1395,7 @@ function copyInstance(id, arg2, arg3)
     {
         if (instance)
         {
-            var newId = global.appPath.replace(/\//g, "_") + '_' + makeid() + '_';
+            var newId = "/adl/sandbox".replace(/\//g, "_") + '_' + makeid() + '_';
             if (!instance.children)
                 instance.children = [];
             instance.children.push(newId);

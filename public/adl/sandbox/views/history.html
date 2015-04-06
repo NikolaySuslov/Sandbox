@@ -27,7 +27,7 @@
 						for(var i=0; i < history.parents.length; i++)
 						{
 							var world = history.parents[i].world;
-							world = world.substr(13,16);
+							world = world.substr(world.length-17,16);
 							
 							$('#data').prepend('<div class="glyphicon glyphicon-eject" style="width: 100%;text-align: center;" />');
 							$('#data').prepend('<a class="historyparentstate" href="./history?id='+world+'">'+history.parents[i].title+'</a>');
@@ -35,7 +35,7 @@
 						for(var i=0; i < history.children.length; i++)
 						{
 							var world = history.children[i].world;
-							world = world.substr(13,16);
+							world = world.substr(world.length-17,16);
 							$('#data').append('<div style="display:inline-block"><div class="glyphicon glyphicon-eject" style="width:100%;text-align: center;-webkit-transform: rotate(180deg);-moz-transform: rotate(180deg);" /><br/><a class="historychildstate" href="./history?id='+world+'">'+history.children[i].title+'</a><div>');
 						}
 						

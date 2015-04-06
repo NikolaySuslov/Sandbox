@@ -31,6 +31,20 @@ function MaterialCache() {
             var oldmat = mesh.material;
             var newmat = this.getMaterialbyDef(oldmat && oldmat.refCount == 1 ? oldmat : null, def);
 
+            //test for shader compile fail, and set in simple mode if failed
+            if(newmat){
+                _dRenderer.initMaterial( newmat, _dScene.__lights, _dScene.fog, mesh );
+                var status = _dRenderer.context.getProgramParameter( newmat.program.program, _dRenderer.context.LINK_STATUS );
+
+                if ( !status ) {
+                    console.error('Error linking material, falling back');
+                    //this line will cause the setting manager to remember the setting. lets not do that right now
+                    //_SettingsManager.setKey('useSimpleMaterials',true);
+                    _SettingsManager.settings['useSimpleMaterials'] = true;
+                    newmat = this.getMaterialbyDef(oldmat && oldmat.refCount == 1 ? oldmat : null, def);
+                }
+            }
+
             if (oldmat == newmat) return;
 
             //so, since the loader now does not clone materails on load, it's possible that the material is shared by other meshes
@@ -68,7 +82,9 @@ function MaterialCache() {
             		if(!newmat.materials[j])
             			newmat.materials[j] = newmat.materials[0];
             }
-            	mesh.material = newmat;
+            mesh.material = newmat;
+            
+
             if (mesh.material && mesh.material.refCount === undefined)
                 mesh.material.refCount = 0;
             if (mesh.material)

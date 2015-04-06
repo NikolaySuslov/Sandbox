@@ -94,10 +94,10 @@ color: lightgray;
 			} else
 			{
 
-				$.get(root + '/vwfDataManager.svc/copyinstance?SID=_adl_sandbox_' + "{{template}}" +'_', function(o){
+				$.get(root + '/vwfDataManager.svc/copyinstance?SID=/adl/sandbox/' + "{{template}}" +'_', function(o){
 			
 							if(o){
-								var newID = o.substr(13,16);
+								var newID = o.substr(o.length - 18,16);
 
 
 								var name = $('#txtInstanceName').val();

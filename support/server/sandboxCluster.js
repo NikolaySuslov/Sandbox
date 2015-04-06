@@ -11,6 +11,8 @@ var count = 1;
 var server = null;
 var proxies = null;
 var DB = null;
+var appPath = "/adl/sandbox";
+var spdy = require("spdy");
 var datapath = null;
 http.globalAgent.maxSockets = 100;
 var states = {};
@@ -18,6 +20,11 @@ var states = {};
 function GetProxyPort(request, cb) {
 
     var query = url.parse(request.url, true).query;
+    //url rewrite for incomming websocket proxy
+    if (!query || !query.pathname) {
+        cb(port + 1);
+    }
+    query.pathname = query.pathname.replace(appPath, "/adl/sandbox");
     var id = query.pathname.replace(/\//g, "_");
     console.log(id)
     var newport = port + parseInt(1 + Math.floor(Math.random() * count));
@@ -102,7 +109,13 @@ async.series([
 
     function readConfigFile(cb) {
         try {
-            configSettings = JSON.parse(fs.readFileSync('./config.json').toString());
+
+            var p = process.argv.indexOf('-config');
+
+            //This is a bit ugly, but it does beat putting a ton of if/else statements everywhere
+            var config = p >= 0 ? (process.argv[p + 1]) : './config.json';
+
+            configSettings = JSON.parse(fs.readFileSync(config).toString());
 
 
         } catch (e) {
@@ -126,6 +139,15 @@ async.series([
 
         p = process.argv.indexOf('-d');
         datapath = p >= 0 ? process.argv[p + 1] : (configSettings.datapath ? libpath.normalize(configSettings.datapath) : libpath.join(__dirname, "../../data"));
+
+        //set the default URL for the site
+        p = process.argv.indexOf('-ap');
+        appPath = global.appPath = p >= 0 ? (process.argv[p + 1]) : (global.configuration.appPath ? global.configuration.appPath : '/adl/sandbox');
+        if (appPath.length < 3) {
+            logger.error('appPath too short. Use at least 2 characters plus the slash');
+            process.exit();
+        }
+
         cb();
     },
 
@@ -143,7 +165,7 @@ async.series([
         console.log('forkChildren');
         proxies = [];
         for (var i = 1; i < count + 1; i++) {
-            var p1 = fork('./app.js', ['-p', port + i, '-cluster', '-DB', './DB_cluster.js'], {
+            var p1 = fork('./app.js', ['-p', port + i, '-cluster', '-DB', './DB_cluster.js'].concat(process.argv), {
                 silent: true
             });
             proxies.push(p1);
@@ -183,7 +205,7 @@ async.series([
                 child.on('close', function() {
 
                     console.log('CRASH in child ' + child.port);
-                    var p1 = fork('./app.js', ['-p', child.port, '-cluster', '-DB', './DB_cluster.js'], {
+                    var p1 = fork('./app.js', ['-p', child.port, '-cluster', '-DB', './DB_cluster.js'].concat(process.argv), {
                         silent: true
                     });
 
@@ -226,7 +248,7 @@ async.series([
             ws: true,
             agent: new http.Agent()
         });
-        proxy.on('error', function(e,req,res) {
+        proxy.on('error', function(e, req, res) {
             console.log(JSON.stringify(e));
             res.end();
         })
@@ -237,20 +259,54 @@ async.series([
         // a web request to the target passed in the options
         // also you can use `proxy.ws()` to proxy a websockets request
         //
-        server = http.createServer(function(req, res) {
-            // You can define here your custom logic to handle the request
-            // and then proxy the request.
 
-            GetProxyPortRandom(req, function(proxyPort) {
+        var opts = {}
 
-                console.log('proxy request to ' + 'http://localhost:' + proxyPort);
-                proxy.web(req, res, {
-                    target: 'http://localhost:' + proxyPort
+        if (global.configuration.pfx) {
+            opts = {
+                pfx: fs.readFileSync(global.configuration.pfx),
+                passphrase: global.configuration.pfxPassphrase,
+                ca: [fs.readFileSync(global.configuration.sslCA[0]), fs.readFileSync(global.configuration.sslCA[1])]
+            }
+
+            
+        }
+        var proxyFunc = function(req, res) {
+                // You can define here your custom logic to handle the request
+                // and then proxy the request.
+
+                GetProxyPortRandom(req, function(proxyPort) {
+
+                    console.log('proxy request to ' + 'http://localhost:' + proxyPort);
+                    proxy.web(req, res, {
+                        target: 'http://localhost:' + proxyPort
+                    });
                 });
-            });
-        });
-        server.on('connection',function(socket)
-        {
+            }
+            //create a regular http server
+        if (!global.configuration.pfx) {
+            server = http.createServer(proxyFunc);
+            server.listen(port);
+        } else {
+            //do ssl resolution in proxy
+            server = spdy.createServer(opts, proxyFunc);
+            server.listen(global.configuration.sslPort);
+            //setup a simple server to redirct all requests to the SSL port
+            var redirect = http.createServer(function(req, res) {
+                var requrl = 'http://' + req.headers.host + req.url;
+                requrl = url.parse(requrl);
+
+                delete requrl.host;
+                requrl.port = global.configuration.sslPort;
+                requrl.protocol = "https:";
+                requrl = url.format(requrl);
+                res.writeHead(302, {
+                    "Location": requrl
+                });
+                res.end();
+            }).listen(port);
+        }
+        server.on('connection', function(socket) {
             socket.setNoDelay(true);
         });
         server.on('upgrade', function(request, socket, head) {
@@ -263,8 +319,9 @@ async.series([
             });
         });
 
+
         console.log("listening on port " + port)
-        server.listen(port);
+
         cb();
 
 

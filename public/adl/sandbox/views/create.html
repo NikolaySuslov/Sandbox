@@ -42,7 +42,7 @@
 				$.get(root + '/vwfDataManager.svc/copyinstance?SID=' + window.selectedTemplate.id, function(o){
 			
 							if(o){
-								var newID = o.substr(13,16);
+								var newID = o.substr(o.length - 17,16);
 
 
 								var name = $('#txtInstanceName').val();
@@ -100,7 +100,7 @@
 						if(state.featured)
 						{
 
-							var src = "http://localhost:3000/47/adl/sandbox/vwfDataManager.svc/thumbnail?SID=" + i;
+							var src = "./vwfDataManager.svc/thumbnail?SID=" + i;
 							$("#WorldChoice").append("<div  id='"+i+"' class='WorldChoice' />")
 							$("#" + i).append("<img src='"+src+"'  onerror=\"this.src = './img/thumbnotfound.png';\"/>" );
 							$("#" + i).append("<div  class='title'>" + state.title + "</div>" );

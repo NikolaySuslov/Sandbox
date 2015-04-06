@@ -58,7 +58,7 @@ function sendStatement(userId, verb, worldId, worldName, worldDescription, other
 				}
 			});
 	} catch (e) {
-		global.error(e)
+		console.error(e)
 	}
 }
 

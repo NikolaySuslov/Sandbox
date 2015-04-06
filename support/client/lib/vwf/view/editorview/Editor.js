@@ -2431,9 +2431,11 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 } else if (typeof(VWFNode) == 'object') VWFNode = [VWFNode];
                 else if (typeof(VWFNode) == 'string') VWFNode = [_Editor.getNode(VWFNode)];
 
-                //this causes too much drama. look into solution in future
-                //	if(!skipUndo)
-                //		_UndoManager.recordSelection(VWFNode);
+
+                	
+                	if(!skipUndo)
+                		_UndoManager.recordSelection(VWFNode.slice(0));
+
 
                 if (!selectmod) {
                     SelectedVWFNodes = [];

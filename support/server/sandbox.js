@@ -110,9 +110,14 @@ function startVWF() {
 
             function readconfig(cb) {
                 var configSettings;
+                var p = process.argv.indexOf('-config');
+
+                //This is a bit ugly, but it does beat putting a ton of if/else statements everywhere
+                var config = p >= 0 ? (process.argv[p + 1]) : './config.json';
+                logger.warn('loading config from ' + config);
                 //start the DAL, load configuration file
                 try {
-                    configSettings = JSON.parse(fs.readFileSync('./config.json').toString());
+                    configSettings = JSON.parse(fs.readFileSync(config).toString());
                     SandboxAPI.setAnalytics(configSettings.analytics);
                     logger.info('Configuration read.')
                 } catch (e) {
@@ -703,7 +708,7 @@ function startVWF() {
                 //The file handleing logic for vwf engine files
                 app.use(appserver.handleRequest);
 
-                if (global.configuration.pfx) {
+                if (global.configuration.pfx && !global.configuration.cluster) {
                     listen = spdy.createServer({
                         pfx: fs.readFileSync(global.configuration.pfx),
                         passphrase: global.configuration.pfxPassphrase,

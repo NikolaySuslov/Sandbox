@@ -658,7 +658,7 @@ function CopyInstance(URL, SID, response)
 		SID = SID ? SID : URL.query.SID;
 		if (SID.length == 16)
 		{
-			SID = global.appPath.replace(/\//g, "_") + '_' + SID + '_';
+			SID = "/adl/sandbox".replace(/\//g, "_") + '_' + SID + '_';
 		}
 		DAL.copyInstance(SID, URL.loginData.UID, function(newId)
 		{
@@ -764,7 +764,7 @@ function GetStateList(URL, SID, response)
 		SID = SID ? SID : URL.query.SID;
 		if (SID.length == 16)
 		{
-			SID = global.appPath.replace(/\//g, "_") + '_' + SID + '_';
+			SID = "/adl/sandbox".replace(/\//g, "_") + '_' + SID + '_';
 		}
 		DAL.getStatesFilelist(SID, function(fileList)
 		{
@@ -785,7 +785,7 @@ function RestoreBackupState(URL, SID, response)
 		}
 		if (SID.length == 16)
 		{
-			SID = global.appPath.replace(/\//g, "_") + '_' + SID + '_';
+			SID = "/adl/sandbox".replace(/\//g, "_") + '_' + SID + '_';
 		}
 		DAL.restoreBackup(SID, statename, function(success)
 		{
@@ -814,7 +814,7 @@ function Publish(URL, SID, publishdata, response)
 	SID = SID ? SID : URL.query.SID;
 	if (SID.length == 16)
 	{
-		SID = global.appPath.replace(/\//g, "_") + '_' + SID + '_';
+		SID ="/adl/sandbox".replace(/\//g, "_") + '_' + SID + '_';
 	}
 	logger.debug(SID, 2);
 	DAL.getInstance(SID, function(state)
@@ -904,7 +904,7 @@ function SaveThumbnail(URL, SID, body, response)
 	var automatic = URL.query.auto;
 	if (SID.length == 16)
 	{
-		SID = global.appPath.replace(/\//g, "_") + '_' + SID + '_';
+		SID = "/adl/sandbox".replace(/\//g, "_") + '_' + SID + '_';
 	}
 	DAL.getInstance(SID, function(state)
 	{
@@ -956,7 +956,7 @@ function GetThumbnail(request, SID, response)
 	SID = SID ? SID : request.url.query.SID;
 	if (SID.length == 16)
 	{
-		SID = global.appPath.replace(/\//g, "_") + '_' + SID + '_';
+		SID = "/adl/sandbox".replace(/\//g, "_") + '_' + SID + '_';
 	}
 	global.FileCache.ServeFile(request, datapath + libpath.sep + "States" + libpath.sep + SID + libpath.sep + "thumbnail.png", response, request.url);
 }
@@ -1264,7 +1264,7 @@ function createState(URL, data, response)
 		statedata.title = data.title;
 		statedata.description = data.description;
 		statedata.lastUpdate = (new Date());
-		var id = global.appPath.replace(/\//g, "_") + '_' + makeid() + '_';
+		var id = "/adl/sandbox".replace(/\//g, "_") + '_' + makeid() + '_';
 		DAL.createInstance(id, statedata, function()
 		{
 			respond(response, 200, 'Created state ' + id);
