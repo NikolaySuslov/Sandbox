@@ -216,9 +216,9 @@ define(function ()
 			}
 			
 			//published states are never saved. 
-			if(_DataManager.instanceData.publishSettings)
+			if(_DataManager.instanceData.publishSettings.persistence === false)
 			{
-				console.log('State is published, cannot save');
+				console.log('State settings prevent persistence, cannot save');
 				return;
 			}
 			

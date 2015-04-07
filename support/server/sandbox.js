@@ -174,6 +174,11 @@ function startVWF() {
                 var cluster = p >= 0 ? true : false;
                 global.configuration.cluster = cluster;
 
+                //use this flag to quit the process after the build step
+                p = process.argv.indexOf('-exit');
+                var exit = p >= 0 ? true : false;
+                global.configuration.exit = exit;
+
                 FileCache.enabled = process.argv.indexOf('-nocache') >= 0 ? false : !global.configuration.noCache;
                 if (!FileCache.enabled) {
                     logger.info('server cache disabled');
@@ -181,7 +186,9 @@ function startVWF() {
                 global.configuration.FileCache = FileCache.enabled;
 
                 FileCache.minify = process.argv.indexOf('-min') >= 0 ? true : !!global.configuration.minify;
-                compile = process.argv.indexOf('-compile') >= 0 ? true : !!global.configuration.compile;
+
+                //treat build and compile as the same.
+                compile = Math.max(process.argv.indexOf('-compile'),process.argv.indexOf('-build')) >= 0 ? true : !!global.configuration.compile;
                 if (compile) {
                     logger.info('Starting compilation process...');
                 }
@@ -366,6 +373,16 @@ function startVWF() {
                         loadIntoCache();
                     });
 
+                }
+            },
+            function exitProcessIfDefined(cb)
+            {
+                if (!global.configuration.exit) {
+                    cb();
+                    return;
+                }else
+                {
+                    process.exit();
                 }
             },
             function setupPassport(cb) {

@@ -787,10 +787,27 @@ function RestoreBackupState(URL, SID, response)
 		{
 			SID = "/adl/sandbox".replace(/\//g, "_") + '_' + SID + '_';
 		}
-		DAL.restoreBackup(SID, statename, function(success)
+
+		DAL.getInstance(SID, function(state)
 		{
-			if (success) respond(response, 200, JSON.stringify("Success"));
-			else respond(response, 500, 'Unable to restore backup');
+			if (!state)
+			{
+				respond(response, 500, 'State ID is incorrect');
+				return;
+			}
+			//Make sure that the logged in user is the owner of the world they are trying to publish
+			if (state.owner != URL.loginData.UID)
+			{
+				respond(response, 500, 'You must be the owner of a world you publish');
+				return;
+			}
+
+			require('./reflector.js').closeInstance(SID);
+			DAL.restoreBackup(SID, statename, function(success)
+			{
+				if (success) respond(response, 200, JSON.stringify("Success"));
+				else respond(response, 500, 'Unable to restore backup');
+			});
 		});
 	}
 	//Publish the world to a new world
@@ -830,9 +847,11 @@ function Publish(URL, SID, publishdata, response)
 			respond(response, 500, 'You must be the owner of a world you publish');
 			return;
 		}
-		if (Object.keys(publishdata)
-			.length == 0)
-			publishdata = null;
+		if (Object.keys(publishdata).length == 0)
+		{
+			respond(response, 500, 'Settings format incorrect');
+			return;
+		}
 		var publishSettings = null;
 		//The settings  for the published state. 
 		//have to handle these in the client side code, with some enforcement at the server
@@ -844,14 +863,17 @@ function Publish(URL, SID, publishdata, response)
 			var allowAnonymous = publishdata.allowAnonymous;
 			var createAvatar = publishdata.createAvatar;
 			var allowTools = publishdata.allowTools;
+			var persistence = publishdata.persistence;
 			publishSettings = {
 				singlePlayer: singlePlayer,
 				camera: camera,
 				allowAnonymous: allowAnonymous,
 				createAvatar: createAvatar,
-				allowTools: allowTools
+				allowTools: allowTools,
+				persistence: persistence,
 			};
 		}
+		require('./reflector.js').closeInstance(SID);
 		//publish the state, and get the new id for the pubished state
 		DAL.Publish(SID, publishSettings, function(newId)
 		{
@@ -1034,6 +1056,7 @@ function DeleteState(URL, SID, response)
 		}
 		else
 		{
+			require('./reflector.js').closeInstance(SID);
 			DAL.deleteInstance(SID, function()
 			{
 				xapi.sendStatement(URL.loginData.UID, xapi.verbs.destroyed, SID, state.title, state.description);

@@ -931,7 +931,7 @@
                 // advance the queue's record of the current time. Messages in the queue are
                 // ordered by time, then by order of arrival.
 
-                queue.insert( fields, true ); // may invoke dispatch(), so call last before returning to the host
+                queue.insert( fields, fields.action == 'tick' ); // may invoke dispatch(), so call last before returning to the host
 
                 // Each message from the server allows us to move time forward. Parse the
                 // timestamp from the message and call dispatch() to execute all queued
@@ -1960,6 +1960,8 @@ this.resyncNode = function(nodeID,node)
 }
 
 this.activeResync = function() {
+
+
     var nodes = nodes = vwf.decendants(vwf.application());
     var nodeID = nodes[Math.floor(Math.random() * nodes.length - .001)];
     var props = this.getProperties(nodeID);
@@ -1967,6 +1969,9 @@ this.activeResync = function() {
     if(!props) return null;
     for(var i in props)
         props[i] = this.getProperty(nodeID,i);
+
+    props = this.callMethod(nodeID,'filterResyncData',props) || props;
+
     return {
         node: {id:nodeID,properties:props}, 
         count: nodes.length
@@ -5835,6 +5840,18 @@ var queue = this.private.queue = {
 
         this.queue.sort( function( a, b ) {
 
+            if ( a.action == "resyncNode" && b.action != "resyncNode" ) {
+                return 1;
+            }
+            if ( a.action != "resyncNode" && b.action == "resyncNode" ) {
+                return -1;
+            }    
+             if ( a.action == "activeResync" && b.action != "activeResync" ) {
+                return 1;
+            }
+            if ( a.action != "activeResync" && b.action == "activeResync" ) {
+                return -1;
+            } 
             if ( a.time != b.time ) {
                 return a.time - b.time;
             } else if ( a.origin != "reflector" && b.origin == "reflector" ) {

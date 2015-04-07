@@ -73,8 +73,10 @@ color: lightgray;
 					$('#chkAllowAnonymous').prop('disabled', false);
 					$('#chkCreateAvatar').prop('disabled', false);
 
-					$('#chkPublish')[0].checked = true;
+					
 
+					if(data.publishSettings.persistence)
+						$('#chkPersistence')[0].checked = true;
 					if(data.publishSettings.allowAnonymous)
 						$('#chkAllowAnonymous')[0].checked = true;
 					if(data.publishSettings.allowTools)
@@ -89,6 +91,15 @@ color: lightgray;
 						$('#txtCamera').show('fade');
 						$('#txtCamera').val(data.publishSettings.camera);
 					}
+
+				   var checked = $('#chkSinglePlayer')[0].checked;
+				   if(checked)
+				   {
+				   	 $('#chkAllowAnonymous')[0].checked = true;
+				   	  $('#chkAllowAnonymous').prop('disabled', true);
+				   	  $('#chkPersistence')[0].checked = false;
+				   	  $('#chkPersistence').prop('disabled', true);
+				   }
 
 	
 				}
@@ -122,29 +133,7 @@ color: lightgray;
 
 
 
-		$('#chkPublish').click(
-		 function(e){
-		   var checked = ($(this).is(':checked'));
-		   if(!checked)
-		   {
-		   		$('#txtInstanceDescription').prop('disabled', true);
-				$('#chkDefaultCamera').prop('disabled', true);
-				$('#chkSinglePlayer').prop('disabled', true);
-				$('#chkAllowTools').prop('disabled', true);
-				$('#chkAllowAnonymous').prop('disabled', true);
-				$('#chkCreateAvatar').prop('disabled', true);
-		   }
-		   	else
-		   	{
-		   		$('#txtInstanceDescription').prop('disabled', false);
-				$('#chkDefaultCamera').prop('disabled', false);
-				$('#chkSinglePlayer').prop('disabled', false);
-				$('#chkAllowTools').prop('disabled', false);
-				$('#chkAllowAnonymous').prop('disabled', false);
-				$('#chkCreateAvatar').prop('disabled', false);
-			}
-		 }
-		);
+		
 
 		$('#chkDefaultCamera').click(
 		 function(e){
@@ -166,9 +155,12 @@ color: lightgray;
 		   {
 		   	 $('#chkAllowAnonymous')[0].checked = true;
 		   	  $('#chkAllowAnonymous').prop('disabled', true);
+		   	  $('#chkPersistence')[0].checked = false;
+		   	  $('#chkPersistence').prop('disabled', true);
 		   }else
 		   {
   			$('#chkAllowAnonymous').prop('disabled', false);
+  			$('#chkPersistence').prop('disabled', false);
 
 		   }
 		 }
@@ -189,8 +181,7 @@ color: lightgray;
 		
 		var statedata = {};
 
-		if($('#chkPublish')[0].checked == true)
-		{
+		
 
 			statedata.title = name;
 			statedata.description = des;
@@ -199,8 +190,8 @@ color: lightgray;
 			statedata.allowAnonymous = $('#chkAllowAnonymous')[0].checked;
 			statedata.createAvatar = $('#chkCreateAvatar')[0].checked;
 			statedata.allowTools = $('#chkAllowTools')[0].checked;
-		}else
-			statedata = null;
+			statedata.persistence = $('#chkPersistence')[0].checked;
+		
 		
 		jQuery.ajax(
 		{
@@ -244,7 +235,7 @@ color: lightgray;
 				<textarea style="display:none" id='txtInstanceDescription' placeholder='Description' class="col-md-5 form-control"></textarea>
 				<br/>
 			
-				<input type='checkbox' id='chkPublish' name='PublishWorld'></input><label for='PublishWorld'>Publish World</label>
+				<input type='checkbox' id='chkPersistence' name='Persistence'></input><label for='Persistence'>Persist world state on close</label>
 				<br/>
 				<input type='checkbox' id='chkAllowTools' name='AllowTools'></input><label for='AllowTools'>Allow Editor Tools</label>
 				<br/>

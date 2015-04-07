@@ -16,6 +16,7 @@ var spdy = require("spdy");
 var datapath = null;
 http.globalAgent.maxSockets = 100;
 var states = {};
+var compile = false;
 
 function GetProxyPort(request, cb) {
 
@@ -147,10 +148,29 @@ async.series([
             logger.error('appPath too short. Use at least 2 characters plus the slash');
             process.exit();
         }
+        //treat build and compile as the same.
+        compile = Math.max(process.argv.indexOf('-compile'), process.argv.indexOf('-build')) >= 0 ? true : !!global.configuration.compile;
+        if (compile) {
+            console.log('Starting compilation process...');
+        }
+
 
         cb();
     },
-
+    function buildIfRequired(cb) {
+        if (compile) {
+            //remove these from the command line, so when spawning children, they don't rebuild
+            if(process.argv.indexOf('-build') > -1)
+                process.argv = process.argv.splice(process.argv.indexOf('-build'),1);
+            if(process.argv.indexOf('-compile') > -1)
+                process.argv = process.argv.splice(process.argv.indexOf('-compile'),1);
+            var p1 = fork('./app.js', [ '-exit' ].concat(process.argv), {});
+            p1.on('close', function() {
+                cb();
+            });
+        } else
+            cb();
+    },
     function startupDB(cb) {
         console.log('startupDB');
 
@@ -269,7 +289,7 @@ async.series([
                 ca: [fs.readFileSync(global.configuration.sslCA[0]), fs.readFileSync(global.configuration.sslCA[1])]
             }
 
-            
+
         }
         var proxyFunc = function(req, res) {
                 // You can define here your custom logic to handle the request

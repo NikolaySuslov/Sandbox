@@ -196,7 +196,7 @@ function getBlankScene(state, instanceData, cb)
                 }
                 //don't allow the clients to persist between a save/load cycle
                 blankscene.properties['clients'] = null;
-                if (instanceData && instanceData.publishSettings)
+                if (instanceData && instanceData.publishSettings && instanceData.publishSettings.allowTools == false)
                 {
                     blankscene.properties['playMode'] = 'play';
                 }
@@ -290,7 +290,12 @@ function SaveInstanceState(namespace, data, socket)
             return;
         }
         //not allowed to update a published world
-        if (state.publishSettings)
+        if (state.publishSettings.persistence == false)
+        {
+            return;
+        }
+        //not allowed to update a published world
+        if (state.publishSettings.singlePlayer == true)
         {
             return;
         }
@@ -382,6 +387,21 @@ function runningInstance(id)
     catch (e)
     {
         logger.error(e.message + ' when opening ' + SandboxAPI.getDataPath() + '//Logs/' + id.replace(/[\\\/]/g, '_'));
+    }
+    this.addClient = function(socket)
+    {
+        this.clients[socket.id] = socket;
+    }
+    this.removeClient = function(socket)
+    {
+        delete this.clients[socket.id];
+    }
+    this.shutdown = function()
+    {
+        for(var i in this.clients)
+            this.clients[i].disconnect();
+        clearInterval(this.timerID);
+        logger.warn('Shutting down ' + this.id)
     }
     this.Log = function(message, level)
     {
@@ -1208,14 +1228,14 @@ function ClientConnected(socket, namespace, instancedata)
         {
             console.log(socket.id);
             console.log(Object.keys(thisInstance.clients));
-            delete thisInstance.clients[socket.id];
+            thisInstance.removeClient(socket);
             console.log(thisInstance.clientCount());
             if (thisInstance.clientCount() == 0)
                 {
-                    clearInterval(thisInstance.timerID);
-                    console.log("timer is " + thisInstance.timerID)
+                    thisInstance.shutdown();
+                  
                     RunningInstances.remove(thisInstance.id);
-                    console.log('Shutting down ' + namespace, 2)
+                    
                 }
             else
             {    
@@ -1281,3 +1301,10 @@ function ClientConnected(socket, namespace, instancedata)
 exports.WebSocketConnection = WebSocketConnection;
 exports.setDAL = setDAL;
 exports.startup = startup;
+exports.closeInstance = function(id)
+{
+    var instance = RunningInstances.get(id);
+    if(instance)
+        instance.shutdown();
+    RunningInstances.remove(instance);
+}
