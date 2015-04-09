@@ -67,7 +67,7 @@ exports.getExampleMetadata = function(name,cb)
 			cb(JSON.parse(data));
 		}catch(e)
 		{
-			cb({title:"",description:""});
+			cb({title:"",description:"",publishSettings:{allowAnonymous:true,persistence:false,allowTools:true,createAvatar:true,singlePlayer:true}});
 		}
 	});
 

@@ -879,12 +879,9 @@ function Publish(URL, SID, publishdata, response)
 		{
 			if (publishSettings)
 			{
-				xapi.sendStatement(URL.loginData.UID, xapi.verbs.published, newId);
+				xapi.sendStatement(URL.loginData.UID, xapi.verbs.modified, newId);
 			}
-			else
-			{
-				xapi.sendStatement(URL.loginData.UID, xapi.verbs.unpublished, newId);
-			}
+			
 			//get the db entry for the published state
 			DAL.getInstance(newId, function(statedata)
 			{

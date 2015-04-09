@@ -13,6 +13,7 @@ var connect = require('connect'),
     cookie = require('express/node_modules/cookie');
 YAML = require('js-yaml');
 var logger = require('./logger');
+var xapi = require('./xapi');
 function startup(listen)
 {
     //create socket server
@@ -339,6 +340,8 @@ function WebSocketConnection(socket, _namespace)
         })
         DAL.getInstance(namespace, function(instancedata)
         {
+           
+            
             if (!instancedata)
             {
                 require('./examples.js')
@@ -346,6 +349,7 @@ function WebSocketConnection(socket, _namespace)
                     {
                         if (instancedata)
                         {
+                            xapi.sendStatement(socket.loginData.UID, xapi.verbs.joined, namespace,instancedata.title,instancedata.description,namespace);
                             //if this is a single player published world, there is no need for the server to get involved. Server the world state and tell the client to disconnect
                             if (instancedata && instancedata.publishSettings && instancedata.publishSettings.singlePlayer)
                             {
@@ -362,6 +366,12 @@ function WebSocketConnection(socket, _namespace)
                     });
                 return;
             }
+
+            if(instancedata)
+            {
+                xapi.sendStatement(socket.loginData.UID, xapi.verbs.joined, namespace,instancedata.title,instancedata.description,namespace);   
+            }
+            
             //if this is a single player published world, there is no need for the server to get involved. Server the world state and tell the client to disconnect
             if (instancedata && instancedata.publishSettings && instancedata.publishSettings.singlePlayer)
             {
@@ -1085,6 +1095,7 @@ function ClientConnected(socket, namespace, instancedata)
                         //we do need to keep some state data, and note that the node is gone
                         thisInstance.state.deleteNode(message.node)
                         thisInstance.Log("deleted " + node.id, 2);
+                        xapi.sendStatement(socket.loginData.UID, xapi.verbs.derezzed, message.node, node.properties ? node.properties.DisplayName : "",null,thisInstance.id);
                     }
                     else
                     {
@@ -1121,6 +1132,7 @@ function ClientConnected(socket, namespace, instancedata)
                             childComponent.properties = {};
                         fixIDs(node.children[childID]);
                         thisInstance.Log("created " + childID, 2);
+                        xapi.sendStatement(socket.loginData.UID, xapi.verbs.rezzed, childID,childComponent.properties.DisplayName,null,thisInstance.id);
                     }
                     else
                     {
@@ -1226,10 +1238,22 @@ function ClientConnected(socket, namespace, instancedata)
         //When a client disconnects, go ahead and remove the instance data
         socket.on('disconnect', function()
         {
-            console.log(socket.id);
-            console.log(Object.keys(thisInstance.clients));
+            logger.info(socket.id);
+            logger.info(Object.keys(thisInstance.clients));
             thisInstance.removeClient(socket);
-            console.log(thisInstance.clientCount());
+            logger.info(thisInstance.clientCount());
+            DAL.getInstance(thisInstance.id,function(instancedata)
+            {
+                if(!instancedata)
+                {
+                    instancedata = {};
+                    instancedata.title = namespace;
+                    instancedata.description = '';
+                }
+                xapi.sendStatement(socket.loginData.UID, xapi.verbs.left, thisInstance.id,instancedata.title,instancedata.description,thisInstance.id);    
+            });
+            
+
             if (thisInstance.clientCount() == 0)
                 {
                     thisInstance.shutdown();
