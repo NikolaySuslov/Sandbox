@@ -839,6 +839,15 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             if(method == "modifierStackUpdated" && this.isSelected(id))
                 this.updateBounds();
         }
+        this.deletedNode = function(vwfID)
+        {
+            if(this.isSelected(vwfID))
+            {
+                var i = SelectedVWFNodes.indexOf(vwfID);
+                SelectedVWFNodes.splice(i,1);
+
+            }
+        }
         this.satProperty = function(id, propname, val) {
 
 

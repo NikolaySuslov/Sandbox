@@ -85,7 +85,7 @@ function sendStatement(userId, verb, worldId, worldName, worldDescription, other
 					{
 						if (err)
 						{
-							global.error(err);
+							logger.error(err);
 						}
 						else if (res.statusCode === 200)
 						{

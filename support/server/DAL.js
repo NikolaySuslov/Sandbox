@@ -831,7 +831,10 @@ function deleteInstance(id, cb)
             {
                 // if it does not exist, goto next in series
                 if (!inst)
+                {
                     cb2();
+                    return;
+                }
                 var children = inst.children || [];
                 // for each child
                 async.eachSeries(children, function(item, cb3)

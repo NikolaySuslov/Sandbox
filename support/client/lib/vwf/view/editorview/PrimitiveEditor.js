@@ -1110,7 +1110,8 @@ define(function() {
         }
         this.SelectionTransformed = function(e, node) {
             try {
-                if (node) {
+                //dont update the spinners when the user is typing in them, but when they drag the gizmo do. 
+                if (node && (vwf.client() !== vwf.moniker()) || $("#index-vwf:focus").length ==1) {
 
                     var mat = vwf.getProperty(node.id, 'transform');
                     var angles = this.rotationMatrix_2_XYZ(mat);

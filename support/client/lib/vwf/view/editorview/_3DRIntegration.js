@@ -278,7 +278,7 @@ define(["vwf/view/editorview/Editor"], function(Editor) {
 
                                 _ModelLibrary.MetadataCache[pid] = object;
                                 __3DRIntegration.insertObject(pid);
-                                var proto = _ModelLibrary.createProtoForPID(pid);
+                                var proto = _ModelLibrary.createProtoForPID(pid,[0,0,0]);
                                 _InventoryManager.addProto(proto, $('#uploadTitle').val(), '3DRObject');
                                 $('#uploadStatus').text("Downloading");
                                 window.setTimeout(function() {
@@ -406,16 +406,32 @@ define(["vwf/view/editorview/Editor"], function(Editor) {
             }).responseText.toLowerCase();
             return (downloadPermssion == '"fetchable"' || downloadPermssion == '"editable"' || downloadPermssion == '"admin"')
         }
-        this.createProtoForPID = function(pid) {
-            var pos = [0, 0, 0];
+        this.createProtoForPID = function(pid,pos) {
+            
+            var x = pos[0];
+            var y = pos[1];
+            var z = pos[2];
+            var s = parseFloat(_ModelLibrary.MetadataCache[pid].UnitScale) || 1;
+            var transform = [s, 0, 0, 0,
+                            0, s, 0, 0,
+                            0, 0, s, 0,
+                            x, y, z, 1];
+            if(_ModelLibrary.MetadataCache[pid].UpAxis == 'Y')
+            {
+                var transform = 
+                           [s, 0, 0, 0,
+                            0, 0, s, 0,
+                            0, -s, 0, 0,
+                            x, y, z, 1];
+            }
             var proto = {
                 extends: 'asset.vwf',
                 source: _ModelLibrary.BuildModelRequest(pid),
                 type: 'subDriver/threejs/asset/vnd.osgjs+json+compressed',
                 properties: {
-                    rotation: [1, 0, 0, 0],
-                    tranform: MATH.transposeMat4(MATH.translateMatrix(pos)),
-                    scale: [_ModelLibrary.MetadataCache[pid].UnitScale, _ModelLibrary.MetadataCache[pid].UnitScale, _ModelLibrary.MetadataCache[pid].UnitScale],
+                    
+                    transform: transform ,
+                    
                     owner: document.PlayerNumber,
                     type: '3DR Object',
                     DisplayName: _ModelLibrary.MetadataCache[pid].Title
@@ -441,8 +457,8 @@ define(["vwf/view/editorview/Editor"], function(Editor) {
 
             if (_ModelLibrary.canDownload(pid)) {
 
-                var proto = this.createProtoForPID(pid);
-                proto.properties.transform = MATH.transposeMat4(MATH.translateMatrix(pos));;
+                var proto = this.createProtoForPID(pid,pos);
+                
 
                 var newname = GUID();
                 //vwf_view.kernel.createNode(proto , null);

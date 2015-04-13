@@ -563,7 +563,7 @@ function ShowSearchPage(mode, req, res, next) {
                     var inst = allinstances[i];
                     if (!inst) continue;
                     inst.id = i;
-                    inst.shortid = i.substr("/adl/sandbox".appPath.length + 1, 16);
+                    inst.shortid = i.substr("/adl/sandbox".length + 1, 16);
                     if (inst.title.toLowerCase().indexOf(search) != -1 || inst.description.toLowerCase().indexOf(search) != -1 || inst.owner.toLowerCase().indexOf(search) != -1 || inst.shortid.toLowerCase().indexOf(search) != -1)
                         results.push(inst);
                 }

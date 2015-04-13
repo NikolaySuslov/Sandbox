@@ -33,10 +33,18 @@ function MaterialCache() {
 
             //test for shader compile fail, and set in simple mode if failed
             if(newmat){
-                _dRenderer.initMaterial( newmat, _dScene.__lights, _dScene.fog, mesh );
-                var status = _dRenderer.context.getProgramParameter( newmat.program.program, _dRenderer.context.LINK_STATUS );
+                var testmats = [newmat];
+                if(newmat.materials)
+                    testmats = newmat.materials;
+                var passed = true;
+                for(var i in testmats)
+                {
+                    _dRenderer.initMaterial( testmats[i], _dScene.__lights, _dScene.fog, mesh );
+                    var status = _dRenderer.context.getProgramParameter( newmat.program.program, _dRenderer.context.LINK_STATUS );
+                    passed = passed && status;
+                }
 
-                if ( !status ) {
+                if ( !passed ) {
                     console.error('Error linking material, falling back');
                     //this line will cause the setting manager to remember the setting. lets not do that right now
                     //_SettingsManager.setKey('useSimpleMaterials',true);

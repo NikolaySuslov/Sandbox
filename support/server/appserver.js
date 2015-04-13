@@ -126,7 +126,7 @@ function RedirectToInstance(request, response, appname, newid) {
     newid = newid.replace(/\/\//g, '/');
     newid = newid.replace(/\/\/\//g, '/');
 
-
+    newid = newid.replace('/adl/sandbox',global.appPath);
     redirect(newid, response);
 }
 
