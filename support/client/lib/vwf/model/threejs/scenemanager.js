@@ -68,12 +68,7 @@ function allocateSceneManagerRegion(min, max, depth, scene, order)
         return new SceneManagerRegion(min, max, depth, scene, order);
     }
 }
-function GUID() {
-    var S4 = function() {
-        return Math.floor(Math.SecureRandom() * 0x10000 /* 65536 */ ).toString(16);
-    };
-    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
-}
+
 
 //values tuned for VTCE
 var maxObjects = 5;

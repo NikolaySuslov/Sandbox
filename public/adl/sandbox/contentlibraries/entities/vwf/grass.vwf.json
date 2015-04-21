@@ -13,7 +13,7 @@
         "emitterSize": [38, 28, 0],
         "emitterType": "box",
         "endColor": [0.988235294117647, 0.988235294117647, 0.988235294117647, 1],
-        "image": "./vwfdatamanager.svc/datafile/models/village/grass.png",
+        "image": "./contentlibraries/entities/assets/plants/gras-long-diff.png",
         "owner": "Rob",
         "quaternion": {
             "_x": 0,

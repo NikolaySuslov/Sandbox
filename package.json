@@ -51,7 +51,8 @@
     "spdy": "~1.26.5",
     "winston": "~0.8.3",
     "ws": "~0.4.25",
-    "yamljs": "~0.1.4"
+    "yamljs": "~0.1.4",
+    "client-session": "~0.1.7"
   },
   "devDependencies": {},
   "scripts": {

@@ -16,3 +16,9 @@ methods:
 properties:
   open: false
   glyphURL: '../vwf/view/editorview/images/icons/inventory.png'
+  showGlyph: true
+  EditorData:
+    showGlyph:
+      displayname: Show glyph
+      property: showGlyph
+      type: check  

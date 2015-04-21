@@ -40,7 +40,7 @@ function MaterialCache() {
                 for(var i in testmats)
                 {
                     _dRenderer.initMaterial( testmats[i], _dScene.__lights, _dScene.fog, mesh );
-                    var status = _dRenderer.context.getProgramParameter( newmat.program.program, _dRenderer.context.LINK_STATUS );
+                    var status = _dRenderer.context.getProgramParameter( testmats[i].program.program, _dRenderer.context.LINK_STATUS );
                     passed = passed && status;
                 }
 

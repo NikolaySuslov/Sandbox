@@ -445,6 +445,40 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             }
 
         }
+       this.mouseDownSelectFilter = function(pickID)
+        {
+            //not sure this logic makes sense when more than one thing selected
+
+            if (this.getSelectionCount() > 1 && 
+            vwf.decendants(vwf.ancestors(_Editor.GetSelectedVWFID())[vwf.ancestors(_Editor.GetSelectedVWFID()).length-2] || _Editor.GetSelectedVWFID()).indexOf(pickID) == -1)
+            {
+                return vwf.ancestors(pickID)[vwf.ancestors(pickID).length-2] || pickID;
+            }
+
+            if(this.getSelectionCount() > 1) return pickID;
+            var ancestors = vwf.ancestors(pickID);
+            // this is a 2nd level object, so just return it
+            if(ancestors.length < 2)
+                return pickID;
+            var sceneroot = ancestors[ancestors.length-2];
+            var decendants = vwf.decendants(sceneroot);
+
+            if(decendants.indexOf(this.GetSelectedVWFID()) > -1)
+            {
+                //the currently selected object is in the decendants
+                return pickID;
+            }
+            if(this.GetSelectedVWFID() == pickID)
+            {
+                return pickID;
+            }
+            if(this.GetSelectedVWFID() == sceneroot)
+            {
+                return pickID;
+            }
+            return sceneroot;
+
+        }
         this.mouseup_Gizmo = function(e) {
             if (e.button == 2 && !MouseMoved && document.AxisSelected == -1) {
 
@@ -471,7 +505,12 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                     var picksize = Math.sqrt(w * w + h * h);
                     if (picksize < 10) {
                         if (vwf.views[0].lastPickId && vwf.views[0].lastPickId != 'index-vwf') {
-                            this.SelectObject(_Editor.getNode(vwf.views[0].lastPickId), this.PickMod);
+                            //implement some logic on the pick - select top level node, unless the current selection is 
+                            // in the hierarchy of the new selection
+                            var newselection = vwf.views[0].lastPickId;
+                           
+                            newselection = this.mouseDownSelectFilter(newselection);
+                            this.SelectObject(_Editor.getNode(newselection), this.PickMod);
                         } else {
                             this.SelectObject(null);
                         }
@@ -530,6 +569,9 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                             var vwfnode;
                             while (hits[i] && hits[i].object && !hits[i].object.vwfID) hits[i].object = hits[i].object.parent;
                             if (hits[i] && hits[i].object) vwfnode = hits[i].object.vwfID;
+
+                            vwfnode = this.mouseDownSelectFilter(vwfnode);
+
                             if (vwfhits.indexOf(vwfnode) == -1 && vwfnode) vwfhits.push(vwfnode);
 
                             hits[i].release();
@@ -2443,7 +2485,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 	
                     //the editor can be loaded when tools are not, so this might not exist
                 	if(!skipUndo && window._UndoManager)
-                		window._UndoManager.recordSelection(VWFNode.slice(0));
+                		window._UndoManager.recordSelection((VWFNode || []).slice(0));
 
 
                 if (!selectmod) {
@@ -3583,8 +3625,10 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 Proto.properties.owner = _UserManager.GetCurrentUserName();
                 Proto.properties.transform = MATH.transposeMat4(MATH.translateMatrix(newintersectxy));
                 var newname = self.GetUniqueName(url);
-                _UndoManager.recordCreate('index-vwf', newname, Proto);
-                vwf_view.kernel.createChild('index-vwf', newname, Proto);
+                Proto.properties.DisplayName = newname;
+                var guid = GUID();
+                _UndoManager.recordCreate('index-vwf', guid, Proto);
+                vwf_view.kernel.createChild('index-vwf', guid, Proto);
 
 
             }, true)

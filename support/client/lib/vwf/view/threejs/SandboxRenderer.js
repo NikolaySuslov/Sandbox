@@ -86,7 +86,8 @@ define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
 				this.renderer.clear();
 				if (_Editor.GetSelectedVWFID())
 					for (var i = 0; i < _Editor.getSelectionCount(); i++)
-						this.renderObject(findviewnode(_Editor.GetSelectedVWFID(i)), scene, camera, this.overrideMaterial);
+						if(vwf.parent(_Editor.GetSelectedVWFID(i)) == vwf.application())
+							this.renderObject(findviewnode(_Editor.GetSelectedVWFID(i)), scene, camera, this.overrideMaterial);
 				//render to the screen
 				quad.material = quad.dialateMaterial;
 				quad.material.uniforms.tDiffuse.value = this.rtt;
@@ -94,7 +95,7 @@ define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
 				this.renderer.render(this.rttScene, this.rttCamera);
 				this.renderer.setClearColor(this.renderer.getClearColor(), 1.0);
 			}
-			if (this.hilightObjects.length > 0 || this.hilightMouseOver)
+			if (_Editor.GetSelectedVWFID() || this.hilightObjects.length > 0 || this.hilightMouseOver)
 			{
 				//render into RTT1
 				this.renderer.setRenderTarget(this.rtt);
@@ -104,6 +105,10 @@ define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
 				{
 					this.renderObject(this.hilightObjects[i], scene, camera, this.overrideMaterial2);
 				}
+				if (_Editor.GetSelectedVWFID())
+					for (var i = 0; i < _Editor.getSelectionCount(); i++)
+						if(vwf.parent(_Editor.GetSelectedVWFID(i)) != vwf.application())
+							this.renderObject(findviewnode(_Editor.GetSelectedVWFID(i)), scene, camera, this.overrideMaterial2);
 				if (this.hilightMouseOver)
 				{
 					if (vwf.views[0].lastPickId && findviewnode(vwf.views[0].lastPickId))

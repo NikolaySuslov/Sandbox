@@ -190,9 +190,26 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 return;
             }
         },
+        showGlyph: function(id) {
+            if (this.glyphs.indexOf(id) == -1)
+                return
+            else {
+                $('#glyph' + ToSafeID(id)).show();
+                return;
+            }
+        },
+        hideGlyph: function(id) {
+            if (this.glyphs.indexOf(id) == -1)
+                return
+            else {
+                $('#glyph' + ToSafeID(id)).hide();
+                return;
+            }
+        },
         updateGlyphs: function(e, viewprojection, wh, ww) {
 
             for (var i = 0; i < this.glyphs.length; i++) {
+                if(vwf.getProperty(this.glyphs[i],'showGlyph') == false) continue;
                 var div = $('#glyph' + ToSafeID(this.glyphs[i]))[0];
                 if (!div) continue;
 
@@ -603,6 +620,11 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             if (glyph) {
                 this.addGlyph(childID, glyph);
             }
+            var showGlyph = vwf.getProperty(childExtendsID, 'showGlyph');
+            if (showGlyph) {
+                this.showGlyph(childID);
+            }else
+            this.hideGlyph(childID);
             //the created node is a scene, and has already been added to the state by the model.
             //how/when does the model set the state object? 
 
@@ -828,7 +850,16 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             if (!threeObject) return value;
 
             if (node && propertyName == 'glyphURL') {
-                this.addGlyph(nodeID, propertyValue);
+                if(propertyValue)
+                    this.addGlyph(nodeID, propertyValue);
+                else 
+                    this.removeGlyph(nodeID);
+            }
+            if (node && propertyName == 'showGlyph') {
+                if(propertyValue)
+                    this.showGlyph(nodeID);
+                else 
+                    this.hideGlyph(nodeID);
             }
             if (node && threeObject && propertyValue !== undefined) {
                 if (threeObject instanceof THREE.Scene) {

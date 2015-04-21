@@ -16,6 +16,7 @@ methods:
 properties:
   type: "ParticleSystem"
   glyphURL: '../vwf/view/editorview/images/icons/ParticleIcon.png'  
+  showGlyph: true  
   startColor_noAplha:
     value: [1 ,1 ,1]
     set: |
@@ -68,6 +69,10 @@ properties:
       min: 200
       max: 10000
       step: 200
+    showGlyph:
+      displayname: Show glyph
+      property: showGlyph
+      type: check  
     ABstartAlpha:
       displayname: "Alpha: start"
       property: startAlpha

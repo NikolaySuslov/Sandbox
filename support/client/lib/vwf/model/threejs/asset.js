@@ -396,11 +396,24 @@
                         if (materials[j].hasOwnProperty('map') && !materials[j].map)
                             materials[j].map = _SceneManager.getTexture('white.png');
                     }
+                   var def;
                     //pass all materials through the material system to normalize them with the render options
-                    var def = _MaterialCache.getDefForMaterial(list[i].material);
-                    //must break the reference, because of deallocation in materialdef.js
-                    list[i].material = new THREE.MeshPhongMaterial();
-                    _MaterialCache.setMaterial(list[i], def);
+                    if(!(list[i].material instanceof THREE.MeshFaceMaterial))
+                    {
+                        def = _MaterialCache.getDefForMaterial(list[i].material);
+                        //must break the reference, because of deallocation in materialdef.js
+                        list[i].material = new THREE.MeshPhongMaterial();
+                        _MaterialCache.setMaterial(list[i], def);
+                    }
+                    else
+                    {
+                        def = [];
+                        for(j = 0; j < list[i].material.materials.length; j++)
+                            def[j] = _MaterialCache.getDefForMaterial(list[i].material.materials[j]);  //this break objects that have a complex structure that has a single node as a meshFaceMaterial
+                        list[i].material = new THREE.MeshFaceMaterial();
+                        _MaterialCache.setMaterial(list[i], def);
+                    }
+                    
                     if (list[i].animationHandle)
                         list[i].material.skinning = true;
                     list[i].material = list[i].material.clone();

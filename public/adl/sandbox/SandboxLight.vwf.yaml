@@ -15,8 +15,13 @@ extends: http://vwf.example.com/light.vwf
 methods:
 properties:
   type: 'Light'
-  glyphURL: '../vwf/view/editorview/images/icons/light_icon.png'  
+  glyphURL: '../vwf/view/editorview/images/icons/light_icon.png'
+  showGlyph: true    
   EditorData:
+    showGlyph:
+      displayname: Show glyph
+      property: showGlyph
+      type: check
     brightness:
       displayname: Intensity
       property: intensity

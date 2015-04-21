@@ -148,7 +148,7 @@
         "preview": "./contentlibraries/entities/thumbs/rock.jpg",
         "dropPreview":
         {
-            "url": "./vwfdatamanager.svc/datafile/models/village/rock1.DAE",
+            "url": "./contentlibraries/entities/assets/rock/rock1.DAE",
             "type": "subDriver/threejs/asset/vnd.collada+xml"
         },
         "type": "asset"

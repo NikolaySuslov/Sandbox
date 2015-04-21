@@ -19,8 +19,13 @@ properties:
   far: 100
   fov: 45
   type: Camera
-  glyphURL: '../vwf/view/editorview/images/icons/cameraIcon.png'  
+  glyphURL: '../vwf/view/editorview/images/icons/cameraIcon.png'
+  showGlyph: true  
   EditorData:
+    showGlyph:
+      displayname: Show glyph
+      property: showGlyph
+      type: check
     near:
       displayname: Near
       property: near
