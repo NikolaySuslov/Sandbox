@@ -21,6 +21,7 @@
 /// attaches to the global window object as window.vwf. Nothing else should affect the global
 /// environment.
 
+
 ( function( window ) {
 
     window.console && console.debug && console.debug( "loading vwf" );
@@ -934,7 +935,7 @@
                 // advance the queue's record of the current time. Messages in the queue are
                 // ordered by time, then by order of arrival.
 
-                queue.insert( fields, fields.action == 'tick' ); // may invoke dispatch(), so call last before returning to the host
+                queue.insert( fields,true ); // may invoke dispatch(), so call last before returning to the host
 
                 // Each message from the server allows us to move time forward. Parse the
                 // timestamp from the message and call dispatch() to execute all queued
@@ -1182,6 +1183,7 @@ this.receive = function( nodeID, actionName, memberName, parameters, respond, or
                 return false;
         }}
 
+
     var result = this[actionName] && this[actionName].apply( this, args );
 
     // Return the result.
@@ -1266,6 +1268,7 @@ this.dispatch = function() {
         if ( fields.action ) {  // TODO: don't put ticks on the queue but just use them to fast-forward to the current time (requires removing support for passing ticks to the drivers and nodes)
             this.sequence_ = fields.sequence; // note the message's queue sequence number for the duration of the action
             this.client_ = fields.client;     // ... and note the originating client
+
             this.receive( fields.node, fields.action, fields.member, fields.parameters, fields.respond, fields.origin );
         }
 
@@ -1451,10 +1454,10 @@ this.getState = function( full, normalize ) {
 
         // Message queue.
 
-        queue: {  // TODO: move to the queue object
+       /* queue: {  // TODO: move to the queue object
             time: queue.time,
-            queue: require( "vwf/utility" ).transform( queue.queue, queueTransitTransformation ),
-        },
+            queue:  require( "vwf/utility" ).transform( queue.queue, queueTransitTransformation ),
+        },*/
 
     };
 
@@ -5872,7 +5875,7 @@ var queue = this.private.queue = {
         // To prevent actions from executing out of order, callers should immediately return
         // to the host after invoking insert with chronic set.
 
-        if ( true ) {
+        if ( chronic ) {
             vwf.dispatch();
         }
 

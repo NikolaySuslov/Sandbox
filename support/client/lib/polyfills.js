@@ -45,7 +45,7 @@ var fills = {
                 return Math.floor(Math.SecureRandom() * 0x10000 /* 65536 */ ).toString(16);
             };
             //can we generate nicer GUID? does it really have to be so long?
-            return S4()+S4();
+            return 'N'+S4()+S4();
             return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
         }
     },

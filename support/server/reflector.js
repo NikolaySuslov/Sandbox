@@ -841,7 +841,7 @@ function ClientConnected(socket, namespace, instancedata)
                 "time": thisInstance.time,
                 "origin":"reflector"
             })));
-            loadClient.pending = true;
+            //loadClient.pending = true;
             socket.emit('message', messageCompress.pack(JSON.stringify(
             {
                 "action": "status",
@@ -961,6 +961,7 @@ function ClientConnected(socket, namespace, instancedata)
                 try
                 {
                     var message = JSON.parse(messageCompress.unpack(msg));
+                    message.time = thisInstance.time;
                 }
                 catch (e)
                 {
@@ -1160,6 +1161,9 @@ function ClientConnected(socket, namespace, instancedata)
                             "parameters": ["State Received, Transmitting"],
                             "time": thisInstance.getStateTime
                         })));
+                        
+                        
+                        
                         client.emit('message', messageCompress.pack(JSON.stringify(
                         {
                             "action": "setState",
