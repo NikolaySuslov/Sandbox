@@ -587,7 +587,7 @@
 				// add placeholder value to the input field
 				if (typeof item.placeholder === "string" && item.placeholder !== "") input.value = item.placeholder;
 				if (fromQueue) this.setFocus();
-				this.addListeners(item.callback);
+				this.addListeners(function(){window.setTimeout(item.callback,100)});
 			},
 
 			/**

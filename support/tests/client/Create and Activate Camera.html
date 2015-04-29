@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost:3000/" />
+<title>Create and Activate Camera</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Create and Activate Camera</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/adl/sandbox/example_blank/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>id=preloadGUIBack</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=preloadGUIBack</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>1000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=MenuCreateCameraPerspective</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>1000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=MenuActivateCamera</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=choice1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=alertify-ok</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>500</td>
+</tr>
+<tr>
+	<td>assertEval</td>
+	<td>window._dView.activeCamera.parent.vwfID == window._Editor.GetSelectedVWFID()</td>
+	<td>true</td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

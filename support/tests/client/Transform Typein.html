@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost:3000/" />
+<title>Transform Typein</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Transform Typein</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/adl/sandbox/example_blank/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>id=MenuCreateSphereicon</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=MenuCreateSphereicon</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForEval</td>
+	<td>window._Editor.GetSelectedVWFID().indexOf('sphere')</td>
+	<td>0</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=SideTabProperties</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=ui-id-46</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>id=PositionY</td>
+	<td>.1</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=PositionZ</td>
+	<td>0</td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>id=PositionZ</td>
+	<td>.1</td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>id=PositionX</td>
+	<td>.1</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=RotationX</td>
+	<td>1</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=RotationY</td>
+	<td>1</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=RotationZ</td>
+	<td>1</td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>id=RotationX</td>
+	<td>1</td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>id=RotationY</td>
+	<td>1</td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>id=RotationZ</td>
+	<td>1</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertEval</td>
+	<td>window.vwf.getProperty(window._Editor.GetSelectedVWFID(),'transform').toString()</td>
+	<td>0.9635919332504272,-0.15156413614749908,0.2202700823545456,0,0.18730328977108002,0.9705389142036438,-0.15156413614749908,0,-0.1908089965581894,0.18730328977108002,0.9635919332504272,0,0.10000000149011612,0.10000000149011612,0.10000000149011612,1</td>
+</tr>
+</tbody></table>
+</body>
+</html>

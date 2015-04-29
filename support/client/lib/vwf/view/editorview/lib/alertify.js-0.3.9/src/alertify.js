@@ -61,7 +61,7 @@
 
             return {
                 type: type,
-                supported: supported
+                supported: false
             };
         };
 
@@ -591,6 +591,7 @@
                 }
                 // build the proper dialog HTML
                 elDialog.innerHTML = this.build(item);
+
                 // assign all the common elements
                 btnReset = $("alertify-resetFocus");
                 btnOK = $("alertify-ok") || undefined;
@@ -641,7 +642,7 @@
                 // add placeholder value to the input field
                 if (typeof item.placeholder === "string" && item.placeholder !== "") input.value = item.placeholder;
                 this.setFocus();
-                this.addListeners(item.callback);
+                this.addListeners(function(ok,val){window.setTimeout(function(){item.callback(ok,val)},100)});
             },
 
             /**

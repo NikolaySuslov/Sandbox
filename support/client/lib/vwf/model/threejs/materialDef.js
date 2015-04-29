@@ -67,6 +67,7 @@
                     if (propname == 'materialDef' && propval)
                         if (!Object.deepEquals(propval, this.materialDef) || this.Build)
                         {
+                            console.log("materialDef on " + this.ID, propval )
                             propval = JSON.parse(JSON.stringify(propval));
                             var needRebuild = false;
                             if (!this.compareLayers(this.materialDef, propval))
@@ -84,6 +85,7 @@
                                 list.push(this.getRoot());
                             for (var i = 0; i < list.length; i++)
                             {
+                               
                                 if (list[i].morphTargetInfluences)
                                     propval.morphTargets = true;
                                 else

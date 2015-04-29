@@ -1,14 +1,15 @@
 "use strict";
-
-
 (function()
 {
     //enum to keep track of assets that fail to load
-   
-
     function asset(childID, childSource, childName, childType, assetSource, asyncCallback)
         {
             //asyncCallback(false);
+            this.childID = childID;
+            this.childSource = childSource;
+            this.childName = childName;
+            this.childType = childType;
+            this.assetSource = assetSource;
             //handle for wrapping the glTF animation format so animatable.js can read it
             function AnimationHandleWrapper(gltfAnimations)
             {
@@ -42,6 +43,7 @@
                 //the parent is an asset object
                 if (true)
                 {
+                    
                     var parentRoot = null;
                     if (this.parentNode && this.parentNode.getRoot) //if the parent internal driver object is just the scene, it does not have a getRoot function
                         parentRoot = this.parentNode.getRoot();
@@ -156,7 +158,12 @@
                         newbone.parent = oldbone.parent;
                     }
                     newgeo.animation = oldgeo.animation;
-                    var newSkin = new THREE.SkinnedMesh(newgeo, parentSkin.material, true);
+
+                    parentSkin.material = parentSkin.material.clone();
+                    var newSkin = new THREE.SkinnedMesh(newgeo, parentSkin.material.clone(), true);
+                    
+
+
                     newSkin.animationHandle = parentSkin.animationHandle;
                     newSkin.bindMatrix = parentSkin.bindMatrix.clone();
                     newSkin.bindMatrixInverse = parentSkin.bindMatrixInverse.clone();
@@ -174,11 +181,24 @@
                     }
                     parent.add(newSkin);
                     newSkin.bind(parentSkin.skeleton, newSkin.matrix.clone());
+
+                    //get array of submats or regualr mat
+                    
+                    var mats = newSkin.material.materials || [newSkin.material]
+                    window.setTimeout(function(){
+
+                    //for some reason, this must happen after a render, or before load.... 
+                    //this is a hack...
+                    for(var i in mats)
+                        mats[i].needsUpdate = true;    
+                    },200)
+                    
+
                     ///////////////////////////////////////////////////////////
                     parentSkin = newSkin;
                     if (parentSkin)
                     {
-                        var morph = this.assetRegistry[assetSource].node.morphTarget;
+                        var morph = assetRegistry.assets[assetSource].node.morphTarget;
                         if (morph)
                         {
                             if ((morph.length / 3) % parentSkin.geometry.vertices.length > 0)
@@ -232,8 +252,13 @@
                         }
                     }
                 }
+                //set this initially
+                //we do this twice to defeat the check in animatable.js that skips the setup if values are the same
+                
+                var frame = this.animationFrame;
+                this.setAnimationFrameInternal(frame + .001,false);
+                this.setAnimationFrameInternal(frame  || 0,false);
             }
-            
             this.gettingProperty = function(propertyName) {}
             this.settingProperty = function(propertyName, propertyValue) {}
             this.gettingProperty = function(propertyName)
@@ -268,7 +293,7 @@
                     this.initializedFromAsset = true;
                     this.backupmats = [];
                     this.backupMatrix = asset.matrix;
-                    //asset.matrix = asset.matrix.clone();
+                    asset.matrix = asset.matrix.clone();
                     this.rootnode = asset;
                     this.rootnode = asset;
                     asset.initializedFromAsset = true;
@@ -281,10 +306,10 @@
                             this.backupmats.push([list[i], list[i].material.clone()]);
                         }
                     }
-                    asset.matrixAutoUpdate = false;
+                   
                     asset.updateMatrixWorld(true);
                     _SceneManager.setDirty(asset);
-                    this.settingProperty('transform', this.gettingProperty('transform'));
+                   // this.settingProperty('transform', this.gettingProperty('transform'));
                     if (asset instanceof THREE.Bone)
                     {
                         for (var i in asset.children)
@@ -336,7 +361,6 @@
                     }
                 }
             }
-            
             this.GetAllLeafMeshes = function(threeObject, list)
             {
                 if (threeObject instanceof THREE.Mesh)
@@ -396,9 +420,9 @@
                         if (materials[j].hasOwnProperty('map') && !materials[j].map)
                             materials[j].map = _SceneManager.getTexture('white.png');
                     }
-                   var def;
+                    var def;
                     //pass all materials through the material system to normalize them with the render options
-                    if(!(list[i].material instanceof THREE.MeshFaceMaterial))
+                    if (!(list[i].material instanceof THREE.MeshFaceMaterial))
                     {
                         def = _MaterialCache.getDefForMaterial(list[i].material);
                         //must break the reference, because of deallocation in materialdef.js
@@ -408,12 +432,11 @@
                     else
                     {
                         def = [];
-                        for(j = 0; j < list[i].material.materials.length; j++)
-                            def[j] = _MaterialCache.getDefForMaterial(list[i].material.materials[j]);  //this break objects that have a complex structure that has a single node as a meshFaceMaterial
+                        for (j = 0; j < list[i].material.materials.length; j++)
+                            def[j] = _MaterialCache.getDefForMaterial(list[i].material.materials[j]); //this break objects that have a complex structure that has a single node as a meshFaceMaterial
                         list[i].material = new THREE.MeshFaceMaterial();
                         _MaterialCache.setMaterial(list[i], def);
                     }
-                    
                     if (list[i].animationHandle)
                         list[i].material.skinning = true;
                     list[i].material = list[i].material.clone();
@@ -449,24 +472,27 @@
                         }
                     }
                 }
-                if (this.materialDef.length === 1)
+                if (this.materialDef && this.materialDef.length === 1)
                     this.materialDef = this.materialDef[0];
             }
-            this.loaded = function(asset,rawAnimationChannels)
+            this.loaded = function(asset, rawAnimationChannels)
             {
-                
+
                 if (!asset)
                 {
                     this.loadFailed();
                     return;
                 }
                 $(document).trigger('EndParse', ['Loading...', assetSource]);
-                
                 //you may be wondering why we are cloning again - this is so that the object in the scene is 
                 //never the same object as in the cache
                 var self = this;
                 if (childType !== 'subDriver/threejs/asset/vnd.gltf+json')
-                    this.getRoot().add(asset.clone());
+                {
+                    var clone = asset.clone();
+                    clone.morphTarget = asset.morphTarget; //sort of hacky way to keep a reference to morphtarget
+                    this.getRoot().add(clone);
+                }
                 else
                 {
                     glTFCloner.clone(asset, rawAnimationChannels, function(clone)
@@ -484,20 +510,17 @@
                 this.getRoot().GetBoundingBox();
                 asyncCallback(true);
             }.bind(this);
-            this.loadFailed = function(id) {
+            this.loadFailed = function(id)
+            {
                 asyncCallback(true);
             }.bind(this);
-
             //if there is no asset source, perhaps because this linked to an existing node from a parent asset, just continue with loading
             if (!assetSource)
             {
                 return;
             }
             asyncCallback(false);
-            
-            
-            assetRegistry.get(childType,assetSource,this.loaded,this.loadFailed);
-            
+            assetRegistry.get(childType, assetSource, this.loaded, this.loadFailed);
         }
         //default factory code
     return function(childID, childSource, childName, childType, assetSource, asyncCallback)

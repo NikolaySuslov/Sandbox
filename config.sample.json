@@ -10,7 +10,7 @@
     "compile": false, //compile with the closure conpiler
     "version": 1, //the version number to use for URL versioning. Must be an integer!
     "useVersioning": false, //when true, the server will use a url prefix to identify the software version
-
+    "appPath" : "/vr", //the main URL for the applicaiton. Default is "/adl/sandbox". You do not need to rename application folders to change hte URLs. Use this instead
     "_3DRAPI": null, //the endpoint to use to access the service. Null defaults to the public 3DR instance
     "_3DRAPIKey": null, //the api key to use for all requests. Null defaults to the public API key
     "_3DRUser": null, //username server identifies itself as. Null defaults to Anonymous
@@ -46,5 +46,5 @@
     "google_client_id": null,
     "google_client_secret": null,
     "google_callback_url": "http://localhost:3000/adl/sandbox/auth/google/callback"
-
+    "branding"
 }

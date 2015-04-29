@@ -1269,7 +1269,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
             //if we have a camera, but self.activecamera is null, then we were expecting a default camera, but it was not yet available
             //try to set it, so next frame we use it. 
-            if (!self.activeCamera) self.setCamera();
+            if (!self.activeCamera) self.setCamera_internal();
 
             if (self.paused === true)
                 return;

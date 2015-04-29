@@ -409,7 +409,23 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                     node.threeObject = new THREE.Object3D();
                     node.threeObject.add(node.getRoot());
                     threeParent.add(node.threeObject);
-                } else if (childType == "subDriver/threejs/asset/vnd.collada+xml" || childType == "subDriver/threejs/asset/vnd.osgjs+json+compressed" || childType == "subDriver/threejs/asset/vnd.collada+xml+optimized" || childType == "subDriver/threejs/asset/vnd.gltf+json") {
+                } 
+                else if (isPhantomDefinition.call(this, protos)) {
+
+                    node = this.state.nodes[childID] = this.subDriverFactory.createNode(childID, 'vwf/model/threejs/phantomAsset.js', childName, childType, childSource, callback);
+
+                    node.name = childName,
+                    node.ID = childID;
+                    node.parentID = nodeID;
+                    node.sourceType = childType;
+                    node.type = childExtendsID;
+                    node.sceneID = this.state.sceneRootID;
+
+                    node.threeObject = new THREE.Object3D();
+                    node.threeObject.add(node.getRoot());
+                    threeParent.add(node.threeObject);
+                } 
+                else if (childType == "subDriver/threejs/asset/vnd.raw-morphttarget" ||childType == "subDriver/threejs/asset/vnd.collada+xml" || childType == "subDriver/threejs/asset/vnd.osgjs+json+compressed" || childType == "subDriver/threejs/asset/vnd.collada+xml+optimized" || childType == "subDriver/threejs/asset/vnd.gltf+json") {
 
                     node = this.state.nodes[childID] = this.subDriverFactory.createNode(childID, 'vwf/model/threejs/asset.js', childName, childType, childSource, callback);
 
@@ -423,7 +439,8 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                     node.threeObject = new THREE.Object3D();
                     node.threeObject.add(node.getRoot());
                     threeParent.add(node.threeObject);
-                } else {
+                }
+                else {
 
                     node = this.state.nodes[childID] = {
                         name: childName,
@@ -1222,6 +1239,16 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
             }
         }
 
+        return foundMaterial;
+    }
+
+    function isPhantomDefinition(prototypes) {
+        var foundMaterial = false;
+        if (prototypes) {
+            for (var i = 0; i < prototypes.length && !foundMaterial; i++) {
+                foundMaterial = (prototypes[i] == "phantomAsset-vwf");
+            }
+        }
         return foundMaterial;
     }
 
@@ -2098,6 +2125,8 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                         }
                     }
                 }
+            if(node.initialize)
+                node.initialize();    
             return node;
 
         }

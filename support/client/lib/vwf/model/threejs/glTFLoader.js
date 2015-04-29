@@ -77,7 +77,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
 
     function LoadTexture(src) {
         if(!src) { return null; }
-        return THREE.ImageUtils.loadTexture(src);
+        return _SceneManager.getTexture(src);
     }
 
     // Geometry processing

@@ -231,6 +231,14 @@ function startVWF() {
 
             function initLandingRoutes(cb)
             {
+                    if(!global.configuration.branding)
+                    {
+                        global.configuration.branding = {};
+                        global.configuration.branding.tagline = "An <a href='https://github.com/adlnet/sandbox/'> open source project</a> from <a href='http://www.adlnet.gov'>ADL</a>"
+                        global.configuration.branding.logo = '<a href="/adl/sandbox"><div style=" float:left;"><img src="/adl/sandbox/img/VWS_Logo.png"></div><div style=" margin-left:10px;margin-top:50px;float:left;"><img src="/adl/sandbox/img/VW_text.png"><img src="/adl/sandbox/img/Sandbox_text.png"></div></a>'
+                        global.configuration.branding.title = "Virtual World Sandbox - Virtual Worlds in your browser";
+                        global.configuration.branding.footer = '<br/><p>The views expressed on this website in the form of documentation, blog articles, or tutorials do not necessarily represent the views or policies of ADL or the U.S. Government.</p><p>Sponsored by the Office of the Under Secretary of Defense for Personnel and Readiness (OUSD P&amp;R).This is an official website of the U.S. Government (c)2014 Advanced Distributed Learning (ADL).</p><a href="{{root}}/test">Test Browser Support</a> '
+                    }
                     Landing.init();
                     cb();
             },

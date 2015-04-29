@@ -1376,6 +1376,16 @@ border: 1px solid lightgray;
 color:black;
 }
 
+.hierarchyicondisable 
+{
+	color:#444;
+}
+
+.hierarchyicon
+{
+	color:rgb(130, 184, 255);
+}
+
 #hierarchyDisplay
 {
 	font: 1.5em sans-serif;
@@ -1398,7 +1408,22 @@ text-overflow: ellipsis;
 height: 1.3em;
 overflow: hidden;
 padding-left: 0px;
-border-bottom: 1px solid #E4E4E4;
+padding: .1em;
+  font-size: 0.9em;
+}
+
+.hierarchyentry
+{
+	margin-left:1em; overflow:hidden;
+	  border-left: 1px dotted #444;
+}
+
+.hierarchytoggle
+{
+  margin-right: .5em;
+  padding-left: 1.5em;
+  font-size: .6em;
+  display: inline;
 }
 
 .hierarchyItem:hover

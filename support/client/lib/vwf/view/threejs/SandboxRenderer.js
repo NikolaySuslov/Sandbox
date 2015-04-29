@@ -22,14 +22,20 @@ define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
 		this.overrideMaterial.color.r = 0;
 		this.overrideMaterial.color.g = 0;
 		this.overrideMaterial.color.b = 1;
+		this.overrideMaterialSkin = this.overrideMaterial.clone();
+		this.overrideMaterialSkin.skinning = true;
 		this.overrideMaterial2 = new THREE.MeshBasicMaterial();
 		this.overrideMaterial2.color.r = 0;
 		this.overrideMaterial2.color.g = 1;
 		this.overrideMaterial2.color.b = 0;
+		this.overrideMaterialSkin2 = this.overrideMaterial.clone();
+		this.overrideMaterialSkin2.skinning = true;
 		this.overrideMaterial3 = new THREE.MeshBasicMaterial();
 		this.overrideMaterial3.color.r = 1;
 		this.overrideMaterial3.color.g = 0;
 		this.overrideMaterial3.color.b = 0;
+		this.overrideMaterialSkin3 = this.overrideMaterial.clone();
+		this.overrideMaterialSkin3.skinning = true;
 		this.rttCamera = new THREE.OrthographicCamera();
 		this.rttScene = new THREE.Scene();
 		this.rttScene.add(quad);
@@ -171,10 +177,18 @@ define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
 						//renderObject.object._normalMatrix.getNormalMatrix( renderObject.object._modelViewMatrix );
 						var oldTransparent = renderObject.object.material.transparent;
 						renderObject.object.material.transparent = false;
+						var matSkinOrNot = material;
+						if(material == this.overrideMaterial && renderObject.object instanceof THREE.SkinnedMesh)
+							matSkinOrNot = this.overrideMaterialSkin;
+						if(material == this.overrideMaterial2 && renderObject.object instanceof THREE.SkinnedMesh)
+							matSkinOrNot = this.overrideMaterialSkin2;
+						if(material == this.overrideMaterial3 && renderObject.object instanceof THREE.SkinnedMesh)
+							matSkinOrNot = this.overrideMaterialSkin3;
+
 						if (renderObject.object.geometry instanceof THREE.BufferGeometry)
-							this.renderer.renderBufferDirect(camera, [], null, material || renderObject.object.material, renderObject.object.geometry, renderObject.object)
+							this.renderer.renderBufferDirect(camera, [], null, matSkinOrNot || renderObject.object.material, renderObject.object.geometry, renderObject.object)
 						else if (renderObject.object.geometry instanceof THREE.Geometry)
-							this.renderer.renderBuffer(camera, lights, fog, material || renderObject.material, renderObject.buffer, renderObject.object)
+							this.renderer.renderBuffer(camera, lights, fog, matSkinOrNot || renderObject.material, renderObject.buffer, renderObject.object)
 						renderObject.object.material.transparent = oldTransparent;
 					}
 			}

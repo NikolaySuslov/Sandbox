@@ -506,15 +506,15 @@ THREE.ColladaLoader = function() {
         //createBones( geometry.bones, skin, hierarchy, skeleton, null, -1 );
         //createWeights( skin, geometry.bones, geometry.skinIndices, geometry.skinWeights );
 
-        
-		geometry.animation = {
-			name: 'take_001',
-			fps: 30,
-			length: 2,
-			JIT: true,
-			hierarchy: hierarchy
-		};
-		
+
+        geometry.animation = {
+            name: 'take_001',
+            fps: 30,
+            length: 2,
+            JIT: true,
+            hierarchy: hierarchy
+        };
+
 
         if (applyBindShape) {
 
@@ -787,6 +787,9 @@ THREE.ColladaLoader = function() {
         for (var i = 0; i < geometry.faces.length; i++) {
             for (var h = 0; h < geometry.faces[i].vertexNormals.length; h++) {
                 geometry.faces[i].vertexNormals[h].applyMatrix4(bindshapeNormal);
+                var t = geometry.faces[i].vertexNormals[h].y;
+                geometry.faces[i].vertexNormals[h].y = -geometry.faces[i].vertexNormals[h].z;
+                geometry.faces[i].vertexNormals[h].z = t;
             }
         }
 
@@ -806,7 +809,7 @@ THREE.ColladaLoader = function() {
                 return b.weight - a.weight;
 
             })
-            
+
             var indicies = new THREE.Vector4(vertweights[0] ? vertweights[0].joint : 0, vertweights[1] ? vertweights[1].joint : 0, vertweights[2] ? vertweights[2].joint : 0, vertweights[3] ? vertweights[3].joint : 0);
             var weight = new THREE.Vector4(vertweights[0] ? vertweights[0].weight : 0,
                 vertweights[1] ? vertweights[1].weight : 0,
@@ -840,7 +843,7 @@ THREE.ColladaLoader = function() {
             "length": animationBounds.frames / 30,
             "hierarchy": []
         };
-      
+
         for (var j = 0; j < sortedbones.length; j++) {
             animationdata.hierarchy.push({
                 parent: sortedbones[j].parent,
@@ -997,7 +1000,7 @@ THREE.ColladaLoader = function() {
 
                         var second = controllers[controller.skin.source];
                         morphController = second;
-                        //	skinController = node.controllers[i];
+                        //  skinController = node.controllers[i];
 
                         if (second.morph && geometries[second.morph.source]) {
 
@@ -1150,7 +1153,7 @@ THREE.ColladaLoader = function() {
                     if (geom.animation) {
                         var animation = new THREE.Animation(
                             mesh,
-                           geom.animation
+                            geom.animation
                         );
                         mesh.animationHandle = animation;
                         window._dAnimation = animation;

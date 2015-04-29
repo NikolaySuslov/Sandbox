@@ -476,6 +476,14 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
             }
 
             delete this.nodes[nodeID];
+            //be sure to clear the watchable cache of entries 
+            for (var i in jsDriverSelf.__WatchableCache)
+            {
+                if( i.indexOf(nodeID) === 0)
+                {
+                    delete jsDriverSelf.__WatchableCache[i];
+                }
+            }
 
         },
 

@@ -429,6 +429,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
             this.loadAssets = function(assets, cb, noProgressbar) {
 
 
+                
                 var total = assets.length;
                 if (!noProgressbar)
                     assetLoader.startProgressGui(total);

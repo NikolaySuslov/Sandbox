@@ -3,14 +3,17 @@
 
 
 
-    function getSkin(node, list) {
+    function getSkin(node, root, list  ) {
 
+        //be sure not to recurse into VWF children
+        if(node.vwfID && node != root)
+            return;
         if (!list) list = [];
         if (node instanceof THREE.SkinnedMesh) {
             list.push(node);
         }
         for (var i = 0; i < node.children.length; i++)
-            getSkin(node.children[i], list);
+            getSkin(node.children[i],root,list);
         return list;
     }
 
@@ -41,7 +44,7 @@
 
             if (this.animationFrame === propertyValue) return;
             this.animationFrame = propertyValue;
-            var skins = getSkin(this.getRoot());
+            var skins = getSkin(this.getRoot(),this.getRoot());
             for (var i = 0; i < skins.length; i++) {
 
                 var frame = parseInt(propertyValue);
@@ -110,8 +113,8 @@
                 this.animationFPS = propertyValue;
             }
             if (propertyName == 'morphTargetInfluences') {
-
-                var skins = getSkin(this.getRoot());
+               
+                var skins = getSkin(this.getRoot(),this.getRoot());
                 for (var i = 0; i < skins.length; i++) {
                     if (skins[i].geometry.morphTargets && skins[i].geometry.morphTargets.length > 0) {
                         //reset to target 0
@@ -143,7 +146,7 @@
             }
             if (propertyName == 'animationLength') {
 
-                var skins = getSkin(this.getRoot());
+                var skins = getSkin(this.getRoot(),this.getRoot());
                 if (skins[0] && skins[0].morphTargetInfluences) return skins[0].morphTargetInfluences.length;
                 if (skins[0] && skins[0].animationHandle)
                     return skins[0].animationHandle.data.length * skins[0].animationHandle.data.fps;

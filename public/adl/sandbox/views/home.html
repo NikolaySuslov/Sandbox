@@ -154,7 +154,7 @@ function center()
 		#wrapper {display:table;height:100%}
 	</style>
 	<![endif]-->
-    <title>Virtual World Sandbox - Virtual Worlds in your browser</title>
+    <title>{{{branding.title}}}</title>
 
 	
 	
@@ -164,16 +164,8 @@ function center()
 <body style="overflow:hidden">
 
 <div id='content' class='bodypanel'>
-<div id="logo">
-						<a href="/adl/sandbox">
-							<div style=" float:left;">
-								<img src="/adl/sandbox/img/VWS_Logo.png">
-							</div>
-							<div style=" margin-left:10px;margin-top:50px;float:left;">
-								<img src="/adl/sandbox/img/VW_text.png">
-								<img src="/adl/sandbox/img/Sandbox_text.png">
-							</div>
-						</a>
+<div id="logo" style="width:100%">
+						{{{branding.logo}}}
 					</div>
 
 		<div>			
@@ -238,7 +230,8 @@ function center()
 	</div>				
 
 	<div style='text-align:center;font-size:.75em;color:#999;margin-top:1em'>
-	An <a href='https://github.com/adlnet/sandbox/'> open source project</a> from <a href='http://www.adlnet.gov'>ADL</a>
+	{{{branding.tagline}}}
+	
 	</div>
 
 	<div style="margin-top: 2em;">

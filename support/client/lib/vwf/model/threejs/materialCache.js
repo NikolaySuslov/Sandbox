@@ -32,7 +32,7 @@ function MaterialCache() {
             var newmat = this.getMaterialbyDef(oldmat && oldmat.refCount == 1 ? oldmat : null, def);
 
             //test for shader compile fail, and set in simple mode if failed
-            if(newmat){
+            if( newmat){
                 var testmats = [newmat];
                 if(newmat.materials)
                     testmats = newmat.materials;

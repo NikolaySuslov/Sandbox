@@ -422,9 +422,9 @@ SceneManager.prototype.loadTexture = function(url, mapping, onLoad, onError) {
 
 
     //test to see if the url ends in .dds
-    if ((/\.dds$/).test(url)) {
+    if ((/^(?!.*\.[^/.]+$).*/).test(url)){
 
-
+       
         //create a new texture. This texture will be returned now, and filled with the compressed dds data
         //once that data is available
         var temptexture = new THREE.Texture(this.getDefaultTexture().image, mapping);
@@ -444,7 +444,7 @@ SceneManager.prototype.loadTexture = function(url, mapping, onLoad, onError) {
         temptexture.magFilter = THREE.LinearFilter;
         temptexture.anisotropy = 1;
         temptexture.sourceFile = url;
-
+        
         //a variable to hold the loaded texture
         var texture;
 
@@ -459,11 +459,12 @@ SceneManager.prototype.loadTexture = function(url, mapping, onLoad, onError) {
 
             temptexture._needsUpdate = texture._needsUpdate;
 
+           
+
+            temptexture.image = texture.image;
             temptexture.flipY = texture.flipY;
             temptexture.format = texture.format;
             temptexture.generateMipmaps = texture.generateMipmaps;
-
-            temptexture.image = texture.image;
             //temptexture.magFilter = texture.magFilter;
             temptexture.mapping = texture.mapping;
             //temptexture.minFilter = texture.minFilter;
@@ -481,6 +482,7 @@ SceneManager.prototype.loadTexture = function(url, mapping, onLoad, onError) {
             temptexture.wrapT = texture.wrapT;
 
             temptexture.isActuallyCompressed = true;
+            texture.isActuallyCompressed = true;
 
             //hit the async callback
             if (onLoad) onLoad(texture);
@@ -600,12 +602,17 @@ SceneManager.prototype.getTexture = function(src, noclone) {
 
         var onload = function(texture) {
 
-            if (texture.clones) {
+            if (tex.clones) {
+              
                 for (var i = 0; i < tex.clones.length; i++) {
+                  
+                    tex.clones[i].__webglTexture  = tex.__webglTexture;
                     tex.clones[i].image = texture.image;
                     tex.clones[i].format = texture.format;
                     tex.clones[i].needsUpdate = true;
-                }
+                    tex.clones[i].isActuallyCompressed = texture.isActuallyCompressed;
+
+                }   
 
 
             }

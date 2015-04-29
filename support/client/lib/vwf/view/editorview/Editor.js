@@ -2351,6 +2351,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             MoveGizmo.parent.updateMatrixWorld(true);
         }
         this.updateBounds = function() {
+            return; /// disable all drawing of bounding boxes
             for (var i = 0; i < SelectionBounds.length; i++) {
                 SelectionBounds[i].parent.remove(SelectionBounds[i], true);
                 SelectionBounds[i].children[0].geometry.dispose()
@@ -2445,7 +2446,13 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             //new vwf kernel does not add the ID to the get node, but all our old code expects it. Add it and return the node.
         this.getNode = function(id) {
             if (!id) return null;
-            var node = vwf.getNode(id, true, true);
+            try{
+                var node = vwf.getNode(id, true, true);
+                if(!node) return null;
+            }catch(e) //this keeps happening because the node does not exist
+            {
+                return null;
+            }
             node.id = id;
 
             var walk = function(parent) {
@@ -2984,6 +2991,35 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             var newnames = [];
             //be sure to exit temp pick mode no matter what
             this.SetSelectMode('Pick');
+
+            //do all checks ahead of time, bail if precoditions are not good
+            if (parentnode) {
+                var parent = parentnode.id;
+                for (var i = 0; i < this.getSelectionCount(); i++) {
+                    var id = this.GetSelectedVWFNode(i).id;
+
+                    if (id != parent) {
+                        if (vwf.parent(id) != parent) {
+                            if (vwf.decendants(id).indexOf(parent) == -1) {
+                                
+                            } else {
+                                alertify.alert('This object cannot be assigned to be a child of one of its decendants')
+                                return;
+                            }
+                        } else {
+                            alertify.alert('This object is already the selected objects parent');
+                            return;
+                        }
+                    } else {
+                        alertify.alert('An object cannot be linked to itself');
+                        return;
+                    }
+                }
+            } else {
+                alertify.alert('No object selected')
+                return;
+            }
+
             if (parentnode) {
 
                 var parent = parentnode.id;
@@ -3011,25 +3047,16 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                                 this.createChild(parentnode.id, newname, node);
                                 _RenderManager.flashHilight(findviewnode(parentnode.id));
 
-                            } else {
-                                alertify.alert('This object cannot be assigned to be a child of one of its decendants')
-                            }
-                        } else {
-                            alertify.alert('This object is already the selected objects parent');
-                        }
-                    } else {
-                        alertify.alert('An object cannot be linked to itself');
-                    }
+                            } 
+                        } 
+                    } 
                 }
                  this.DeleteSelection();
                                 this.TempPickCallback = null;
                                 self.SelectOnNextCreate(newnames);
                                 this.SetSelectMode('Pick');
                                 _UndoManager.stopCompoundEvent();
-            } else {
-                alertify.alert('No object selected')
-            }
-
+            } 
 
         }
         this.RemoveParent = function() {

@@ -98,31 +98,7 @@ define(function() {
 
         this.GetNextAnonName = function(clients)
         {
-            var _int = 0;
-            if(!clients)
-                return "Anonymous" + _int;
-            while(true)
-            {
-                var test = "Anonymous" + _int;
-                var found = false;
-                _int++;
-                for(var i in clients)
-                {
-                    if(clients[i].name == test)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if(!found)
-                {
-                    return test;
-                }
-                if(_int > 10000)
-                {
-                    throw(new Error('error finding anonymous name'))
-                }
-            }
+            return "Anonymous_" + vwf.moniker();
         }
         $(document).on('setstatecomplete', function() {
 

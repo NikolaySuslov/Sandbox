@@ -47,10 +47,12 @@ events:
 scripts:
 - |
       this.attached = function() {
+        if (this.id == 'character-vwf') return;
         //called when added to the scene, after initialize is called and parent is set.
         //this.parent.avatarCreated(this.PlayerNumber);
       }
       this.ready = function() {
+        if (this.id == 'character-vwf') return;
         var self = this;
         this.kd = function(e, d) {
           return self.keyDown(e, d)
@@ -154,6 +156,7 @@ scripts:
             if (o instanceof THREE.Line) return false;
             if (o instanceof THREE.SkinnedMesh) return false;
             if (o instanceof THREE.Bone) return false;
+            if (o.name == 'BoneSelectionHandle') return false;
             return !(o.isAvatar === true || o.passable === true)
           },
           maxDist: 2,
@@ -167,6 +170,7 @@ scripts:
 
       }
       this.increment = function(cycle, steps) {
+        if (this.id == 'character-vwf') return;
         cycle.current += cycle.speed * steps;
         if (cycle.current >= cycle.length && cycle.loop == true)
           cycle.current = 0;
@@ -182,7 +186,7 @@ scripts:
         this.cycleInit = true;
       }
       this.createNameTag = function(PlayerNumber) {
-
+        if (this.id == 'character-vwf') return;
         $(document.body).append('<div class="nametag" id="' + "Player_" + ToSafeID(PlayerNumber) + 'label' + '"><div class="nametagname ignoreMouseLeave">' + PlayerNumber + '</div></div>')
         var newdiv = $("#Player_" + ToSafeID(PlayerNumber) + 'label')[0];
         var self = this;
@@ -210,7 +214,7 @@ scripts:
 
       }
       this.placeNameTag = function(e, viewprojection, wh, ww) {
-
+        if (this.id == 'character-vwf') return;
         if (!this.ownerClientID)
           return;
 
@@ -366,7 +370,7 @@ scripts:
         }
       }
       this.satProperty = function(nodeID, prop, val) {
-
+        if (this.id == 'character-vwf') return;
         if (nodeID == this.standingOnID && prop == 'transform' && this.standingOnOffset) {
           this.standingUpdate();
         }
@@ -417,7 +421,7 @@ scripts:
       }
       this.update = function(moniker) {
 
-
+        if (this.id == 'character-vwf') return;
         if (!this.cycleInit)
           this.initCycles();
         this.updatecounter++;
@@ -434,7 +438,15 @@ scripts:
 
 
         var standing = this.standing;
-        if (this.activeCycle[this.activeCycle.length - 1]) {
+        var _cycles = this.activeCycle;
+        if(! _cycles)
+        {
+          debugger;
+          _cycles = this.activeCycle;
+        }
+        var _length = _cycles.length;
+        
+        if (_cycles[_length -1]) {
 
 
           var newframe = this.increment(this.cycles[this.activeCycle[this.activeCycle.length - 1]], updateFreqDivisor);
@@ -929,3 +941,4 @@ scripts:
         return false;
       }
     
+       //@ sourceURL=character.vwf.yaml

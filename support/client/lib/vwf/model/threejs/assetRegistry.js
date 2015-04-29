@@ -54,9 +54,11 @@ var assetRegistry = function() {
         this.assets[assetSource].pending = false;
         this.assets[assetSource].callbacks = [];
         this.assets[assetSource].failcallbacks = [];
+       
         //see if it was preloaded
         if (childType == 'subDriver/threejs/asset/vnd.raw-morphttarget' && _assetLoader.getMorphs(assetSource))
         {
+           
             this.assets[assetSource].loaded = true;
             this.assets[assetSource].pending = false;
             this.assets[assetSource].node = _assetLoader.getMorphs(assetSource).scene;
@@ -122,8 +124,10 @@ var assetRegistry = function() {
         }
 
         reg.pending = true;
-        reg.callbacks.push(success);
-        reg.failcallbacks.push(failure);
+        if(success)
+            reg.callbacks.push(success);
+        if(failure)
+            reg.failcallbacks.push(failure);
         var assetLoaded = function(asset)
         {
 
@@ -143,7 +147,7 @@ var assetRegistry = function() {
             reg.loaded = true;
             //actually, is this necessary? can we just store the raw loaded asset in the cache? 
             if (childType !== 'subDriver/threejs/asset/vnd.gltf+json' && childType !== 'subDriver/threejs/asset/vnd.raw-animation')
-                reg.node = asset.scene; //dont clone into the cache, since we clone on the way out
+                reg.node = asset.scene; 
             else
             {
                 glTFCloner.clone(asset.scene, asset.rawAnimationChannels, function(clone)
@@ -153,7 +157,7 @@ var assetRegistry = function() {
                 });
             }
             for (var i = 0; i < reg.callbacks.length; i++)
-                reg.callbacks[i](asset.scene, asset.rawAnimationChannels);
+                reg.callbacks[i](reg.node, reg.rawAnimationChannels);
             //nothing should be waiting on callbacks now.
             reg.callbacks = [];
             reg.failcallbacks = [];
@@ -239,7 +243,7 @@ var assetRegistry = function() {
                 //nexttask is supplied by async to trigger the next in the queue;
 
                 //note the timeout does not account for the fact that the load has not really started because of the queue
-                reg.loadStarted();
+                
 
                 THREE.glTFLoader.queue = new async.queue(function(task, nextTask)
                 {
@@ -249,13 +253,15 @@ var assetRegistry = function() {
                     //signature of callback dictated by loader
                     node.loader.load(node.source, function(geometry, materials)
                     {
-                        //ok, this model loaded, we can start the next load
-                        nextTask();
+                        
                         //do whatever it was (asset loaded) that this load was going to do when complete
                         cb(geometry, materials);
+                        //ok, this model loaded, we can start the next load
+                        nextTask();
                     }, animOnly);
                 }, 1);
             }
+            reg.loadStarted();
             //we need to queue up our entry to this module, since it cannot handle re-entry. This means that while it 
             //is an async function, it cannot be entered again before it completes
             THREE.glTFLoader.queue.push(
@@ -271,6 +277,7 @@ var assetRegistry = function() {
         //load as a normal gltf file TODO:add this to the preloader, since it should work normally
         if (childType == 'subDriver/threejs/asset/vnd.raw-morphttarget')
         {
+            
             reg.loadStarted();
             this.loader = new MorphRawJSONLoader();
             this.loader.load(assetSource, assetLoaded);
@@ -306,8 +313,10 @@ var assetRegistry = function() {
         {
             reg.refcount++;
             _ProgressBar.show();
-            reg.callbacks.push(success)
-            reg.failcallbacks.push(failure);
+            if(success)
+                reg.callbacks.push(success)
+            if(failure)
+                reg.failcallbacks.push(failure);
         }
     }
     this.cancel = function(assetSource, success, failure)

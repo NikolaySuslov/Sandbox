@@ -508,34 +508,9 @@ function runningInstance(id)
         };
         this.messageClients(joinMessage);
     }
-    this.GetNextAnonName = function()
+    this.GetNextAnonName = function(socket)
     {
-        var clients = this.clients;
-        var _int = 0;
-        if (!clients)
-            return "Anonymous" + _int;
-        while (true)
-        {
-            var test = "Anonymous" + _int;
-            var found = false;
-            _int++;
-            for (var i in clients)
-            {
-                if (clients[i].loginData.Username == test)
-                {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-            {
-                return test;
-            }
-            if (_int > 10000)
-            {
-                throw (new Error('error finding anonymous name'))
-            }
-        }
+        return "Anonymous_" + socket.id
     }
     this.resyncCounter = 0;
     this.totalerr = 0;
@@ -681,7 +656,7 @@ function ClientConnected(socket, namespace, instancedata)
         //count anonymous users, try to align with the value used for hte displayname of the avatar
         if (socket.loginData.UID == "Anonymous")
         {
-            var anonName = thisInstance.GetNextAnonName();
+            var anonName = thisInstance.GetNextAnonName(socket);
             socket.loginData.UID = anonName;
             socket.loginData.Username = anonName;
         }

@@ -41,6 +41,14 @@ var fills = {
     GUID: function()
     {
         window.GUID = function(){
+
+            //override randomness for testing. NEVER USE THIS
+            if(window.GUID.nextGUID)
+            {
+                var guid = window.GUID.nextGUID;
+                delete window.GUID.nextGUID;
+                return guid;
+            }
             var S4 = function() {
                 return Math.floor(Math.SecureRandom() * 0x10000 /* 65536 */ ).toString(16);
             };
@@ -543,18 +551,18 @@ var fills = {
 
                     if (performance.now() - lastError > 5000) {
                         if (xhr.status != 200) {
-                            if (window.alertify)
-                                alertify.error('Sorry, an error has occured, but could not be logged');
+                            if (console.error)
+                                console.error('Sorry, an error has occured, but could not be logged');
                         } else
-                        if (window.alertify)
-                            alertify.error('Sorry, an error has occured and was logged to the server.');
+                        if (console.error)
+                            console.error('Sorry, an error has occured and was logged to the server.');
                         lastError = performance.now();
                     }
                 },
                 error: function(e) {
                     if (performance.now() - lastError > 5000) {
-                        if (window.alertify)
-                            alertify.error('Sorry, an error has occured, but could not be logged');
+                        if (console.error)
+                            console.error('Sorry, an error has occured, but could not be logged');
                         lastError = performance.now();
                     }
                 },
