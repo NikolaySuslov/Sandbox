@@ -148,7 +148,7 @@ define(function() {
 		$(document.body).append("<div id='ScriptEditorDeleteProperty'>Are you sure you want to delete this property? This cannot be undone.</div>");
 		$(document.body).append("<div id='ScriptEditorDeleteEvent'>Are you sure you want to delete this script? This cannot be undone.</div>");
 		$(document.body).append("<div id='ScriptEditorMessage'>This script contains syntax errors, and cannot be saved;</div>");
-		$(document.body).append("<div id='ScriptEditor'  style='z-index:100'>" +
+		$(document.body).append("<div id='ScriptEditor'  style='z-index:99'>" +
 			"<div id='scripteditortitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' >" +
 			"<span id='scripteditortitletext' class='ui-dialog-title' id='ui-dialog-title-Players'>ScriptEditor</span></div>" +
 			'<div id="ScriptEditorTabs" style="width:100%;height:100%;overflow:hidden;padding: 0px 10px 0px 0px;">' +
@@ -213,8 +213,12 @@ define(function() {
 				var scripteditorheight = $('#ScriptEditor').offset().top;
 				if (scripteditorheight != 0) scripteditorheight = $(window).height() - scripteditorheight;
 				$('#index-vwf').css('height', window.innerHeight - getHeight('smoothmenu1') - getHeight('statusbar') - getHeight('toolbar') - (scripteditorheight - 25) + 'px');
-				_Editor.findcamera().aspect = (parseInt($('#index-vwf').css('width')) / parseInt($('#index-vwf').css('height')));
-				_Editor.findcamera().updateProjectionMatrix();
+				//_Editor.findcamera().aspect = (parseInt($('#index-vwf').css('width')) / parseInt($('#index-vwf').css('height')));
+				//_Editor.findcamera().updateProjectionMatrix();
+				var resolutionScale = _SettingsManager.getKey('resolutionScale');
+						$('#index-vwf')[0].height = parseInt($('#index-vwf').css('height')) / resolutionScale;
+						$('#index-vwf')[0].width = $(window).width() / resolutionScale;
+						_dRenderer.setSize(parseInt($('#index-vwf').css('width')) / resolutionScale, parseInt($('#index-vwf').css('height')) / resolutionScale, false);
 			}
 			_ScriptEditor.resize();
 		});
@@ -804,6 +808,29 @@ define(function() {
 				$('#MenuScriptEditoricon').addClass('iconselected');
 			}
 		}
+		this.isOpen = function ()
+		{
+			//$("#materialeditor").dialog( "isOpen" )
+			return $('#materialeditor').is(':visible');
+		}
+		this.disable = function()
+        {
+            if(this.isDisabled()) return;
+            $("#ScriptEditor").append("<div id='ScriptEditorDisable' class='editorPanelDisableOverlay'></div>")
+            $('#ScriptEditor').addClass('editorPanelDisable');
+            $("#ScriptEditor").find('*').addClass('editorPanelDisable');
+        }
+        this.isDisabled = function()
+        {
+            return $("#ScriptEditorDisable").length === 1;
+        }
+        this.enable = function()
+        {
+            if(!this.isDisabled()) return;
+            $("#ScriptEditorDisable").remove();
+            $('#ScriptEditor').removeClass('editorPanelDisable');
+            $("#ScriptEditor").find('*').removeClass('editorPanelDisable');
+        }
 		this.hide = function() {
 			if (this.isOpen()) {
 				$('#ScriptEditor').animate({
@@ -1306,15 +1333,17 @@ define(function() {
 			if (!node) {
 
 				if (this.isOpen()) {
-					this.hide();
+					//this.hide();
+					this.disable();
 					this.currentNode = null;
 				}
 
 			}
 			if (node && node.id == 'index-vwf') {
-				if (this.isOpen()) this.hide();
+				if (this.isOpen()) this.disable();
 			}
 			if (node && this.isOpen()) {
+				this.enable();
 				if (!this.currentNode || (this.currentNode.id != node.id)) {
 					this.currentNode = node;
 
@@ -1323,7 +1352,7 @@ define(function() {
 					this.BuildGUI(true);
 				}
 			} else {
-				if (this.isOpen()) this.hide();
+				if (this.isOpen()) this.disable();
 			}
 		}
 		this.SelectionChanged = function(e, node) {
@@ -1332,7 +1361,7 @@ define(function() {
 				return;
 			}
 			try {
-				if ((self.MethodChanged || self.EventChanged) && ((node && self.currentNode && node.id != self.currentNode.id) || (!node && self.currentNode))) {
+				if ((self.MethodChanged || self.EventChanged || self.PropertyChanged) && ((node && self.currentNode && node.id != self.currentNode.id) || (!node && self.currentNode))) {
 					$('#ScriptEditorAbandonChanges').text('You have selected a new object, but you have unsaved changes on this script. Do you want to abandon these changes? If you choose not to, your changes will remain in the editor, but the script editor will show properties for the previoiusly selected node, not the newly selected one.');
 					self.PromptAbandon(function() {
 						self.changeSelection(node)

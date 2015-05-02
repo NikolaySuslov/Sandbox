@@ -13,8 +13,8 @@ define(function() {
 
 	function initialize() {
 		var self = this;
-		$('#sidepanel').append("<div id='hierarchyManager' class='ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active' style='padding-bottom:5px;overflow:hidden;height:auto'></div>");
-		$('#hierarchyManager').append("<div id='hierarchyManagertitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span id='hierarchyManagertitletext' class='ui-dialog-title' id='ui-dialog-title-Players'>Hierarchy</span></div>");
+		$('#sidepanel').append("<div id='hierarchyManager' class='ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active' style='border-radius: 10px;overflow:hidden;height:auto'></div>");
+		$('#hierarchyManager').append("<div id='hierarchyManagertitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span id='hierarchyManagertitletext' class='ui-dialog-title' id='ui-dialog-title-Players'>Hierarchy</span></div>");
 		//$('#hierarchyManager').append("<span>Filter: </span><input type='text' id='HeirarchyFilter' class=''></input>");
 		$('#hierarchyManager').append("<div id='hierarchyDisplay' style=''></div>");
 		$('#hierarchyManager').append("<div id='hierarchyManagerMakeNode'></div>");
@@ -38,13 +38,11 @@ define(function() {
 			label: 'Select'
 		});
 		$('#hierarchyManagerSelect').hide();
-		$('#hierarchyManagertitle').append('<a id="hierarchyclose" href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" style="display: inline-block;float: right;"><span class="ui-icon ui-icon-closethick">close</span></a>');
+		
 		$('#hierarchyManagertitle').prepend('<div class="headericon hierarchy" />');
 		$('#hierarchyManager').css('border-bottom', '5px solid #444444')
 		$('#hierarchyManager').css('border-left', '2px solid #444444')
-		$('#hierarchyclose').click(function() {
-			HierarchyManager.hide()
-		});
+		
 		$('#hierarchyManagerMakeNode').click(function() {
 			HierarchyManager.makeVWFNode()
 		});
@@ -62,12 +60,21 @@ define(function() {
 			_UndoManager.recordCreate(parent, name, proto, uri);
 			vwf_view.kernel.createChild(parent, name, proto, uri, callback);
 		}
+		$('#hierarchyManagertitle').click(function()
+        {
+            
+            if(self.isOpen())
+                self.hide()
+            else
+                self.show();
+        })
 		this.show = function() {
 			//$('#hierarchyManager').dialog('open');
-			$('#hierarchyManager').prependTo($('#hierarchyManager').parent());
-			$('#hierarchyManager').show('blind', function() {
+			
+			$('#hierarchyDisplay').show('blind', function() {
 				if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
 			});
+			$('#hierarchyManagertitle').addClass('sidetab-editor-title-active')
 			//$('#hierarchyManager').dialog('option','position',[1282,40]);
 			if (!this.selectedID)
 				this.selectedID = 'index-vwf';
@@ -80,9 +87,10 @@ define(function() {
 			//$('#hierarchyManager').dialog('close');
 
 			if (this.isOpen()) {
+				$('#hierarchyManagertitle').removeClass('sidetab-editor-title-active')
 				if(window._RenderManager)
 					_RenderManager.removeHilightObject(HierarchyManager.previewNode);
-				$('#hierarchyManager').hide('blind', function() {
+				$('#hierarchyDisplay').hide('blind', function() {
 					if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
 					if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible')) hideSidePanel();
 				});
@@ -91,7 +99,7 @@ define(function() {
 		}
 		this.isOpen = function() {
 			//return $("#hierarchyManager").dialog( "isOpen" );
-			return $('#hierarchyManager').is(':visible');
+			return $('#hierarchyDisplay').is(':visible');
 		}
 		this.offClicked = function() {
 			$('#InventoryRename').hide();
@@ -322,7 +330,7 @@ define(function() {
 
 			$('#hierarchyManagerMakeNode').hide();
 			_RenderManager.removeHilightObject(HierarchyManager.previewNode);
-			$('#hierarchyManagertitletext').text((vwf.getProperty(this.selectedID, 'DisplayName') || "") + ' Hierarchy');
+			
 			$('#hierarchyDisplay').empty();
 			$('#InventoryRename').hide();
 			$('#InventoryRename').keypress(HierarchyManager.rename)

@@ -123,22 +123,21 @@ define({
         createSeperator();
         createIcon('pick', 'MenuSelectPick', 'Select by clicking');
         createIcon('selectnone', 'MenuSelectNone', 'Select None');
+        createIcon('up', 'MenuSelectParent', 'Select Parent');
+        createIcon('target', 'MenuFocusSelected', 'Focus to selected object');
         createSeperator();
         createIcon('copy', 'MenuCopy', 'Copy');
         createIcon('paste', 'MenuPaste', 'Paste');
         createIcon('duplicate', 'MenuDuplicate', 'Duplicate');
-        createIcon('save', 'MenuSaveCopy', 'Save to Inventory');
         createIcon('delete', 'MenuDelete', 'Delete');
         createSeperator();
         createIcon('link', 'MenuSetParent', 'Link');
         createIcon('unlink', 'MenuRemoveParent', 'Unlink');
-        createIcon('up', 'MenuSelectParent', 'Select Parent');
         createSeperator();
         createIcon('camera', 'MenuCameraOrbit', 'Orbit Camera');
         createIcon('firstperson', 'MenuCamera3RDPerson', 'First Person Camera');
         createIcon('navigate', 'MenuCameraNavigate', 'Navigation Camera');
         createIcon('free', 'MenuCameraFree', 'Free Camera');
-        createIcon('target', 'MenuFocusSelected', 'Focus to selected object');
         createSeperator();
         createIcon('sphere', 'MenuCreateSphere', 'Create Sphere');
         createIcon('cube', 'MenuCreateBox', 'Create Box');
@@ -146,15 +145,13 @@ define({
         createIcon('cone', 'MenuCreateCone', 'Create Cone');
         createIcon('plane', 'MenuCreatePlane', 'Create Plane');
         createSeperator();
-        createIcon('users', 'MenuUsers', 'Show Users Window');
+        
         createIcon('chat', 'MenuChat', 'Show Chat Window');
-        createIcon('material', 'MenuMaterialEditor', 'Show Material Editor Window');
+       
         createIcon('script', 'MenuScriptEditor', 'Show Script Editor Window');
-        createIcon('properties', 'MenuObjectProperties', 'Show Object Properties Window');
+       
         createIcon('models', 'MenuModels', 'Show Model Library Window');
-        createIcon('inventory', 'MenuInventory', 'Show Inventory Window');
-        createIcon('hierarchy', 'MenuHierarchyManager', 'Show Hierarchy Window');
-        createIcon('physics', 'MenuPhysicsEditor', 'Show Hierarchy Window');
+        
         $('#MenuCameraOrbiticon').addClass('iconselected');
         $('#MenuMoveicon').addClass('iconselected');
         $('#MenuWorldicon').addClass('iconselected');

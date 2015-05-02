@@ -65,7 +65,7 @@
                 {
                     //if it's a prim, this.build will be true. Prims must be able to reset the material, and won't pass this check
                     if (propname == 'materialDef' && propval)
-                        if (!Object.deepEquals(propval, this.materialDef) || this.Build)
+                        if (!Object.deepEquals(propval, this.materialDef_) || this.Build)
                         {
                             console.log("materialDef on " + this.ID, propval )
                             propval = JSON.parse(JSON.stringify(propval));
@@ -75,7 +75,7 @@
                                 needRebuild = true;
                             }
                             //the copy here is necesary because we tack some properties onto this should not be send back when requesting the value
-                            this.materialDef = JSON.parse(JSON.stringify(propval));
+                            this.materialDef_ = JSON.parse(JSON.stringify(propval));
                             var list = [];
                             for (var i = 0; i < this.getRoot().children.length; i++)
                             {

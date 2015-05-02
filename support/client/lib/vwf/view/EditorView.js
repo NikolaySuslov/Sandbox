@@ -14,7 +14,7 @@ jQuery.extend({
 });
 
 
-define(["module", "version", "vwf/view", "vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify", "vwf/view/editorview/Menubar", "vwf/view/editorview/ObjectPools", "vwf/view/editorview/LocationTools", "vwf/view/editorview/WindowResize", "vwf/view/editorview/_PermissionsManager", "vwf/view/editorview/InputSetup", "vwf/view/editorview/SaveLoadTimer", "vwf/view/editorview/TouchHandler", "vwf/view/editorview/SidePanel", "vwf/view/editorview/Toolbar", "vwf/view/editorview/ChatSystemGUI", "vwf/view/editorview/PrimitiveEditor", "vwf/view/editorview/MaterialEditor", "vwf/view/editorview/Notifier", "vwf/view/editorview/ScriptEditor", "vwf/view/editorview/Editor", "vwf/view/editorview/_3DRIntegration", "vwf/view/editorview/InventoryManager", "vwf/view/editorview/HeirarchyManager", "vwf/view/editorview/DataManager", "vwf/view/editorview/UserManager", "vwf/view/editorview/help", "vwf/view/editorview/SideTabs", "vwf/view/editorview/wireeditor", "vwf/view/editorview/selectionEditor", "vwf/view/editorview/UndoManager", "vwf/view/editorview/Publisher", "vwf/view/editorview/EntityLibrary", "vwf/view/editorview/PhysicsEditor","vwf/view/editorview/PerformanceManager","vwf/view/editorview/JSONPrompt","touch.js","vwf/view/localization/translate"], function(module, version, view) {
+define(["module", "version", "vwf/view", "vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify", "vwf/view/editorview/Menubar", "vwf/view/editorview/ObjectPools", "vwf/view/editorview/LocationTools", "vwf/view/editorview/WindowResize", "vwf/view/editorview/_PermissionsManager", "vwf/view/editorview/InputSetup", "vwf/view/editorview/SaveLoadTimer", "vwf/view/editorview/TouchHandler", "vwf/view/editorview/SidePanel", "vwf/view/editorview/Toolbar", "vwf/view/editorview/ChatSystemGUI", "vwf/view/editorview/PrimitiveEditor", "vwf/view/editorview/MaterialEditor", "vwf/view/editorview/Notifier", "vwf/view/editorview/ScriptEditor", "vwf/view/editorview/Editor", "vwf/view/editorview/_3DRIntegration", "vwf/view/editorview/InventoryManager", "vwf/view/editorview/HeirarchyManager", "vwf/view/editorview/DataManager", "vwf/view/editorview/UserManager", "vwf/view/editorview/help", "vwf/view/editorview/SideTabs", "vwf/view/editorview/wireeditor", "vwf/view/editorview/selectionEditor", "vwf/view/editorview/UndoManager", "vwf/view/editorview/Publisher", "vwf/view/editorview/EntityLibrary", "vwf/view/editorview/PhysicsEditor","vwf/view/editorview/PerformanceManager","vwf/view/editorview/JSONPrompt","touch.js","vwf/view/editorview/panelEditor", "vwf/view/localization/translate"], function(module, version, view) {
 
     return view.load(module, {
         // == Module Definition ====================================================================
@@ -60,17 +60,21 @@ define(["module", "version", "vwf/view", "vwf/view/editorview/lib/alertify.js-0.
                     //initialize the primitive editor
 
                     //initialize the primitive editor
+
+                    window.HierarchyManager = require("vwf/view/editorview/HeirarchyManager").getSingleton();;
                     window._PrimitiveEditor = require("vwf/view/editorview/PrimitiveEditor").getSingleton();
+                    
+                    window._MaterialEditor = require("vwf/view/editorview/MaterialEditor").getSingleton();
                     window._PhysicsEditor = require("vwf/view/editorview/PhysicsEditor").getSingleton();
                     //initialize the Material editor
-                    window._MaterialEditor = require("vwf/view/editorview/MaterialEditor").getSingleton();
+                    
                     window._MaterialEditor.hide();
                     window._Notifier = require("vwf/view/editorview/Notifier").getSingleton();
                     window._ScriptEditor = require("vwf/view/editorview/ScriptEditor").getSingleton();;
                     window._ModelLibrary = require("vwf/view/editorview/_3DRIntegration").getSingleton();
                     window._Publisher = require("vwf/view/editorview/Publisher").getSingleton();
                     window._InventoryManager = require("vwf/view/editorview/InventoryManager").getSingleton();;
-                    window.HierarchyManager = require("vwf/view/editorview/HeirarchyManager").getSingleton();;
+                   
                     window._PermissionsManager = require("vwf/view/editorview/_PermissionsManager").getSingleton();
                     window._WireEditor = require("vwf/view/editorview/wireeditor").getSingleton();
                     window._SelectionEditor = require("vwf/view/editorview/selectionEditor").getSingleton();

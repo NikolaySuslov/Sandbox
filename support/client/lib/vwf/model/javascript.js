@@ -806,7 +806,16 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
         setWatchableValue: function(id, propertyName, value, dotNotation) {
             //when we set the value of a watchable, we need to update the cache. 
             // this is all moved into setproperty anyway, no?
-            var masterid = dotNotation.substring(0, (dotNotation.indexOf('.') + 1 || dotNotation.indexOf('[') + 1) - 1)
+            
+            
+            var masteriddot = dotNotation.substring(0, dotNotation.indexOf('.'))
+            var masteridbrac = dotNotation.substring(0, dotNotation.indexOf('['))
+            var masterid = masteriddot;
+            if(masterid.length ==0  || masteridbrac.length < masteriddot.length && masteridbrac.length > 0)
+                masterid = masteridbrac;
+
+          
+            
             masterid = masterid || dotNotation;
             if (this.__WatchableCache[masterid]) {
 

@@ -8,6 +8,9 @@ define({
 		$('#vwf-root').click(function(e){_Editor.click(e)});
 		$('#index-vwf').mouseleave(function(e){_Editor.mouseleave(e)});
 		$('#vwf-root').mousemove(function(e){_Editor.mousemove(e)});
+
+		$('#index-vwf').on('dblclick',function(e){_Editor.dblclick(e)});
+
 		$('#index-vwf').attr('tabindex',0);
 		$('#index-vwf').on('touchstart',function(e){
 			e.preventDefault();

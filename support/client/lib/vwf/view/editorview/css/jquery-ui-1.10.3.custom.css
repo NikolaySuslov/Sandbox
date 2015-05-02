@@ -185,6 +185,8 @@
     padding:.5em .5em .5em .7em;
     min-height:0;
     font-size:100%
+;
+    border-radius: 2px;
 }
 
 .ui-accordion .ui-accordion-icons {
@@ -974,13 +976,12 @@ background: #3a8fff url("images/ui-bg_glass_20_3a8fff_1x400.png") 50% 50% repeat
 
 .ui-state-active,.ui-widget-content .ui-state-active,.ui-widget-header .ui-state-active {
     border:1px solid #26b3f7;
-    background:#3a8fff url(images/ui-bg_glass_20_3a8fff_1x400.png) 50% 50% repeat-x;
+    background: #AEAEAE url(images/ui-bg_glass_80_888888_1x400.png) 50% 50% repeat-x;
     font-weight:700;
-    color:#fff
-}
+    color: #000000;}
 
 .ui-state-active a,.ui-state-active a:link,.ui-state-active a:visited {
-    color:#fff;
+    color: #000;
     text-decoration:none
 }
 
@@ -1762,20 +1763,16 @@ background: #3a8fff url("images/ui-bg_glass_20_3a8fff_1x400.png") 50% 50% repeat
 }
 
 .ui-corner-all,.ui-corner-top,.ui-corner-left,.ui-corner-tl {
-    border-top-left-radius:10px
-}
+    border-top-left-radius: 2px;}
 
 .ui-corner-all,.ui-corner-top,.ui-corner-right,.ui-corner-tr {
-    border-top-right-radius:10px
-}
+    border-top-right-radius: 2px;}
 
 .ui-corner-all,.ui-corner-bottom,.ui-corner-left,.ui-corner-bl {
-    border-bottom-left-radius:10px
-}
+    border-bottom-left-radius: 2px;}
 
 .ui-corner-all,.ui-corner-bottom,.ui-corner-right,.ui-corner-br {
-    border-bottom-right-radius:10px
-}
+    border-bottom-right-radius: 2px;}
 
 .ui-widget-overlay {
     background:#82B8FF url(images/ui-bg_flat_50_82B8FF_40x100.png) 50% 50% repeat-x;

@@ -41,7 +41,8 @@
 
             //since the phantom does not pause the queue, this should reset the materialDef on the object
             var md = this.materialDef;
-            this.materialDef = null
+            this.materialDef = null;
+            this.materialDef_ = null;
             vwf.setProperty(childID, 'materialDef', md);
             this.settingProperty('animationFrame', 0);
             //if any callbacks were waiting on the asset, call those callbacks

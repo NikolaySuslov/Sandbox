@@ -127,7 +127,9 @@ function getState(id,cb)
 }
 function getAssets(request,response,URL)
 {
-	var id = request.query.SID;
+	var id = URL.query.SID;
+	
+
 	getState(id,function(assets)
 	{
 		ServeJSON(assets,response,URL);

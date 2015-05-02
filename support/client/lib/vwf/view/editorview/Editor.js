@@ -479,7 +479,20 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             return sceneroot;
 
         }
+        this.dblclick_Gizmo = function(e)
+        {
+            this.mouseup(e);
+            _PrimitiveEditor.show();
+        }
         this.mouseup_Gizmo = function(e) {
+            
+            //tracking for double click
+            if(performance.now() - this.mouseUpTime  < 300)
+            {
+                this.mouseUpTime = 0;
+                this.dblclick_Gizmo(e)
+                return;
+            }
             if (e.button == 2 && !MouseMoved && document.AxisSelected == -1) {
 
                 self.ShowContextMenu(e);
@@ -494,7 +507,11 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 return false;
             }
 
+
             this.MouseLeftDown = false;
+
+            this.mouseUpTime = performance.now();
+           
 
             this.mouseUpScreenPoint = [e.clientX, e.clientY];
 
@@ -3752,6 +3769,11 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             if (vwf.getProperty(vwf.application(), 'playMode') == 'play') return;
             if (this.activeTool && this.activeTool.click) this.activeTool.click(e);
         }
+        this.dblclick = function(e) {
+            if (!toolsOpen()) return;
+            if (vwf.getProperty(vwf.application(), 'playMode') == 'play') return;
+            if (this.activeTool && this.activeTool.dblclick) this.activeTool.dblclick(e);
+        }
         this.mousemove = function(e) {
             if (!toolsOpen()) return;
             if (vwf.getProperty(vwf.application(), 'playMode') == 'play') return;
@@ -3806,6 +3828,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             mousemove: this.mousemove_Gizmo,
             click: null,
             mousewheel: null,
+            dblclick:this.dblclick_Gizmo,
             keydown: this.keydown_Gizmo,
             keyup: this.keyup_Gizmo
         });

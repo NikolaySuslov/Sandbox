@@ -48,16 +48,19 @@ define(function() {
                 if (!$('#sidepanel').children().is(':visible')) hideSidePanel();
             });
         });
-        $('#sidepanel').append('<div id="Players"  class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="width: 100%;margin:0px;padding:0px">' + "<div id='playerstitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Players</span></div>" + '	 <div id="PlayerList"></div>' + '</div>');
-        $('#playerstitle').append('<a id="playersclose" href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" style="display: inline-block;float: right;"><span class="ui-icon ui-icon-closethick">close</span></a>');
-        $('#playersclose').click(function() {
-            $('#Players').hide('blind', function() {
-                $('#MenuUsersicon').removeClass('iconselected');
-                if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-                if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible')) hideSidePanel();
-            });
-        });
+        $('#sidepanel').append('<div id="Players"  class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="border-radius: 10px;width: 100%;margin:0px;padding:0px">' + "<div id='playerstitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Players</span></div>" + '	 <div id="PlayerList"></div>' + '</div>');
+        
+        ;
         $('#playerstitle').prepend('<div class="headericon users"  />');
+
+        $('#playerstitle').click(function() {
+
+                if ($('#PlayerList').is(':visible'))
+                    _UserManager.hidePlayers();
+                else
+                    _UserManager.showPlayers();
+            })
+
         $('#Players').css('border-bottom', '5px solid #444444')
         $('#Players').css('border-left', '2px solid #444444')
         $(document.body).append('<div id="CreateProfileDialog"/>');
@@ -601,16 +604,16 @@ define(function() {
         //note:: this depends on avatar creation. Remove that
         this.PlayerCreated = function(e, id) {
             //refresh the list if a player joins while it is open
-            if ($('#Players').is(':visible'))
+            if ($('#PlayerList').is(':visible'))
                 this.showPlayers();
         }
         this.firedEvent = function(id, event, params) {
             if (id == vwf.application() && event == 'clientConnected') {
-                if ($('#Players').is(':visible'))
+                if ($('#PlayerList').is(':visible'))
                     this.showPlayers();
             }
             if (id == vwf.application() && event == 'clientDisconnected') {
-                if ($('#Players').is(':visible'))
+                if ($('#PlayerList').is(':visible'))
                     this.showPlayers();
             }
         }
@@ -682,10 +685,20 @@ define(function() {
                     $("#" + e + "label .glyphicon-share").css('color','')
             }
         }
+        this.hidePlayers = function()
+        {
+            $('#playerstitle').removeClass('sidetab-editor-title-active')
+            $('#PlayerList').hide('blind', function() {
+                $('#MenuUsersicon').removeClass('iconselected');
+                if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
+                if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible')) hideSidePanel();
+            });
+        }
+        this.hidePlayers();
         this.showPlayers = function() {
-            $('#Players').prependTo($('#Players').parent());
-            $('#Players').show('blind', function() {});
-
+           // $('#Players').prependTo($('#Players').parent());
+            $('#PlayerList').show('blind', function() {});
+            $('#playerstitle').addClass('sidetab-editor-title-active')
             $("#PlayerList").empty();
             var clients = vwf.getProperty(vwf.application(), 'clients');
             
@@ -752,6 +765,6 @@ define(function() {
             showSidePanel();
         }
         $('#UserProfileWindow').hide();
-        $('#Players').hide();
+        
     }
 });

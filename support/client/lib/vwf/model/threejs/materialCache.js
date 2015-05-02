@@ -89,6 +89,7 @@ function MaterialCache() {
             	for(var j = 0; j < maxIndex +1; j++)
             		if(!newmat.materials[j])
             			newmat.materials[j] = newmat.materials[0];
+                mesh.geometry.groupsNeedUpdate = true
             }
             mesh.material = newmat;
             

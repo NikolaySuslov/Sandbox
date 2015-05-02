@@ -16,14 +16,14 @@ define(function ()
 
 	function initialize()
 	{
-		$('#sidepanel').append("<div id='InventoryManager' class='SidePanelWindowBottomBorder ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active' style='padding-bottom:5px;overflow:hidden;height:auto'></div>");
+		$('#sidepanel').append("<div id='InventoryManager' class='SidePanelWindowBottomBorder ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active' style='border-radius: 10px;overflow:hidden;height:auto'></div>");
 		
 		
 		
 		$(document.body).append("<div id='InventoryViewer' style='overflow:hidden'><div id='InventoryView' style='width: 100%;height: 100%;margin: -5px -5px 5px -10px;'/></div>");
-		$('#InventoryManager').append("<div id='inventorymanagertitle' style = '' class='ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix SidePanelWindowTitle' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Inventory</span></div>");
-		
-		$('#InventoryManager').append("<div id='InventoryControls' class=''></div>");
+		$('#InventoryManager').append("<div id='inventorymanagertitle' style='padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix SidePanelWindowTitle' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Inventory</span></div>");
+		$('#InventoryManager').append("<div id='InventoryPane' class=''></div>");
+		$('#InventoryPane').append("<div id='InventoryControls' class=''></div>");
 		$('#InventoryControls').append("<div id='InventoryTypeChoice' class=''></div>");
 		$('#InventoryTypeChoice').append("<input type='radio' id='InventoryTypeChoicePersonal' name='InventoryTypeChoice' class='' checked='checked'></input><label for='InventoryTypeChoicePersonal'>Personal</label>");
 		$('#InventoryTypeChoice').append("<input type='radio' id='InventoryTypeChoiceGlobal' name='InventoryTypeChoice' class=''></input><label for='InventoryTypeChoiceGlobal'>Global</label>");
@@ -47,12 +47,12 @@ define(function ()
 		
 		});
 		
-		$('#InventoryManager').append("<div id='InventoryDisplay' class='InventoryPanel'></div>");
-		$('#InventoryManager').append("<div id='InventoryManagerCreate'></div>");
-		$('#InventoryManager').append("<div id='InventoryManagerDelete'></div>");
-		$('#InventoryManager').append("<div id='InventoryManagerView'></div>");
-		$('#InventoryManager').append("<div id='InventoryManagerRename'></div>");
-		$('#InventoryManager').append("<div id='InventoryManagerMessage'></div>");
+		$('#InventoryPane').append("<div id='InventoryDisplay' class='InventoryPanel'></div>");
+		$('#InventoryPane').append("<div id='InventoryManagerCreate'></div>");
+		$('#InventoryPane').append("<div id='InventoryManagerDelete'></div>");
+		$('#InventoryPane').append("<div id='InventoryManagerView'></div>");
+		$('#InventoryPane').append("<div id='InventoryManagerRename'></div>");
+		$('#InventoryPane').append("<div id='InventoryManagerMessage'></div>");
 		$('#InventoryManagerCreate').button(
 		{
 			label: 'Create'
@@ -69,12 +69,9 @@ define(function ()
 		{
 			label: 'Rename'
 		});
-		$('#inventorymanagertitle').append('<a id="inventoryclose" href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" style="display: inline-block;float: right;"><span class="ui-icon ui-icon-closethick">close</span></a>');
+		
 		$('#inventorymanagertitle').prepend('<div class="headericon inventory"  />');
-		$('#inventoryclose').click(function ()
-		{
-			_InventoryManager.hide()
-		});
+		
 		this.renameSelectedItem = function ()
 		{
 			if(!this.inventory || !this.inventory[this.selectedName])
@@ -227,8 +224,8 @@ define(function ()
 					
 					if(!_InventoryManager.isOpen())
 					{
-						$('#InventoryManager').prependTo($('#InventoryManager').parent());
-						$('#InventoryManager').show('blind', function ()
+						//$('#InventoryManager').prependTo($('#InventoryManager').parent());
+						$('#InventoryPane').show('blind', function ()
 						{
 							if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
 						});
@@ -397,6 +394,14 @@ define(function ()
 				}
 			});
 		}
+		$('#inventorymanagertitle').click(function()
+        {
+            
+            if(_InventoryManager.isOpen())
+                _InventoryManager.hide()
+            else
+                _InventoryManager.show();
+        })
 		this.show = function ()
 		{
 			if(!_UserManager.GetCurrentUserName())
@@ -404,12 +409,12 @@ define(function ()
 				alertify.alert('You must be logged in to view your inventory.');
 				return;
 			}
+			$('#inventorymanagertitle').addClass('sidetab-editor-title-active');
 			this.getInventory(function(inventory)
 			{		
 				$('#MenuInventoryicon').addClass('iconselected');
-				//$('#InventoryManager').dialog('open');
-				$('#InventoryManager').prependTo($('#InventoryManager').parent());
-				$('#InventoryManager').show('blind', function ()
+				
+				$('#InventoryPane').show('blind', function ()
 				{
 					if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
 				});
@@ -460,17 +465,18 @@ define(function ()
 		this.hide = function ()
 		{
 			//$('#InventoryManager').dialog('close');
-			$('#InventoryManager').hide('blind', function ()
+			$('#InventoryPane').hide('blind', function ()
 			{
 				if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
 				if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible')) hideSidePanel();
 			});
 			$('#MenuInventoryicon').removeClass('iconselected');
+			$('#inventorymanagertitle').removeClass('sidetab-editor-title-active');
 		}
 		this.isOpen = function ()
 		{
 			//return $("#InventoryManager").dialog( "isOpen" );
-			return $('#InventoryManager').is(':visible');
+			return $('#InventoryPane').is(':visible');
 		}
 		this.renameInventoryItem = function(id,val,cb)
 		{

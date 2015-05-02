@@ -27,13 +27,7 @@ define({
         }
 
         function createPanelShowHide() {
-            var iconname = "togglesidepanelicon";
-            $('#toolbar').append('<div id="togglesidepanelicon" class="icon left" />');
-            $('#togglesidepanelicon').css('float', 'right');
-            $('#' + iconname).click(function() {
-                if ($('#sidepanel').offset().left < $(window).width()) hideSidePanel();
-                else showSidePanel();
-            });
+          
         }
 
         function hideSidePanel() {

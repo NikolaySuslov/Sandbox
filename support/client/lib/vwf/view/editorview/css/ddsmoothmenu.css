@@ -1,6 +1,6 @@
 .ddsmoothmenu{
 font: 12px 'Open Sans';
-background: #666666; /*background of menu bar (default state)*/
+background: #222222; /*background of menu bar (default state)*/
 width: 100%;
 
 }
@@ -17,15 +17,16 @@ list-style-type: none;
 position: relative;
 display: inline;
 float: left;
+/* font-size: 1.1em; */
 }
 
 /*Top level menu link items style*/
 .ddsmoothmenu ul li a{
 display: block;
-background: #666666; /*background of menu items (default state)*/
+background: #252525; /*background of menu items (default state)*/
 color: white;
 padding: 8px 10px;
-border-right: 1px solid #778;
+/* border-right: 1px solid #778; */
 cursor:pointer;
 text-decoration: none;
 padding-bottom: 3px;
@@ -75,7 +76,7 @@ top: 0;
 .ddsmoothmenu ul li ul li a{
 font: normal 13px 'Open Sans';
 width: 160px; /*width of sub menus*/
-padding: 5px 5px 2px 9px;
+padding: 5px 6px 2px 9px;
 margin: 0;
 border-top-width: 0;
 border-bottom: 1px solid gray;

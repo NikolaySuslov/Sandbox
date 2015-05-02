@@ -174,6 +174,8 @@ var defaultPrimMaterial = new THREE.MeshPhongMaterial();
             this.rootnode.add(mesh);
 
             this.mesh.updateMatrixWorld();
+            if(mat instanceof THREE.MeshFaceMaterial)
+                this.mesh.geometry.groupsNeedUpdate = true;
             var cast = this.gettingProperty('castShadows');
             var rec = this.gettingProperty('receiveShadows');
 
