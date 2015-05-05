@@ -4,8 +4,18 @@ define(["vwf/view/editorview/mapbrowser", "vwf/view/editorview/colorpicker.js"],
     return {
         getSingleton: function() {
             if (!isInitialized) {
-                initialize.call(MaterialEditor);
-                isInitialized = true;
+              
+				var baseclass = require("vwf/view/editorview/panelEditor");
+				//var base = new baseclass('hierarchyManager','Hierarchy','hierarchy',false,true,'#sidepanel')
+				//base.init();
+				//$.extend(HierarchyManager,base);
+				baseclass(MaterialEditor,'MaterialEditor','Material','material',true,true,'#sidepanel')
+				
+				MaterialEditor.init()
+				initialize.call(MaterialEditor);
+				MaterialEditor.bind()
+				isInitialized = true;
+
             }
             return MaterialEditor;
         }
@@ -13,73 +23,18 @@ define(["vwf/view/editorview/mapbrowser", "vwf/view/editorview/colorpicker.js"],
 
     function initialize() {
         window._MapBrowser = require("vwf/view/editorview/mapbrowser").getSingleton();
-        $('#sidepanel').append("<div id='materialeditor'>" + "<div id='materialeditortitle' class='ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' >Material</div>" + "</div>");
+        //$('#sidepanel').append("<div id='materialeditor'>" + "<div id='materialeditortitle' class='ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' >Material</div>" + "</div>");
         //$('#materialeditor').dialog({title:'Material Editor',autoOpen:false});
-        $("#materialeditor").empty();
-        $("#materialeditor").append("<div id='materialeditortitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Material</span></div>");
+        //$("#"+this.contentID).empty();
+        //$("#"+this.contentID).append("<div id='materialeditortitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Material</span></div>");
 
-        $('#materialeditortitle').prepend('<div class="headericon material" />');
-        $("#materialeditor").append('<div id="materialaccordion" style="height:100%;overflow:hidden">' + '	<h3>' + '		<a href="#">Material Base</a>' + '	</h3>' + '	<div id="MaterialBasicSettings">' + '	</div>' + '</div>');
+       // $('#materialeditortitle').prepend('<div class="headericon material" />');
+        $("#"+this.contentID).append('<div id="materialaccordion" style="height:100%;overflow:hidden">' + '	<h3>' + '		<a href="#">Material Base</a>' + '	</h3>' + '	<div id="MaterialBasicSettings">' + '	</div>' + '</div>');
 
-        $('#materialeditor').css('border-bottom', '5px solid #444444')
-        $('#materialeditor').css('border-left', '2px solid #444444')
+        //$('#materialeditor').css('border-bottom', '5px solid #444444')
+       // $('#materialeditor').css('border-left', '2px solid #444444')
 
 
-        $('#materialeditortitle').click(function() {
-
-            if (_MaterialEditor.isOpen())
-                _MaterialEditor.hide()
-            else
-                _MaterialEditor.show();
-        })
-        this.show = function() {
-
-            if (!this.currentMaterial) {
-                alertify.alert('This object does not expose a material interface');
-                return;
-            }
-
-            $('#materialeditortitle').addClass('sidetab-editor-title-active')
-            
-            showSidePanel();
-            this.BuildGUI();
-            $('#materialaccordion').hide();
-            $('#materialaccordion').show('blind', function() {
-                if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-            });
-            $('#MenuMaterialEditoricon').addClass('iconselected');
-
-        }
-        this.hide = function() {
-            //$('#materialeditor').dialog('close');
-            if (this.isOpen()) {
-                $('#materialeditortitle').removeClass('sidetab-editor-title-active')
-                $('#materialaccordion').hide('blind', function() {
-                    if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-                    if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible')) hideSidePanel();
-                });
-                $('#MenuMaterialEditoricon').removeClass('iconselected');
-            }
-        }
-        this.isOpen = function() {
-            //$("#materialeditor").dialog( "isOpen" )
-            return $('#materialaccordion').is(':visible');
-        }
-        this.disable = function() {
-            if (this.isDisabled()) return;
-            $("#materialeditor").append("<div id='materialeditorDisable' class='editorPanelDisableOverlay'></div>")
-            $('#materialeditor').addClass('editorPanelDisable');
-            $("#materialeditor").find('*').addClass('editorPanelDisable');
-        }
-        this.isDisabled = function() {
-            return $("#materialeditorDisable").length === 1;
-        }
-        this.enable = function() {
-            if (!this.isDisabled()) return;
-            $("#materialeditorDisable").remove();
-            $('#materialeditor').removeClass('editorPanelDisable');
-            $("#materialeditor").find('*').removeClass('editorPanelDisable');
-        }
         this.RootPropTypein = function() {
             var prop = $(this).attr('prop');
             _MaterialEditor.currentMaterial[prop] = $('#' + prop + 'value').val();
@@ -238,25 +193,11 @@ define(["vwf/view/editorview/mapbrowser", "vwf/view/editorview/colorpicker.js"],
                 var lastTab = $("#materialaccordion").accordion('option', 'active');
             } catch (e) {}
 
-            $("#materialeditor").empty();
-            $("#materialeditor").empty();
-            $("#materialeditor").append("<div id='materialeditortitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title-active sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Material</span></div>");
+            $("#"+this.contentID).empty();
+            $("#"+this.contentID).empty();
+            $("#"+this.contentID).append('<div id="materialaccordion" style="height:100%;overflow:hidden">' + '	<h3>' + '		<a href="#">Material Base</a>' + '	</h3>' + '	<div id="MaterialBasicSettings">' + '	</div>' + '</div>');
 
-            $('#materialeditortitle').prepend('<div class="headericon material" />');
-            $("#materialeditor").append('<div id="materialaccordion" style="height:100%;overflow:hidden">' + '	<h3>' + '		<a href="#">Material Base</a>' + '	</h3>' + '	<div id="MaterialBasicSettings">' + '	</div>' + '</div>');
-
-            $('#materialeditor').css('border-bottom', '5px solid #444444')
-            $('#materialeditor').css('border-left', '2px solid #444444')
-
-
-            $('#materialeditortitle').click(function() {
-
-                if (_MaterialEditor.isOpen())
-                    _MaterialEditor.hide()
-                else
-                    _MaterialEditor.show();
-            })
-
+            
 
             if (!this.currentMaterial.type)
                 this.currentMaterial.type = 'phong';
@@ -342,7 +283,7 @@ define(["vwf/view/editorview/mapbrowser", "vwf/view/editorview/colorpicker.js"],
 
             for (var i = 0; i < sliderprops.length; i++) {
                 var prop = sliderprops[i].prop;
-                var inputstyle = "display: inline;float: right;padding: 0;width: 50px;border-radius: 6px;background: transparent;text-align: center;border-width: 1px;color: grey;"
+                var inputstyle = "display: inline;float: right;padding: 0;width: 50px;border-radius: 2px;background: transparent;text-align: center;border-width: 1px;color: grey;"
                 $('#MaterialBasicSettings').append('<div style="display:inline-block;margin-bottom: 3px;margin-top: 3px;">' + prop + ': </div>');
                 $('#MaterialBasicSettings').append('<input style="' + inputstyle + '" id="' + prop + 'value"></input>');
                 $('#' + prop + 'value').change(this.RootPropTypein);
@@ -367,7 +308,7 @@ define(["vwf/view/editorview/mapbrowser", "vwf/view/editorview/colorpicker.js"],
             $('#MaterialBasicSettings').append('<div style="clear:both" />');
 
 
-            var colorswatchstyle = "margin: 5px;float:right;clear:right;background-color: #FF19E9;width: 25px;height: 25px;border: 2px solid lightgray;border-radius: 3px;display: inline-block;margin-left: 20px;vertical-align: middle;box-shadow: 2px 2px 5px,1px 1px 3px gray inset;background-image: url(vwf/view/editorview/images/select3.png);background-position: center;";
+            var colorswatchstyle = "margin: 5px;float:right;clear:right;background-color: #FF19E9;width: 25px;height: 25px;border: 2px solid lightgray;display: inline-block;margin-left: 20px;vertical-align: middle;background-image: url(vwf/view/editorview/images/select3.png);background-position: center;";
             $('#MaterialBasicSettings').append('<div style="clear:both" />');
             $('#MaterialBasicSettings').append('<div style="margin-bottom:10px" id="colordiv" />');
             $('#colordiv').append('<div style="display:inline-block;margin-bottom: 3px;margin-top: 15px;">Diffuse Color: </div>');
@@ -807,7 +748,7 @@ define(["vwf/view/editorview/mapbrowser", "vwf/view/editorview/colorpicker.js"],
                 console.log(e);
             }
         }
-        $(document).bind('selectionChanged', this.SelectionChanged.bind(this));
+      
         this.hide();
     }
 });

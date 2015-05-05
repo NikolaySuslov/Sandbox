@@ -4,7 +4,15 @@ define([], function() {
     return {
         getSingleton: function() {
             if (!isInitialized) {
+               var baseclass = require("vwf/view/editorview/panelEditor");
+                //var base = new baseclass('hierarchyManager','Hierarchy','hierarchy',false,true,'#sidepanel')
+                //base.init();
+                //$.extend(HierarchyManager,base);
+                baseclass(PhysicsEditor,'PhysicsEditor','Physics','material',true,true,'#sidepanel')
+                
+                PhysicsEditor.init()
                 initialize.call(PhysicsEditor);
+                PhysicsEditor.bind()
                 isInitialized = true;
             }
             return PhysicsEditor;
@@ -59,12 +67,12 @@ define([], function() {
 
     function initialize() {
 
-        $('#sidepanel').append("<div id='PhysicsEditor'>" + "<div id='PhysicsEditortitle' class='ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' >Physics</div>" + "</div>");
-        $("#PhysicsEditor").empty();
-        $("#PhysicsEditor").append("<div id='PhysicsEditortitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Physics</span></div>");
+        //$('#sidepanel').append("<div id='PhysicsEditor'>" + "<div id='PhysicsEditortitle' class='ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' >Physics</div>" + "</div>");
+        //$("#"+this.contentID).empty();
+        //$("#"+this.contentID).append("<div id='PhysicsEditortitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Physics</span></div>");
 
-        $('#PhysicsEditortitle').prepend('<div class="headericon material" />');
-        $("#PhysicsEditor").append('<div id="physicsaccordion" style="height:100%;overflow:hidden"><h3><a href="#">Physics Basics</a>   </h3>   <div id="PhysicsBasicSettings"> </div></div>');
+        //$('#PhysicsEditortitle').prepend('<div class="headericon material" />');
+        $("#"+this.contentID).append('<div id="physicsaccordion" style="height:100%;overflow:hidden"><h3><a href="#">Physics Basics</a>   </h3>   <div id="PhysicsBasicSettings"> </div></div>');
 
         //$('#PhysicsEditor').dialog({title:'Material Editor',autoOpen:false});
         $('#PhysicsEditor').css('border-bottom', '5px solid #444444')
@@ -95,63 +103,14 @@ define([], function() {
         this.previewMaterialSubObject.wireframe = true;
 
 
-        $('#PhysicsEditortitle').click(function() {
-
-            if (_PhysicsEditor.isOpen())
-                _PhysicsEditor.hide()
-            else
-                _PhysicsEditor.show();
-        })
-        this.show = function() {
-
-           
-            $('#PhysicsEditortitle').addClass('sidetab-editor-title-active')
-            this.selectedID = _Editor.GetSelectedVWFID();
-            showSidePanel();
-            this.BuildGUI();
-            $('#physicsaccordion').hide();
-             $('#physicsaccordion').show('blind', function() {
-                if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-            });
-            $('#MenuPhysicsEditoricon').addClass('iconselected');
-        }
+       
+       
         this.setProperty = function(id, propertyName, propertyValue) {
             //the prim editor will always set properties for all selected objects
             id = 'selection';
             _PrimitiveEditor.setProperty(id, propertyName, propertyValue);
         }
-        this.hide = function() {
-            //$('#PhysicsEditor').dialog('close');
-            if (this.isOpen()) {
-                
-                this.clearPreview();
-                $('#physicsaccordion').hide('blind', function() {
-                    if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-                    if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible')) hideSidePanel();
-                    $('#PhysicsEditortitle').removeClass('sidetab-editor-title-active')
-                });
-                $('#MenuPhysicsEditoricon').removeClass('iconselected');
-            }
-        }
-        this.disable = function() {
-            if (this.isDisabled()) return;
-            $("#PhysicsEditor").append("<div id='PhysicsEditorDisable' class='editorPanelDisableOverlay'></div>")
-            $('#PhysicsEditor').addClass('editorPanelDisable');
-            $("#PhysicsEditor").find('*').addClass('editorPanelDisable');
-        }
-        this.isDisabled = function() {
-            return $("#PhysicsEditorDisable").length === 1;
-        }
-        this.enable = function() {
-            if (!this.isDisabled()) return;
-            $("#PhysicsEditorDisable").remove();
-            $('#PhysicsEditor').removeClass('editorPanelDisable');
-            $("#PhysicsEditor").find('*').removeClass('editorPanelDisable');
-        }
-        this.isOpen = function() {
-            //$("#PhysicsEditor").dialog( "isOpen" )
-            return $('#physicsaccordion').is(':visible');
-        }
+      
         this.createdProperty = function(nodeID, propertyName, propertyValue) {
             this.satProperty(nodeID, propertyName, propertyValue);
         }
@@ -670,18 +629,12 @@ define([], function() {
             try {
                 lastTab = $("#physicsaccordion").accordion('option', 'active');
             } catch (e) {}
-            $("#PhysicsEditor").empty();
-            $("#PhysicsEditor").append("<div id='PhysicsEditortitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title-active sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Physics</span></div>");
+            $("#"+this.contentID).empty();
+           // $("#"+this.contentID).append("<div id='PhysicsEditortitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title-active sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Physics</span></div>");
 
-            $('#PhysicsEditortitle').prepend('<div class="headericon material" />');
-            $("#PhysicsEditor").append('<div id="physicsaccordion" style="height:100%;overflow:hidden"><h3><a href="#">Physics Basics</a>   </h3>   <div id="PhysicsBasicSettings"> </div></div>');
-            $('#PhysicsEditortitle').click(function() {
-
-                if (_PhysicsEditor.isOpen())
-                    _PhysicsEditor.hide()
-                else
-                    _PhysicsEditor.show();
-            })
+            //$('#PhysicsEditortitle').prepend('<div class="headericon material" />');
+            $("#"+this.contentID).append('<div id="physicsaccordion" style="height:100%;overflow:hidden"><h3><a href="#">Physics Basics</a>   </h3>   <div id="PhysicsBasicSettings"> </div></div>');
+           
 
             this.inSetup = true;
             if (this.selectedID === vwf.application()) {
@@ -774,31 +727,10 @@ define([], function() {
             });
             $(".ui-accordion-content").css('height', 'auto');
         }
-        this.SelectionChanged = function(e, node) {
-            try {
-                if (this.isOpen()) {
-                    if (node) {
-                        this.enable();
-                        this.propertyEditorDialogs = [];
-                        this.selectedID = _Editor.getSelectionCount() == 1 ? node.id : "selection";
-                        this.BuildGUI();
-                    } else {
-                        this.propertyEditorDialogs = [];
-                        this.selectedID = null;
-                        this.disable();
-                    }
-                } else {
-                    this.clearPreview();
-                    if(!node)
-                        this.disable();
-                    else
-                        this.enable();
-                }
-            } catch (e) {
-                console.log(e);
-            }
+        this.onHide = function()
+        {
+            this.clearPreview();
         }
-        $(document).bind('selectionChanged', this.SelectionChanged.bind(this));
         this.hide();
     }
 });

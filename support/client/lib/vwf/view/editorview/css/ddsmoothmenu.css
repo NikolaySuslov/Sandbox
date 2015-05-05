@@ -1,6 +1,6 @@
 .ddsmoothmenu{
 font: 12px 'Open Sans';
-background: #222222; /*background of menu bar (default state)*/
+background: #424242; /*background of menu bar (default state)*/
 width: 100%;
 
 }
@@ -23,7 +23,7 @@ float: left;
 /*Top level menu link items style*/
 .ddsmoothmenu ul li a{
 display: block;
-background: #252525; /*background of menu items (default state)*/
+background: #424242; /*background of menu items (default state)*/
 color: white;
 padding: 8px 10px;
 /* border-right: 1px solid #778; */
@@ -31,7 +31,7 @@ cursor:pointer;
 text-decoration: none;
 padding-bottom: 3px;
 padding-top: 3px;
-text-shadow: 2px 2px 2px black;
+/* text-shadow: 2px 2px 2px black; */
 }
 
 * html .ddsmoothmenu ul li a{ /*IE6 hack to get sub menu links to behave correctly*/
@@ -79,8 +79,8 @@ width: 160px; /*width of sub menus*/
 padding: 5px 6px 2px 9px;
 margin: 0;
 border-top-width: 0;
-border-bottom: 1px solid gray;
-background-color: rgba(63, 62, 62, 0.88);
+/* border-bottom: 1px solid rgb(66, 66, 66); */
+background-color: rgba(48, 48, 48, 1);
 }
 
 /* Holly Hack for IE \*/

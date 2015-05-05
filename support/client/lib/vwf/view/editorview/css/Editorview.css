@@ -30,7 +30,7 @@
 
 .pulsing {
 
-  background-color:rgb(132, 185, 255);;
+  background-color: rgb(58, 143, 255);;
   /*
   maybe the animation is just not worth the repaint on the status bar
   animation-name: pulsing;
@@ -63,7 +63,7 @@
 		padding: 0px;
 		margin-bottom: 0px;
 		margin-top: 4px;
-		border-radius: 6px;
+		/* border-radius: 6px; */
 		border-color: lightgray;
 		border-width: 1px;
 	}
@@ -113,7 +113,7 @@ height: 59px;
 display: inline-block;
 margin-top: -45px;
 background: #444;
-border-radius: 5px;
+border-radius: 2px;
 border: 1px solid #555;
 padding: 4px 4px 4px 4px;
 }
@@ -162,7 +162,10 @@ margin-bottom: -3px;
 cursor: pointer;
 margin-right: 2px;
 margin-bottom: -4px;
-border-radius: 6px;
+
+
+
+/* border-radius: 6px; */
 }
 .timeControl:hover {
 	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
@@ -199,11 +202,12 @@ border-radius: 6px;
 		font-family: 'Open Sans',sans-serif;
 		background: black;
 		border: 1px solid gray;
-		box-shadow: 2px 2px 2px gray;
+		/* box-shadow: 2px 2px 2px gray; */
 		font-style: italic;
 		color:white;
+		margin: 0px;
+}
 
-	}
 	.AutoCompleteOption
 	{
 		font-size: 1.5em;
@@ -230,12 +234,14 @@ border-radius: 6px;
 		z-index: 10000000;
 		background: black;
 		border: 1px solid #888;
-		box-shadow: 5px 5px 10px #888;
-		border-radius: 5px;
+		/* box-shadow: 5px 5px 10px #888; */
+		/* border-radius: 5px; */
 		overflow-y: auto !important;
 		overflow-x: hidden !important;
 
-	}
+
+		margin: 0px;
+}
 	input[type="text"]:focus, input[type="password"]:focus
 	{
 		box-shadow: 0px 0px 5px rgba(130, 184, 255,1);
@@ -263,9 +269,12 @@ border-radius: 6px;
   font-size: 1.3em;
   margin: 1px 5px;
   padding: 3px;
-  border-radius: 7px;
-  border: 1px solid #444;
-  background: #222 url(images/ui-bg_glass_15_222222_1x400.png) 50% 50% repeat-x;
+
+		/* border-radius: 7px; */
+
+		/* border: 1px solid #444; */
+
+		/* background: #222 url(images/ui-bg_glass_15_222222_1x400.png) 50% 50% repeat-x; */
   font-weight: 700;
   color: #eee;
   font-family: 'Open Sans';
@@ -298,16 +307,18 @@ border-radius: 6px;
 	{
 		font:1.5em sans-serif;
 		padding-bottom:5px;
-		background:#FFFFF8;
+		/* background:#FFFFF8; */
 		border: 1px black solid;
 		margin: 3px 3px 3px 3px;
-		height:auto
+		height:auto;
+		color: #444;
+}
 
-	}
 	.inventoryItem
 	{
-		text-overflow: ellipsis;background:#FFFFF8;padding-left: 10px;
-		color: black;
+		text-overflow: ellipsis;
+		/* background:#FFFFF8; */padding-left: 10px;
+		color: #DFDFDF;
 	}
 	.loadchoice:hover
 	{
@@ -485,13 +496,17 @@ transition: background 1s, opacity 1s;
 	{
 		display: inline-block;
 		width: 100%;
-background: #636363; /* Old browsers */
+
+		background: #414141; /* Old browsers */
 background: -moz-linear-gradient(top,  #636363 0%, #6f6f6f 12%, #7a7a7a 25%, #5f5f5f 39%, #474747 47%, #212121 55%, #303030 63%, #474747 76%, #3a3a3a 91%, #323232 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#636363), color-stop(12%,#6f6f6f), color-stop(25%,#7a7a7a), color-stop(39%,#5f5f5f), color-stop(47%,#474747), color-stop(55%,#212121), color-stop(63%,#303030), color-stop(76%,#474747), color-stop(91%,#3a3a3a), color-stop(100%,#323232)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #636363 0%,#6f6f6f 12%,#7a7a7a 25%,#5f5f5f 39%,#474747 47%,#212121 55%,#303030 63%,#474747 76%,#3a3a3a 91%,#323232 100%); /* Chrome10+,Safari5.1+ */
+
+		/* background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#636363), color-stop(12%,#6f6f6f), color-stop(25%,#7a7a7a), color-stop(39%,#5f5f5f), color-stop(47%,#474747), color-stop(55%,#212121), color-stop(63%,#303030), color-stop(76%,#474747), color-stop(91%,#3a3a3a), color-stop(100%,#323232)); */ /* Chrome,Safari4+ */
+
+		/* background: -webkit-linear-gradient(top,  #636363 0%,#6f6f6f 12%,#7a7a7a 25%,#5f5f5f 39%,#474747 47%,#212121 55%,#303030 63%,#474747 76%,#3a3a3a 91%,#323232 100%); */ /* Chrome10+,Safari5.1+ */
 background: -o-linear-gradient(top,  #636363 0%,#6f6f6f 12%,#7a7a7a 25%,#5f5f5f 39%,#474747 47%,#212121 55%,#303030 63%,#474747 76%,#3a3a3a 91%,#323232 100%); /* Opera 11.10+ */
 background: -ms-linear-gradient(top,  #636363 0%,#6f6f6f 12%,#7a7a7a 25%,#5f5f5f 39%,#474747 47%,#212121 55%,#303030 63%,#474747 76%,#3a3a3a 91%,#323232 100%); /* IE10+ */
-background: linear-gradient(to bottom,  #636363 0%,#6f6f6f 12%,#7a7a7a 25%,#5f5f5f 39%,#474747 47%,#212121 55%,#303030 63%,#474747 76%,#3a3a3a 91%,#323232 100%); /* W3C */
+
+		/* background: linear-gradient(to bottom,  #636363 0%,#6f6f6f 12%,#7a7a7a 25%,#5f5f5f 39%,#474747 47%,#212121 55%,#303030 63%,#474747 76%,#3a3a3a 91%,#323232 100%); */ /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#636363', endColorstr='#323232',GradientType=0 ); /* IE6-9 */
 
 
@@ -519,7 +534,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#636363', end
 		margin-top: 3px;
 		/* border: 4px inset #444; */
 		margin-left: 3px;
-		border-radius: 2px;
+		/* border-radius: 2px; */
 		background-color: -webkit-linear-gradient(right, white 0%, rgb(217, 238, 239) 100%);
 		/* background-color:white; */
 		padding: 1px;
@@ -542,7 +557,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#636363', end
 	}
 	.iconselected
 	{
-		background-color:rgb(130, 184, 255);
+		background-color: rgb(58, 143, 255);
 		padding: 2px;
 		border: 3px inset #444
 		-moz-border-bottom-colors: #4B4B4B #4B4B4B #4B4B4B #4B4B4B #4B4B4B #4B4B4B #4B4B4B #4B4B4B
@@ -564,7 +579,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#636363', end
 		margin-right: -26px;
 		padding: 19px;
 		display:inline;
-	
+
 		border-left-style: groove;
 }
 	.usertable tr td
@@ -593,7 +608,7 @@ margin-left: 3px;
 margin-right: 3px;
 font-family: 'Open Sans',sans-serif;
 font-size: 1.3em;
-text-shadow: 1px 1px 3px black;
+/* text-shadow: 1px 1px 3px black; */
 border-left: 1px solid;
 
 	}
@@ -635,22 +650,23 @@ border-left: 1px solid;
 		z-index: 100;
 		position: fixed;
 		width: 100%;
-		background-color: #414141;
-		background: #4c4c4c; /* Old browsers */
-background: #636363; /* Old browsers */
+		background-color: #424242;
+		/* background: #4c4c4c; */ /* Old browsers */
+ /* Old browsers */
 background: -moz-linear-gradient(top,  #636363 0%, #6f6f6f 12%, #7a7a7a 25%, #5f5f5f 39%, #474747 47%, #212121 55%, #303030 63%, #474747 76%, #3a3a3a 91%, #323232 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#636363), color-stop(12%,#6f6f6f), color-stop(25%,#7a7a7a), color-stop(39%,#5f5f5f), color-stop(47%,#474747), color-stop(55%,#212121), color-stop(63%,#303030), color-stop(76%,#474747), color-stop(91%,#3a3a3a), color-stop(100%,#323232)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #636363 0%,#6f6f6f 12%,#7a7a7a 25%,#5f5f5f 39%,#474747 47%,#212121 55%,#303030 63%,#474747 76%,#3a3a3a 91%,#323232 100%); /* Chrome10+,Safari5.1+ */
+ /* Chrome,Safari4+ */
+ /* Chrome10+,Safari5.1+ */
 background: -o-linear-gradient(top,  #636363 0%,#6f6f6f 12%,#7a7a7a 25%,#5f5f5f 39%,#474747 47%,#212121 55%,#303030 63%,#474747 76%,#3a3a3a 91%,#323232 100%); /* Opera 11.10+ */
 background: -ms-linear-gradient(top,  #636363 0%,#6f6f6f 12%,#7a7a7a 25%,#5f5f5f 39%,#474747 47%,#212121 55%,#303030 63%,#474747 76%,#3a3a3a 91%,#323232 100%); /* IE10+ */
-background: linear-gradient(to bottom,  #636363 0%,#6f6f6f 12%,#7a7a7a 25%,#5f5f5f 39%,#474747 47%,#212121 55%,#303030 63%,#474747 76%,#3a3a3a 91%,#323232 100%); /* W3C */
+
+		/* background: linear-gradient(to bottom,  #636363 0%,#6f6f6f 12%,#7a7a7a 25%,#5f5f5f 39%,#474747 47%,#212121 55%,#303030 63%,#474747 76%,#3a3a3a 91%,#323232 100%); */ /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#636363', endColorstr='#323232',GradientType=0 ); /* IE6-9 */
 
 overflow: hidden;
 white-space: nowrap;
 
-		
-	
+
+
 		border-bottom: 3px solid rgb(69, 69, 69);
 }
 
@@ -832,7 +848,7 @@ white-space: nowrap;
 	right: 0;
 	width: 8px;
 	height: 100%;
-	background: #515151;
+	background: #424242;
 }
 
 .jspHorizontalBar
@@ -878,13 +894,14 @@ white-space: nowrap;
 .jspDrag
 {
 box-shadow: 1px 1px 3px inset black;
-background: rgba(130, 184, 255,.8);
+background: rgba(58, 143, 255, 1);
 position: relative;
 top: 0;
 left: 0;
 cursor: pointer;
-box-shadow: 0px 0px 3px black inset;
-border-radius: 5px;
+/* box-shadow: 0px 0px 3px black inset; */
+/* border-radius: 5px; */
+border-left: 1px solid black;
 }
 
 .jspHorizontalBar .jspTrack,
@@ -974,20 +991,28 @@ text-align: center;
 vertical-align: middle;
 
 
-border-radius: 7px;
+/* border-radius: 7px; */
 
 
-border: 2px groove rgb(130, 184, 255);
+border: 2px solid rgb(130, 184, 255);
 color: white;
-text-shadow: 1px 1px 3px black;
+
+
+/* text-shadow: 1px 1px 3px black; */
 cursor: pointer;
-background: #4c4c4c; /* Old browsers */
+
+
+/* background: #4c4c4c; */ /* Old browsers */
 background: -moz-linear-gradient(top,  #4c4c4c 0%, #595959 12%, #666666 25%, #474747 39%, #2c2c2c 50%, #000000 51%, #111111 60%, #2b2b2b 76%, #1c1c1c 91%, #131313 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4c4c4c), color-stop(12%,#595959), color-stop(25%,#666666), color-stop(39%,#474747), color-stop(50%,#2c2c2c), color-stop(51%,#000000), color-stop(60%,#111111), color-stop(76%,#2b2b2b), color-stop(91%,#1c1c1c), color-stop(100%,#131313)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%); /* Chrome10+,Safari5.1+ */
+
+
+/* background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4c4c4c), color-stop(12%,#595959), color-stop(25%,#666666), color-stop(39%,#474747), color-stop(50%,#2c2c2c), color-stop(51%,#000000), color-stop(60%,#111111), color-stop(76%,#2b2b2b), color-stop(91%,#1c1c1c), color-stop(100%,#131313)); */ /* Chrome,Safari4+ */
+ /* Chrome10+,Safari5.1+ */
 background: -o-linear-gradient(top,  #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%); /* Opera 11.10+ */
 background: -ms-linear-gradient(top,  #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%); /* IE10+ */
-background: linear-gradient(to bottom,  #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%); /* W3C */
+
+
+/* background: linear-gradient(to bottom,  #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%); */ /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#131313',GradientType=0 ); /* IE6-9 */
 
 }
@@ -1135,7 +1160,7 @@ position: absolute;
 padding: 5px 0px 5px 10px;
 font-size: 1.5em;
 left: 1%;
-box-shadow: 3px 2px 10px lightgray inset;
+/* box-shadow: 3px 2px 10px lightgray inset; */
 width: 97%;
 box-sizing: border-box;
 }
@@ -1392,11 +1417,12 @@ display: inline-block;
 {
 	background: rgb(130, 184, 255) url(../../../images/ui-bg_glass_75_cfe4ef_1x400.png) repeat;
 background-size: 100% 100%;
-border: 1px solid lightgray;
+
+	/* border: 1px solid lightgray; */
 color:black;
 }
 
-.hierarchyicondisable 
+.hierarchyicondisable
 {
 	color:#444;
 }
@@ -1639,18 +1665,24 @@ transform: rotate(90deg);
 font-size: 12px;
 font-family: 'Open Sans',sans-serif;
 text-align: center;
-border-radius: 7px;
-border: 2px groove rgb(130, 184, 255);
+
+	/* border-radius: 7px; */
+
+	border: 2px solid rgb(130, 184, 255);
 color: white;
 text-shadow: 1px 1px 3px black;
 cursor: pointer;
-background: #4c4c4c;
+
+	background: #4c4c4c;
 background: -moz-linear-gradient(top, #4c4c4c 0%, #595959 12%, #666666 25%, #474747 39%, #2c2c2c 50%, #000000 51%, #111111 60%, #2b2b2b 76%, #1c1c1c 91%, #131313 100%);
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4c4c4c), color-stop(12%,#595959), color-stop(25%,#666666), color-stop(39%,#474747), color-stop(50%,#2c2c2c), color-stop(51%,#000000), color-stop(60%,#111111), color-stop(76%,#2b2b2b), color-stop(91%,#1c1c1c), color-stop(100%,#131313));
-background: -webkit-linear-gradient(top, #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%);
+
+	/* background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4c4c4c), color-stop(12%,#595959), color-stop(25%,#666666), color-stop(39%,#474747), color-stop(50%,#2c2c2c), color-stop(51%,#000000), color-stop(60%,#111111), color-stop(76%,#2b2b2b), color-stop(91%,#1c1c1c), color-stop(100%,#131313)); */
+
+	/* background: -webkit-linear-gradient(top, #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%); */
 background: -o-linear-gradient(top, #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%);
 background: -ms-linear-gradient(top, #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%);
-background: linear-gradient(to bottom, #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%);
+
+	/* background: linear-gradient(to bottom, #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%); */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#131313',GradientType=0 );
 padding-left: 0px;
 z-index: 20;
@@ -1690,7 +1722,7 @@ height: 75px;
   background: rgba(0,0,0,0.5);
   z-index: 100;
   position: relative;
-  border-radius: 10px;
+  /* border-radius: 10px; */
   pointer-events: none;
 }
 
@@ -1703,7 +1735,8 @@ box-sizing:border-box;
 margin-bottom: -19px;
 
 	border-radius: 3px;
-box-shadow: 2px 2px 5px gray;
+
+	/* box-shadow: 2px 2px 5px gray; */
 -webkit-transition: opactiy 2s; /* For Safari 3.1 to 6.0 */
 -blink-transition: opactiy 2s; /* For Safari 3.1 to 6.0 */
  transition: opactiy 2s;
@@ -1723,10 +1756,11 @@ box-shadow: 2px 2px 5px gray;
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    background: rgba(130, 184, 255,1);
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+
+    /* -webkit-border-radius: 5px; */
+    /* border-radius: 5px; */
+    background: rgba(82, 132, 199, 1);
+    /* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); */
     width: 8px;
 }
 ::-webkit-scrollbar-thumb:window-inactive {
@@ -1739,8 +1773,8 @@ box-shadow: 2px 2px 5px gray;
 cursor: pointer;
 font-size: 1.5em;
 border: 1px solid gray;
-border-radius: 5px;
-box-shadow: 0px 0px 20px #555 inset;
+/* border-radius: 5px; */
+/* box-shadow: 0px 0px 20px #555 inset; */
 margin: 2px;
 padding: 1px;
 text-overflow: ellipsis;
@@ -1755,7 +1789,7 @@ cursor: pointer;
 font-size: 1.5em;
 border: 1px solid gray;
 border-radius: 2px;
-box-shadow: 0px 0px 20px #555 inset;
+/* box-shadow: 0px 0px 20px #555 inset; */
 margin: 2px;
 padding: 1px;
 text-overflow: ellipsis;
@@ -1775,8 +1809,10 @@ color:rgb(130, 184, 255);
 .libraryAsset img:hover
 {
 
-box-shadow: 2px 2px 10px rgb(130, 184, 255), 9px 9px 10px black inset;
-border: 2px solid rgb(130,184,255);
+/* box-shadow: 2px 2px 10px rgb(130, 184, 255), 9px 9px 10px black inset; */
+
+
+border: 3px solid rgb(58, 143, 255);
 }
 
 .BigTextureThumb:hover, .BigTextureThumbSrc:hover
@@ -1894,7 +1930,7 @@ div#Translation .ui-spinner, div#Rotation .ui-spinner, div#Scale .ui-spinner
 
 div#otherprops input[type=text] {
 color: black;
-border-radius: 5px;
+/* border-radius: 5px; */
 padding: 0px;
 margin: 2px;
 }
@@ -1905,6 +1941,7 @@ margin: 2px;
 	margin-top: 2px;
 	clear:both;
 	border-radius: 3px;
+	width: 30px;
 }
 .ui-selectmenu-button span.ui-selectmenu-text
 {
@@ -2002,7 +2039,7 @@ ul li a .glyphicon {
 
 .sidetab-editor-title
 {
-	background: #3a8fff url(images/ui-bg_glass_20_3a8fff_1x400.png) 50% 50% repeat-x;
+	background: #3a8fff  50% 50% repeat-x;
 	cursor: pointer
 
 ;
@@ -2016,8 +2053,7 @@ ul li a .glyphicon {
 
 .sidetab-editor-title-active
 {
-background:#3a8fff url(images/ui-bg_glass_20_3a8fff_1x400.png) 50% 50% repeat-x
-}
+background: #3a8fff  50% 50% repeat-x;}
 
 .sidetab-editor-title-active:hover
 {
@@ -2027,4 +2063,3 @@ text-decoration: underline;
 .downarrowclass {
 display:none;
 }
-

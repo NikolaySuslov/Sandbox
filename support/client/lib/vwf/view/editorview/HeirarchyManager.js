@@ -4,7 +4,17 @@ define(function() {
 	return {
 		getSingleton: function() {
 			if (!isInitialized) {
+
+				
+				var baseclass = require("vwf/view/editorview/panelEditor");
+				//var base = new baseclass('hierarchyManager','Hierarchy','hierarchy',false,true,'#sidepanel')
+				//base.init();
+				//$.extend(HierarchyManager,base);
+				baseclass(HierarchyManager,'hierarchyManager','Hierarchy','hierarchy',false,true,'#sidepanel')
+				
+				HierarchyManager.init()
 				initialize.call(HierarchyManager);
+				HierarchyManager.bind()
 				isInitialized = true;
 			}
 			return HierarchyManager;
@@ -13,13 +23,13 @@ define(function() {
 
 	function initialize() {
 		var self = this;
-		$('#sidepanel').append("<div id='hierarchyManager' class='ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active' style='border-radius: 10px;overflow:hidden;height:auto'></div>");
-		$('#hierarchyManager').append("<div id='hierarchyManagertitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span id='hierarchyManagertitletext' class='ui-dialog-title' id='ui-dialog-title-Players'>Hierarchy</span></div>");
-		//$('#hierarchyManager').append("<span>Filter: </span><input type='text' id='HeirarchyFilter' class=''></input>");
-		$('#hierarchyManager').append("<div id='hierarchyDisplay' style=''></div>");
-		$('#hierarchyManager').append("<div id='hierarchyManagerMakeNode'></div>");
-		$('#hierarchyManager').append("<div id='hierarchyManagerSelect'></div>");
-		$('#hierarchyManager').append("<div id='hierarchyManagerExplode'></div>");
+		
+		
+		//$('#' + this.contentID).append("<span>Filter: </span><input type='text' id='HeirarchyFilter' class=''></input>");
+		$('#' + this.contentID).append("<div id='hierarchyDisplay' style=''></div>");
+		$('#' + this.contentID).append("<div id='hierarchyManagerMakeNode'></div>");
+		$('#' + this.contentID).append("<div id='hierarchyManagerSelect'></div>");
+		$('#' + this.contentID).append("<div id='hierarchyManagerExplode'></div>");
 
 		$('#HeirarchyFilter').keyup(function() {
 			self.BuildGUI();
@@ -40,8 +50,8 @@ define(function() {
 		$('#hierarchyManagerSelect').hide();
 		
 		$('#hierarchyManagertitle').prepend('<div class="headericon hierarchy" />');
-		$('#hierarchyManager').css('border-bottom', '5px solid #444444')
-		$('#hierarchyManager').css('border-left', '2px solid #444444')
+		$('#' + this.contentID).css('border-bottom', '5px solid #444444')
+		$('#' + this.contentID).css('border-left', '2px solid #444444')
 		
 		$('#hierarchyManagerMakeNode').click(function() {
 			HierarchyManager.makeVWFNode()
@@ -68,39 +78,7 @@ define(function() {
             else
                 self.show();
         })
-		this.show = function() {
-			//$('#hierarchyManager').dialog('open');
-			
-			$('#hierarchyDisplay').show('blind', function() {
-				if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-			});
-			$('#hierarchyManagertitle').addClass('sidetab-editor-title-active')
-			//$('#hierarchyManager').dialog('option','position',[1282,40]);
-			if (!this.selectedID)
-				this.selectedID = 'index-vwf';
-			HierarchyManager.BuildGUI();
-			showSidePanel();
-			HierarchyManager.open = true;
-			$('#MenuHierarchyManagericon').addClass('iconselected');
-		}
-		this.hide = function() {
-			//$('#hierarchyManager').dialog('close');
-
-			if (this.isOpen()) {
-				$('#hierarchyManagertitle').removeClass('sidetab-editor-title-active')
-				if(window._RenderManager)
-					_RenderManager.removeHilightObject(HierarchyManager.previewNode);
-				$('#hierarchyDisplay').hide('blind', function() {
-					if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-					if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible')) hideSidePanel();
-				});
-				$('#MenuHierarchyManagericon').removeClass('iconselected');
-			}
-		}
-		this.isOpen = function() {
-			//return $("#hierarchyManager").dialog( "isOpen" );
-			return $('#hierarchyDisplay').is(':visible');
-		}
+		
 		this.offClicked = function() {
 			$('#InventoryRename').hide();
 			if (HierarchyManager.inRename) {
@@ -458,41 +436,31 @@ define(function() {
 				this.appendThreeChildDOM(node.children[i], thisid + 'container', type);
 			}
 		}
-		this.SelectionChanged = function(e, node) {
-			try {
-				if (this.SelectionBounds != null) {
-					this.SelectionBounds.parent.remove(this.SelectionBounds);
-					this.SelectionBounds = null;
-				}
-				if (node) {
-					this.selectedID = node.id
-					if (this.isOpen())
-						this.BuildGUI();
-				} else {
-					
-					this.selectedID = null;
-					if (this.isOpen())
-						this.BuildGUI();
-				}
-			} catch (e) {
-				console.log(e);
-			}
-		}
+		
 		this.createdNode = function(id) {
 
-			if (this.selectedID == id || vwf.decendants(this.selectedID).indexOf(id) != -1) {
+			
 				window.setTimeout(function() {
 					this.BuildGUI();
 				}.bind(this), 500)
 
-			}
+			
+		}
+		this.deletedNode = function(id) {
+
+			
+				window.setTimeout(function() {
+					this.BuildGUI();
+				}.bind(this), 500)
+
+			
 		}
 		this.satProperty = function(id,propname,val)
 		{
 			if(propname == 'DisplayName' && this.isOpen())
 				this.BuildGUI();
 		}
-		$(document).bind('selectionChanged', this.SelectionChanged.bind(this));
-		this.hide();
+		
+		
 	}
 });

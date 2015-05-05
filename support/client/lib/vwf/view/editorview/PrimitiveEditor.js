@@ -4,8 +4,20 @@ define(function() {
     return {
         getSingleton: function() {
             if (!isInitialized) {
+                
+               
+                var baseclass = require("vwf/view/editorview/panelEditor");
+                //var base = new baseclass('hierarchyManager','Hierarchy','hierarchy',false,true,'#sidepanel')
+                //base.init();
+                //$.extend(HierarchyManager,base);
+                baseclass(PrimEditor,'PrimitiveEditor','Properties','properties',true,true,'#sidepanel')
+                
+                PrimEditor.init()
                 initialize.call(PrimEditor);
+                PrimEditor.bind()
                 isInitialized = true;
+
+               
             }
             return PrimEditor;
         }
@@ -26,7 +38,7 @@ define(function() {
 	    }
 
 
-        $('#sidepanel').append("<div id='PrimitiveEditor'>" + "<div id='primeditortitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span id='primeditortitletext' class='ui-dialog-title' id='ui-dialog-title-Players'>Properties</span></div>" +
+        $('#' + this.contentID).append(
             '<div id="accordion" style="height:100%;overflow:hidden">' +
             '<h3><a href="#">Flags</a></h3>' +
             '<div>' +
@@ -67,17 +79,9 @@ define(function() {
             '</div>' +
             '</div>');
         
-        $('#primeditortitle').prepend('<div class="headericon properties" />');
         
-        var self = this;
-        $('#primeditortitle').click(function()
-        {
-            
-            if(self.isOpen())
-                self.hide()
-            else
-                self.show();
-        })
+        
+       
         $('.TransformEditorInput').spinner();
         $('#isStatic').change(function(e) {
             _PrimitiveEditor.setProperty('selection', 'isStatic', this.checked)
@@ -109,23 +113,7 @@ define(function() {
             }
             _PrimitiveEditor.setProperty(_Editor.GetSelectedVWFNode().id, 'DisplayName', $(this).val());
         });
-        $('#PrimitiveEditor').css('border-bottom', '5px solid #444444')
-        $('#PrimitiveEditor').css('border-left', '2px solid #444444')
-        //$('#PrimitiveEditor').resizable({
-        //    maxHeight: 550,
-        //    maxWidth: 320,
-        //    minHeight: 150,
-        //    minWidth: 320
-        //});
-        //$('#PrimitiveEditor').dialog({title:'Primitive Editor',autoOpen:false, 
-        //	resize:function(){
-        //		$( "#accordion" ).accordion( "resize" );
-        //		this.updateOtherWindows();
-        //	}.bind(this),
-        //	close:function(){
-        //		this.updateOtherWindows();
-        //	}.bind(this)
-        //});
+        
         $("#accordion").accordion({
             fillSpace: true,
             heightStyle: "content",
@@ -134,54 +122,7 @@ define(function() {
             }
         });
         $(".ui-accordion-content").css('height', 'auto');
-        this.show = function() {
-            $('#MenuObjectPropertiesicon').addClass('iconselected');
-            $('#primeditortitle').addClass('sidetab-editor-title-active')
-            //$('#PrimitiveEditor').dialog('open');
-            //$('#PrimitiveEditor').dialog('option','position',[1282,40]);
-            
-            $('#PrimitiveEditor #accordion').show('blind', function() {
-                if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-            });
-            showSidePanel();
-            this.SelectionChanged(null, _Editor.GetSelectedVWFNode());
-            this.open = true;
-
-        }
-        this.hide = function() {
-            //$('#PrimitiveEditor').dialog('close');
-            if (this.isOpen()) {
-                 $('#primeditortitle').removeClass('sidetab-editor-title-active')
-                $('#PrimitiveEditor  #accordion').hide('blind', function() {
-                    if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-                    if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible')) hideSidePanel();
-                });
-
-            }
-            $('#MenuObjectPropertiesicon').removeClass('iconselected');
-        }
-        this.disable = function()
-        {
-            if(this.isDisabled()) return;
-            $("#PrimitiveEditor").append("<div id='PrimitiveEditorDisable' class='editorPanelDisableOverlay'></div>")
-            $('#PrimitiveEditor').addClass('editorPanelDisable');
-            $("#PrimitiveEditor").find('*').addClass('editorPanelDisable');
-        }
-        this.isDisabled = function()
-        {
-            return $("#PrimitiveEditorDisable").length === 1;
-        }
-        this.enable = function()
-        {
-            if(!this.isDisabled()) return;
-            $("#PrimitiveEditorDisable").remove();
-            $('#PrimitiveEditor').removeClass('editorPanelDisable');
-            $("#PrimitiveEditor").find('*').removeClass('editorPanelDisable');
-        }
-        this.isOpen = function() {
-            //return $("#PrimitiveEditor").dialog( "isOpen" )
-            return $('#PrimitiveEditor #accordion').is(':visible')
-        }
+       
         this.setProperty = function(id, prop, val, skipUndo) {
             //prevent the handlers from firing setproperties when the GUI is first setup;
             if (this.inSetup) return;
@@ -232,106 +173,104 @@ define(function() {
                 alertify.alert('calling methods on multiple selections is not supported');
             }
         }
-
-        this.SelectionChanged = function(e, node) {
-            try {
-                this.currentWidgets = {};
-                if (node) {
-                    this.enable();
-                    this.inSetup = true;
-                    this.clearPropertyEditorDialogs();
-                    var lastTab = $("#accordion").accordion('option', 'active');
-                    $("#accordion").accordion('destroy');
-                    $("#accordion").children('.modifiersection').remove();
-                    //update to ensure freshness
-                    node = _Editor.getNode(node.id);
-                    node.properties = vwf.getProperties(node.id);
-                    if (!node.properties) return;
-
-
-
-                    $('#ui-dialog-title-ObjectProperties').text(vwf.getProperty(node.id, 'DisplayName') + " Properties");
-                    $('#dispName').val(vwf.getProperty(node.id, 'DisplayName') || node.id);
-
-                    this.addPropertyEditorDialog(node.id, 'DisplayName', $('#dispName'), 'text');
-
-                    
-
-                    if ($('#dispName').val() == "") {
-                        $('#dispName').val(node.name);
-                    }
-                    $('#dispOwner').val(vwf.getProperty(node.id, 'owner'));
-
-                    if (vwf.getProperty(node.id, 'isStatic')) {
-                        $('#isStatic').prop('checked', 'checked');
-                    } else {
-                        $('#isStatic').prop('checked', '');
-                    }
-
-                    if (vwf.getProperty(node.id, 'visible')) {
-                        $('#isVisible').prop('checked', 'checked');
-                    } else {
-                        $('#isVisible').prop('checked', '');
-                    }
-
-                    if (vwf.getProperty(node.id, 'inheritScale')) {
-                        $('#inheritScale').prop('checked', 'checked');
-                    } else {
-                        $('#inheritScale').prop('checked', '');
-                    }
-
-                    if (vwf.getProperty(node.id, 'isDynamic')) {
-                        $('#isDynamic').prop('checked', 'checked');
-                    } else {
-                        $('#isDynamic').prop('checked', '');
-                    }
-                    if (vwf.getProperty(node.id, 'castShadows')) {
-                        $('#castShadows').prop('checked', 'checked');
-                    } else {
-                        $('#castShadows').prop('checked', '');
-                    }
-                    if (vwf.getProperty(node.id, 'isSelectable')) {
-                        $('#isSelectable').prop('checked', 'checked');
-                    } else {
-                        $('#isSelectable').prop('checked', '');
-                    }
-                    if (vwf.getProperty(node.id, 'passable')) {
-                        $('#passable').prop('checked', 'checked');
-                    } else {
-                        $('#passable').prop('checked', '');
-                    }
-                    if (vwf.getProperty(node.id, 'receiveShadows')) {
-                        $('#receiveShadows').prop('checked', 'checked');
-                    } else {
-                        $('#receiveShadows').prop('checked', '');
-                    }
-                    $('#BaseSectionTitle').text(node.properties.type || "Type" + ": " + node.id);
-                    this.SelectionTransformed(null, node);
-                    this.setupAnimationGUI(node, true);
-                    this.setupEditorData(node, true);
-                    this.recursevlyAddPrototypes(node);
-                    this.recursevlyAddModifiers(node);
-                    this.addBehaviors(node);
-                    $("#accordion").accordion({
-                        heightStyle: 'fill',
-                        activate: function() {
-                            if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-                        }
-                    });
-                    $(".ui-accordion-content").css('height', 'auto');
-                    this.inSetup = false;
-
-                    $("#accordion").accordion({
-                        'active': lastTab
-                    });
-                } else {
-                    this.disable();
-                }
-            } catch (e) {
-                console.log(e);
+        this.BuildGUI = function()
+        {
+            this.currentWidgets = {};
+            this.inSetup = true;
+            this.clearPropertyEditorDialogs();
+            var lastTab = 0;
+            try{
+                lastTab = $("#accordion").accordion('option', 'active');
+                $("#accordion").accordion('destroy');
+            }catch(e)
+            {
+                //accordion was not init yet
             }
-        }
+            
+            $("#accordion").children('.modifiersection').remove();
+            //update to ensure freshness
+            var node = _Editor.getNode(this.selectedID);
+            if(!node) return;
+            node.properties = vwf.getProperties(node.id);
+            if (!node.properties) return;
 
+
+
+            $('#ui-dialog-title-ObjectProperties').text(vwf.getProperty(node.id, 'DisplayName') + " Properties");
+            $('#dispName').val(vwf.getProperty(node.id, 'DisplayName') || node.id);
+
+            this.addPropertyEditorDialog(node.id, 'DisplayName', $('#dispName'), 'text');
+
+            
+
+            if ($('#dispName').val() == "") {
+                $('#dispName').val(node.name);
+            }
+            $('#dispOwner').val(vwf.getProperty(node.id, 'owner'));
+
+            if (vwf.getProperty(node.id, 'isStatic')) {
+                $('#isStatic').prop('checked', 'checked');
+            } else {
+                $('#isStatic').prop('checked', '');
+            }
+
+            if (vwf.getProperty(node.id, 'visible')) {
+                $('#isVisible').prop('checked', 'checked');
+            } else {
+                $('#isVisible').prop('checked', '');
+            }
+
+            if (vwf.getProperty(node.id, 'inheritScale')) {
+                $('#inheritScale').prop('checked', 'checked');
+            } else {
+                $('#inheritScale').prop('checked', '');
+            }
+
+            if (vwf.getProperty(node.id, 'isDynamic')) {
+                $('#isDynamic').prop('checked', 'checked');
+            } else {
+                $('#isDynamic').prop('checked', '');
+            }
+            if (vwf.getProperty(node.id, 'castShadows')) {
+                $('#castShadows').prop('checked', 'checked');
+            } else {
+                $('#castShadows').prop('checked', '');
+            }
+            if (vwf.getProperty(node.id, 'isSelectable')) {
+                $('#isSelectable').prop('checked', 'checked');
+            } else {
+                $('#isSelectable').prop('checked', '');
+            }
+            if (vwf.getProperty(node.id, 'passable')) {
+                $('#passable').prop('checked', 'checked');
+            } else {
+                $('#passable').prop('checked', '');
+            }
+            if (vwf.getProperty(node.id, 'receiveShadows')) {
+                $('#receiveShadows').prop('checked', 'checked');
+            } else {
+                $('#receiveShadows').prop('checked', '');
+            }
+            $('#BaseSectionTitle').text(node.properties.type || "Type" + ": " + node.id);
+            this.SelectionTransformed(null, node);
+            this.setupAnimationGUI(node, true);
+            this.setupEditorData(node, true);
+            this.recursevlyAddPrototypes(node);
+            this.recursevlyAddModifiers(node);
+            this.addBehaviors(node);
+            $("#accordion").accordion({
+                heightStyle: 'fill',
+                activate: function() {
+                    if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
+                }
+            });
+            $(".ui-accordion-content").css('height', 'auto');
+            this.inSetup = false;
+
+            $("#accordion").accordion({
+                'active': lastTab
+            });
+        }
         this.recursevlyAddPrototypes = function(node) {
             
             
@@ -1165,7 +1104,7 @@ define(function() {
                 //console.log(e);
             }
         }
-        $(document).bind('selectionChanged', this.SelectionChanged.bind(this));
+        
         $(document).bind('modifierCreated', this.SelectionChanged.bind(this));
         $(document).bind('selectionTransformedLocal', this.SelectionTransformed.bind(this));
        

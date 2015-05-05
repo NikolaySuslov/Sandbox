@@ -517,7 +517,8 @@ input.ui-button::-moz-focus-inner,button.ui-button::-moz-focus-inner {
     position:relative;
     cursor: move;
 border: 1px solid #26b3f7;
-background: #3a8fff url("images/ui-bg_glass_20_3a8fff_1x400.png") 50% 50% repeat-x;
+
+    background: #3a8fff  50% 50% repeat-x;
 font-weight: bold;
 color: #fff;
 }
@@ -687,6 +688,8 @@ color: #fff;
     position:relative;
     text-decoration:none;
     cursor:pointer
+;
+    width: 30% !important;
 }
 
 .ui-selectmenu-button span.ui-icon {
@@ -720,8 +723,7 @@ color: #fff;
     cursor:default;
     -ms-touch-action:none;
     touch-action:none;
-    box-shadow: 0px 0px 5px
-}
+    /* box-shadow: 0px 0px 5px */}
 
 .ui-slider .ui-slider-range {
     position:absolute;
@@ -849,7 +851,7 @@ color: #fff;
 .ui-tabs .ui-tabs-nav {
     margin:0;
     padding:.2em .2em 0;
-    background:#222 url(images/ui-bg_highlight-soft_44_222222_1x100.png) 50% 50% repeat-x;
+    background: #222 50% 50% repeat-x;
 }
 
 .ui-tabs .ui-tabs-nav li {
@@ -918,7 +920,7 @@ body .ui-tooltip {
 }
 
 .ui-widget-content {
-    border:1px solid #555;
+    border: 1px solid #323232;
     background:#111 url(images/ui-bg_hexagon_5_111111_12x10.png) 50% 50% repeat;
     color:#fff
 }
@@ -930,7 +932,7 @@ body .ui-tooltip {
 .ui-widget-header {
     border:1px solid #333;
     
-    background: #3a8fff url(images/ui-bg_glass_20_3a8fff_1x400.png) 50% 50% repeat-x;
+    background: #3a8fff 50% 50% repeat-x;
     color:#fff;
     font-weight:700
 
@@ -945,7 +947,7 @@ background: #3a8fff url("images/ui-bg_glass_20_3a8fff_1x400.png") 50% 50% repeat
 
 .ui-state-default,.ui-widget-content .ui-state-default,.ui-widget-header .ui-state-default {
     border:1px solid #444;
-    background:#222 url(images/ui-bg_glass_15_222222_1x400.png) 50% 50% repeat-x;
+    background: #222 50% 50% repeat-x;
     font-weight:700;
     color:#eee
 }
@@ -975,8 +977,8 @@ background: #3a8fff url("images/ui-bg_glass_20_3a8fff_1x400.png") 50% 50% repeat
 }
 
 .ui-state-active,.ui-widget-content .ui-state-active,.ui-widget-header .ui-state-active {
-    border:1px solid #26b3f7;
-    background: #AEAEAE url(images/ui-bg_glass_80_888888_1x400.png) 50% 50% repeat-x;
+    /* border:1px solid #26b3f7; */
+    background: #AEAEAE  50% 50% repeat-x;
     font-weight:700;
     color: #000000;}
 

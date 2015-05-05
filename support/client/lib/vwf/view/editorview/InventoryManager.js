@@ -7,7 +7,15 @@ define(function ()
 		{
 			if (!isInitialized)
 			{
+				var baseclass = require("vwf/view/editorview/panelEditor");
+				//var base = new baseclass('hierarchyManager','Hierarchy','hierarchy',false,true,'#sidepanel')
+				//base.init();
+				//$.extend(HierarchyManager,base);
+				baseclass(InventoryManager,'InventoryManager','Inventory','inventory',false,false,'#sidepanel')
+				
+				InventoryManager.init()
 				initialize.call(InventoryManager);
+				InventoryManager.bind()
 				isInitialized = true;
 			}
 			return InventoryManager;
@@ -16,13 +24,13 @@ define(function ()
 
 	function initialize()
 	{
-		$('#sidepanel').append("<div id='InventoryManager' class='SidePanelWindowBottomBorder ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active' style='border-radius: 10px;overflow:hidden;height:auto'></div>");
+		//$('#sidepanel').append("<div id='InventoryManager' class='SidePanelWindowBottomBorder ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active' style='border-radius: 10px;overflow:hidden;height:auto'></div>");
 		
 		
 		
 		$(document.body).append("<div id='InventoryViewer' style='overflow:hidden'><div id='InventoryView' style='width: 100%;height: 100%;margin: -5px -5px 5px -10px;'/></div>");
-		$('#InventoryManager').append("<div id='inventorymanagertitle' style='padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix SidePanelWindowTitle' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Inventory</span></div>");
-		$('#InventoryManager').append("<div id='InventoryPane' class=''></div>");
+		
+		$("#"+this.contentID).append("<div id='InventoryPane' class=''></div>");
 		$('#InventoryPane').append("<div id='InventoryControls' class=''></div>");
 		$('#InventoryControls').append("<div id='InventoryTypeChoice' class=''></div>");
 		$('#InventoryTypeChoice').append("<input type='radio' id='InventoryTypeChoicePersonal' name='InventoryTypeChoice' class='' checked='checked'></input><label for='InventoryTypeChoicePersonal'>Personal</label>");
@@ -70,7 +78,7 @@ define(function ()
 			label: 'Rename'
 		});
 		
-		$('#inventorymanagertitle').prepend('<div class="headericon inventory"  />');
+		
 		
 		this.renameSelectedItem = function ()
 		{
@@ -224,7 +232,7 @@ define(function ()
 					
 					if(!_InventoryManager.isOpen())
 					{
-						//$('#InventoryManager').prependTo($('#InventoryManager').parent());
+						//$("#"+this.contentID).prependTo($("#"+this.contentID).parent());
 						$('#InventoryPane').show('blind', function ()
 						{
 							if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
@@ -402,29 +410,7 @@ define(function ()
             else
                 _InventoryManager.show();
         })
-		this.show = function ()
-		{
-			if(!_UserManager.GetCurrentUserName())
-			{
-				alertify.alert('You must be logged in to view your inventory.');
-				return;
-			}
-			$('#inventorymanagertitle').addClass('sidetab-editor-title-active');
-			this.getInventory(function(inventory)
-			{		
-				$('#MenuInventoryicon').addClass('iconselected');
-				
-				$('#InventoryPane').show('blind', function ()
-				{
-					if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-				});
-				//$('#InventoryManager').dialog('option','position',[1282,40]);
-				_InventoryManager.BuildGUI(inventory);
-				showSidePanel();
-				_InventoryManager.open = true;
-				
-			});
-		}
+		
 		this.addScript = function (body, name, type)
 		{
 			var t = {};
@@ -439,8 +425,8 @@ define(function ()
 			//var h = ($('#InventoryDisplay').parent().height()-45);
 			//$('#InventoryDisplay').css('height',h+'px');
 		}
-		//$('#InventoryManager').dialog({title:'Inventory',modal:false,autoOpen:false,resizable:true,resize:this.resize,width:'300px',height:435});
-		//$('#InventoryManager').dialog('option','position',[1282,640]);
+		//$("#"+this.contentID).dialog({title:'Inventory',modal:false,autoOpen:false,resizable:true,resize:this.resize,width:'300px',height:435});
+		//$("#"+this.contentID).dialog('option','position',[1282,640]);
 		$('#InventoryManagerMessage').dialog(
 		{
 			title: 'Inventory Message',
@@ -461,23 +447,9 @@ define(function ()
 				_InventoryManager.itemViewer.resize();
 			}
 		});
-		//$('#InventoryManager').dialog('option','position','center');
-		this.hide = function ()
-		{
-			//$('#InventoryManager').dialog('close');
-			$('#InventoryPane').hide('blind', function ()
-			{
-				if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-				if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible')) hideSidePanel();
-			});
-			$('#MenuInventoryicon').removeClass('iconselected');
-			$('#inventorymanagertitle').removeClass('sidetab-editor-title-active');
-		}
-		this.isOpen = function ()
-		{
-			//return $("#InventoryManager").dialog( "isOpen" );
-			return $('#InventoryPane').is(':visible');
-		}
+		//$("#"+this.contentID).dialog('option','position','center');
+		
+		
 		this.renameInventoryItem = function(id,val,cb)
 		{
 			
@@ -556,7 +528,30 @@ define(function ()
 			}
 
 		}.bind(this)
-		this.BuildGUI = function (newInventory)
+		this.BuildGUI = function()
+		{
+			if(!_UserManager.GetCurrentUserName())
+			{
+				alertify.alert('You must be logged in to view your inventory.');
+				return;
+			}
+			$('#inventorymanagertitle').addClass('sidetab-editor-title-active');
+			this.getInventory(function(inventory)
+			{		
+				$('#MenuInventoryicon').addClass('iconselected');
+				
+				$('#InventoryPane').show('blind', function ()
+				{
+					if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
+				});
+				//$("#"+this.contentID).dialog('option','position',[1282,40]);
+				_InventoryManager.BuildInventory(inventory);
+				showSidePanel();
+				_InventoryManager.open = true;
+				
+			});
+		}
+		this.BuildInventory = function (newInventory)
 		{
 			
 			var filter = $('#InventoryFilter').val();
