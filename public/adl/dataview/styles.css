@@ -33,7 +33,7 @@ width: 100%;
 {
 border-bottom: 15px inset #EEE;
 min-height: 1em;
-background: #DDE;
+background: #000;
 height: 25%;
 overflow-x: hidden;
 overflow-y: scroll;
@@ -49,12 +49,10 @@ overflow-y: scroll;
 }
 .state:nth-child(even)
 {
-	background: rgb(186, 190, 253)
-}
+	background: rgb(19, 19, 19);}
 .state:nth-child(odd)
 {
-	background: rgb(207, 207, 255)
-}
+	background: rgb(47, 47, 47);}
 #previewpane
 {
 height: 50%;
@@ -92,8 +90,8 @@ width: 100%;
 font-family: sans-serif;
 font-size: 1.3em;
 /* border: 1px solid #BBFAFF; */
-margin: 2px;
-background: #BBD3FF;
+/* margin: 2px; */
+background: #474747;
 /* border-radius: 10px 10px 10px 10px; */
 text-shadow: 0px 0px 3px black;
 cursor: pointer;
@@ -111,7 +109,7 @@ content: '-';
 background: rgb(87, 121, 255);
 white-space: nowrap;
 text-overflow: initial;
-margin-right: 1em;
+/* margin-right: 1em; */
 /* border-radius: 10px 0px 0px 10px; */
 text-shadow: none;
 border-right: 2px solid black;
@@ -129,9 +127,9 @@ border-right: 2px solid black;
 
 #datalist, #recordlist, #snapshotlist
 {
-	background: white;
+	background: black;
 	height: 93%;
-	color:black;
+	color: rgb(0, 0, 0);
 	overflow-y: auto;
 }
 
@@ -317,7 +315,8 @@ font-family: sans-serif;
 font-weight: bold;
 text-align: center;
 text-decoration: underline;
-background: rgb(116, 166, 255);
+
+	background: rgb(74, 74, 74);
 color: white;
 text-shadow: 1px 1px black;
 padding: 7px;
@@ -346,7 +345,8 @@ font-weight: bold;
 	font-family: sans-serif;
 font-size: 18px;
 color: gray;
-background: #DDD;
+
+	background: #1D1D1D;
 }
 .button
 {
@@ -354,8 +354,10 @@ background: #DDD;
 height: 20px;
 text-align: center;
 vertical-align: middle;
-border: 1px solid #999;
-border-radius: 48px;
+
+	border: 1px solid #999;
+
+	/* border-radius: 48px; */
 padding: 10px;
 background: -webkit-gradient(linear, left top, left bottom, from(#cfcfcf), to(#f5f5f5));
 background: -webkit-linear-gradient(#cfcfcf,#f5f5f5);

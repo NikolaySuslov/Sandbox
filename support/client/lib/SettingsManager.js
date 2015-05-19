@@ -24,8 +24,13 @@ define(function ()
             filtering:true,
             stereoOffset:.25,
             normalMapTerrain:true,
-            triPlanerMapTerrain:false
-  
+            triPlanerMapTerrain:false,
+            disableWebGL:false
+        }
+        this.readQueryString = function()
+        {
+            
+            this.settings.disableWebGL = $.parseQuerystring().norender  || $.parseQuerystring().disableWebGL ;
         }
         this.getKey = function(key)
         {
@@ -48,6 +53,8 @@ define(function ()
                 this.settings = JSON.parse(window.localStorage['sandboxPreferences']);
             else
                 this.settings = JSON.parse(JSON.stringify(this.defaults));
+            //querystring overrides
+            this.readQueryString();
         }
         this.load();
     }

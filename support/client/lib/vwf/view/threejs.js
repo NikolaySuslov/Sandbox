@@ -38,7 +38,7 @@ function matset(newv, old) {
 
 var pfx = ["webkit", "moz", "ms", "o", ""];
 
-define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/threejs/ThermalCamEffect", "vwf/model/threejs/VRRenderer", "vwf/view/threejs/editorCameraController","vwf/view/threejs/SandboxRenderer"], function(module, view) {
+define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/threejs/ThermalCamEffect", "vwf/model/threejs/VRRenderer", "vwf/view/threejs/editorCameraController", "vwf/view/threejs/SandboxRenderer"], function(module, view) {
     var stats;
     var NORMALRENDER = 0;
     var STEREORENDER = 1;
@@ -57,33 +57,29 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         vrHMD: null,
         vrRenderer: null,
         editorCamera: new THREE.PerspectiveCamera(35, $(document).width() / $(document).height(), .01, 10000),
-        shareCamera:false,
-        receiveSharedCamera:false,
-        cameraShareLoop:function(){
-            if(this.shareCamera)
-            {
-                vwf_view.kernel.callMethod(vwf.application(),'cameraShareInfo',[vwf.moniker(),this.getCamera().matrixWorld.elements])
-                window.setTimeout(this.cameraShareLoop.bind(this),33);
+        shareCamera: false,
+        receiveSharedCamera: false,
+        cameraShareLoop: function() {
+            if (this.shareCamera) {
+                vwf_view.kernel.callMethod(vwf.application(), 'cameraShareInfo', [vwf.moniker(), this.getCamera().matrixWorld.elements])
+                window.setTimeout(this.cameraShareLoop.bind(this), 33);
             }
         },
-        shareCameraView:function()
-        {
+        shareCameraView: function() {
             this.shareCamera = true;
             this.receiveSharedCamera = false;
-            vwf_view.kernel.callMethod(vwf.application(),'startCameraShare',[vwf.moniker()]);
+            vwf_view.kernel.callMethod(vwf.application(), 'startCameraShare', [vwf.moniker()]);
             this.cameraShareLoop();
         },
-        receiveSharedCameraView:function()
-        {
+        receiveSharedCameraView: function() {
             this.shareCamera = false;
             this.receiveSharedCamera = true;
             require("vwf/view/threejs/editorCameraController").setCameraMode(null);
         },
-        stopShareCameraView:function()
-        {
+        stopShareCameraView: function() {
             this.shareCamera = false;
             this.receiveSharedCamera = true;
-            vwf_view.kernel.callMethod(vwf.application(),'stopCameraShare',[vwf.moniker()]);
+            vwf_view.kernel.callMethod(vwf.application(), 'stopCameraShare', [vwf.moniker()]);
         },
         simulateContextLoss: function() {
             var cx = _dRenderer.context.getExtension('WEBGL_lose_context');
@@ -209,7 +205,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         updateGlyphs: function(e, viewprojection, wh, ww) {
 
             for (var i = 0; i < this.glyphs.length; i++) {
-                if(vwf.getProperty(this.glyphs[i],'showGlyph') == false) continue;
+                if (vwf.getProperty(this.glyphs[i], 'showGlyph') == false) continue;
                 var div = $('#glyph' + ToSafeID(this.glyphs[i]))[0];
                 if (!div) continue;
 
@@ -454,9 +450,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                         if (this.nodes[i].lastAnimationStep + 1 < vwf.time()) {
                             this.nodes[i].lastAnimationFrame = null;
                             this.nodes[i].thisAnimationFrame = null;
-                        }
-                        else
-                        {
+                        } else {
                             this.nodes[i].lastAnimationFrame = this.nodes[i].thisAnimationFrame;
                             this.nodes[i].thisAnimationFrame = this.state.nodes[i].gettingProperty('animationFrame');
                         }
@@ -608,8 +602,8 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     id: childID,
                     extends: childExtendsID,
                     properties: {},
-                    lastTransformStep:0,
-                    lastAnimationStep:0
+                    lastTransformStep: 0,
+                    lastAnimationStep: 0
                 };
 
             //man VWF makes this stuff so hard. Why must we deal with this? Who though that a game engine needed prototypical inheritance?
@@ -623,8 +617,8 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             var showGlyph = vwf.getProperty(childExtendsID, 'showGlyph');
             if (showGlyph) {
                 this.showGlyph(childID);
-            }else
-            this.hideGlyph(childID);
+            } else
+                this.hideGlyph(childID);
             //the created node is a scene, and has already been added to the state by the model.
             //how/when does the model set the state object? 
 
@@ -781,35 +775,28 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     this.setCamera_internal(args[1]);
                 }
             }
-            if(id == vwf.application() && method == 'cameraShareInfo')
-            {
-                if(this.receiveSharedCamera)
-                {
+            if (id == vwf.application() && method == 'cameraShareInfo') {
+                if (this.receiveSharedCamera) {
                     this.setCamera();
                     this.getCamera().matrixAutoUpdate = false;
                     this.getCamera().matrixWorld.fromArray(args[1]);
                     this.getCamera().matrix.fromArray(args[1]);
-                  
+
                 }
             }
-            if(id == vwf.application() && method == 'startCameraShare')
-            {
-                if(!this.receiveSharedCamera && vwf.moniker() !== args[0])
-                {
+            if (id == vwf.application() && method == 'startCameraShare') {
+                if (!this.receiveSharedCamera && vwf.moniker() !== args[0]) {
                     var self = this;
-                    alertify.confirm('A user would like to share their camera view. Accept?',function(ok)
-                    {
-                        if(ok)
-                        {
+                    alertify.confirm('A user would like to share their camera view. Accept?', function(ok) {
+                        if (ok) {
                             self.receiveSharedCameraView();
                         }
                     })
                 }
             }
-            if(id == vwf.application() && method == 'stopCameraShare')
-            {
+            if (id == vwf.application() && method == 'stopCameraShare') {
                 this.receiveSharedCamera = false;
-             //   require("vwf/view/threejs/editorCameraController").getController('Orbit').orbitPoint(newintersectxy);
+                //   require("vwf/view/threejs/editorCameraController").getController('Orbit').orbitPoint(newintersectxy);
                 require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
                 require("vwf/view/threejs/editorCameraController").updateCamera();
                 this.getCamera().matrixAutoUpdate = false;
@@ -850,15 +837,15 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             if (!threeObject) return value;
 
             if (node && propertyName == 'glyphURL') {
-                if(propertyValue)
+                if (propertyValue)
                     this.addGlyph(nodeID, propertyValue);
-                else 
+                else
                     this.removeGlyph(nodeID);
             }
             if (node && propertyName == 'showGlyph') {
-                if(propertyValue)
+                if (propertyValue)
                     this.showGlyph(nodeID);
-                else 
+                else
                     this.hideGlyph(nodeID);
             }
             if (node && threeObject && propertyValue !== undefined) {
@@ -941,7 +928,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                             newfog.vFalloffStart = this.nodes[nodeID].properties["fogVFalloffStart"] || 0;
                             newfog.vAtmosphereDensity = (this.nodes[nodeID].properties["skyAtmosphereDensity"] || 0) / 500;
 
-                            if(!threeObject.fog) threeObject.fog = newfog;
+                            if (!threeObject.fog) threeObject.fog = newfog;
                             threeObject.fog.vHorizonColor = new THREE.Color();
 
                             threeObject.fog.vHorizonColor.r = this.nodes[nodeID].properties["skyApexColor"] ? this.nodes[nodeID].properties["skyHorizonColor"][0] : 1;
@@ -1582,90 +1569,205 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             var hovering = false;
             var view = this;
 
-            if (!$.parseQuerystring().norender) {
+            if (!_SettingsManager.settings.disableWebGL) {
                 if (getURLParameter('disableWebGL') == 'null') {
 
-
-                    sceneNode.renderer = new THREE.WebGLRenderer({
-                        canvas: mycanvas,
-                        antialias: true,
-                        alpha: false,
-                        stencil: false,
-                        depth: true,
-                        preserveDrawingBuffer: true,
-                        devicePixelRatio: window.devicePixelRatio
-                       
-                    });
-                    if (!sceneNode.renderer.context) {
-                        //lets not fall back on canvas renderer. there just is no point trying to do this without it.
-                        //so, we create a renderer anyway.
-                        //just throw out to a page. Could be a custom error warning. 
-                        window.location = 'http://get.webgl.org/';
-                        window.onbeforeunload = null;
-                        window.onunload = null;
-                    };
-
-                    sceneNode.renderer.context.canvas.addEventListener("webglcontextlost", function(event) {
-
-                        alertify.error('WebGL Context Lost!');
-
-                        //no point in rendering when we have no context
-                        _dView.paused = true;
-
-                        //clean up existing resources
-                        var walk = function(node) {
-                            if (node.children)
-                                for (var i = 0; i < node.children.length; i++)
-                                    walk(node.children[i])
-                            if (node.dispose)
-                                node.dispose();
-                            if (node.__webglInit)
-                                node.__webglInit = undefined;
-                            if (node.__webglActive)
-                                node.__webglActive = undefined;
-
-                            if (node.geometryGroups)
-                                node.geometryGroups = undefined;
-
-                            if (node.geometry)
-                                walk(node.geometry);
-                            walk(_dScene);
-                        }
-
-                    }, false);
-
-                    sceneNode.renderer.context.canvas.addEventListener("webglcontextrestored", function(event) {
-                        // Do something 
-                        //chadwick :10/24/14
-                        //try to recreate all the webgl stuff when context is restored.
-                        //TODO: the terrain engine does all sorts of crazy things. Things that current probably don't work
-                        //terrain   //nope, turns out this is fine
-                        //render-to-texture
-                        //videotextures   //seems ok, but does stop the vidoe
-                        //the grass system  
-                        //postprocessing
-                        //buffergeometry - in progress
-                        //any other code that manually manages rendertargets 
-
-                        //ok, good to render next frame
-                        _dView.paused = false;
-
-                        //create a new renderer and set all pointers to it
-                        renderer = _dRenderer = sceneNode.renderer = new THREE.WebGLRenderer({
+                    var contextCreated = false;
+                    try {
+                        sceneNode.renderer = new THREE.WebGLRenderer({
                             canvas: mycanvas,
                             antialias: true,
                             alpha: false,
                             stencil: false,
-                            devicePixelRatio:window.devicePixelRatio
+                            depth: true,
+                            preserveDrawingBuffer: true,
+                            devicePixelRatio: window.devicePixelRatio
+
                         });
-                        renderer.sortObjects  = false;
+                        contextCreated = true;
+                    } catch (e) {
 
 
-                        //here, we are going to do a lot of work to clean up the three.js datastructures
-                        //to force the  new renderer to recreate all the webgl objects
-                        _dScene.__webglObjects = {};
+                        //lets not fall back on canvas renderer. there just is no point trying to do this without it.
+                        //so, we create a renderer anyway.
+                        //just throw out to a page. Could be a custom error warning. 
+                        alertify.alert("We were unable to use WebGL on this device. Sandbox requires WebGL support for graphics. You can continue, but will see no 3D display.")
 
-                        //reset the renderer properties
+
+                    }
+                    if (contextCreated)
+                        sceneNode.renderer.context.canvas.addEventListener("webglcontextlost", function(event) {
+
+                            alertify.error('WebGL Context Lost!');
+
+                            //no point in rendering when we have no context
+                            _dView.paused = true;
+
+                            //clean up existing resources
+                            var walk = function(node) {
+                                if (node.children)
+                                    for (var i = 0; i < node.children.length; i++)
+                                        walk(node.children[i])
+                                if (node.dispose)
+                                    node.dispose();
+                                if (node.__webglInit)
+                                    node.__webglInit = undefined;
+                                if (node.__webglActive)
+                                    node.__webglActive = undefined;
+
+                                if (node.geometryGroups)
+                                    node.geometryGroups = undefined;
+
+                                if (node.geometry)
+                                    walk(node.geometry);
+                                walk(_dScene);
+                            }
+
+                        }, false);
+
+                    if (contextCreated)
+                        sceneNode.renderer.context.canvas.addEventListener("webglcontextrestored", function(event) {
+                            // Do something 
+                            //chadwick :10/24/14
+                            //try to recreate all the webgl stuff when context is restored.
+                            //TODO: the terrain engine does all sorts of crazy things. Things that current probably don't work
+                            //terrain   //nope, turns out this is fine
+                            //render-to-texture
+                            //videotextures   //seems ok, but does stop the vidoe
+                            //the grass system  
+                            //postprocessing
+                            //buffergeometry - in progress
+                            //any other code that manually manages rendertargets 
+
+                            //ok, good to render next frame
+                            _dView.paused = false;
+
+                            //create a new renderer and set all pointers to it
+                            renderer = _dRenderer = sceneNode.renderer = new THREE.WebGLRenderer({
+                                canvas: mycanvas,
+                                antialias: true,
+                                alpha: false,
+                                stencil: false,
+                                devicePixelRatio: window.devicePixelRatio
+                            });
+                            renderer.sortObjects = false;
+
+
+                            //here, we are going to do a lot of work to clean up the three.js datastructures
+                            //to force the  new renderer to recreate all the webgl objects
+                            _dScene.__webglObjects = {};
+
+                            //reset the renderer properties
+                            sceneNode.renderer.shadowMapType = THREE.PCFSoftShadowMap;
+                            sceneNode.renderer.shadowMapEnabled = true;
+                            sceneNode.renderer.autoClear = false;
+                            sceneNode.renderer.setClearColor({
+                                r: 1,
+                                g: 1,
+                                b: 1
+                            }, 1.0);
+
+                            //because we can encounter the same objects over and over in the scenegraph, we need to keep track of what we hit
+                            var geoProcessedList = [];
+                            var matProcessedList = [];
+                            var walk = function(node) {
+                                    if (node.children)
+                                        for (var i = 0; i < node.children.length; i++)
+                                            walk(node.children[i])
+
+                                    //mark objects an not inited
+                                    if (node.__webglInit)
+                                        node.__webglInit = undefined;
+                                    if (node.__webglActive)
+                                        node.__webglActive = undefined;
+
+
+                                    //clear buffers and caches on geometries
+                                    if (node instanceof THREE.Geometry && geoProcessedList.indexOf(node) == -1) {
+                                        if (node.geometryGroups)
+                                            node.geometryGroups = undefined;
+                                        if (node.geometryGroupsList)
+                                            node.geometryGroupsList = undefined;
+                                        node.__colorArray = undefined;
+                                        node.__sortArray = undefined;
+                                        node.__vertexArray = undefined;
+                                        node.__webglColorBuffer = undefined;
+                                        node.__webglCustomAttributesList = undefined;
+                                        node.__webglInit = undefined;
+                                        node.__webglParticleCount = undefined;
+                                        node.__webglVertexBuffer = undefined;
+                                        geoProcessedList.push(node);
+                                    }
+                                    if (node instanceof THREE.BufferGeometry) {
+                                        for (var i in node.attributes) {
+
+                                            node.attributes[i].buffer = _dRenderer.context.createBuffer();
+
+
+                                            node.attributes[i].array = setClone(node.attributes[i].array);
+                                            _dRenderer.context.bindBuffer(_dRenderer.context.ARRAY_BUFFER, node.attributes[i].buffer);
+                                            _dRenderer.context.bufferData(_dRenderer.context.ARRAY_BUFFER, node.attributes[i].array, _dRenderer.context.STATIC_DRAW);
+
+
+                                        }
+                                    }
+                                    //send geometry into this same function
+                                    if (node.geometry) {
+                                        walk(node.geometry);
+
+                                    }
+
+                                    //have to be careful! renderer stashes the rendertarget in the light itself
+                                    //clear it
+                                    if (node instanceof THREE.Light) {
+                                        if (node.shadowMap) {
+                                            node.shadowMap.__webglFramebuffer = undefined;
+                                            node.shadowMap.__webglRenderbuffer = undefined;
+                                            node.shadowMap.__webglTexture = undefined;
+                                        }
+
+                                    }
+                                    //careful! three.js uses a datatexture to send bone transforms. clear this texture
+                                    if (node instanceof THREE.SkinnedMesh) {
+                                        if (node.skeleton.boneTexture) {
+                                            node.skeleton.boneTexture.needsUpdate = true
+                                            node.skeleton.boneTexture.__webglInit = undefined;
+                                            node.skeleton.boneTexture.__webglTexture = undefined;
+                                        }
+                                    }
+
+                                    //scene needs to be tricked into re-initing the objects. this does that
+                                    if (!(node instanceof THREE.Geometry))
+                                        _dScene.__objectsAdded.push(node);
+
+                                    //big step here, deal with materials
+                                    if (node.material && matProcessedList.indexOf(node.material) == -1) {
+                                        resetMaterial(node.material);
+                                        matProcessedList.push(node.material);
+                                    }
+
+                                    //reset the default datatexture provided while real textures are loading
+                                    var defaulttex = _SceneManager.getDefaultTexture();
+                                    defaulttex.__webglInit = undefined;
+                                    defaulttex.__webglTexture = undefined;
+                                    defaulttex.needsUpdate = true;
+
+
+                                    if (node.geometry)
+                                        walk(node.geometry);
+                                }
+                                //walk the scenegraph and recreate
+                            walk(_dScene);
+
+                            alertify.log('WebGL Context Restored!');
+                            glext_ft = _dRenderer.context.getExtension("GLI_frame_terminator");
+
+                        }, false);
+
+                    if (contextCreated) {
+                        sceneNode.renderer.autoUpdateScene = false;
+                        sceneNode.renderer.setSize($('#index-vwf').width(), $('#index-vwf').height());
+
                         sceneNode.renderer.shadowMapType = THREE.PCFSoftShadowMap;
                         sceneNode.renderer.shadowMapEnabled = true;
                         sceneNode.renderer.autoClear = false;
@@ -1674,123 +1776,11 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                             g: 1,
                             b: 1
                         }, 1.0);
-
-                        //because we can encounter the same objects over and over in the scenegraph, we need to keep track of what we hit
-                        var geoProcessedList = [];
-                        var matProcessedList = [];
-                        var walk = function(node) {
-                                if (node.children)
-                                    for (var i = 0; i < node.children.length; i++)
-                                        walk(node.children[i])
-
-                                //mark objects an not inited
-                                if (node.__webglInit)
-                                    node.__webglInit = undefined;
-                                if (node.__webglActive)
-                                    node.__webglActive = undefined;
-
-
-                                //clear buffers and caches on geometries
-                                if (node instanceof THREE.Geometry && geoProcessedList.indexOf(node) == -1) {
-                                    if (node.geometryGroups)
-                                        node.geometryGroups = undefined;
-                                    if (node.geometryGroupsList)
-                                        node.geometryGroupsList = undefined;
-                                    node.__colorArray = undefined;
-                                    node.__sortArray = undefined;
-                                    node.__vertexArray = undefined;
-                                    node.__webglColorBuffer = undefined;
-                                    node.__webglCustomAttributesList = undefined;
-                                    node.__webglInit = undefined;
-                                    node.__webglParticleCount = undefined;
-                                    node.__webglVertexBuffer = undefined;
-                                    geoProcessedList.push(node);
-                                }
-                                if (node instanceof THREE.BufferGeometry) {
-                                    for (var i in node.attributes) {
-
-                                        node.attributes[i].buffer = _dRenderer.context.createBuffer();
-
-
-                                        node.attributes[i].array = setClone(node.attributes[i].array);
-                                        _dRenderer.context.bindBuffer(_dRenderer.context.ARRAY_BUFFER, node.attributes[i].buffer);
-                                        _dRenderer.context.bufferData(_dRenderer.context.ARRAY_BUFFER, node.attributes[i].array, _dRenderer.context.STATIC_DRAW);
-
-
-                                    }
-                                }
-                                //send geometry into this same function
-                                if (node.geometry) {
-                                    walk(node.geometry);
-
-                                }
-
-                                //have to be careful! renderer stashes the rendertarget in the light itself
-                                //clear it
-                                if (node instanceof THREE.Light) {
-                                    if (node.shadowMap) {
-                                        node.shadowMap.__webglFramebuffer = undefined;
-                                        node.shadowMap.__webglRenderbuffer = undefined;
-                                        node.shadowMap.__webglTexture = undefined;
-                                    }
-
-                                }
-                                //careful! three.js uses a datatexture to send bone transforms. clear this texture
-                                if (node instanceof THREE.SkinnedMesh) {
-                                    if (node.skeleton.boneTexture) {
-                                        node.skeleton.boneTexture.needsUpdate = true
-                                        node.skeleton.boneTexture.__webglInit = undefined;
-                                        node.skeleton.boneTexture.__webglTexture = undefined;
-                                    }
-                                }
-
-                                //scene needs to be tricked into re-initing the objects. this does that
-                                if (!(node instanceof THREE.Geometry))
-                                    _dScene.__objectsAdded.push(node);
-
-                                //big step here, deal with materials
-                                if (node.material && matProcessedList.indexOf(node.material) == -1) {
-                                    resetMaterial(node.material);
-                                    matProcessedList.push(node.material);
-                                }
-
-                                //reset the default datatexture provided while real textures are loading
-                                var defaulttex = _SceneManager.getDefaultTexture();
-                                defaulttex.__webglInit = undefined;
-                                defaulttex.__webglTexture = undefined;
-                                defaulttex.needsUpdate = true;
-
-
-                                if (node.geometry)
-                                    walk(node.geometry);
-                            }
-                            //walk the scenegraph and recreate
-                        walk(_dScene);
-
-                        alertify.log('WebGL Context Restored!');
-                        glext_ft = _dRenderer.context.getExtension("GLI_frame_terminator");
-
-                    }, false);
-
-                    sceneNode.renderer.autoUpdateScene = false;
-                    sceneNode.renderer.setSize($('#index-vwf').width(), $('#index-vwf').height());
-
-
-                    if (_SettingsManager.getKey('shadows')) {
-
-
+                        if (sceneNode.renderer.setFaceCulling)
+                            sceneNode.renderer.setFaceCulling(false);
                     }
-                    sceneNode.renderer.shadowMapType = THREE.PCFSoftShadowMap;
-                    sceneNode.renderer.shadowMapEnabled = true;
-                    sceneNode.renderer.autoClear = false;
-                    sceneNode.renderer.setClearColor({
-                        r: 1,
-                        g: 1,
-                        b: 1
-                    }, 1.0);
                 }
-                if (sceneNode.renderer.setFaceCulling)
-                    sceneNode.renderer.setFaceCulling(false);
+
             }
 
 
@@ -1813,9 +1803,11 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             window._dScene = scene;
             window._dbackgroundScene = backgroundScene;
             window._dRenderer = renderer;
-            
-            window._RenderManager = new (require("vwf/view/threejs/SandboxRenderer"))(_dRenderer,mycanvas);
-            glext_ft = _dRenderer.context.getExtension("GLI_frame_terminator");
+            window._RenderManager = new(require("vwf/view/threejs/SandboxRenderer"))(_dRenderer, mycanvas);
+            if (renderer) {
+
+                glext_ft = _dRenderer.context.getExtension("GLI_frame_terminator");
+            }
             window._dSceneNode = sceneNode;
             sceneNode.frameCount = 0; // needed for estimating when we're pick-safe
 
@@ -1825,14 +1817,14 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
     }
 
     function rebuildAllMaterials(start) {
-       //update 2/15 - walk all objects registered with renderer, not just objects currently in scence
-       //previous code missed objects cached in engine in various places.
-       //This probably misses some cached materials, however
-       if(!window._dScene) return;
-       for(var i in _dScene.__webglObjects)
-         for(var j in _dScene.__webglObjects[i])
-            if(_dScene.__webglObjects[i][j].material) _dScene.__webglObjects[i][j].material.needsUpdate = true;
-        if(window._dTerrain)
+        //update 2/15 - walk all objects registered with renderer, not just objects currently in scence
+        //previous code missed objects cached in engine in various places.
+        //This probably misses some cached materials, however
+        if (!window._dScene) return;
+        for (var i in _dScene.__webglObjects)
+            for (var j in _dScene.__webglObjects[i])
+                if (_dScene.__webglObjects[i][j].material) _dScene.__webglObjects[i][j].material.needsUpdate = true;
+        if (window._dTerrain)
             _dTerrain.TileCache.rebuildAllMaterials();
     }
     //necessary when settign the amibent color to match MATH behavior
@@ -2300,11 +2292,9 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
         // -- dragOver ---------------------------------------------------------------------------------
 
-       
 
         // -- drop ---------------------------------------------------------------------------------
 
-        
 
     };
 

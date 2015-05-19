@@ -39,9 +39,12 @@ function MaterialCache() {
                 var passed = true;
                 for(var i in testmats)
                 {
-                    _dRenderer.initMaterial( testmats[i], _dScene.__lights, _dScene.fog, mesh );
-                    var status = _dRenderer.context.getProgramParameter( testmats[i].program.program, _dRenderer.context.LINK_STATUS );
-                    passed = passed && status;
+                    if (window._dRenderer)
+                    {
+                        _dRenderer.initMaterial(testmats[i], _dScene.__lights, _dScene.fog, mesh);
+                        var status = _dRenderer.context.getProgramParameter(testmats[i].program.program, _dRenderer.context.LINK_STATUS);
+                        passed = passed && status;
+                    }
                 }
 
                 if ( !passed ) {
@@ -1045,14 +1048,14 @@ function MaterialCache() {
                     var tfm = new THREE.Matrix3(layer.scalex, 0, layer.offsetx, 0, layer.scaley, layer.offsety, 0, 0, 1);
                     transform.push.apply(transform, tfm.elements);
 
-                } else if (layer.mapTo == 2 && _dRenderer.supportsStandardDerivatives()) {
+                } else if (window._dRenderer && layer.mapTo == 2 && _dRenderer.supportsStandardDerivatives()) {
                     currentmat.bumpMap = true;
                     currentmat.uniforms.bumpMap.value = _SceneManager.getTexture(layer.src);
                     currentmat.uniforms.bumpScale.value = value.layers[i].alpha;
                 } else if (layer.mapTo == 3) {
                     currentmat.lightMap = true;
                     currentmat.uniforms.lightMap.value = _SceneManager.getTexture(layer.src);
-                } else if (layer.mapTo == 4 && _dRenderer.supportsStandardDerivatives()) {
+                } else if (window._dRenderer && layer.mapTo == 4 && _dRenderer.supportsStandardDerivatives()) {
                     currentmat.normalMap = true;
                     currentmat.uniforms.normalMap.value = _SceneManager.getTexture(layer.src);
                     currentmat.uniforms.normalScale.value = new THREE.Vector2(value.layers[i].alpha, value.layers[i].alpha);

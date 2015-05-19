@@ -80,7 +80,8 @@ define({
                 var resolutionScale = _SettingsManager.getKey('resolutionScale');
                 $('#index-vwf')[0].height = $('#index-vwf').height() / resolutionScale;
                 $('#index-vwf')[0].width = $('#index-vwf').width() / resolutionScale;
-                _dRenderer.setSize($('#index-vwf').width() / resolutionScale, $('#index-vwf').height() / resolutionScale, false);
+                if(window._dRenderer)
+                    _dRenderer.setSize($('#index-vwf').width() / resolutionScale, $('#index-vwf').height() / resolutionScale, false);
                 if (_Editor.findcamera()) {
                     _Editor.findcamera().aspect = ($('#index-vwf').width() / $('#index-vwf').height());
                     _Editor.findcamera().updateProjectionMatrix();

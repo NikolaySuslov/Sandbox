@@ -1,6 +1,6 @@
-define(['../sandbox/messageCompress', '../sandbox/vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify', "/socket.io/socket.io.js"], function(messageCompress, alertify, socket) {
+define(['../sandbox/messageCompress', '../sandbox/vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify', "/socket.io/socket.io.js"], function(messageCompress, alertify, io) {
 
-
+var socket;
 	function propertyRecord(nodeid, property, value, time) {
 		this.nodeid = nodeid;
 		this.property = property;
@@ -315,7 +315,7 @@ define(['../sandbox/messageCompress', '../sandbox/vwf/view/editorview/lib/alerti
 
 		async.series([function(cb) {
 
-				if (socket && socket.socket.connected) {
+				if (socket && socket.connected) {
 					socket.on('disconnect', function() {
 						socket = null;
 						window.setTimeout(function() {
@@ -342,9 +342,10 @@ define(['../sandbox/messageCompress', '../sandbox/vwf/view/editorview/lib/alerti
 				captureState(true);
 				hookUpRecording();
 
-				socket = io.connect(window.location.protocol + window.location.host, {
-					'force new connection': true
-				});
+				
+				socket = io(window.location.host,{reconnection : false,transports:['websocket'],query:'pathname='+window.location.pathname});
+
+				socket.connect();
 				socket.on('connect', function() {
 					loadStates();
 					socket.emit('setNamespace', messageCompress.pack({

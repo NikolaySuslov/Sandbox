@@ -1,0 +1,14 @@
+To run the testing server locally, first install seleinum-standalone
+
+> npm install selenium-standalone -g
+> selenium-standalone install
+
+The, open a command prompt in the directory where you found this file
+
+> selenium-standalone start
+
+In another prompt window in the same directory, 
+
+> node server.js
+
+Browse to localhost:8181

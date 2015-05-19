@@ -1,0 +1,124 @@
+<html>
+<head>
+<script src="jquery-2.0.3.min.js"> </script>
+<script src="jquery-ui-1.10.3.custom.min.js"> </script>
+<link rel="stylesheet" type="text/css"  href="jquery-ui-1.10.3.custom.css" > </link>
+<link rel="stylesheet" type="text/css"  href="testing.css" > </link>
+<script> 
+$(document).ready(function()
+		{
+			$("#runTests").button();
+			$("#runTests").click(function()
+			{
+				$.get("../runTests");
+				//window.location.reload();
+				
+			});
+			$("#quitTests").button();
+			$("#quitTests").click(function()
+			{
+				$.get("../quit");
+				
+			});
+			$("#stopTests").button();
+			$("#stopTests").click(function()
+			{
+				$.get("../stop");
+				
+			});
+			$("#reloadTests").button();
+			$("#reloadTests").click(function()
+			{
+				$.get("../reload");
+				//window.location.reload();
+				
+			});
+
+			function display()
+			{
+				$.getJSON("../status", function(status)
+				{
+					//$("#status").text(JSON.stringify(status));		
+					//$("#tests").empty();
+					$("#gitLog").text(status.gitLog);
+					if(status.status == 1)
+						$("#test_status").text('Running');
+					if(status.status == 0)
+						$("#test_status").text('Complete');
+					if(status.status == 2)
+						$("#test_status").text('Canceling');
+					if(status.status == 3)
+						$("#test_status").text('Not Started');
+					var tests = status.tests;
+					for (var i in tests)
+					{
+						var testID = i.replace(/[^a-zA-Z]/g, "_");
+						if($('#' + testID).length == 0)
+						{
+							$("#tests").append("<div class='testrow' id = '" + testID + "' ></div>")
+							$("#" + testID).append("<div  class='runtest' id='run"+testID+"'>Run</div>");
+							$("#" + testID).attr('test',i)
+							$("#run" + testID).attr('test',i)
+							$("#run" + testID).click(function()
+							{
+								var id = $(this).attr('test');
+								$.get("../runOne?" + encodeURIComponent(id));
+							})
+							$("#run" + testID).button();
+							$("#" + testID).append("<div class='testtitle'>" + tests[i].title + "</div>");
+							$("#" + testID).append("<div class='testfile'>" + tests[i].filename + "</div>");
+							$("#" + testID).append("<div class='teststatus'>" + tests[i].status + "</div>");
+							$("#" + testID).append("<div class='testresult'>" + tests[i].result + "</div>");
+							$("#" + testID).append("<div class='testmessage'>" + tests[i].message + "</div>");
+						}else
+						{
+							
+							$("#" + testID +" .teststatus").text(tests[i].status)
+							$("#" + testID +" .testresult").text(tests[i].result)
+							$("#" + testID +" .testmessage").text(tests[i].message)
+						}
+					}
+					$('#log').text(status.log);
+					var rows = $("#tests .testrow")
+					for(var i =0 ; i <  rows.length; i ++)
+					{
+						var testID = $(rows[i]).attr('test');
+						if(!tests[testID])
+						$(rows[i]).remove();
+					}
+					$(".testresult:contains('passed')").css("background-color", "green");
+					$(".testresult:contains('failed')").css("background-color", "red");
+					$(".testresult:contains('error')").css("background-color", "orange");
+					$(".teststatus:contains('error')").css("background-color", "orange");
+					$(".teststatus:contains('complete')").css("background-color", "green");
+					$(".teststatus:contains('running')").css("background-color", "lightgreen");
+
+					$(".teststatus:contains('not started')").css("background-color",'');
+					$(".testresult:contains('null')").css("background-color",'');
+
+					$("#test_status:contains('Running')").css("background-color",'lightgreen');
+					$("#test_status:contains('Complete')").css("background-color",'green');
+					$("#test_status:contains('Canceling')").css("background-color",'orange');
+
+				});
+			}
+			display();
+			window.setInterval(function()
+			{
+				display();
+			}, 500)
+			window.setInterval(function()
+			{
+			//	window.location.reload();
+			}, 60000) 
+})
+</script>
+</head>
+<body>
+	
+	<div id = "status"> <div id="gitLog" ></div><div id="test_status" ></div> <div id="tests" ></div><div id = "runTests">Run</div>
+	<div id = "quitTests">Quit</div>
+	<div id = "stopTests">Stop</div>
+	<div id = "reloadTests">Reload</div><pre id="log" ></pre>
+</body>
+</html>

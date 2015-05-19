@@ -47,6 +47,8 @@ define({
 
         window.setThumbnail = function(auto) {
 
+            if(!window._dRenderer)
+                return;
             if (vwf.getProperty('index-vwf', 'owner') != _UserManager.GetCurrentUserName()) {
                 alertify.alert('Sorry, only the world owner can set the thumbnail');
                 return;

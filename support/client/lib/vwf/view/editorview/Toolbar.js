@@ -1,53 +1,45 @@
-function toolBarButton(src, handler,tooltip,name)
-{
-            if(!name) name = GUID();
-            var translatedTooltip = i18n.t(tooltip);
+function toolBarButton(src, handler, tooltip, name, requiresSelection) {
+    if (!name) name = GUID();
+    var translatedTooltip = i18n.t(tooltip);
 
-            var iconname = name  +  "icon";
-            
-           
+    var iconname = name + "icon";
 
-            $('#toolbar').append('<div src="' + src + '" id="' + iconname + '" class="icon ' + src + '" />');
-            $('#' + iconname).click(function() {
-                handler();
-            });
-            $('#' + iconname).tooltip({
-                content: translatedTooltip,
-                items: "div",
-                show: {
-                    delay: 500
-                }
-            });
-            this.handler = handler;
-            this.tooltip = tooltip;
-            this.hide = function()
-            {
-                $('#' + iconname).hide();
-            }
-            this.show = function()
-            {
-                $('#' + iconname).show();
-            }
-            this.trigger = function()
-            {
-                this.handler();
-            }
-            this.select = function()
-            {
-                $('#' + iconname).addClass('iconselected');
-            }
-            this.deselect = function()
-            {
-                $('#' + iconname).removeClass('iconselected');
-            }
-            this.enable = function()
-            {
-                $('#' + iconname).addClass('icondisabled');
-            }
-            this.disable = function()
-            {
-                $('#' + iconname).removeClass('icondisabled');
-            }
+
+    $('#toolbar').append('<div src="' + src + '" id="' + iconname + '" class="icon ' + src + '" />');
+    $('#' + iconname).click(function() {
+        handler();
+    });
+    $('#' + iconname).tooltip({
+        content: translatedTooltip,
+        items: "div",
+        show: {
+            delay: 500
+        }
+    });
+    this.handler = handler;
+    this.tooltip = tooltip;
+    this.requiresSelection = requiresSelection;
+    this.hide = function() {
+        $('#' + iconname).hide();
+    }
+    this.show = function() {
+        $('#' + iconname).show();
+    }
+    this.trigger = function() {
+        this.handler();
+    }
+    this.select = function() {
+        $('#' + iconname).addClass('iconselected');
+    }
+    this.deselect = function() {
+        $('#' + iconname).removeClass('iconselected');
+    }
+    this.enable = function() {
+        $('#' + iconname).removeClass('icondisabled');
+    }
+    this.disable = function() {
+        $('#' + iconname).addClass('icondisabled');
+    }
 }
 var toolbarButtons = {};
 define({
@@ -92,17 +84,35 @@ define({
             };
         })(jQuery);
 
+
+        window._Toolbar = this;
+
+        $(document).on('selectionChanged', function(e, node) {
+            if (node) {
+                for (var i in toolbarButtons) {
+                    if (toolbarButtons[i].requiresSelection)
+                        toolbarButtons[i].enable();
+                }
+
+            } else {
+                for (var i in toolbarButtons) {
+                    if (toolbarButtons[i].requiresSelection)
+                        toolbarButtons[i].disable();
+                }
+            }
+        });
+
         $('#toolbar').dragScroll();
-        function createIcon(src, menuitemname, tooltip) {
+
+        function createIcon(src, menuitemname, tooltip, requiresSelection) {
 
             var handler = function() {
                 $('#' + menuitemname).click();
 
                 $(".ddsmoothmenu").find('li').trigger('mouseleave');
             };
-            toolbarButtons[menuitemname] = new toolBarButton(src,handler,tooltip,menuitemname);
+            toolbarButtons[menuitemname] = new toolBarButton(src, handler, tooltip, menuitemname, requiresSelection);
         }
-
 
 
         function createSeperator() {
@@ -114,25 +124,25 @@ define({
         createIcon('undo', 'MenuUndo', 'Undo (ctrl-z)');
         createIcon('redo', 'MenuRedo', 'Redo (ctrl-y)');
         createSeperator();
-        createIcon('move', 'MenuMove', 'Move Tool');
-        createIcon('rotate', 'MenuRotate', 'Rotate Tool');
-        createIcon('scale', 'MenuScale', 'Scale Tool');
+        createIcon('move', 'MenuMove', 'Move Tool', true);
+        createIcon('rotate', 'MenuRotate', 'Rotate Tool', true);
+        createIcon('scale', 'MenuScale', 'Scale Tool', true);
         createSeperator();
-        createIcon('worldspace', 'MenuWorld', 'Use World Coordinates');
-        createIcon('localspace', 'MenuLocal', 'Use Local Coordinates');
+        createIcon('worldspace', 'MenuWorld', 'Use World Coordinates', true);
+        createIcon('localspace', 'MenuLocal', 'Use Local Coordinates', true);
         createSeperator();
         createIcon('pick', 'MenuSelectPick', 'Select by clicking');
         createIcon('selectnone', 'MenuSelectNone', 'Select None');
-        createIcon('up', 'MenuSelectParent', 'Select Parent');
-        createIcon('target', 'MenuFocusSelected', 'Focus to selected object');
+        createIcon('up', 'MenuSelectParent', 'Select Parent', true);
+        createIcon('target', 'MenuFocusSelected', 'Focus to selected object', true);
         createSeperator();
-        createIcon('copy', 'MenuCopy', 'Copy');
+        createIcon('copy', 'MenuCopy', 'Copy', true);
         createIcon('paste', 'MenuPaste', 'Paste');
-        createIcon('duplicate', 'MenuDuplicate', 'Duplicate');
-        createIcon('delete', 'MenuDelete', 'Delete');
+        createIcon('duplicate', 'MenuDuplicate', 'Duplicate', true);
+        createIcon('delete', 'MenuDelete', 'Delete', true);
         createSeperator();
-        createIcon('link', 'MenuSetParent', 'Link');
-        createIcon('unlink', 'MenuRemoveParent', 'Unlink');
+        createIcon('link', 'MenuSetParent', 'Link', true);
+        createIcon('unlink', 'MenuRemoveParent', 'Unlink', true);
         createSeperator();
         createIcon('camera', 'MenuCameraOrbit', 'Orbit Camera');
         createIcon('firstperson', 'MenuCamera3RDPerson', 'First Person Camera');
@@ -145,27 +155,29 @@ define({
         createIcon('cone', 'MenuCreateCone', 'Create Cone');
         createIcon('plane', 'MenuCreatePlane', 'Create Plane');
         createSeperator();
-        
+
         createIcon('chat', 'MenuChat', 'Show Chat Window');
-       
-        createIcon('script', 'MenuScriptEditor', 'Show Script Editor Window');
-       
+
+        createIcon('script', 'MenuScriptEditor', 'Show Script Editor Window', true);
+
         createIcon('models', 'MenuModels', 'Show Model Library Window');
-        
+
+        for (var i in toolbarButtons) {
+            if (toolbarButtons[i].requiresSelection)
+                toolbarButtons[i].disable();
+        }
+
         $('#MenuCameraOrbiticon').addClass('iconselected');
         $('#MenuMoveicon').addClass('iconselected');
         $('#MenuWorldicon').addClass('iconselected');
         $('#MenuLogOuticon').addClass('icondisabled');
-        this.addButton = function(name,cssname,handler,toolip)
-        {
-             toolbarButtons[name] = new toolBarButton(cssname,handler,tooltip);
+        this.addButton = function(name, cssname, handler, toolip) {
+            toolbarButtons[name] = new toolBarButton(cssname, handler, tooltip);
         }
-        this.getButton = function(name)
-        {
+        this.getButton = function(name) {
             return toolbarButtons[name];
         }
-        this.getButtons = function()
-        {
+        this.getButtons = function() {
             return toolbarButtons;
         }
     }

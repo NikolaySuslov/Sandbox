@@ -4,6 +4,14 @@ define(function ()
 	
 	var isInitialized = false;
 	 
+	function localGUID()
+	{
+		var S4 = function() {
+                return Math.floor(Math.SecureRandom() * 0x10000 /* 65536 */ ).toString(16);
+            };
+            //can we generate nicer GUID? does it really have to be so long?
+            return 'N'+S4()+S4();
+	} 
 	function getSingleton()
 	{
 		if (!isInitialized)
@@ -69,14 +77,14 @@ define(function ()
 		}
 		this.load = function(url,type,callback)
 		{
-			var cbid = GUID();
+			var cbid = localGUID();
 			this.callbacks[cbid] = callback;
 			this.worker.postMessage({command:'load',data:{url:url,type:type,cbid:cbid}});
 		}
 		this.decompress = function(data,callback)
 		{
 			
-			var cbid = GUID();
+			var cbid = localGUID();
 			this.callbacks[cbid] = callback;
 			this.worker.postMessage({command:'decompressUTF8',data:{compressed:data,cbid:cbid}});
 		}

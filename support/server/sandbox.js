@@ -732,6 +732,17 @@ function startVWF() {
                 app.use(appserver.routeToAPI);
                 //The file handleing logic for vwf engine files
                 app.use(appserver.handleRequest);
+                //manual 404
+                app.use(function(request,response)
+                    {
+                        response.writeHead(404,
+                        {
+                            
+                        });
+                        response.write('Cannot GET ' + request.url)
+                        response.end();
+
+                    });
 
                 if (global.configuration.pfx && !global.configuration.cluster) {
                     listen = spdy.createServer({

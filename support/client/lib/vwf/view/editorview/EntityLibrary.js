@@ -370,10 +370,14 @@ define(function() {
 
                 
                 $.getJSON(data.url, function(proto) {
+
                       if (typeof proto == "string"){
                         proto = JSON.parse(proto);
                        }
-                   //very important to clean the node! Might have accidently left a name or id in the libarary
+
+                    //very important to clean the node! Might have accidently left a name or id in the libarary
+                     var newname = GUID();
+
                     proto = _DataManager.getCleanNodePrototype(proto);
                     if (!proto.properties)
                         proto.properties = {};
@@ -395,7 +399,7 @@ define(function() {
                         proto.properties.transform = transform.elements;
                     }
 
-                    var newname = GUID();
+                   
                     _Editor.createChild('index-vwf', newname, proto);
                     _Editor.SelectOnNextCreate([newname]);
 
@@ -410,13 +414,15 @@ define(function() {
                 if (ID) {
                     $.getJSON(data.url, function(proto) {
                         //very important to clean the node! Might have accidently left a name or id in the libarary
+                        var newname = GUID();
                         proto = _DataManager.getCleanNodePrototype(proto);
+
                         if (!proto.properties)
                             proto.properties = {};
                         proto.properties.owner = _UserManager.GetCurrentUserName()
                         if (!proto.properties.transform)
                             proto.properties.transform = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-                        var newname = GUID();
+                       
                         _Editor.createChild(ID, newname, proto);
                         _Editor.SelectOnNextCreate([newname]);
 

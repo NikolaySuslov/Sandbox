@@ -1,5 +1,5 @@
 .undo, .redo, .physics, .axis, .camera, .cameraIcon, .chat, .cone, .copy, .cube, .cylinder, .delete, .down, .duplicate, .firstperson, .folder, .free, .grid, .grid_icon, .hierarchy, .icon_belts_axis, .inventory, .left, .light_icon, .link, .localspace, .login, .logout, .material, .models, .move, .navigate, .ParticleIcon, .paste, .pick, .plane, .properties, .pyramid, .right, .rotate, .save, .scale, .scene, .script, .selectnone, .sphere, .target, .unlink, .up, .up_folder, .up2, .user, .users, .window, .worldspace{
-background-image: url(../images/icons/sprites.png) !important;
+background-image: url(../images/icons/sprites.svg) !important;
 background-origin: content-box !important;
 }
 
@@ -10,7 +10,7 @@ background-origin: content-box !important;
 }
 
 .camera{
-	background-position: -156px -62px ;
+	background-position: -155px -59px;
 	width: 25px;
 	height: 25px;
 }
@@ -28,7 +28,7 @@ background-origin: content-box !important;
 }
 
 .cone{
-	background-position: -61px -59px ;
+	background-position: -62px -60px;
 	width: 25px;
 	height: 25px;
 }
@@ -40,19 +40,19 @@ background-origin: content-box !important;
 }
 
 .cube{
-	background-position: 0 -59px ;
+	background-position: -2px -59px;
 	width: 25px;
 	height: 25px;
 }
 
 .cylinder{
-	background-position: -609px -28px ;
+	background-position: -604px -27px;
 	width: 25px;
 	height: 25px;
 }
 
 .delete{
-	background-position: -579px -25px ;
+	background-position: -575px -25px;
 	width: 25px;
 	height: 25px;
 }
@@ -64,13 +64,13 @@ background-origin: content-box !important;
 }
 
 .duplicate{
-	background-position: -520px -28px ;
+	background-position: -515px -28px;
 	width: 25px;
 	height: 25px;
 }
 
 .firstperson{
-	background-position: -489px -28px ;
+	background-position: -485px -28px;
 	width: 25px;
 	height: 25px;
 }
@@ -82,7 +82,7 @@ background-origin: content-box !important;
 }
 
 .free{
-	background-position: -430px -29px ;
+	background-position: -428px -28px;
 	width: 25px;
 	height: 25px;
 }
@@ -100,7 +100,7 @@ background-origin: content-box !important;
 }
 
 .hierarchy{
-	background-position: -339px -28px ;
+	background-position: -337px -28px;
 	width: 25px;
 	height: 25px;
 }
@@ -130,13 +130,13 @@ background-origin: content-box !important;
 }
 
 .link{
-	background-position: -201px -30px ;
+	background-position: -201px -29px;
 	width: 25px;
 	height: 25px;
 }
 
 .localspace{
-	background-position: -174px -30px ;
+	background-position: -171px -31px;
 	width: 25px;
 	height: 25px;
 }
@@ -154,7 +154,7 @@ background-origin: content-box !important;
 }
 
 .material{
-	background-position: -87px -30px ;
+	background-position: -88px -30px;
 	width: 25px;
 	height: 25px;
 }
@@ -172,7 +172,7 @@ background-origin: content-box !important;
 }
 
 .navigate{
-	background-position: 0 -28px ;
+	background-position: 0px -26px;
 	width: 25px;
 	height: 25px;
 }
@@ -184,25 +184,25 @@ background-origin: content-box !important;
 }
 
 .paste{
-	background-position: -579px 0;
+	background-position: -576px 0;
 	width: 25px;
 	height: 25px;
 }
 
 .pick{
-	background-position: -548px 0;
+	background-position: -543px 1px;
 	width: 25px;
 	height: 25px;
 }
 
 .plane{
-	background-position: -518px 0;
+	background-position: -515px 0;
 	width: 25px;
 	height: 25px;
 }
 
 .properties{
-	background-position: -488px 0;
+	background-position: -485px 0;
 	width: 25px;
 	height: 25px;
 }
@@ -220,7 +220,7 @@ background-origin: content-box !important;
 }
 
 .rotate{
-	background-position: -416px 0;
+	background-position: -413px 1px;
 	width: 25px;
 	height: 25px;
 }
@@ -232,7 +232,7 @@ background-origin: content-box !important;
 }
 
 .scale{
-	background-position: -360px 0;
+	background-position: -358px 1px;
 	width: 25px;
 	height: 25px;
 }
@@ -244,7 +244,7 @@ background-origin: content-box !important;
 }
 
 .script{
-	background-position: -305px 0;
+	background-position: -303px 0;
 	width: 25px;
 	height: 25px;
 }
@@ -274,7 +274,7 @@ background-origin: content-box !important;
 }
 
 .up{
-	background-position: -166px 0;
+	background-position: -165px -1px;
 	width: 25px;
 	height: 25px;
 }
@@ -310,7 +310,7 @@ background-origin: content-box !important;
 }
 
 .worldspace{
-	background-position: 0 0;
+	background-position: -1px 0;
 	width: 25px;
 	height: 25px;
 }
@@ -322,13 +322,13 @@ background-origin: content-box !important;
 }
 
 .undo{
-	background-position: -379px -158px;
+	background-position: -255px -127px;
 	width: 25px;
 	height: 25px;
 }
 
 .redo{
-	background-position: -354px -158px;
+	background-position: -228px -127px;
 	width: 25px;
 	height: 25px;
 }

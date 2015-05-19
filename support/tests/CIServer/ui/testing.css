@@ -1,0 +1,95 @@
+
+body {
+    font-family: sans-serif;
+}
+.testrow
+{
+  background: rgb(250, 250, 250);
+  width:100%;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.testrow:nth-child(odd)
+{
+  background: rgb(230, 230, 230);
+  width:100%;
+}
+.testtitle
+{
+    display: inline-block;
+      vertical-align: middle;
+    width: 20%;
+      white-space: normal;
+}
+.testfile
+{
+    display: inline-block;
+    
+    width: 20%;
+      white-space: normal;
+}
+.teststatus
+{
+    display: inline-block;
+    
+    width: 5%;
+    background: gray;
+    margin-right: 1em;
+    text-align: center;
+    padding: 1em;
+}
+.testresult
+{
+    display: inline-block;
+    
+    width: 5%;
+    background: gray;
+    text-align: center;
+    padding: 1em;
+      white-space: normal;
+}
+.testresult:content(passed)
+{
+    background: green;
+}
+.testmessage
+{
+    display: inline-block;
+    
+    padding-left: 1em;
+    width: 34%;
+    vertical-align: middle;
+    margin: 8px;
+    white-space: normal;
+}
+
+.runtest
+{
+    zoom:50%;
+}
+
+#test_status
+{
+      background: green;
+      color: white;
+      padding: 1em;
+      margin: 1em;
+      font-size: 3em;
+      text-align: center;
+}
+
+#gitlog
+{
+    text-align: center
+}
+
+pre
+{
+    background-color: black;
+  color: white;
+  font-family: monospace;
+  padding: 1em;
+  max-height: 20em;
+  overflow: scroll;
+}
+}

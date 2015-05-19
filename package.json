@@ -52,7 +52,7 @@
     "winston": "~0.8.3",
     "ws": "~0.4.25",
     "yamljs": "~0.1.4",
-    "client-session": "~0.1.7"
+    "client-sessions": "~0.7.0"
   },
   "devDependencies": {},
   "scripts": {
