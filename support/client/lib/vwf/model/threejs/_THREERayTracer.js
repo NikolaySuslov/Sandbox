@@ -75,6 +75,7 @@ THREE.CPUPickOptions = function() {
     this.objectRegionsTested = 0;
     this.objectsTested = [];
     this.filter = null;
+    this.noTraverse = true;
 }
 // Return the nearsest, highest priority hit 
 THREE.Scene.prototype.CPUPick = function(origin, direction, options, hitlist) {
@@ -1842,6 +1843,9 @@ THREE.Object3D.prototype.ignoreTest = function(ignore) {
 //boudning box.
 THREE.Object3D.prototype.CPUPick = function(origin, direction, options, ret) {
 
+  //really need to be sure we never get here!
+  //  if(origin.length !== 3 || direction.length !== 3 || !(options instanceof THREE.CPUPickOptions) || !(ret instanceof Array))
+  //      debugger;
 
     if (options && options.filter && this) {
 
@@ -1883,7 +1887,8 @@ THREE.Object3D.prototype.CPUPick = function(origin, direction, options, ret) {
     if (this.geometry && !(this instanceof THREE.SkinnedMesh)) {
 
         //at this point, were going to move the ray into the space relative to the mesh. until now, the ray has been in worldspace.
-        var mat = this.getModelMatrix([]);
+        var modelMatrix = this.getModelMatrix([]);
+        var mat = modelMatrix.slice(0)
         var tmp2 = [];
         Mat4.invert(mat, tmp2);
 
@@ -1892,17 +1897,14 @@ THREE.Object3D.prototype.CPUPick = function(origin, direction, options, ret) {
 
 
 
-        mat = this.getModelMatrix([]);
+        
         mat[3] = 0;
         mat[7] = 0;
         mat[11] = 0;
-        var tmp = [];
-        Mat4.invert(mat, tmp);
-
-        mat = tmp;
+       
         var newd = MATH.mulMat4Vec3(mat, direction);
-        var mat2 = this.getModelMatrix([]);
-        var mat3 = this.getModelMatrix([]);
+        var mat2 = modelMatrix;
+        var mat3 = modelMatrix.slice(0)
         mat3[3] = 0;
         mat3[7] = 0;
         mat3[11] = 0;
@@ -2090,6 +2092,10 @@ THREE.Object3D.prototype.FrustrumCast = function(frustrum, options) {
 
         mat = this.getModelMatrix().slice(0);
         mat = MATH.inverseMat4(mat);
+
+        //if space can't be inverted, just return null
+        if(isNaN(mat[0])) return null;
+
         var tfrustrum = frustrum.transformBy(mat);
 
         if (this instanceof THREE.Mesh) {

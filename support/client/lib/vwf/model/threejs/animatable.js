@@ -73,7 +73,7 @@
                    
                     skins[i].animationHandle.setKey(this.animationFrame,this.animationFPS);
                     
-                    skins[i].updateMatrixWorld(true);
+                    skins[i].updateMatrixWorld();
                     
                     //odd, does not seem to update matrix on first child bone. 
                     //how does the bone relate to the skeleton?

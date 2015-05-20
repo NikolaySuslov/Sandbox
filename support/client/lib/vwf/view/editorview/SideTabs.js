@@ -5,7 +5,7 @@ define(function() {
         $("#sidetabs").append("<div id='SideTabShow'  class='sidetab'>Editors</div>");
         $("#SideTabShow").click(function()
         {
-            if ($('#sidepanel').offset().left < $(window).width()) hideSidePanel();
+            if ($('#sidepanel').offset().left + $('#sidepanel').width()/2 < $(window).width()) hideSidePanel();
                 else showSidePanel();
         });
          $('#sidepanel').css('overflow','visible');

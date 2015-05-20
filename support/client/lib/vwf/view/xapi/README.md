@@ -3,9 +3,11 @@ xAPIWrapper
 
 Wrapper to simplify communication to an LRS. [Read more about the Experience API Spec here.](https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md)
 
+Check out the [Reference Documentation Here](http://adlnet.github.io/xAPIWrapper/)
+
 ## Contributing to the project
 We welcome contributions to this project. Fork this repository, 
-make changes and submit pull requests. If you're not comfortable 
+make changes, re-minify, and submit pull requests. If you're not comfortable 
 with editing the code, please submit an issue and we'll be happy 
 to address it.  
 
@@ -19,23 +21,44 @@ is enclosed in an ADL object like the
 a single object to contain both the ADL verbs and the ADL xapiwrapper.
 
 This wrapper has two version identifiers within the code. One, `xapiVersion`
-is the version of the Experience API Specification for which it was built. 
-The second, `build` indicates, using an ISO date time, when the 
-wrapper was last modified. The `xapiVersion` value can be used to 
-determine if the wrapper is compatible with an LRS implementing a specific 
-xAPI Specification version. The `build` value may be used to help 
-determine if you have the current version of the wrapper.
+is the version of the Experience API Specification for which it was built,
+and can be used to determine if the wrapper is compatible with an LRS implementing a specific 
+xAPI Specification version. The second is the build date in the header of the minified file,
+which can be used to tell if you're using the latest version.
 
 ### Minified version
 
 The minified wrapper is self-contained. It includes all required dependencies
-in addition to the ADL Verbs and the XAPIStatement module. Instructions to build
-the minified library are included in the *COMPILING.md* file.
+in addition to the ADL Verbs and the XAPIStatement module. For production sites,
+this version of the wrapper is recommended.
+
+Compiling the minified version is easy. Install Node.js and NPM if you don't already have them
+(download them [here](http://nodejs.org/download/)). Then install the build system, Grunt. This
+may require root/admin privileges on your system.
+
+```bash
+$ sudo npm install -g grunt
+```
+
+Install the xAPIWrapper dependencies:
+
+```bash
+$ npm install
+```
+
+Then execute the build script:
+
+```bash
+$ grunt
+```
+
+This will overwrite `xapiwrapper.min.js` with the minifed versions of the wrapper and all its
+dependencies.
 
 ### Dependencies
 The wrapper relies on external dependencies to perform some actions. Make sure you include
 our compilation of the necessary [CryptoJS](https://code.google.com/p/crypto-js/) components
-in your pages.
+in your pages if you're not using `xapiwrapper.min.js`
 
 ``` html
 <script type="text/javascript" src="./cryptojs_v3.1.2.min.js"></script>
@@ -82,7 +105,7 @@ var Config = function()
 
 ```JavaScript
 var conf = {
-  "endpoint" : "http://lrs.adlnet.gov/xapi/",
+  "endpoint" : "https://lrs.adlnet.gov/xapi/",
   "auth" : "Basic " + toBase64('tom:1234'),
 };
 ADL.XAPIWrapper.changeConfig(conf);
@@ -92,7 +115,7 @@ configuration object:
 
 ```JavaScript
 var conf = {
-  "endpoint" : "http://lrs.adlnet.gov/xapi/",
+  "endpoint" : "https://lrs.adlnet.gov/xapi/",
   "user" : "lou",
   "password" : "5678",
 };
@@ -129,6 +152,7 @@ Include the wrapper file, and optionally the dependencies.
 ``` html
 <script type="text/javascript" src="./cryptojs_v3.1.2.min.js"></script>
 <script type="text/javascript" src="./verbs.js"></script>
+<script type="text/javascript" src="./xapistatement.js"></script>
 <script type="text/javascript" src="./xAPIWrapper/xapiwrapper.js"></script>
 ```
 
@@ -196,7 +220,7 @@ var stmt = new ADL.XAPIStatement(
 
 ```JavaScript
 var stmt = new ADL.XAPIStatement(
-	new ADL.XAPIStatement.Agent(ADL.hash('mailto:steve.vergenz.ctr@adlnet.gov'), 'Steven Vergenz'),
+	new ADL.XAPIStatement.Agent(ADL.XAPIWrapper.hash('mailto:steve.vergenz.ctr@adlnet.gov'), 'Steven Vergenz'),
 	new ADL.XAPIStatement.Verb('http://adlnet.gov/expapi/verbs/launched', 'launched'),
 	new ADL.XAPIStatement.Activity('http://vwf.adlnet.gov/xapi/virtual_world_sandbox', 'the Virtual World Sandbox')
 );
@@ -513,7 +537,8 @@ ADL.XAPIWrapper.getActivities("http://adlnet.gov/expapi/activities/question",
 ##### Activity State
 `function sendState(activityid, agent, stateid, registration, statevalue, matchHash, noneMatchHash, callback)`  
 `function getState(activityid, agent, stateid, registration, since, callback)`  
-Save / Retrieve activity state information for a particular agent, and optional registration.
+`function deleteState(activityid, agent, stateid, registration, matchHash, noneMatchHash, callback)` 
+Save / Retrieve / Delete activity state information for a particular agent, and optional registration.
 
 ###### Send / Retrieve New Activity State 
 
@@ -578,10 +603,31 @@ ADL.XAPIWrapper.log(states);
 >> ["another_state"] 
 ```
 
+###### Delete Activity State
+
+```javascript
+var stateval = {"info":"the state info"};
+ADL.XAPIWrapper.sendState("http://adlnet.gov/expapi/activities/question", 
+                          {"mbox":"mailto:tom@example.com"}, 
+                          "questionstate", null, stateval);
+ADL.XAPIWrapper.getState("http://adlnet.gov/expapi/activities/question", 
+                        {"mbox":"mailto:tom@example.com"}, "questionstate");
+>> {info: "the state info"}
+
+ADL.XAPIWrapper.deleteState("http://adlnet.gov/expapi/activities/question", 
+                        {"mbox":"mailto:tom@example.com"}, "questionstate");
+>> XMLHttpRequest {statusText: "NO CONTENT", status: 204, response: "", responseType: "", responseXML: null…}
+
+ADL.XAPIWrapper.getState("http://adlnet.gov/expapi/activities/question", 
+                        {"mbox":"mailto:tom@example.com"}, "questionstate");
+>> 404
+```
+
 ##### Activity Profile
 `function sendActivityProfile(activityid, profileid, profilevalue, matchHash, noneMatchHash, callback)`  
 `function getActivityProfile(activityid, profileid, since, callback)`  
-Allows for the storage and retrieval of data about an Activity.
+`function deleteActivityProfile(activityid, profileid, matchHash, noneMatchHash, callback)`  
+Allows for the storage, retrieval and deletion of data about an Activity.
 
 ###### Send / Retrieve New Activity Profile
 
@@ -647,6 +693,27 @@ var profiles = ADL.XAPIWrapper.getActivityProfile(actid, null, since);
 ADL.XAPIWrapper.log(profiles);
 >> ["new-profile"]
 ```
+
+###### Delete Activity Profile
+
+```javascript
+var profile = {"info":"the profile"};
+ADL.XAPIWrapper.sendActivityProfile("http://adlnet.gov/expapi/activities/question", 
+                                    "actprofile", profile, null, "*");
+ADL.XAPIWrapper.getActivityProfile("http://adlnet.gov/expapi/activities/question", 
+                                  "actprofile", null,
+                                  function(r){ADL.XAPIWrapper.log(JSON.parse(r.response));});
+>> {info: "the profile"} 
+
+ADL.XAPIWrapper.deleteActivityProfile("http://adlnet.gov/expapi/activities/question", 
+                        "actprofile");
+>> XMLHttpRequest {statusText: "NO CONTENT", status: 204, response: "", responseType: "", responseXML: null…}
+
+ADL.XAPIWrapper.getActivityProfile("http://adlnet.gov/expapi/activities/question", 
+                                  "actprofile");
+>> 404
+```
+
 #### Agents
 ##### Get Agent
 `function getAgents(agent, callback)`  
@@ -673,7 +740,8 @@ ADL.XAPIWrapper.getAgents({"mbox":"mailto:tom@example.com"},
 ##### Agent Profile
 `function sendAgentProfile(agent, profileid, profilevalue, matchHash, noneMatchHash, callback)`  
 `function getAgentProfile(agent, profileid, since, callback)`  
-Allows for the storage and retrieval of data about an Agent.
+`function deleteAgentProfile(agent, profileid, matchHash, noneMatchHash, callback)`  
+Allows for the storage, retrieval and deletion of data about an Agent.
 
 ###### Send / Retrieve New Agent Profile
 
@@ -732,4 +800,24 @@ var sinceprofiles = ADL.XAPIWrapper.getAgentProfile(otheragent, null, since);
 
 ADL.XAPIWrapper.log(sinceprofiles);
 >> ["the-new-other-profile-id"]
+```
+
+###### Delete Agent Profile
+
+```javascript
+var profile = {"info":"the agent profile"};
+ADL.XAPIWrapper.sendAgentProfile({"mbox":"mailto:tom@example.com"}, 
+                                  "agentprofile", profile, null, "*");
+ADL.XAPIWrapper.getAgentProfile({"mbox":"mailto:tom@example.com"}, 
+                                 "agentprofile", null,
+                                 function(r){ADL.XAPIWrapper.log(JSON.parse(r.response));});
+>> {info: "the agent profile"} 
+
+ADL.XAPIWrapper.deleteAgentProfile({"mbox":"mailto:tom@example.com"}, 
+                        "agentprofile");
+>> XMLHttpRequest {statusText: "NO CONTENT", status: 204, response: "", responseType: "", responseXML: null…}
+
+ADL.XAPIWrapper.getAgentProfile({"mbox":"mailto:tom@example.com"}, 
+                                 "agentprofile");
+>> 404
 ```

@@ -12,7 +12,7 @@ define([],
             obj.parentSelector = parentSelector;
             obj.iconID = obj.titleID + 'icon'
             obj.titleTextID = obj.titleID + 'text'
-
+            obj.open = false;
             obj.init = function() {
                 $(this.parentSelector).append("<div id='" + this.rootID + "''></div");
                 $('#' + this.rootID).attr('style', 'border-radius: 10px;width: 100%;margin: 0px;padding: 0px;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: rgb(68, 68, 68);border-left-width: 2px;border-left-style: solid;border-left-color: rgb(68, 68, 68);height: auto;')
@@ -45,6 +45,7 @@ define([],
                     $('#' + this.contentID).show('blind', function() {
                         if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
                     });
+                    this.open = true;
                 }
                 this.hide = function() {
                     //$('#PhysicsEditor').dialog('close');
@@ -57,6 +58,7 @@ define([],
                         if(this.onHide)
                         	this.onHide()
                     }
+                    this.open = false;
                 }
                 this.disable = function() {
                     if (this.isDisabled()) return;
@@ -75,7 +77,8 @@ define([],
                 }
                 this.isOpen = function() {
                     //$("#PhysicsEditor").dialog( "isOpen" )
-                    return $('#' + this.contentID).is(':visible');
+                    //return $('#' + this.contentID).is(':visible');
+                    return this.open;
                 }
                 this.SelectionChanged = function(e, node) {
                     if (this.requiresSelection) {

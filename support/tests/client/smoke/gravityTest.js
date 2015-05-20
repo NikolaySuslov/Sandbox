@@ -19,12 +19,12 @@ module.exports = {
 			.setProperty("testSphere2", "___physics_enabled", true)
 			.click("#playButton")
 			.pause(5000)
-			
 			.getProperty("testSphere1", "transform", function(err, prop){
 				checkDistance("testSphere1", initial1, prop.value);
 			})
 			.getProperty("testSphere2", "transform", function(err, prop){
 				checkDistance("testSphere2", initial2, prop.value);
+				console.log('test finished')
 				finished(passed, outStr);
 			});
 		

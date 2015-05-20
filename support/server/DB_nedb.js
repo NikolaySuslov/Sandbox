@@ -70,8 +70,8 @@ exports.new = function(DBTablePath, cb) {
                     cb();
                 })
             },
-            find: function(key, data, cb) {
-                DB.find(key, data, cb);
+            find: function(key, cb) {
+                DB.find(key, cb);
             },
             find_raw: function(key, cb) {
                 return DB.find(key, cb);

@@ -261,11 +261,12 @@ SceneManager.prototype.CPUPick = function(o, d, opts) {
 
     //so, in the octree, all pickable meshes are sorted - there is no need to walk down the transform graph to an objects children
     //however, the special purpose section does requrie you to walk the children - otherwise you'll never get anywhere!
+    var oldNoTraverse = opts.noTraverse;
     opts.noTraverse = false;
     for (var i = 0; i < this.specialCaseObjects.length; i++) {
         this.specialCaseObjects[i].CPUPick(o, d, opts || this.defaultPickOptions, hitlist);
     }
-
+    opts.noTraverse = oldNoTraverse;
     //sort the hits by priority and distance
     hitlist = hitlist.sort(function(a, b) {
         var ret = b.priority - a.priority;

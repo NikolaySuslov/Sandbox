@@ -461,7 +461,7 @@
                     if (list[i].animationHandle)
                     {
                         list[i].CPUPick([0, 0, 0], [0, 0, 1],
-                        {}); //this is sort of a silly way to initialize the bone handles, but it works
+                        _SceneManager.defaultPickOptions,[]); //this is sort of a silly way to initialize the bone handles, but it works
                         list[i].animationHandle.setKey(this.animationFrame);
                         list[i].updateMatrixWorld();
                         //odd, does not seem to update matrix on first child bone. 
