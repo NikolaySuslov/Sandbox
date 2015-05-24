@@ -1,0 +1,1323 @@
+[{
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object3",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -5.399998188018799, 9.599998474121094, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "N29903cb9"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object5",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -34.20000076293945, 10.399996757507324, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "N2b2f5a9"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object15",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -2.1999948024749756, 32.39999771118164, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "N3b917a95"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object10",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -25.199996948242188, 27.19999885559082, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "N5b494a28"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object5",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -22, -0.8000000715255737, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "N74b2d6f2"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object15",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, 5.400002956390381, 29.39999771118164, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "N7a6970d7"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object15",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, 10.00000286102295, 21.19999885559082, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "N84b720f0"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object4",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -11.199999809265137, 5.59999942779541, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "N95546744"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, 0, 0, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "Na138a3bb"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object5",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -40, 6.399999618530273, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "Na8167896"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object5",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -28.800004959106445, 0.800000011920929, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "Naac8177d"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object15",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, 3.199998140335083, 22.80000114440918, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "Nab143b45"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object10",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -38.59999465942383, 26.200000762939453, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "Nc1833b38"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object5",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -26.600000381469727, 7.399998188018799, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "Nc55bf2af"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object1",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, 6.800000190734863, -1.600000023841858, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "Ncb31f9f4"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object15",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -7.999993801116943, 28.399999618530273, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "Neba3db19"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object10",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -20.59999656677246, 19, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "Nf070f349"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object10",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -32.79999542236328, 30.19999885559082, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "Nf74d6160"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object10",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, -27.400001525878906, 20.60000228881836, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "Nfdf4b7f"
+    }, {
+        "extends": "asset.vwf",
+        "properties": {
+            "DisplayName": "Object2",
+            "___physics_activation_state": 1,
+            "___physics_deactivation_time": 0,
+            "___physics_velocity_angular": [0, 0, 0],
+            "___physics_velocity_linear": [0, 0, 0],
+            "animationEnd": 23.6,
+            "animationFrame": 20.58,
+            "animationSpeed": 0.28,
+            "animationStart": 0,
+            "animationState": 1,
+            "materialDef": {
+                "alpha": 1,
+                "ambient": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "color": {
+                    "b": 1,
+                    "g": 1,
+                    "r": 1
+                },
+                "emit": {
+                    "b": 0,
+                    "g": 0,
+                    "r": 0
+                },
+                "layers": [{
+                        "alpha": 1,
+                        "mapInput": 0,
+                        "mapTo": 1,
+                        "offsetx": 0,
+                        "offsety": 0,
+                        "scalex": 1,
+                        "scaley": 1,
+                        "src": "white.png"
+                    }
+                ],
+                "reflect": 0.1,
+                "shininess": 0.6,
+                "side": 0,
+                "specularColor": {
+                    "b": 0.067,
+                    "g": 0.067,
+                    "r": 0.067
+                },
+                "specularLevel": 1,
+                "type": "phong"
+            },
+            "transform": [1, 0, 0, 0, 0, -0.017452407628297806, 0.9998477101325989, 0, 0, -0.9998477101325989, -0.017452407628297806, 0, 2.2000012397766113, 6.599998950958252, 0, 1]
+        },
+        "random": {
+            "c": 1,
+            "s0": 0.653414655476809,
+            "s1": 0.913618323160335,
+            "s2": 0.805538387037814
+        },
+        "sequence": 0,
+        "source": "../examples/threejsjson/knight.js",
+        "type": "subDriver/threejs/asset/vnd.three.js+json",
+        "name": "Nff6ef048"
+    }, {
+        "DisplayName": null,
+        "glyphURL": "../vwf/view/editorview/images/icons/scene.png",
+        "simTime": 1538,
+        "placemarks": {
+            "Origin": [0, 0, 0]
+        },
+        "navmode": "none",
+        "sunColor": [1, 1, 1],
+        "sunDirection": [0, 0, 1],
+        "sunIntensity": 0.5,
+        "shadowDarkness": 0.5,
+        "ambientColor": [0.35, 0.35, 0.35],
+        "fogColor": [155, 155, 155],
+        "fogNear": 100,
+        "fogFar": 1000,
+        "fogType": 0,
+        "fogDensity": 0.005,
+        "fogVFalloff": 1.3,
+        "fogVFalloffStart": 0,
+        "skyColorBlend": 0,
+        "skyFogBlend": 0,
+        "skyApexColor": [0, 0.5, 1],
+        "skyHorizonColor": [0, 0.5, 1],
+        "___physics_gravity": [0, 0, -9.8],
+        "___physics_accuracy": 10,
+        "___physics_active": true,
+        "vAtmosphereDensity": 0.0005,
+        "playMode": "stop",
+        "octreeObjects": 5,
+        "octreeDepth": 16,
+        "octreeExtents": 640,
+        "skyTexture": "white",
+        "owner": "Anonymous_bAQFeWjj7b5YHrrIAAAC",
+        "type": "scene",
+        "publishSettings": {
+            "allowAnonymous": false,
+            "allowTools": false,
+            "camera": "",
+            "createAvatar": false,
+            "singlePlayer": false
+        }
+    }
+]

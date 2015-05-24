@@ -38,6 +38,71 @@ function MorphBinaryLoader()
     };
 }
 
+//when animation tracks don't contain a pos,rot,or scl for each key, add that value with a linear interp
+function cleanAnimation(animation)
+{
+    
+    for (var h = 0, hl = animation.hierarchy.length; h < hl; h++) {
+        var object = animation.hierarchy[h];
+        var keys = animation.data.hierarchy[h].keys;
+        for(var i =0; i < keys.length; i++)
+        {
+            var thispos = keys[i].pos || [0, 0, 0];
+            var thisrot = keys[i].rot || new THREE.Quaternion();
+            var thisscl = keys[i].scl || [1, 1, 1];
+
+            var nextpos, nextposdist;
+            var nextrot, nextrotdist;
+            var nextscl, nextscldist;
+            for (var k = i + 1; k < keys.length; k++) {
+                if (keys[k].pos) {
+                    nextpos = keys[k].pos;
+                    nextposdist = k - i;
+                    break;
+                }
+            }
+            for (var k = i + 1; k < keys.length; k++) {
+                if (keys[k].rot) {
+                    nextrot = keys[k].rot;
+                    nextrotdist = k - i;
+                    break;
+                }
+            }
+            for (var k = i + 1; k < keys.length; k++) {
+                if (keys[k].scl) {
+                    nextscl = keys[k].scl;
+                    nextscldist = k - i;
+                    break;
+                }
+            }
+            if(!nextpos) nextpos = thispos;
+            if(!nextrot) nextrot = thisrot;
+            if(!nextscl) nextscl = thisscl;
+            if(nextposdist > 1)
+            {
+                keys[i+1].pos = [ thispos[0] + (nextpos[0] - thispos[0])/nextposdist,
+                 thispos[1] + (nextpos[1] - thispos[1])/nextposdist,
+                  thispos[2] + (nextpos[2] - thispos[2])/nextposdist,
+                ]
+            }
+            if(nextscldist > 1)
+            {
+                keys[i+1].scl = [ thisscl[0] + (nextscl[0] - thisscl[0])/nextscldist,
+                 thisscl[1] + (nextscl[1] - thisscl[1])/nextscldist,
+                  thisscl[2] + (nextscl[2] - thisscl[2])/nextscldist,
+                ]
+            }
+
+            if(nextrotdist > 1)
+            {
+                
+                keys[i+1].rot = new THREE.Quaternion(thisrot.x,thisrot.y,thisrot.z,thisrot.w);
+                keys[i+1].rot.slerp(nextrot,1/nextrotdist)
+            }
+        }
+    }    
+
+}
  var NOT_STARTED = 0;
     var PENDING = 1;
     var FAILED = 2;
@@ -81,6 +146,15 @@ var assetRegistry = function() {
             this.assets[assetSource].pending = false;
             this.assets[assetSource].node = _assetLoader.getCollada(assetSource).scene;
         }
+
+        
+
+        if (childType == "subDriver/threejs/asset/vnd.three.js+json" && _assetLoader.getTHREEjs(assetSource))
+        {
+            this.assets[assetSource].loaded = true;
+            this.assets[assetSource].pending = false;
+            this.assets[assetSource].node = _assetLoader.getTHREEjs(assetSource).scene;
+        }
         if (childType == 'subDriver/threejs/asset/vnd.collada+xml+optimized' && _assetLoader.getColladaOptimized(assetSource))
         {
             this.assets[assetSource].loaded = true;
@@ -95,6 +169,10 @@ var assetRegistry = function() {
             this.assets[assetSource].animations = _assetLoader.getglTF(assetSource).animations;
             this.assets[assetSource].rawAnimationChannels = _assetLoader.getglTF(assetSource).rawAnimationChannels;
         }
+         if(this.assets[assetSource] && this.assets[assetSource].node.animationHandle)
+            {
+                cleanAnimation(this.assets[assetSource].node.animationHandle);
+            }
     }
     this.newLoad = function(childType, assetSource, success, failure)
     {
@@ -130,7 +208,30 @@ var assetRegistry = function() {
             reg.failcallbacks.push(failure);
         var assetLoaded = function(asset)
         {
+            //if a loader does not return a three.mesh
+            if (asset instanceof THREE.Geometry) {
+                var shim;
+                if (asset.skinIndices && asset.skinIndices.length > 0)
+                {
+                    shim = { scene: new THREE.SkinnedMesh(asset, new THREE.MeshPhongMaterial())} 
 
+                }
+                else
+                    shim = {scene: new THREE.Mesh(asset, new THREE.MeshPhongMaterial())}
+
+                if (asset.animation) {
+                    shim.scene.animationHandle = new THREE.Animation(
+                        shim.scene,
+                        asset.animation
+                    );
+                }
+
+                asset = shim;
+            }
+            if(asset.scene.animationHandle)
+            {
+                cleanAnimation(asset.scene.animationHandle);
+            }
             //store this asset in the registry
             //get the entry from the asset registry
             reg = assetRegistry.assets[assetSource];
@@ -205,27 +306,33 @@ var assetRegistry = function() {
         if (childType == 'subDriver/threejs/asset/vnd.collada+xml')
         {
             reg.loadStarted();
-            this.loader = new THREE.ColladaLoader();
-            this.loader.load(assetSource, assetLoaded, assetFailed);
+            var loader = new THREE.ColladaLoader();
+            loader.load(assetSource, assetLoaded, assetFailed);
         }
         if (childType == 'subDriver/threejs/asset/vnd.collada+xml+optimized')
         {
             reg.loadStarted();
-            this.loader = new ColladaLoaderOptimized();
-            this.loader.load(assetSource, assetLoaded, assetFailed);
+            var loader = new ColladaLoaderOptimized();
+            loader.load(assetSource, assetLoaded, assetFailed);
         }
         if (childType == 'subDriver/threejs/asset/vnd.osgjs+json+compressed+optimized')
         {
             reg.loadStarted();
-            this.loader = new UTF8JsonLoader_Optimized(
+            var loader = new UTF8JsonLoader_Optimized(
             {
                 source: assetSource
             }, assetLoaded, assetFailed);
         }
+        if (childType == "subDriver/threejs/asset/vnd.three.js+json")
+        {
+            reg.loadStarted();
+            var loader = new THREE.JSONLoader()
+            loader.load(assetSource, assetLoaded);
+        }
         if (childType == 'subDriver/threejs/asset/vnd.osgjs+json+compressed')
         {
             reg.loadStarted();
-            this.loader = new UTF8JsonLoader(
+            var loader = new UTF8JsonLoader(
             {
                 source: assetSource
             }, assetLoaded, assetFailed);
@@ -279,8 +386,8 @@ var assetRegistry = function() {
         {
             
             reg.loadStarted();
-            this.loader = new MorphRawJSONLoader();
-            this.loader.load(assetSource, assetLoaded);
+            var loader = new MorphRawJSONLoader();
+            loader.load(assetSource, assetLoaded);
         }
     }
     this.get = function(childType, assetSource, success, failure)

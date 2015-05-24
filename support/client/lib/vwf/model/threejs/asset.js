@@ -489,8 +489,10 @@
                 var self = this;
                 if (childType !== 'subDriver/threejs/asset/vnd.gltf+json')
                 {
+                  
                     var clone = asset.clone();
                     clone.morphTarget = asset.morphTarget; //sort of hacky way to keep a reference to morphtarget
+                
                     this.getRoot().add(clone);
                 }
                 else

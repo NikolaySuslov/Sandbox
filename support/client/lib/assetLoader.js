@@ -79,6 +79,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
             this.utf8JsonOptimized = {};
             this.colladaOptimized = {};
             this.glTF = {};
+            this.THREEjs = {};
 
             this.getOrLoadAsset = function(url, type, cb) {
 
@@ -112,7 +113,19 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                         cb(assetLoader.getUtf8Json(url));
 
                     });
-                } else if (type == 'subDriver/threejs/asset/vnd.gltf+json') {
+                } 
+                else if (type == "subDriver/threejs/asset/vnd.three.js+json") {
+                    if (assetLoader.getTHREEjs(url)) {
+                        cb(assetLoader.getTHREEjs(url));
+                        return;
+                    }
+                    assetLoader.loadTHREEJS(url, function() {
+
+                        cb(assetLoader.getTHREEjs(url));
+
+                    });
+                }
+                else if (type == 'subDriver/threejs/asset/vnd.gltf+json') {
                     if (assetLoader.getglTF(url)) {
                         cb(assetLoader.getglTF(url));
                         return;
@@ -149,6 +162,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                     root.GenerateBounds();
                     root.BuildRayTraceAccelerationStructure();
                     $('#preloadguiText').text($('#preloadguiText').text() + '.');
+                   
                 }
                 if (root.children) {
                     //for(var i =0;i < root.children.length; i++)
@@ -191,6 +205,10 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                 this.getMorphs = function(url) {
                     return this.morphs[url];
                 },
+                this.getTHREEjs = function(url)
+                {
+                    return this.THREEjs[url];
+                },
 
 
                 this.loadCollada = function(url, cb2) {
@@ -213,6 +231,43 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                             cb2();
                             loader.cleanup();
                         }
+                    });
+                },
+                this.loadTHREEJS = function(url,cb2)
+                {
+                    var loader = new THREE.JSONLoader()
+                    loader.load(url,function(asset) {
+                        //console.log(url, performance.now() - time);
+
+                        //if a loader does not return a three.mesh
+                        if (asset instanceof THREE.Geometry) {
+                            var shim;
+                            if (asset.skinIndices && asset.skinIndices.length > 0)
+                            {
+                                shim = { scene: new THREE.SkinnedMesh(asset, new THREE.MeshPhongMaterial())} 
+
+                            }
+                            else
+                                shim = {scene: new THREE.Mesh(asset, new THREE.MeshPhongMaterial())}
+
+                            if (asset.animation) {
+                                shim.scene.animationHandle = new THREE.Animation(
+                                    shim.scene,
+                                    asset.animation
+                                );
+                            }
+
+                            asset = shim;
+                        }
+                       
+
+                        assetLoader.THREEjs[url] = asset;
+                        assetLoader.BuildCollisionData(asset.scene, function(cb3) {
+                            
+                            cb2();
+                            
+                        });
+
                     });
                 },
                 this.loadColladaOptimized = function(url, cb2) {
@@ -478,7 +533,11 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                             assetLoader.loadglTF(url, cb2, true);
                         } else if (type == 'subDriver/threejs/asset/vnd.osgjs+json+compressed+optimized') {
                             assetLoader.loadUTf8JsonOptimized(url, cb2);
-                        } else if (type == 'unknown') {
+                        } 
+                        else if (type == "subDriver/threejs/asset/vnd.three.js+json") {
+                            assetLoader.loadTHREEJS(url, cb2);
+                        } 
+                        else if (type == 'unknown') {
                             assetLoader.loadUnknown(url, cb2);
                         } else if (type == 'terrain') {
                             var type = url.substr(url.lastIndexOf('.') + 1).toLowerCase();

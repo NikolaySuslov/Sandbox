@@ -160,13 +160,13 @@ function run_one_test(thistest, next) {
 
     handler = function(e) {
         //should return false or true
-        logger.log("EXCEPTION")
+        logger.log("EXCEPTION", JSON.stringify(e))
 
         report.tests[id].status = "error";
 
         report.tests[id].result = "error"
 
-        report.tests[id].message = e;
+        report.tests[id].message = " " + e.toString() + "; ";
         global.clearTimeout(timeoutID);
         domain.exit();
         process.removeListener('uncaughtException', handler);

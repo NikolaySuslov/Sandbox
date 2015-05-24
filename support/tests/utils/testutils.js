@@ -114,6 +114,21 @@ module.exports.hookupUtils = function(browser) {
         	cb(null, didSave);
         });
 	});	
+	browser.addCommand("hasViewNode", function(nodeName, treatAsId) {
+		var cb = arguments[arguments.length -1];
+        browser.execute(function(a, b) {
+			try{
+				a = b ? a : vwf.find(vwf.application(), a)[0];
+				return findviewnode(a).children[0].children[0] ? true : false;
+			} 
+			catch(e){
+				return false;
+			}
+        }, nodeName, treatAsId, function(err, viewNode)
+        {
+        	cb(err, viewNode.value);
+        });
+	});	
 }
 
 module.exports.login = function(cb){

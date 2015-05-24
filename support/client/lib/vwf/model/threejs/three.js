@@ -4461,8 +4461,6 @@ THREE.Matrix4.prototype = {
 
 
 
-
-
         temp_m.copy(this)
 
         var te = this.elements;
@@ -16035,13 +16033,22 @@ THREE.Scene = function () {
 
 	this.__objectsAdded = [];
 	this.__objectsRemoved = [];
-
+	this.__skins = [];
+	this.__pointclouds = [];
 };
 
 THREE.Scene.prototype = Object.create( THREE.Object3D.prototype );
 
 THREE.Scene.prototype.__addObject = function ( object ) {
 
+	if ( object instanceof THREE.SkinnedMesh )
+	{
+		this.__skins.push(object);
+	}
+	if ( object instanceof THREE.PointCloud )
+	{
+		this.__pointclouds.push(object);
+	}
 	if ( object instanceof THREE.Light ) {
 
 		if ( this.__lights.indexOf( object ) === - 1 ) {
@@ -16085,6 +16092,14 @@ THREE.Scene.prototype.__addObject = function ( object ) {
 
 THREE.Scene.prototype.__removeObject = function ( object ) {
 
+	if ( object instanceof THREE.SkinnedMesh )
+	{
+		this.__skins.splice(this.__skins.indexOf(object),1);
+	}
+	if ( object instanceof THREE.PointCloud )
+	{
+		this.__pointclouds.splice(this.__pointclouds.indexOf(object),1);
+	}
 	if ( object instanceof THREE.Light ) {
 
 		var i = this.__lights.indexOf( object );
@@ -22420,15 +22435,12 @@ THREE.WebGLRenderer = function ( parameters ) {
 
 			}
 
-			for ( var i = 0, l = object.children.length; i < l; i ++ ) {
-
-				updateSkeletons( object.children[ i ] );
-
-			}
+			
 
 		}
 
-		updateSkeletons( scene );
+		for( var i = 0; i < scene.__skins.length; i++)
+			updateSkeletons( scene.__skins[i] );
 
 		camera.matrixWorldInverse.getInverse( camera.matrixWorld );
 
@@ -34884,7 +34896,7 @@ THREE.LensFlarePlugin = function () {
 
 		flares.length = 0;
 
-		scene.traverseVisible( function ( child ) {
+		/*scene.traverseVisible( function ( child ) {
 
 			if ( child instanceof THREE.LensFlare ) {
 
@@ -34892,7 +34904,7 @@ THREE.LensFlarePlugin = function () {
 
 			}
 
-		} );
+		} );*/ //this is too slow!
 
 		if ( flares.length === 0 ) return;
 
@@ -35681,7 +35693,7 @@ THREE.SpritePlugin = function () {
 
 		sprites.length = 0;
 
-		scene.traverseVisible( function ( child ) {
+		/*scene.traverseVisible( function ( child ) {
 
 			if ( child instanceof THREE.Sprite ) {
 
@@ -35689,7 +35701,7 @@ THREE.SpritePlugin = function () {
 
 			}
 
-		} );
+		} );*/ //this is way too slow!
 
 		if ( sprites.length === 0 ) return;
 

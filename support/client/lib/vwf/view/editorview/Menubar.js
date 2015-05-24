@@ -769,19 +769,19 @@ define({
                         if (ok) {
                             if (type == 'Collada')
                                 _Editor.loadMesh(val, 'subDriver/threejs/asset/vnd.collada+xml');
-                            if (type == 'Optimized Collada')
-                                _Editor.loadMesh(val, 'subDriver/threejs/asset/vnd.collada+xml+optimized');
-                            if (type == '3DR JSON')
+                        //    if (type == 'Optimized Collada')  // Lets remove this until we know the use case better
+                        //        _Editor.loadMesh(val, 'subDriver/threejs/asset/vnd.collada+xml+optimized');
+                            if (type == '3DR JSON (http://3dr.adlnet.gov)')
                                 _Editor.loadMesh(val, 'subDriver/threejs/asset/vnd.osgjs+json+compressed');
-                            if (type == 'glTF JSON')
+                            if (type == 'glTF (v0.6) JSON')
                                 _Editor.loadMesh(val, 'subDriver/threejs/asset/vnd.gltf+json');
-
-
+                            if (type == 'Three.js Native JSON')
+                                _Editor.loadMesh(val, 'subDriver/threejs/asset/vnd.three.js+json');
                         }
                     }, 'http://');
                 }
 
-            }, ["Collada", "Optimized Collada", "3DR JSON", 'glTF JSON'])
+            }, ["Collada", "3DR JSON (http://3dr.adlnet.gov)", "glTF (v0.6) JSON", 'Three.js Native JSON'])
 
         });
 

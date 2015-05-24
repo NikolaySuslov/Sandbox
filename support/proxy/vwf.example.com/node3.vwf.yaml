@@ -269,6 +269,22 @@ properties:
                     return euler;
                 
                 },
+                getWorldRotation: function()
+                {
+                    var m = self.worldTransform.internal_val;
+                    var x = Math.atan2(m[9], m[10]);
+                    var y = Math.atan2(-m[8], Math.sqrt(m[9] * m[9] + m[10] * m[10]));
+                    var z = Math.atan2(m[4], m[0]);
+                    
+                    var euler = [x,y,z];
+
+                    euler[0] *= 57.2957795;
+                    euler[1] *= 57.2957795;
+                    euler[2] *= 57.2957795;
+                    
+                    return euler;
+                
+                },
                 setRotation: function(x,y,z)
                 {
                 
