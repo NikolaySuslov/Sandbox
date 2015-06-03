@@ -17,3 +17,24 @@ properties:
   radius: 1
   rsegs: 10
   ssegs: 10
+  EditorData:
+    radius:
+      displayname: "Radius"
+      max: 10
+      min: 0
+      property: "radius"
+      step: 0.01
+      type: "slider"
+    rsegs:
+      displayname: "R Segments"
+      max: 16
+      min: 3
+      property: "rsegs"
+      type: "slider"
+    ssegs:
+      displayname : "S Segments"
+      max: 16
+      min: 3
+      property: "ssegs"
+      type: "slider"
+

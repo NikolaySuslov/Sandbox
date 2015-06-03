@@ -5,6 +5,8 @@
         this.mymesh = null;
         this.hideLine = false;
         this.axis = 'Z';
+        this.outputType = "Primitive";
+        this.inputType = "Spline";
         this.updateSelf = function() {
 
             if (this.mymesh && this.mymesh.parent)

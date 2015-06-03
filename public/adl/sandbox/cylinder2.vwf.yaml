@@ -18,5 +18,33 @@ properties:
   rsegs: 10
   height: 1
   hsegs: 1
+  EditorData:
+    radius: 
+      displayname: "Radius"
+      property: "radius"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    height: 
+      displayname: "Height"
+      property: "height"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    rsegs: 
+      displayname: "Radius Segments"
+      property: "rsegs"
+      type: "slider"
+      min: 1
+      max: 16
+    hsegs: 
+      displayname: "Height Segments"
+      property: "hsegs"
+      type: "slider"
+      min: 1
+      max: 16
+
   
   

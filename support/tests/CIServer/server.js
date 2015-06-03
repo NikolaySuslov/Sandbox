@@ -122,8 +122,60 @@ function readFiles(nextStep) {
     }, nextStep);
 }
 
+function run_one_test(test, nextTest) {
 
-function run_one_test(thistest, next) {
+    var id = test.filename + ":" + test.title;
+    report.tests[id] = {
+        status: "running",
+        result: null,
+        message: null,
+        title: test.title,
+        filename: test.filename
+    }
+    var originalTitle = test.title;
+    webdriverio = require('webdriverio');
+    options = {
+        desiredCapabilities: {
+            browserName: 'firefox'
+        }
+    };
+    async.eachSeries(['firefox', 'chrome', 'ie11'], function(browserName, nextBrowser) {
+        async.series([
+            function initBrowser(cb) {
+                options.desiredCapabilities.browserName = browserName;
+                global.browser = webdriverio.remote(options);
+                global.testUtils.hookupUtils(browser);
+                browser.init().then(function() {
+                    cb();
+                });
+            },
+            function runTheTest(cb) {
+                test.title = originalTitle +':'+browserName;
+                run_one_test_one_browser(test, options.desiredCapabilities.browserName, cb)
+            },
+            function closeTheBrowser(cb)
+            {
+                browser.endAll();
+                cb();
+            }
+        ], function finishedAllBrowsers() {
+            nextBrowser();
+        });
+    },function()
+    {
+        test.title = originalTitle;
+        report.tests[id] = {
+        status: "complete",
+        result: null,
+        message: null,
+        title: test.title,
+        filename: test.filename
+    }
+        nextTest();
+    })
+}
+
+function run_one_test_one_browser(thistest, browsername, next) {
 
     //setup reporting data
     var id = thistest.filename + ":" + thistest.title;
@@ -171,7 +223,7 @@ function run_one_test(thistest, next) {
         domain.exit();
         process.removeListener('uncaughtException', handler);
         global.setTimeout(function() {
-           
+
             next();
         }, 500)
     }
@@ -188,7 +240,7 @@ function run_one_test(thistest, next) {
             domain.exit();
             process.removeListener('uncaughtException', handler);
             global.setTimeout(function() {
-                
+
                 next();
             }, 500)
         }
@@ -209,7 +261,7 @@ function run_one_test(thistest, next) {
         domain.exit();
         process.removeListener('uncaughtException', handler);
         global.setTimeout(function() {
-           
+
             next();
         }, 500)
 

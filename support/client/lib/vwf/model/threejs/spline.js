@@ -1,9 +1,10 @@
 (function(){
-		function prim(childID, childSource, childName)
+		function spline(childID, childSource, childName)
 		{
 			
 			this.closed = true;
-			
+			this.outputType = "Spline";
+        	this.inputType = null;
 			this.points = [[0,0,0],[0,1,0],[1,1,0],[1,0,0]]
 			
 			this.callingMethod = function(methodName,args)
@@ -76,7 +77,6 @@
 				{	
 					return 'Spline';
 				}
-				
 			}
 			this.updateStack = function(rebuild)
 			{
@@ -164,7 +164,7 @@
 		//default factory code
         return function(childID, childSource, childName) {
 			//name of the node constructor
-            return new prim(childID, childSource, childName);
+            return new spline(childID, childSource, childName);
         }
 })();
 

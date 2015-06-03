@@ -3,12 +3,10 @@ var outArr = [];
 module.exports = function(){ return outArr; };
 
 var tests = [
-	{ title: "Import unoptimized Collada without animation", model: "gameboard.DAE", base: globalBase + "examples/collada/"},
-	{ title: "Import optimized Collada without animation", model: "gameboard.DAE", base: globalBase + "examples/collada/"},
-	{ title: "Import unoptimized Collada with animation", model: "usmale.dae", animation: true,  i: 0},
-	{ title: "Import optimized Collada with animation", model: "usmale.dae", animation: true,    i: 1},
-	{ title: "Import 3DR JSON file", model: "house2.json", base: globalBase + "examples/3drjson/",     i: 2},
-	{ title: "Import glTF JSON file", model: "monster.json", base: globalBase + "examples/gltfAsset/", i: 3, animation: true}
+	{ title: "Import Collada without animation", model: "gameboard.DAE", base: globalBase + "examples/collada/"},
+	{ title: "Import Collada with animation", model: "usmale.dae", animation: true, i: 0},
+	{ title: "Import 3DR JSON file", model: "house2.json", base: globalBase + "examples/3drjson/", i: 1},
+	{ title: "Import glTF JSON file", model: "monster.json", base: globalBase + "examples/gltfAsset/", i: 2, animation: true}
 ];
 		
 for(var i = 0; i < tests.length; i++){
@@ -48,13 +46,14 @@ function runAssetTest(browser, finished, test){
 			.click("#alertify-ok");
 	}
 		
-	loadModel(test.model, test.base)		
+	loadModel(test.model, test.base)	
 		.pause(6000).then(function() {
 			testUtils.assertNodeExists(test.model, function(assertStatus, msg){
 				passed = passed && !!assertStatus;
 				outStr += msg + "; ";
 			});
 		})
+		.pause(2000)
 		.getProperty(test.model, "animationLength", function(err, obj){
 			var length = obj.value;
 			

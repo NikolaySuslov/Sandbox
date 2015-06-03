@@ -2,6 +2,8 @@
 		function modifier(childID, childSource, childName)
 		{
 			this.amount = 0;
+			this.outputType = "Primitive";
+        	this.inputType = "Primitive";
 			this.updateSelf = function()
 			{
 				

@@ -4,10 +4,10 @@
 			this.radius = 1;
 			this.rsegs = 10;
 			this.ssegs = 10;
-			this.EditorData = {};
-			this.EditorData.radius = {displayname:'Radius',property:'radius',type:'slider',min:0,max:10,step:.01};
-			this.EditorData.rsegs = {displayname:'R Segments',property:'rsegs',type:'slider',min:3,max:16};
-			this.EditorData.ssegs = {displayname:'S Segments',property:'ssegs',type:'slider',min:3,max:16};
+		
+			this.outputType = "Primitive";
+        	this.inputType = null;
+			
 			this.inherits = ['vwf/model/threejs/prim.js'];
 			//the node constructor
 			this.settingProperty = function(propertyName,propertyValue)

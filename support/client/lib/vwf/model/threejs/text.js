@@ -5,16 +5,12 @@
 			this.textsize = 1;
 			this.text = "hi";
 			this.height = 1;
-			
+			this.outputType = "Primitive";
+        	this.inputType = null;
 			this.rsegs = 10;
 			this.hsegs = 1;
 			
-			this.EditorData = {};
-			
-			this.EditorData.text = {displayname:'text',property:'text',type:'text'};
-			this.EditorData.textsize = {displayname:'textsize',property:'textsize',type:'slider',min:0,max:10,step:.01};
-			this.EditorData.height = {displayname:'height',property:'height',type:'slider',min:0,max:10,step:.01};
-			
+		
 
 			this.inherits = ['vwf/model/threejs/prim.js'];
 			//the node constructor

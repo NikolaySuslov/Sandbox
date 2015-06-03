@@ -6,13 +6,9 @@
 			this.width = 1;
 			this.thickness1 = .5;
 			this.thickness2 = .5;
-			
-			this.EditorData = {};
-			this.EditorData._length = {displayname:'Length',property:'_length',type:'slider',min:0,max:10,step:.01};
-			this.EditorData.width = {displayname:'Width',property:'width',type:'slider',min:0,max:10,step:.01};
-			this.EditorData.thickness1 = {displayname:'Thickness 1',property:'thickness1',type:'slider',min:0,max:10,step:.01};
-			this.EditorData.thickness2 = {displayname:'Thickness 2',property:'thickness2',type:'slider',min:0,max:10,step:.01};
-			
+			this.outputType = "Spline";
+        	this.inputType = null;
+		
 			
 			this.frac = function(e){return e-Math.floor(e)}
 			this.inherits = ['vwf/model/threejs/spline.js'];

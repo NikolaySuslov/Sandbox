@@ -8,13 +8,9 @@
 			this.lsegs = 1;
 			this.wsegs = 1;
 			
-			
-			this.EditorData = {};
-			this.EditorData._length = {displayname:'Length',property:'_length',type:'slider',min:0,max:10,step:.01};
-			this.EditorData.width = {displayname:'Width',property:'width',type:'slider',min:0,max:10,step:.01};
-			
-			this.EditorData.lsegs = {displayname:'Length Segments',property:'lsegs',type:'slider',min:1,max:16};
-			this.EditorData.wsegs = {displayname:'Width Segments',property:'wsegs',type:'slider',min:1,max:16};
+			this.outputType = "Primitive";
+        	this.inputType = null;
+
 			
 			
 			this.inherits = ['vwf/model/threejs/prim.js'];

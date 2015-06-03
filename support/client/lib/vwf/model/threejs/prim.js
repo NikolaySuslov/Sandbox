@@ -61,7 +61,6 @@ var defaultPrimMaterial = new THREE.MeshPhongMaterial();
             if (propertyName == 'type') {
                 return 'Primitive';
             }
-
         }
         this.hasModifiers = function() {
             var has = false;
@@ -150,6 +149,10 @@ var defaultPrimMaterial = new THREE.MeshPhongMaterial();
             this.GetMesh().position.y = 0;
             this.GetMesh().position.z = 0;
             this.GetMesh().updateMatrixWorld(true);
+        }
+        this.childRemoved = function()
+        {
+            this.dirtyStack();
         }
         this.Build = function(cache) {
             var mat;

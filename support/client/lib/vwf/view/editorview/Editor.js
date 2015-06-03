@@ -1060,7 +1060,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
         this.RotateAroundAxis = function(RotationMatrix, Axis, Radians, rotationMatrix) {
             if (CoordSystem == WorldCoords) {
                 var childmat = this.GetRotationMatrix(toGMat(self.findviewnode(self.GetSelectedVWFID()).matrixWorld));
-                var parentmat = this.GetRotationMatrix(toGMat(self.findviewnode(self.GGetSelectedVWFID()).parent.matrixWorld));
+                var parentmat = this.GetRotationMatrix(toGMat(self.findviewnode(self.GetSelectedVWFID()).parent.matrixWorld));
                 Axis = MATH.mulMat4Vec3(MATH.inverseMat4(parentmat), Axis);
             }
             if (CoordSystem == LocalCoords) {

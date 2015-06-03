@@ -13,6 +13,8 @@
         this.zaxis = new THREE.Vector3(0, 0, 1);
         this.uoffset = 0;
         this.voffset = 0;
+        this.outputType = "Primitive";
+        this.inputType = "Primitive";
         this.projectToSphere = function(vert) {
             var x = vert.x * this._length;
             var y = vert.z * this.width;

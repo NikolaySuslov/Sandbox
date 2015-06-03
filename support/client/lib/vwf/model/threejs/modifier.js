@@ -1,6 +1,8 @@
 (function() {
     function modifier(childID, childSource, childName) {
         this.active = true;
+        this.outputType = null;
+        this.inputType = null;    //objects that inherit this should set these to either "Primitive" or "Spline"
         this.callingMethod = function(methodName, args) {
             args = args || [];
             if (methodName == 'GetMesh') {
@@ -18,6 +20,9 @@
         }
         this.gettingProperty = function(prop) {
             if (prop == 'isModifier') return true;
+            if (prop == 'type') return "Modifier";
+            if (prop == 'inputType') return this.inputType;
+            if (prop == 'outputType') return this.outputType;
             if (prop == 'active') return this.active;
         }
         this.settingProperty = function(prop, val) {

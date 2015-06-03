@@ -11,7 +11,6 @@
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
 ---
-
 extends: prim2.vwf
 properties:
   radius1: 1
@@ -19,3 +18,39 @@ properties:
   rsegs1: 6
   rsegs2: 10
   arc: 6.283185307179586
+  EditorData:
+    radius1: 
+      displayname: "Radius"
+      property: "radius1"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    radius2: 
+      displayname: "Tube Width"
+      property: "radius2"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    arc: 
+      displayname: "Arc"
+      property: "arc"
+      type: "slider"
+      min: 0
+      max: 6.283185307179586
+      step: 0.01
+    rseg1: 
+      displayname: "Tube Segments"
+      property: "rseg1"
+      type: "slider"
+      min: 3
+      max: 10
+      step: 1
+    rseg2: 
+      displayname: "Radial Segments"
+      property: "rseg2"
+      type: "slider"
+      min: 3
+      max: 10
+      step: 1

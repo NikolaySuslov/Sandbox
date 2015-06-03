@@ -17,3 +17,22 @@ properties:
   textsize: 1
   text: "text"
   height: 1
+  EditorData:
+    text: 
+      displayname: "text"
+      property: "text"
+      type: "text"
+    textsize: 
+      displayname: "textsize"
+      property: "textsize"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    height: 
+      displayname: "height"
+      property: "height"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01

@@ -6,6 +6,8 @@
         this.hideLine = false;
         this.axis = 'Z';
         this.pathPoints = [];
+        this.outputType = "Primitive";
+        this.inputType = "Spline";
         this.updateSelf = function() {
 
             if (this.mymesh && this.mymesh.parent)

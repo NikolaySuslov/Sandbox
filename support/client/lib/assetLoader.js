@@ -114,6 +114,17 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
 
                     });
                 } 
+                else if (type == "subDriver/threejs/asset/vnd.rmx+json") {
+                    if (assetLoader.getRMX(url)) {
+                        cb(assetLoader.getRMX(url));
+                        return;
+                    }
+                    assetLoader.loadRMX(url, function() {
+
+                        cb(assetLoader.getRMX(url));
+
+                    });
+                }
                 else if (type == "subDriver/threejs/asset/vnd.three.js+json") {
                     if (assetLoader.getTHREEjs(url)) {
                         cb(assetLoader.getTHREEjs(url));
@@ -209,6 +220,10 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                 {
                     return this.THREEjs[url];
                 },
+                this.getRMX = function(url)
+                {
+                    return this.RMX[url];
+                },
 
 
                 this.loadCollada = function(url, cb2) {
@@ -269,6 +284,50 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                         });
 
                     });
+                },
+                this.loadRMX = function(url, cb2) {
+
+                    var jsonmodel, binarymodel, asset;
+
+                    async.series([
+                            function loadone(cb)
+                            {
+                                $.getJSON(url,function(data)
+                                {
+                                    jsonmodel = data;
+                                    cb();
+                                });
+                            },
+                            function loadtwo(cb)
+                            {
+                                var src = url.substr(0, url.lastIndexOf(".")) + ".bin";
+
+                                var xhr = new XMLHttpRequest();
+                                xhr.onload = function(e)
+                                {
+                                    binarymodel = xhr.response;
+                                    cb();
+                                };
+                                xhr.open("GET", src, true);
+                                xhr.responseType = "arraybuffer";
+                                xhr.send();
+                            },
+                            function load_from_data(cb)
+                            {
+                                var loader = new RMXModelLoader;
+
+                                loader.load(jsonmodel, binarymodel, function(model) {
+                                    console.log(model);
+                                    asset = model;
+                                    assetLoader.RMX[url] = asset;
+                                    cb();
+                                });
+                            }],
+                        function done(){
+                            assetLoader.BuildCollisionData(asset.scene, function(cb3) {
+                                cb2();
+                            });
+                        })
                 },
                 this.loadColladaOptimized = function(url, cb2) {
                     var loader = new ColladaLoaderOptimized();
@@ -537,6 +596,9 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                         else if (type == "subDriver/threejs/asset/vnd.three.js+json") {
                             assetLoader.loadTHREEJS(url, cb2);
                         } 
+                        else if (type == "subDriver/threejs/asset/vnd.rmx+json") {
+                            assetLoader.loadRMX(url, cb2);
+                        }
                         else if (type == 'unknown') {
                             assetLoader.loadUnknown(url, cb2);
                         } else if (type == 'terrain') {

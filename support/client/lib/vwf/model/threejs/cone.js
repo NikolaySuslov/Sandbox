@@ -5,17 +5,12 @@
 			this.radius = 1;
 			this.height = 1;
 			
-			
+			this.outputType = "Primitive";
+        	this.inputType = null;
 			this.rsegs = 10;
 			this.hsegs = 1;
 			
-			this.EditorData = {};
 			
-			this.EditorData.radius = {displayname:'Radius',property:'radius',type:'slider',min:0,max:10,step:.01};
-			this.EditorData.height = {displayname:'Height',property:'height',type:'slider',min:0,max:10,step:.01};
-			
-			this.EditorData.rsegs = {displayname:'Radius Segments',property:'rsegs',type:'slider',min:1,max:16};
-			this.EditorData.hsegs = {displayname:'Height Segments',property:'hsegs',type:'slider',min:1,max:16};
 			
 			this.inherits = ['vwf/model/threejs/prim.js'];
 			//the node constructor

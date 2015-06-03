@@ -101,7 +101,78 @@ function cleanAnimation(animation)
             }
         }
     }    
+   // createTracksForBones(animation);
+    cacheParentSpaceKeys(animation);
+}
+function createTracksForBones(animation)
+{
+   
+    var bones = animation.root.skeleton.bones;
+    for(var i =0 ; i < bones.length; i++)
+    {
+        if(animation.hierarchy.indexOf(bones[i]))
+        {
+            var parentTrack = animation.hierarchy.indexOf(bones[i].parent);
+            var newTrack = {
+                node:bones[i],
+                keys:[{time:0,pos:[0,0,0],rot:new THREE.Quaternion(),scl:[1,1,1]}]
+            }
+            var pos = new THREE.Vector3();
+            var scl = new THREE.Vector3();
+            bones[i].matrix.decompose(pos,newTrack.keys[0].rot,scl);
+            newTrack.keys[0].pos = [pos.x,pos.y,pos.z]
+            newTrack.keys[0].scl = [scl.x,scl.y,scl.z]
+        }
+    }
+}
+function cacheParentSpaceKeys(animation)
+{
+    
+    for (var i = 0; i < animation.data.hierarchy.length; i++)
+    {
+        var track = animation.data.hierarchy[i];
+        var keys = track.keys;
+        var node = animation.hierarchy[i];
+        
+        
 
+        for(var j =0; j < keys.length; j++)
+        {
+            var currentTrack = track;
+            var mats = [];
+            var parentMat = new THREE.Matrix4();
+            while(currentTrack && currentTrack.keys)
+            {
+
+                var key = currentTrack.keys[j];
+                if(!key)
+                    key = currentTrack.keys[currentTrack.keys.length-1]
+                if(!key)
+                    mats.push(new THREE.Matrix4());
+                if(key)
+                {
+                    var mat = new THREE.Matrix4();
+                    mat.compose(new THREE.Vector3(key.pos[0],key.pos[1],key.pos[2]),key.rot,new THREE.Vector3(key.scl[0],key.scl[1],key.scl[2]))
+                    mats.push(mat);
+                }
+                
+                currentTrack = animation.data.hierarchy[currentTrack.parent];
+            }
+            for(var k = 0; k <mats.length; k++)
+            {
+                mats[k].multiplyMatrices(mats[k],mats[k-1] || new THREE.Matrix4());
+            }
+            parentMat = mats[mats.length-1];
+            var key = track.keys[j];
+            key.cachedRootMat = parentMat;
+            key.parentspacePos = new THREE.Vector3();
+            key.parentspaceScl = new THREE.Vector3();
+            key.parentspaceRot = new THREE.Quaternion();
+            key.cachedRootMat.decompose(key.parentspacePos,key.parentspaceRot,key.parentspaceScl);
+            key.parentspacePos = [key.parentspacePos.x,key.parentspacePos.y,key.parentspacePos.z];
+            key.parentspaceScl = [key.parentspaceScl.x,key.parentspaceScl.y,key.parentspaceScl.z];
+        }
+    }
 }
  var NOT_STARTED = 0;
     var PENDING = 1;
@@ -148,7 +219,12 @@ var assetRegistry = function() {
         }
 
         
-
+        if (childType == "subDriver/threejs/asset/vnd.rmx+json" && _assetLoader.getRMX(assetSource))
+        {
+            this.assets[assetSource].loaded = true;
+            this.assets[assetSource].pending = false;
+            this.assets[assetSource].node = _assetLoader.getRMX(assetSource).scene;
+        }
         if (childType == "subDriver/threejs/asset/vnd.three.js+json" && _assetLoader.getTHREEjs(assetSource))
         {
             this.assets[assetSource].loaded = true;
@@ -169,10 +245,11 @@ var assetRegistry = function() {
             this.assets[assetSource].animations = _assetLoader.getglTF(assetSource).animations;
             this.assets[assetSource].rawAnimationChannels = _assetLoader.getglTF(assetSource).rawAnimationChannels;
         }
-         if(this.assets[assetSource] && this.assets[assetSource].node.animationHandle)
-            {
-                cleanAnimation(this.assets[assetSource].node.animationHandle);
-            }
+        if(this.assets[assetSource] && this.assets[assetSource].node && this.assets[assetSource].node.animationHandle)
+        {
+
+            cleanAnimation(this.assets[assetSource].node.animationHandle);
+        }
     }
     this.newLoad = function(childType, assetSource, success, failure)
     {
@@ -322,6 +399,38 @@ var assetRegistry = function() {
             {
                 source: assetSource
             }, assetLoaded, assetFailed);
+        }
+        if (childType == "subDriver/threejs/asset/vnd.rmx+json")
+        {
+            reg.loadStarted();
+            var jsonmodel, binarymodel, asset;
+
+            async.series([
+                    function loadone(cb){
+                        $.getJSON(assetSource,function(data)
+                        {
+                            jsonmodel = data;
+                            cb();
+                        });
+                    },
+                    function loadtwo(cb)
+                    {
+                        var src = assetSource.substr(0, assetSource.lastIndexOf(".")) + ".bin";
+
+                        var xhr = new XMLHttpRequest();
+                        xhr.onload = function(e)
+                        {
+                            binarymodel = xhr.response;
+                            cb();
+                        };
+                        xhr.open("GET", src, true);
+                        xhr.responseType = "arraybuffer";
+                        xhr.send();
+                    }],
+                function done(){
+                    var loader = new RMXModelLoader;
+                    loader.load(jsonmodel, binarymodel, assetLoaded);
+                })
         }
         if (childType == "subDriver/threejs/asset/vnd.three.js+json")
         {

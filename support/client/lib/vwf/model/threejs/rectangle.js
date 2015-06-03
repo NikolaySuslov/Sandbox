@@ -4,12 +4,10 @@
 			
 			this._length = 1;
 			this.width = 1;
+		
 			
-			this.EditorData = {};
-			this.EditorData._length = {displayname:'Length',property:'_length',type:'slider',min:0,max:10,step:.01};
-			this.EditorData.width = {displayname:'Width',property:'width',type:'slider',min:0,max:10,step:.01};
-			
-			
+			this.outputType = "Spline";
+        	this.inputType = null;
 			this.frac = function(e){return e-Math.floor(e)}
 			this.inherits = ['vwf/model/threejs/spline.js'];
 			//the node constructor

@@ -5,10 +5,10 @@
 			this.radius = 1;
 			this.radius2 = 1;
 			this.steps = 10;
-			this.EditorData = {};
-			this.EditorData.radius = {displayname:'Radius 1',property:'radius',type:'slider',min:0,max:10,step:.01};
-			this.EditorData.radius2 = {displayname:'Radius 2',property:'radius2',type:'slider',min:0,max:10,step:.01};
-			this.EditorData.steps = {displayname:'Steps',property:'steps',type:'slider',min:0,max:50,step:2};
+			
+			this.outputType = "Spline";
+        	this.inputType = null;
+		
 			
 			this.frac = function(e){return e-Math.floor(e)}
 			this.inherits = ['vwf/model/threejs/spline.js'];

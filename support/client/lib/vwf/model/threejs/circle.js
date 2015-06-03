@@ -1,12 +1,11 @@
 (function(){
 		function circle(childID, childSource, childName)
 		{
-			
+			this.outputType = "Spline";
+        	this.inputType = null;
 			this.radius = 1;
 			this.steps = 10;
-			this.EditorData = {};
-			this.EditorData.radius = {displayname:'Radius',property:'radius',type:'slider',min:0,max:10,step:.01};
-			this.EditorData.steps = {displayname:'Steps',property:'steps',type:'slider',min:0,max:50,step:1};
+			
 			
 			
 			this.inherits = ['vwf/model/threejs/spline.js'];

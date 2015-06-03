@@ -17,3 +17,25 @@ properties:
   radius:
   radius2:
   steps:
+  EditorData:
+    radius: 
+      displayname: "Radius 1"
+      property: "radius"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    radius2: 
+      displayname: "Radius 2"
+      property: "radius2"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    steps: 
+      displayname: "Steps"
+      property: "steps"
+      type: "slider"
+      min: 0
+      max: 50
+      step: 2

@@ -4,6 +4,8 @@
 			this.amount = 1;
 			this.steps = 10;
 			this.mymesh = null;
+			this.outputType = "Primitive";
+        	this.inputType = "Spline";
 			this.updateSelf = function()
 			{
 				

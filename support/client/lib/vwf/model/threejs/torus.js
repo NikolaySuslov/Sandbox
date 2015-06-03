@@ -7,15 +7,9 @@
 			this.rseg1 = 6;
 			this.rseg2 = 10;
 			this.arc = Math.PI * 2;
+			this.outputType = "Primitive";
+        	this.inputType = null;
 			
-			this.EditorData = {};
-			
-
-			this.EditorData.radius1 = {displayname:'Radius',property:'radius1',type:'slider',min:0,max:10,step:.01};
-			this.EditorData.radius2 = {displayname:'Tube Width',property:'radius2',type:'slider',min:0,max:10,step:.01};
-			this.EditorData.arc = {displayname:'Arc',property:'arc',type:'slider',min:0,max:Math.PI * 2,step:.01};
-			this.EditorData.rseg1 = {displayname:'Tube Segments',property:'rseg1',type:'slider',min:3,max:10,step:1};
-			this.EditorData.rseg2 = {displayname:'Radial Segments',property:'rseg2',type:'slider',min:3,max:10,step:1};
 			
 
 			this.inherits = ['vwf/model/threejs/prim.js'];

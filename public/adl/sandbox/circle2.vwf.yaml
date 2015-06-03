@@ -16,3 +16,18 @@ extends: spline.vwf
 properties:
   radius:
   steps:
+  EditorData:
+    radius: 
+      displayname: "Radius"
+      property: "radius"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    steps: 
+      displayname: "Steps"
+      property: "steps"
+      type: "slider"
+      min: 0
+      max: 50
+      step: 1

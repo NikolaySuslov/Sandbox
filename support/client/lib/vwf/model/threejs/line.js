@@ -2,8 +2,9 @@
 		function line(childID, childSource, childName)
 		{
 			
+			this.outputType = "Spline";
+        	this.inputType = null;
 			
-			this.EditorData = {};
 			
 			this.inherits = ['vwf/model/threejs/spline.js'];
 			//the node constructor
@@ -36,7 +37,7 @@
 				}
 				if(propertyName == 'type')
 				{	
-					return 'Line';
+					return 'Spline';
 				}				
 				if(propertyName == 'EditorData')
 				{

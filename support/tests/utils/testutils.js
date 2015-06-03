@@ -2,6 +2,9 @@ var async = require("async");
 
 module.exports.USER = "joe";
 module.exports.PASS = "Abc123456";
+module.exports.INFO = parseInt("001", 2);
+module.exports.WARNING = parseInt("010", 2);
+module.exports.SEVERE = parseInt("100", 2);
 
 module.exports.hookupUtils = function(browser) {
     console.log('hook up utils');
@@ -99,6 +102,17 @@ module.exports.hookupUtils = function(browser) {
         	cb(null, jqObj);
         });
 	});
+	browser.addCommand("$keyup", function(cssSelector, key) {
+		var cb = arguments[arguments.length -1];
+        browser.execute(function(c, k) {
+			var e = $.Event("keyup");
+			e.which = e.keyCode = k.charCodeAt(0);
+        	return $(c).trigger(e);
+        }, cssSelector, key, function(err, jqObj)
+        {
+        	cb(null, jqObj);
+        });
+	});
 	browser.addCommand("saveDataBeforeUnload", function(){
 		var cb = arguments[arguments.length -1];
         browser.execute(function(){
@@ -128,7 +142,51 @@ module.exports.hookupUtils = function(browser) {
         {
         	cb(err, viewNode.value);
         });
+	});		
+	browser.addCommand("getChildren", function(nodeName) {
+		var cb = arguments[arguments.length -1];
+		browser.execute(function(name){
+			var id = vwf.find(vwf.application(), name)[0];
+			return vwf.children(id);
+		}, nodeName, function(err, children){
+			cb(err, children.value);
+		});
 	});	
+	browser.addCommand("getConsoleLog", function(level, contains) {
+		if(typeof contains === "string"){
+			var cb = arguments[arguments.length -1];
+			module.exports.getConsoleLog(level, contains, cb);
+		}
+		else{
+			var cb = contains;
+			module.exports.getConsoleLog(level, '', cb);
+		}
+	});	
+	browser.addCommand("completeTest", function(status, message, finished) {
+		browser.getConsoleLog(module.exports.SEVERE, function(err, logs){
+			
+			finished(status, message);
+		});
+	});	
+	
+	
+}
+
+module.exports.getConsoleLog = function(level, contains, cb){
+	var regexStr = "";
+	if((level & module.exports.INFO) > 0) regexStr = "INFO";
+	if((level & module.exports.WARNING) > 0) regexStr = regexStr ? regexStr + "|WARNING" : "WARNING";
+	if((level & module.exports.SEVERE) > 0) regexStr = regexStr ? regexStr + "|SEVERE" : "SEVERE";
+	
+	var regex = new RegExp(regexStr);
+	browser.log("browser", function(err, logs){
+		var outArr = [];
+		for(var i = 0; i < logs.value.length; i++){
+			if(regex.test(logs.value[i].level)) outArr.push(logs.value[i].message);
+		}
+		
+		cb(null, outArr);
+	});
 }
 
 module.exports.login = function(cb){
@@ -164,8 +222,8 @@ module.exports.login = function(cb){
 };
 module.exports.loadBlankScene = function(cb) {
     browser
-        .url('http://localhost:3000/adl/sandbox/example_blank/?norender=true')
-        //.url('http://localhost:3000/adl/sandbox/example_blank/')
+        //.url('http://localhost:3000/adl/sandbox/example_blank/?norender=true')
+        .url('http://localhost:3000/adl/sandbox/example_blank/')
         .waitForExist('#preloadGUIBack', 60000)
         .waitForVisible('#preloadGUIBack', 60000, true)
         .pause(3000).then(cb);

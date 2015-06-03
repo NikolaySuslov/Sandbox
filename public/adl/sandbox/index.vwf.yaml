@@ -552,51 +552,61 @@ scripts:
     this.CreateSky = function(sky_name)
     {
      
+        ////console.log('set sky ' + sky_name);
+       
+       //var sky_name = 'cloudy_noon';
+       var urls = [];
+
+        
+        urls.push('skys/'+sky_name+'_FR.jpg');
+        urls.push('skys/'+sky_name+'_BK.jpg');
+        urls.push('skys/'+sky_name+'_RT.jpg');
+        urls.push('skys/'+sky_name+'_LF.jpg');
+        urls.push('skys/'+sky_name+'_UP.jpg');
+        urls.push('skys/'+sky_name+'_DN.jpg');
+       
+       
+        
        var loaded = function(){
             this.skymaterial.uniforms.texture.value.image = skyCubeTexture.image;
             this.skymaterial.uniforms.texture.value.needsUpdate = true;
             this.skymaterial.uniforms.texture.value.wrapS = this.skymaterial.uniforms.texture.value.wrapT = THREE.RepeatWrapping;
        }.bind(this);
+            var skyCubeTexture = THREE.ImageUtils.loadTextureCube(urls,undefined,loaded);
+           // skyCubeTexture.format = THREE.RGBFormat;
+            skyCubeTexture.generateMipmaps = true;
+            skyCubeTexture.minFilter = THREE.LinearFilter;
+            skyCubeTexture.magFilter = THREE.LinearFilter;
+            skyCubeTexture.wrapS = THREE.ClampToEdgeWrapping;
+            skyCubeTexture.wrapT = THREE.ClampToEdgeWrapping;
 
 
-        if(sky_name.substring(0,4) == "http")
-        {
-            var source = sky_name;
-        }
-        else {
-            var source = "skys/" + sky_name + ".dds";
-        }
-
-        var loader = new THREE.DDSLoader();
-        var skyCubeTexture = loader.load( source, loaded);
-        skyCubeTexture.magFilter = THREE.LinearFilter;
-        skyCubeTexture.minFilter = THREE.LinearFilter;
-        
-        skyCubeTexture.mapping = THREE.CubeReflectionMapping;
 
        if(!this.skymaterial)
        {
-            this.skymaterial = new THREE.ShaderMaterial( {
-                uniforms:       THREE.ShaderLib.sky.uniforms,
-                attributes:     THREE.ShaderLib.sky.attributes,
-                vertexShader:   THREE.ShaderLib.sky.vertexShader,
-                fragmentShader: THREE.ShaderLib.sky.fragmentShader
-            });
-            this.skymaterial.uniforms.texture.value = skyCubeTexture;
+       
+            
+                this.skymaterial = new THREE.ShaderMaterial( {
+                    uniforms:       THREE.ShaderLib.sky.uniforms,
+                    attributes:     THREE.ShaderLib.sky.attributes,
+                    vertexShader:   THREE.ShaderLib.sky.vertexShader,
+                    fragmentShader: THREE.ShaderLib.sky.fragmentShader
+                });
+            this.skymaterial.uniforms.texture.value = skyCubeTexture;    
 
             this.skymaterial.depthWrite = false;
             this.skymaterial.depthTest= false;
             this.skymaterial.fog= true;
             this.skymaterial.lights= true;
             this.skymaterial.transparent = false;
-            this.skymaterial.uniforms.texture.value = skyCubeTexture;
-
+            this.skymaterial.uniforms.texture.value = skyCubeTexture;    
+            
        }
-
-
+       
+       
        this.skymaterial.side = 1;
-
-
+       
+      
        if(!this.skycube)
        {
            this.skycube = new THREE.Mesh(new THREE.SphereGeometry(1,10,20), this.skymaterial);
@@ -609,12 +619,10 @@ scripts:
            this.skycube.castShadow = false;
            this.skycube.receiveShadow = false;
            findscene().add(this.skycube);
-
+           
            window._dSky = this.skycube;
-
+          
        }
-
-    
         
     }
      function findscene()

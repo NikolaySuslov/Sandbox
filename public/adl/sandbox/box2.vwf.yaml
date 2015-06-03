@@ -20,3 +20,43 @@ properties:
   lsegs: 1
   wsegs: 1
   hsegs: 1
+  EditorData:
+    _length: 
+      displayname: "Length"
+      property: "_length"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    width: 
+      displayname: "Width"
+      property: "width"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    height: 
+      displayname: "Height"
+      property: "height"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    lsegs: 
+      displayname: "Length Segments"
+      property: "lsegs"
+      type: "slider"
+      min: 1
+      max: 16
+    wsegs: 
+      displayname: "Width Segments"
+      property: "wsegs"
+      type: "slider"
+      min: 1
+      max: 16
+    hsegs: 
+      displayname: "Height Segments"
+      property: "hsegs"
+      type: "slider"
+      min: 1
+      max: 16

@@ -54,7 +54,7 @@ function setMeshStatic(node, val) {
         setMeshStatic(node.children[i], val);
 }
 
-define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/threejs/backgroundLoader", "vwf/model/threejs/glTFCloner", "vwf/model/threejs/glTFLoaderUtils", "vwf/model/threejs/glTFLoader", "vwf/model/threejs/glTFAnimation", "vwf/model/threejs/glTFAnimation", "vwf/model/threejs/materialCache", "vwf/model/threejs/assetRegistry"], function(module, model, utility, Color, backgroundLoader) {
+define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/threejs/backgroundLoader", "vwf/model/threejs/glTFCloner", "vwf/model/threejs/glTFLoaderUtils", "vwf/model/threejs/glTFLoader", "vwf/model/threejs/glTFAnimation", "vwf/model/threejs/glTFAnimation", "vwf/model/threejs/materialCache", "vwf/model/threejs/assetRegistry","vwf/model/threejs/RMXLoader"], function(module, model, utility, Color, backgroundLoader) {
 
 
 
@@ -425,7 +425,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                     node.threeObject.add(node.getRoot());
                     threeParent.add(node.threeObject);
                 } 
-                else if (childType == "subDriver/threejs/asset/vnd.raw-morphttarget" ||childType == "subDriver/threejs/asset/vnd.collada+xml" || childType == "subDriver/threejs/asset/vnd.osgjs+json+compressed" || childType == "subDriver/threejs/asset/vnd.collada+xml+optimized" || childType == "subDriver/threejs/asset/vnd.gltf+json" || childType == "subDriver/threejs/asset/vnd.three.js+json") {
+                else if (childType == "subDriver/threejs/asset/vnd.raw-morphttarget" ||childType == "subDriver/threejs/asset/vnd.collada+xml" || childType == "subDriver/threejs/asset/vnd.osgjs+json+compressed" || childType == "subDriver/threejs/asset/vnd.collada+xml+optimized" || childType == "subDriver/threejs/asset/vnd.gltf+json" || childType == "subDriver/threejs/asset/vnd.three.js+json" || childType == "subDriver/threejs/asset/vnd.rmx+json") {
 
                     node = this.state.nodes[childID] = this.subDriverFactory.createNode(childID, 'vwf/model/threejs/asset.js', childName, childType, childSource, callback);
 

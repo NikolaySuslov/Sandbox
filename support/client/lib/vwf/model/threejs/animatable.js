@@ -155,8 +155,17 @@
                 if (skins[i].animationHandle) {
                    
                     skins[i].animationHandle.setKey(this.animationFrame,this.animationFPS);
-                  
-                    skins[i].updateMatrixWorld();
+                    for(var j =0; j < skins[i].animationHandle.hierarchy.length; j++ )
+                    {
+                        var bone = skins[i].animationHandle.hierarchy[j];
+                        bone.matrixWorld.multiplyMatrices(bone.parent.matrixWorld,bone.matrix);
+                        for(var k = 0; k < bone.children.length; k++)
+                        {
+                            if(!(bone.children[k] instanceof THREE.Bone))
+                            bone.children[k].updateMatrixWorld();
+                        }
+                    }
+                    //skins[i].updateMatrixWorld();
                     
                     //odd, does not seem to update matrix on first child bone. 
                     //how does the bone relate to the skeleton?
@@ -171,10 +180,8 @@
                         for (var k = 0; k < allMeshes.length; k++)
                             _SceneManager.setDirty(allMeshes[k]);
                     }
-
                 }
             }
-
         }
         this.settingProperty = function(propertyName, propertyValue) {
             if (propertyName == 'animationFrame') {

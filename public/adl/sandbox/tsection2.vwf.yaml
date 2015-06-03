@@ -18,4 +18,32 @@ properties:
   width:
   thickness1:
   thickness2:
-  
+  EditorData:
+    _length: 
+      displayname: "Length"
+      property: "_length"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    width: 
+      displayname: "Width"
+      property: "width"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    thickness1: 
+      displayname: "Thickness 1"
+      property: "thickness1"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    thickness2: 
+      displayname: "Thickness 2"
+      property: "thickness2"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
