@@ -1269,6 +1269,20 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
             }
 
         },
+        tryCallMethod: function(node,body,methodName,methodParameters)
+        {
+             try {
+                    var ret = body.apply(node, methodParameters);
+                    if (ret && ret.internal_val) return ret.internal_val;
+                    return ret;
+                } catch (e) {
+                    console.warn(e.toString() + " Node:'" + (node.properties.DisplayName || node.id) + "' during: '" + methodName + "' with '" + JSON.stringify(methodParameters) + "'");
+                    //            this.logger.warn( "callingMethod", nodeID, methodName, methodParameters, // TODO: limit methodParameters for log
+                    //              "exception:", utility.exceptionMessage( e ) );
+                    return;
+                }
+
+        },
         callingMethod: function(nodeID, methodName, methodParameters) {
 
 
@@ -1350,15 +1364,7 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
             var body = node.private.bodies && node.private.bodies[methodName];
 
             if (body) {
-                try {
-                    var ret = body.apply(node, methodParameters);
-                    if (ret && ret.internal_val) return ret.internal_val;
-                    return ret;
-                } catch (e) {
-                    console.warn(e.toString() + " Node:'" + (node.properties.DisplayName || nodeID) + "' during: '" + methodName + "' with '" + JSON.stringify(methodParameters) + "'");
-                    //            this.logger.warn( "callingMethod", nodeID, methodName, methodParameters, // TODO: limit methodParameters for log
-                    //              "exception:", utility.exceptionMessage( e ) );
-                }
+               return this.tryCallMethod(node,body,methodName,methodParameters);
             }
 
             //call the method on the child behaviors

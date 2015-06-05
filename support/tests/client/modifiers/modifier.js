@@ -86,7 +86,7 @@ function runAssetTest(browser, finished, nodeName){
 		
 	function loadModel(modelName){
 		return browser.nextGUID(modelName)
-			.click("#MenuCreateCylindericon")
+			.$click("#MenuCreateCylindericon")
 			.pause(500);
 	}
 }

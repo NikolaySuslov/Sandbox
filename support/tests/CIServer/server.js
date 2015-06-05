@@ -125,13 +125,13 @@ function readFiles(nextStep) {
 function run_one_test(test, nextTest) {
 
     var id = test.filename + ":" + test.title;
-    report.tests[id] = {
+   /* report.tests[id] = {
         status: "running",
         result: null,
         message: null,
         title: test.title,
         filename: test.filename
-    }
+    }*/
     var originalTitle = test.title;
     webdriverio = require('webdriverio');
     options = {
@@ -139,7 +139,7 @@ function run_one_test(test, nextTest) {
             browserName: 'firefox'
         }
     };
-    async.eachSeries(['firefox', 'chrome', 'ie11'], function(browserName, nextBrowser) {
+    async.eachSeries(['chrome'], function(browserName, nextBrowser) {
         async.series([
             function initBrowser(cb) {
                 options.desiredCapabilities.browserName = browserName;
@@ -150,7 +150,7 @@ function run_one_test(test, nextTest) {
                 });
             },
             function runTheTest(cb) {
-                test.title = originalTitle +':'+browserName;
+                test.title = originalTitle ;
                 run_one_test_one_browser(test, options.desiredCapabilities.browserName, cb)
             },
             function closeTheBrowser(cb)
@@ -164,13 +164,13 @@ function run_one_test(test, nextTest) {
     },function()
     {
         test.title = originalTitle;
-        report.tests[id] = {
+       /* report.tests[id] = {
         status: "complete",
         result: null,
         message: null,
         title: test.title,
         filename: test.filename
-    }
+    }*/
         nextTest();
     })
 }

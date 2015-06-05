@@ -113,6 +113,17 @@ module.exports.hookupUtils = function(browser) {
         	cb(null, jqObj);
         });
 	});
+		browser.addCommand("$keypress", function(cssSelector, key) {
+		var cb = arguments[arguments.length -1];
+        browser.execute(function(c, k) {
+			var e = $.Event("keypress");
+			e.which = e.keyCode = k.charCodeAt(0);
+        	return $(c).trigger(e);
+        }, cssSelector, key, function(err, jqObj)
+        {
+        	cb(null, jqObj);
+        });
+	});
 	browser.addCommand("saveDataBeforeUnload", function(){
 		var cb = arguments[arguments.length -1];
         browser.execute(function(){
@@ -161,14 +172,71 @@ module.exports.hookupUtils = function(browser) {
 			var cb = contains;
 			module.exports.getConsoleLog(level, '', cb);
 		}
-	});	
+	});
 	browser.addCommand("completeTest", function(status, message, finished) {
 		browser.getConsoleLog(module.exports.SEVERE, function(err, logs){
 			
 			finished(status, message);
 		});
-	});	
-	
+	});
+	browser.addCommand("isNodeSelected", function(nodename) {
+        var cb = arguments[arguments.length -1]
+        browser.execute(function(a) {
+            var id = vwf.find(vwf.application(), a)[0];
+        	return _Editor.isSelected("" + id);
+        }, nodename,function(err, r)
+        {
+        	
+        	cb(err, r.value)
+        });
+    });
+	browser.addCommand("selectNodes", function(nodename) {
+        
+        var cb = arguments[arguments.length -1]
+        browser.execute(function(a) {
+			var isSelected = true;
+			var ids = [];
+			for(var i = 0; i < a.length; i++) {
+				ids.push(vwf.find(vwf.application(), a[i])[0]);
+				
+			}
+			_Editor.SelectObject(ids);
+			for(i = 0; i < ids.length; i++) {
+				
+				isSelected = isSelected && _Editor.isSelected("" + ids[i]);
+			}
+			return isSelected;
+        }, nodename,function(err, r)
+        {
+        	
+        	cb(err, r ? r.value: null)
+        });
+    });
+	browser.addCommand("getSelectedNodes", function(nodename) {
+        
+        var cb = arguments[arguments.length -1]
+        browser.execute(function() {
+			
+			var nodes = [];
+			for(var i = 0; true; i++) {
+				var temp = _Editor.GetSelectedVWFNode(i);
+				if (temp) {
+					nodes.push(temp);
+				} else {
+					break;
+				}
+			}
+            
+			return nodes;
+			
+			
+			
+        }, nodename,function(err, r)
+        {
+        	
+        	cb(null,r.value)
+        });
+    });
 	
 }
 
@@ -264,6 +332,7 @@ module.exports.getDistance = function(arr1, arr2){
 		return a + b;
 	}));
 }
+
 
 function getNode(name) {
     try {

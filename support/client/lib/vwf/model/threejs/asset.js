@@ -1,6 +1,12 @@
 "use strict";
 (function()
 {
+
+
+
+
+
+
     //enum to keep track of assets that fail to load
     function asset(childID, childSource, childName, childType, assetSource, asyncCallback)
         {
@@ -437,7 +443,7 @@
                         list[i].material = new THREE.MeshFaceMaterial();
                         _MaterialCache.setMaterial(list[i], def);
                     }
-                    if (list[i].animationHandle)
+                    if (list[i] instanceof THREE.SkinnedMesh)
                         list[i].material.skinning = true;
                     list[i].material = list[i].material.clone();
                     if (!this.materialDef)
@@ -492,17 +498,32 @@
                   
                     var clone = asset.clone();
                     clone.morphTarget = asset.morphTarget; //sort of hacky way to keep a reference to morphtarget
-                
+
                     this.getRoot().add(clone);
                 }
-                else
+            else
+            {
+                glTFCloner.clone(asset, rawAnimationChannels, function(clone)
                 {
-                    glTFCloner.clone(asset, rawAnimationChannels, function(clone)
+                    clone.traverse(function(o)
                     {
-                        self.getRoot().add(clone);
-                        self.getRoot().GetBoundingBox();
-                    });
-                }
+                        if (o.animationHandle)
+                        {
+                            var ani = gltf2threejs(rawAnimationChannels,o);
+                            var animation = new THREE.Animation(
+                                o,
+                                ani
+                            );
+                            animation.data = ani;
+                            o.geometry.animation = ani;
+                            o.animationHandle = animation;
+                        }
+                    })
+
+                    self.getRoot().add(clone);
+                    self.getRoot().GetBoundingBox();
+                });
+            }
                 this.cleanTHREEJSnodes(this.getRoot());
                 //set some defaults now that the mesh is loaded
                 //the VWF should set some defaults as well

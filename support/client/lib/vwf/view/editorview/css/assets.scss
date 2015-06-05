@@ -1,0 +1,208 @@
+@import 'polyfill';
+
+#manageAssetsDialog
+{
+	@include display-flex();
+	padding: 0;
+
+	& > *
+	{
+		width: 50%;
+		margin-top: 2px;
+	}
+
+	label {
+		font-size: 11px;
+	}
+
+	#assetBrowser
+	{
+		border-right: solid grey 1px;
+		margin-right: 2px;
+		padding-right: 2px;
+
+		#controls
+		{
+			@include justify-content(space-between);
+			margin-bottom: 5px;
+
+			label#hideThumbs {
+				@include align-items(center);
+			}
+
+			input[type=search] {
+				color: black;
+			}
+		}
+
+		#assetList {
+			overflow-y: auto;
+			@include flex-grow(1);
+		}
+
+		.asset, .newAsset
+		{
+			padding: 3px;
+			margin-bottom: 2px;
+			border-radius: 3px;
+			
+			&.selected-asset {
+				background-color: rgba(62,134,215,0.8) !important;
+			}
+		}
+
+		.asset
+		{
+			&:nth-child(even){
+				background-color: rgba(48,48,48,0.8);
+			}
+			&:nth-child(odd){
+				background-color: rgba(60,60,60,0.8);
+			}
+
+			.info
+			{
+				@include flex-grow(1);
+				
+				.name {
+					margin: 2px 0;
+					font-size: 16px;
+				}
+				.meta {
+					margin: 2px 0;
+					font-size: 12px;
+				}
+			}
+
+			.nonbs-thumbnail
+			{
+				width: 45px; height: 45px;
+				background-color: whitesmoke;
+				border: solid grey 1px;
+				border-radius: 3px;
+
+				background-size: contain;
+				background-repeat: no-repeat;
+				background-position: center;
+			}
+		}
+
+		.newAsset
+		{
+			@include align-items(center);
+			@include justify-content(center);
+
+			background-color: rgba(40,67,79,0.8);
+
+			font-size: 22px;
+			font-weight: bold;
+		}
+	}
+
+	#propertyBrowser
+	{
+		margin-left: 2px;
+
+		& > * {
+			margin: 2px 0;
+		}
+
+		input, textarea {
+			&:not([disabled]) {
+				color: black;
+			}
+		}
+
+		label#thumbnail
+		{
+			margin-top: 3px;
+			@include justify-content(space-between);
+			@include align-items(center);
+		}
+
+		#dragarea
+		{
+			border: dashed whitesmoke 2px;
+			border-radius: 5px;
+			background-color: grey;
+			position: relative;
+			height: 175px;
+
+			@include justify-content(center);
+			@include align-items(center);
+
+			input#fileInput
+			{
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				padding: 0;
+				top: 0;
+				left: 0;
+				opacity: 0;
+
+				cursor: pointer;
+			}
+
+			input#typeInput {
+				z-index: 1;
+			}
+
+			span {
+				margin: 20px;
+				font-size: 18px;
+
+				text-decoration: underline;
+			}
+		}
+
+		p#url {
+			text-align: center;
+			font-size: 18px;
+		}
+
+		#permissions
+		{
+			@include align-items(center);
+			@include justify-content(space-between);
+			table {
+				width: 100px;
+				td {
+					text-align: center;
+				}
+				td:first-child {
+					text-align: right;
+				}
+			}
+		}
+
+		#buttons
+		{
+			@include flex-wrap(wrap);
+			@include justify-content(space-around);
+			@include align-items(center);
+
+			input
+			{
+				@include flex-grow(1);
+				margin: 3px;
+				min-width: 80px;
+				max-width: 50%;
+			}
+		}
+
+		.spacer {
+			@include flex-grow(1);
+		}
+	}
+
+}
+
+.verticalLayout {
+	@include display-flex();
+	@include flex-direction(column);
+}
+.horizontalLayout {
+	@include display-flex();
+	@include flex-direction(row);
+}

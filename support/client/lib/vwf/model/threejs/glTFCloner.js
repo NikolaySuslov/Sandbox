@@ -24,7 +24,7 @@ define(["vwf/model/threejs/glTF-parser"], function() {
                     var nodeAnimationChannels = rawAnimationChannels[name];
 
                     if (!nodeAnimationChannels[0].target)
-                        return callback(clone);
+                        continue;
 
                     var anim = new THREE.glTFAnimation(nodeAnimationChannels);
                     anim.name = "animation_" + name;
@@ -39,6 +39,28 @@ define(["vwf/model/threejs/glTF-parser"], function() {
                     if (list[i] instanceof THREE.SkinnedMesh) {
 
                         list[i].animationHandle = new AnimationHandleWrapper(animations);
+                        //retarget the animation to the current mesh
+                        for(var k = 0 ; k < animations.length; k++)
+                        {
+                            for(var j = 0; j < animations[k].interps.length; j++)
+                            {
+                                list[i].traverse(function(o)
+                                {
+                                    if(o.name == animations[k].interps[j].targetNode.name)
+                                    {
+                                        animations[k].interps[j].targetNode = o;
+                                        if(animations[k].interps[j].path == 'translation')
+                                            animations[k].interps[j].target = o.position;
+                                        if(animations[k].interps[j].path == 'scale')
+                                            animations[k].interps[j].target = o.scale;
+                                        if(animations[k].interps[j].path == 'rotation')
+                                            animations[k].interps[j].target = o.quaternion;
+
+                                    }
+                                })
+
+                            }
+                        }
                     }
                 }
             }

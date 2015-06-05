@@ -1723,6 +1723,16 @@ function serve(request, response)
 						assetPreload.getAssets(request, response, URL);
 					}
 					break;
+				case "saspath":
+					{
+						if(global.configuration.hostAssets){
+							response.send(global.configuration.assetAppPath);
+						}
+						else {
+							response.send(global.configuration.remoteAssetServerURL);
+						}
+					}
+					break;
 				default:
 					{
 						_404(response);

@@ -33,7 +33,6 @@
 
     "sslCA": ["./ca1.pem", "./ca2.pem"], //intermediate certificate authority
 
-    "sessionKey": "virtual", //enter a good random string here for security of sessions
     "sessionSecret": "unsecure cookie secret", //enter a good random string here for security of sessions
 
     //use the the following settings to enable social media logins
@@ -47,4 +46,11 @@
     "google_client_secret": null,
     "google_callback_url": "http://localhost:3000/adl/sandbox/auth/google/callback"
     "branding"
+
+	"hostAssets": true,
+	// if not hosting assets, provide an remote asset server URL
+	"remoteAssetServerURL": "",
+    // data storage location (relative to Sandbox root) of the integrated asset server
+    "assetDataDir": "assets",
+	"assetSessionHeader": "X-Session-Cookie"
 }

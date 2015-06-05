@@ -53,10 +53,10 @@ $(document).ready(function()
 					$("#tests").empty();
 					for (var j in Object.keys(tests).sort())
 					{
-						var i = Object.keys(tests).sort()[j];
+						var i = Object.keys(tests)[j];
 						var testID = i.replace(/[^a-zA-Z]/g, "_");
-					//	if($('#' + testID).length == 0)
-						//{
+						if($('#' + testID).length == 0)
+						{
 							$("#tests").append("<div class='testrow' id = '" + testID + "' ></div>")
 							$("#" + testID).append("<div  class='runtest' id='run"+testID+"'>Run</div>");
 							$("#" + testID).attr('test',i)
@@ -72,13 +72,13 @@ $(document).ready(function()
 							$("#" + testID).append("<div class='teststatus'>" + tests[i].status + "</div>");
 							$("#" + testID).append("<div class='testresult'>" + tests[i].result + "</div>");
 							$("#" + testID).append("<div class='testmessage'>" + tests[i].message + "</div>");
-					//	}else
-					//	{
+						}else
+						{
 							
-					//		$("#" + testID +" .teststatus").text(tests[i].status)
-					//		$("#" + testID +" .testresult").text(tests[i].result)
-					//		$("#" + testID +" .testmessage").text(tests[i].message)
-					//	}
+							$("#" + testID +" .teststatus").text(tests[i].status)
+							$("#" + testID +" .testresult").text(tests[i].result)
+							$("#" + testID +" .testmessage").text(tests[i].message)
+						}
 					}
 					$('#log').text(status.log);
 					var rows = $("#tests .testrow")

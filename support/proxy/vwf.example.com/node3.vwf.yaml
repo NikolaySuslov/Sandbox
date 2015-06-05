@@ -197,10 +197,11 @@ properties:
                         z = x[2];
                         x = x[0];
                     }
-                    var transform = self.transform;
+                    var transform = self.transform.internal_val;
                     transform[12] = x;
                     transform[13] = y;
                     transform[14] = z;
+                    self.transform = transform;
                 },
                 rotate:function(x,y,z,coordinateSystem)
                 {

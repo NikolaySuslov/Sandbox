@@ -9,7 +9,7 @@ module.exports = {
 
         //Create testBox from button
         .nextGUID('testBox')
-        .click('#MenuCreateBoxicon')
+        .$click('#MenuCreateBoxicon')
         //gets the ul that is the sibling of #MenuCreate
         // .waitForVisible('#MenuPrimitives', 1000)
         // .click('#MenuPrimitives')
@@ -25,13 +25,13 @@ module.exports = {
 		//Copy testBox from button
         // .click('#MenuEdit')
 		// .waitForVisible('#MenuCopy', 1000)
-		.click('#MenuCopyicon')
+		.$click('#MenuCopyicon')
 		.pause(1000)
 		//Paste copyBox from menu
 		.nextGUID('copyBox')
 		// .click('#MenuEdit')
 		// .waitForVisible('#MenuPaste', 1000)
-		.click('#MenuPasteicon')
+		.$click('#MenuPasteicon')
 		//verify copyBox exists
 		.pause(3000).then(function() {
 			testUtils.assertNodeExists("copyBox", function(assertStatus, msg) {
