@@ -2,6 +2,22 @@
     "L-System generator": {
         "url": "./contentlibraries/lsystem.json"
     },
+
+	"My Entities": {
+		"url": "./vwfdatamanager.svc/library/my-entities"
+	},
+	"My Models": {
+		"url": "./vwfdatamanager.svc/library/my-models"
+	},
+	"My Materials": {
+		"url": "./vwfdatamanager.svc/library/my-materials"
+	},
+	"My Behaviors": {
+		"url": "./vwfdatamanager.svc/library/my-behaviors"
+	},
+	"My Textures": {
+		"url": "./vwfdatamanager.svc/library/my-textures"
+	},
     "Demo Entities": {
         "url": "./contentlibraries/entities.json"
     },

@@ -298,7 +298,7 @@ if ( ! object ) return;  // TODO: patch until full-graph sync is working; driver
                     return behavior.id;
                 } );
             } else {
-                this.logger.warnx( "Node '" + nodeID + "' does not have a valid behaviors array" );
+                //this.logger.warnx( "Node '" + nodeID + "' does not have a valid behaviors array" );
             }
             return [];
         },

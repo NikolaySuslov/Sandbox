@@ -59,13 +59,15 @@ body {
     padding-left: 1em;
     width: 34%;
     vertical-align: middle;
-    margin: 8px;
+    /* margin: 8px; */
     white-space: normal;
+    max-height: 3em;
+    overflow: auto;
 }
 
 .runtest
 {
-    zoom:50%;
+    width:80px;
 }
 
 #test_status
@@ -92,4 +94,56 @@ pre
   max-height: 20em;
   overflow: scroll;
 }
+
+
+.runRow
+{
+/* border-top: 1px solid white; */
 }
+.runRow .testTitle
+{
+  margin-left: 84px;
+}
+.runStatus
+{
+
+  background-color: rgb(0, 128, 0);
+  /* height: 0em; */
+  /* vertical-align: inherit; */
+  /* text-align: start; */
+  margin: 0em;
+  
+
+  /* padding-top: .3em; */
+  
+
+  /* padding-bottom: .3em; */
+  
+
+  /* margin-right: 1em; */
+
+}
+.runResult
+{
+
+  background: gray;
+  /* height: 0em; */
+  /* vertical-align: inherit; */
+  /* text-align: start; */
+  margin: 0em;
+  
+
+  /* padding-top: .3em; */
+  
+
+  /* padding-bottom: .3em; */
+  
+
+  /* margin-right: 1em; */
+
+}
+
+.topstatus
+{
+
+width: calc(10% + 2em);}

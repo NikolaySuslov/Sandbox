@@ -19,11 +19,6 @@ module.exports = {
 		.nextGUID('Sphere')
 		.$click('#MenuCreateSphereicon')
 		.pause(3000)
-			// .getNodeID(function(err, r) {
-				// sphereID = r;
-			// })
-		
-		
 		
 		.pause(1000)
 		.nextGUID('Cylinder')
@@ -42,37 +37,10 @@ module.exports = {
 				outStr += "Cylinder exists: " + msg + "; ";
 			});
 		})
-		//Verify no other sphere or cylinder
-		.then(function() {
-			testUtils.assertNodeExists('DupSphere1', function(assertStatus, msg) {
-				passed = passed && !assertStatus;
-				outStr += "DupSphere1 exists: " + msg + "; ";
-			});
-		})
-		.then(function() {
-			testUtils.assertNodeExists('DupCylinder1', function(assertStatus, msg) {
-				passed = passed && !assertStatus;
-				outStr += "DupCylinder1 exists: " + msg + "; ";
-			});
-		})
+
 
 		.pause(6000)
 		//Select Both Prims
-		//Cylinder is already selected
-		// .click('#MenuEdit')
-		// .waitForVisible('#MenuSelect')
-		// .click('#MenuSelect')
-		// .waitForVisible('#MenuSelectName')
-		// .click('#MenuSelectName')
-		// .waitForVisible('#selectionEditor')
-		// .then(function() {
-			// return browser.click("#"+sphereID+"_treeviewitem_anchor")
-		// })
-		
-		//Click the Select button of the Selection Editor menu
-		// .$click('.ui-dialog .ui-button:contains(Select)')
-		
-		// Okay for selecting one node - not multiple
 		.selectNodes(["Sphere", "Cylinder"], function(err, r) {
 			if(!err && r) {
 				outStr += "Nodes are selected. ";
@@ -83,12 +51,7 @@ module.exports = {
 		})
 		
 		
-		
-		
-		
 		//Duplicate via Button
-		// .nextGUID('DupSphere1')
-		// .nextGUID('DupCylinder1')
 		.$click('#MenuDuplicateicon')
 		.pause(1000).getSelectedNodes(function(err, r) {
 			for(var i = 0; i < r.length; i++) {
@@ -98,21 +61,27 @@ module.exports = {
 		
 		//Duplicate via Menu
 		.pause(1000)
-		// .nextGUID('DupSphere2')
-		// .nextGUID('DupCylinder2')
-		.$click('#MenuEdit')
-		// .waitForVisible('#MenuDuplicate')
-		.pause(1000)
-		.$click('#MenuDuplicate')
+		.click('#MenuEdit')
+		.waitForVisible('#MenuDuplicate')
+		// .pause(1000)
+		.click('#MenuDuplicate')
 		.pause(1000).getSelectedNodes(function(err, r) {
 			for(var i = 0; i < r.length; i++) {
 				dupNodes.push(r[i].name);
 			}
 		})
+
 		//Duplicate via Context Menu
-		// .pause(1000)
-		// .nextGUID('DupSphere3')
-		
+		//Sphere and Cylinder just created from duplication are selected
+		.pause(1000)
+		.rightClick('#index-vwf')
+		.waitForVisible('#ContextMenu')
+		.$click('#ContextMenuDuplicate')
+		.pause(1000).getSelectedNodes(function(err, r) {
+			for(var i = 0; i < r.length; i++) {
+				dupNodes.push(r[i].name);
+			}
+		})
 		
 		//Verify Duplicates
 		.pause(3000).then(function() {
@@ -138,17 +107,37 @@ module.exports = {
 			testUtils.assertNodeExists(dupNodes[3], function(assertStatus, msg) {
 				passed = passed && !!assertStatus;
 				outStr += "Dup Menu: " + msg + "; ";
-				finished(passed, outStr);
+				// finished(passed, outStr);
 			});
 		})
-		// .pause(3000).then(function() {
-			// testUtils.assertNodeExists('DupSphere3', function(assertStatus, msg) {
-				// passed = passed && !!assertStatus;
-				// outStr += "Dup Context Menu: " + msg + "; ";
-				// finished(passed, outStr);
-			// });
-		// })
+		.pause(3000).then(function() {
+			testUtils.assertNodeExists(dupNodes[4], function(assertStatus, msg) {
+				passed = passed && !!assertStatus;
+				outStr += "Dup Context Menu: " + msg + "; ";
+			})
+		})
+		.pause(3000).then(function() {
+			testUtils.assertNodeExists(dupNodes[5], function(assertStatus, msg) {
+				passed = passed && !!assertStatus;
+				outStr += "Dup Context Menu: " + msg + "; ";
+				finished(passed, outStr);
+			});
+		});
 		
+		//Verify Duplicates replacing with a for loop
+		// .pause(3000)
+		// .then(function () {
+			// for (var i = 0; i < dupNodes.length; i++) {
+				// browser.pause(3000).then(function() {
+					// testUtils.assertNodeExists(dupNodes[i], function(assertStatus, msg) {
+						// passed = passed && !!assertStatus;
+						// outStr += "Dup Context Menu: " + msg + "; ";
+					// })
+				// });
+			// }
+			// browser.pause(2000);
+			// finished(passed, outStr);
+		// });
 
 	
 	}

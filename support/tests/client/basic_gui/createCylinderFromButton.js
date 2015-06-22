@@ -11,7 +11,7 @@ module.exports = {
 
 		//Create cylinder from button
 		.nextGUID('testCylinder')
-		.click('#MenuCreateCylindericon')
+		.$click('#MenuCreateCylindericon')
 		//Verify cylinder
 		.pause(6000).then(function() {
 			testUtils.assertNodeExists("testCylinder", function(assertStatus, msg){

@@ -1,5 +1,5 @@
 module.exports = {
-    'Test simulated physics with two spheres': function(browser, finished) {
+    'Simulate physics with two spheres': function(browser, finished) {
         global.browser = browser;
         var testUtils = global.testUtils;
 		var passed = true;

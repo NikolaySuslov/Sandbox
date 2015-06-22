@@ -5,18 +5,27 @@ module.exports = function(){ return outArr; };
 var modifiers = ["Bend", "Twist", "Taper", "PerlinNoise", "SimplexNoise", "Offset", "Stretch", "Push", "UVMap", "CenterPivot", "Extrude", "PathExtrude", "Lathe"];
 		
 for(var i = 0; i < modifiers.length; i++){
-	outArr.push({
-		title: "Test creation and deletion of " + modifiers[i] + " modifier", 
+	//Generate a "test object" that uses prims
+	outArr.push(generateTestObj(true, i));
+	
+	//Generate a "test object" that does not use prims
+	outArr.push(generateTestObj(false, i));
+}
+
+function generateTestObj(usePrim, i){
+	var primOrShape = usePrim ? "(prim)" : "(2D)";
+	return {
+		title: "Create and delete " + modifiers[i] + " modifier " + primOrShape, 
 		test: 
 			function(i){
 				return function(browser, finished){
-					runAssetTest(browser, finished, modifiers[i]);
+					runTest(browser, finished, modifiers[i], usePrim);
 				}
 			}(i)
-	});
+	}
 }
 
-function runAssetTest(browser, finished, nodeName){
+function runTest(browser, finished, nodeName, usePrim){
 	global.browser = browser;
 	var testUtils = global.testUtils;
 	var outStr = "";
@@ -26,8 +35,10 @@ function runAssetTest(browser, finished, nodeName){
 	
 	browser.loadBlankScene();
 		
-	loadModel(nodeName)	
-		.pause(6000).then(function() {
+	if(usePrim) loadPrim(nodeName)	
+	else loadShape(nodeName)	
+	
+		browser.pause(6000).then(function() {
 			testUtils.assertNodeExists(nodeName, function(assertStatus, msg){
 				passed = passed && !!assertStatus;
 				outStr += msg + "; ";
@@ -36,16 +47,13 @@ function runAssetTest(browser, finished, nodeName){
 		.pause(2000);
 		
 	addModifier(i)		
-		.getConsoleLog(testUtils.SEVERE, function(err, arr){
-			outStr += "Log error: " + JSON.stringify(err) + ", Log message: " + JSON.stringify(arr) + " ";
-		})
 		.pause(5000)
 		.getChildren(nodeName, function(err, children){
 			if(children[0] && children[0].indexOf(modifiers[i].toLowerCase()) > -1){
 				outStr += modifiers[i] + " (" + children[0] + ") modifier found; ";
 			}
 			else{
-				passed = true;
+				passed = false;
 				outStr += modifiers[i] + " modifier NOT found; ";
 			}
 			
@@ -61,6 +69,7 @@ function runAssetTest(browser, finished, nodeName){
 			else{
 				outStr += modifiers[i] + " modifier successfully deleted; ";
 			}
+			
 			finished(passed, outStr);
 		});
 		
@@ -78,14 +87,25 @@ function runAssetTest(browser, finished, nodeName){
 	function addModifier(i){
 		return browser.click("#MenuCreate")
 			.pause(500)
-			.click("#MenuModifiers")
+			.$click("#MenuModifiers")
 			.pause(500)
-			.click("#MenuCreate" + modifiers[i])
+			.$click("#MenuCreate" + modifiers[i])
 			.pause(500);
 	}
 		
-	function loadModel(modelName){
-		return browser.nextGUID(modelName)
+	function loadShape(name){
+		return browser.nextGUID(name)
+			.click("#MenuCreate")
+			.pause(500)
+			.click("#MenuShapes")
+			.pause(500)
+			.click("#MenuCreateStar")
+			.pause(500)
+			.click("#MenuCreate")
+			.pause(500);
+	}		
+	function loadPrim(name){
+		return browser.nextGUID(name)
 			.$click("#MenuCreateCylindericon")
 			.pause(500);
 	}

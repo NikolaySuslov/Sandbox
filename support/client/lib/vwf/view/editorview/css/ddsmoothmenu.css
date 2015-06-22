@@ -20,6 +20,14 @@ float: left;
 /* font-size: 1.1em; */
 }
 
+.ddsmoothmenu li.disabled {
+	pointer-events: none;
+}
+
+.ddsmoothmenu li.disabled a {
+	color: grey;
+}
+
 /*Top level menu link items style*/
 .ddsmoothmenu ul li a{
 display: block;

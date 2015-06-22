@@ -25,9 +25,11 @@
 	  <li><a  id="MenuPaste"><div class="glyphicon glyphicon-paste"/>Paste (ctrl-v)</a></li>
 	  <li><a  id="MenuDuplicate"><div class="glyphicon glyphicon-duplicate"/>Duplicate (ctrl-s)</a></li>
 	  <li><a  id="MenuDelete"><div class="glyphicon glyphicon-trash"/>Delete (del)</a></li>
+
 	  <li style='border-bottom:3px solid gray'></li>
 	  <li><a  id="MenuSaveCopy"><div class="glyphicon glyphicon-save"/>Add to Inventory</a></li>
 	  <li><a  id="MenuPublish"><div class="glyphicon glyphicon-export"/>Publish Selected</a></li>
+
 	  <li><a  id="MenuShare"><div class="glyphicon glyphicon-share"/>Set Permissions</a></li>
 	  <li><a id="MenuSelect" >Select</a>
 		<ul>
@@ -65,7 +67,7 @@
 </li>
 <li><a  id="MenuCamera">Camera</a>
   <ul>
-  <li><a  id="MenuFocusSelected" ><div class="glyphicon glyphicon-screenshot"/>Focus Selected</a></li>
+  <li class='disabled'><a  id="MenuFocusSelected" ><div class="glyphicon glyphicon-screenshot"/>Focus Selected</a></li>
   <li><a>Camera Sharing</a>
   <ul>
   <li><a  id="MenuCameraShare"><div class="glyphicon glyphicon-share"/>Share Camera View</a></li>
@@ -86,7 +88,7 @@
        </ul></li>
   </ul>
 </li>
-<li><a  id="MenuHierarchy">Hierarchy</a>
+<li class='disabled'><a  id="MenuHierarchy">Hierarchy</a>
   <ul>
   <li><a  id="MenuSetParent" ><div class="glyphicon glyphicon-link"/>Link</a></li>
   <li><a  id="MenuRemoveParent" ><div class="glyphicon glyphicon-link"/>Unlink</a></li>
@@ -94,9 +96,9 @@
   <li><a id="MenuGrouping" >Grouping</a>
 		<ul>
 		  <li><a  id="MenuGroup"><div class="glyphicon glyphicon-oil"/>Group</a></li>
-		  <li><a  id="MenuUngroup"><div class="glyphicon glyphicon-duplicate"/>Ungroup</a></li>
-		  <li><a  id="MenuOpenGroup"><div class="glyphicon glyphicon-resize-full"/>Open Group</a></li>
-		  <li><a  id="MenuCloseGroup"><div class="glyphicon glyphicon-resize-small"/>Close Group</a></li>
+		  <li class='disabled'><a  id="MenuUngroup"><div class="glyphicon glyphicon-duplicate"/>Ungroup</a></li>
+		  <li class='disabled'><a  id="MenuOpenGroup"><div class="glyphicon glyphicon-resize-full"/>Open Group</a></li>
+		  <li class='disabled'><a  id="MenuCloseGroup"><div class="glyphicon glyphicon-resize-small"/>Close Group</a></li>
 		</ul>
   </ul>
 </li>
@@ -207,23 +209,63 @@
 		  <li><a  id="MenuCreateGUIImage">Image</a></li>
 		</ul>
 	</li>
+
 	<li style="z-index: 100;"><a  id="MenuCreateLoadMeshURL"><div class="glyphicon glyphicon-cloud-download"/>Load Mesh By URL</a></li>
 
 	<!--<li style="z-index: 100;"><a  id="MenuCreateUploadMesh"><div class="glyphicon glyphicon-cloud-upload"/>Upload a 3D Object</a></li> -->
 
+
   </ul>
+</li>
+<li><a id="MenuAssets"> Assets </a>
+	<ul>
+		<li><a id="MenuAssetsSaveAs"><div class='glyphicon glyphicon-save'/>Create New Asset</a>
+			<ul>
+				<li class='disabled'><a id="MenuAssetsSaveAsEntity"><div class='glyphicon glyphicon-book'/>From Sel. Entity</a></li>
+				<li class='disabled'><a id="MenuAssetsSaveAsMaterial"><div class="glyphicon glyphicon-tint"/>From Sel. Material</a></li>
+				<li class='disabled'><a id="MenuAssetsSaveAsBehavior"><div class='glyphicon glyphicon-cog'/>From Sel. Behavior</a></li>
+				<li><a id="MenuAssetsSaveAsFile"><div class='glyphicon glyphicon-hdd'/>From File</a></li>
+			</ul>
+		</li>
+		<li class='disabled'><a id='MenuAssetsSave'><div class='glyphicon glyphicon-floppy-save'/>Refresh Asset</a>
+			<ul>
+				<li class='disabled'><a id="MenuAssetsSaveEntity"><div class='glyphicon glyphicon-book'/>From Sel. Entity</a></li>
+				<li class='disabled'><a id="MenuAssetsSaveMaterial"><div class="glyphicon glyphicon-tint"/>From Sel. Material</a></li>
+				<li class='disabled'><a id="MenuAssetsSaveBehavior"><div class='glyphicon glyphicon-cog'/>From Sel. Behavior</a></li>
+			</ul>
+		</li>
+		<li><a id="MenuManageAssets"><div class="glyphicon glyphicon-cloud"/>Manage Your Assets</a></li>
+		<li style='border-bottom:3px solid gray'></li>
+		<li><a id="MenuCreateLoadMeshURL"><div class="glyphicon glyphicon-cloud-download"/>Load Mesh By URL</a></li>
+		<li><a id="MenuAssets3DR">3DR</a>
+			<ul>
+				<li><a id="MenuAssets3DRUpload"><div class="glyphicon glyphicon-cloud-upload"/>Upload Mesh to 3DR</a></li>
+				<li><a id="MenuAssets3DRBrowse"><div class="glyphicon glyphicon-tree-deciduous"/>Browse 3D Repository</a></li>
+			</ul>
+		</li>
+	</ul>
 </li>
 <li><a  id="MenuTools">Tools</a>
   <ul>
-  <li><a  id="MenuAlign"><div class="glyphicon glyphicon-object-align-bottom"/>Align</a></li>
+  <li class='disabled'><a  id="MenuLocation">Location</a>
+    <ul>
+      <li><a  id="LocationGoToPosition">Go to Position...</a></li>
+      <li><a  id="LocationGoToPlacemark">Go to Placemark...</a></li>
+      <li><a  id="LocationAddPlacemark">Add Placemark...</a></li>
+      <li><a  id="LocationMoveToGround">Move to ground</a></li>
+    </ul>
+  </li>
+  <li class='disabled'><a  id="MenuAlign"><div class="glyphicon glyphicon-object-align-bottom"/>Align</a></li>
   <li><a  id="MenuBlockPainter"><div class="glyphicon glyphicon-equalizer"/>Block Painter</a></li>
-  <li><a  id="MenuSplineTools"><div class="glyphicon glyphicon-pencil"/>Spline Tools</a></li>
-  <li><a  id="ToolsShowID"><div class="glyphicon glyphicon-console"/>Show ID</a></li>
-  <li><a  id="ToolsShowVWF"><div class="glyphicon glyphicon-console"/>Show VWF Entity Definition</a></li>
+  <li class='disabled'><a  id="MenuSplineTools"><div class="glyphicon glyphicon-pencil"/>Spline Tools</a></li>
+  <li class='disabled'><a  id="ToolsShowID"><div class="glyphicon glyphicon-console"/>Show ID</a></li>
+  <li class='disabled'><a  id="ToolsShowVWF"><div class="glyphicon glyphicon-console"/>Show VWF Entity Definition</a></li>
   <li><a  id="ToolsShowVWFSaveData"><div class="glyphicon glyphicon-console"/>Show Sandbox Scene Definition</a></li>
+
 
   <li style='border-bottom:3px solid gray'></li>
   <li><a  id="MenuToolsManageAssets"><div class="glyphicon glyphicon-cloud"/>Manage Assets</a></li>
+
   
 
   </ul>
@@ -235,9 +277,6 @@
   <li><a  id="MenuMaterialEditor"><div class="glyphicon glyphicon-tint"/>Material Editor</a></li>
   <li><a  id="MenuScriptEditor"><div class="glyphicon glyphicon-console"/>Script Editor</a></li>
   <li><a  id="MenuObjectProperties"><div class="glyphicon glyphicon-tasks"/>Object Properties</a></li>
-  <li><a  id="MenuModels"><div class="glyphicon glyphicon-tree-deciduous"/>Models</a></li>
-  <li><a  id="MenuInventory"><div class="glyphicon glyphicon-open-file"/>Inventory</a></li>
-  <li><a  id="MenuGlobalInventory"><div class="glyphicon glyphicon-cloud"/>Public Inventory</a></li>
   <li><a  id="MenuHierarchyManager"><div class="glyphicon glyphicon-sort-by-attributes-alt"/>Show Hierarchy</a></li>
   <li><a  id="MenuPhysicsEditor"><div class="glyphicon glyphicon-wrench"/>Physics Editor</a></li>
   </ul>
@@ -261,14 +300,6 @@
 
 
 
-  </ul>
-</li>
-<li><a  id="MenuLocation">Location</a>
-  <ul>
-  <li><a  id="LocationGoToPosition">Go to Position...</a></li>
-  <li><a  id="LocationGoToPlacemark">Go to Placemark...</a></li>
-  <li><a  id="LocationAddPlacemark">Add Placemark...</a></li>
-  <li><a  id="LocationMoveToGround">Move to ground</a></li>
   </ul>
 </li>
 <li><a  id="MenuHelp">Help</a>

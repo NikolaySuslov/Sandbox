@@ -15,13 +15,13 @@ for(var i = 0; i < tests.length; i++){
 		test: 
 			function(i){
 				return function(browser, finished){
-					runAssetTest(browser, finished, tests[i]);
+					runTest(browser, finished, tests[i]);
 				}
 			}(i)
 	});
 }
 
-function runAssetTest(browser, finished, test){
+function runTest(browser, finished, test){
 	global.browser = browser;
 	var testUtils = global.testUtils;
 	var outStr = "";
@@ -70,6 +70,7 @@ function runAssetTest(browser, finished, test){
 			passed = passed && exists;
 			outStr += test.model + ": " + exists + ", expected: true; ";
 			console.log('test finished');
+			
 			finished(passed, outStr);
 		});
 		

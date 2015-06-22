@@ -1,22 +1,26 @@
-{
-	"Orbit":{
+[
+	{
+		"name": "Orbit",
 		"url":"./contentlibraries/cameras/vwf/orbit.vwf.json",
 		"preview":"./contentlibraries/cameras/thumbs/camera.png",
 		"type":"asset"
 	},
-	"Fly":{
+	{
+		"name": "Fly",
 		"url":"./contentlibraries/cameras/vwf/fly.vwf.json",
 		"preview":"./contentlibraries/cameras/thumbs/camera.png",
 		"type":"asset"
 	},
-	"Walk":{
+	{
+		"name": "Walk",
 		"url":"./contentlibraries/cameras/vwf/walk.vwf.json",
 		"preview":"./contentlibraries/cameras/thumbs/camera.png",
 		"type":"asset"
 	},
-	"Lookat":{
+	{
+		"name": "Lookat",
 		"url":"./contentlibraries/cameras/vwf/lookat.vwf.json",
 		"preview":"./contentlibraries/cameras/thumbs/camera.png",
 		"type":"asset"
 	}
-}
+]

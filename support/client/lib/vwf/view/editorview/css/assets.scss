@@ -24,6 +24,8 @@
 		#controls
 		{
 			@include justify-content(space-between);
+			@include flex-shrink(0);
+
 			margin-bottom: 5px;
 
 			label#hideThumbs {
@@ -38,6 +40,7 @@
 		#assetList {
 			overflow-y: auto;
 			@include flex-grow(1);
+			position: relative;
 		}
 
 		.asset, .newAsset
@@ -45,7 +48,23 @@
 			padding: 3px;
 			margin-bottom: 2px;
 			border-radius: 3px;
-			
+
+			.info
+			{
+				@include flex-grow(1);
+				
+				.name {
+					margin: 2px 0;
+					font-size: 16px;
+					overflow-wrap: break-word;
+				}
+				.meta {
+					margin: 2px 0;
+					font-size: 12px;
+				}
+			}
+
+	
 			&.selected-asset {
 				background-color: rgba(62,134,215,0.8) !important;
 			}
@@ -58,20 +77,6 @@
 			}
 			&:nth-child(odd){
 				background-color: rgba(60,60,60,0.8);
-			}
-
-			.info
-			{
-				@include flex-grow(1);
-				
-				.name {
-					margin: 2px 0;
-					font-size: 16px;
-				}
-				.meta {
-					margin: 2px 0;
-					font-size: 12px;
-				}
 			}
 
 			.nonbs-thumbnail
@@ -89,27 +94,51 @@
 
 		.newAsset
 		{
-			@include align-items(center);
-			@include justify-content(center);
-
 			background-color: rgba(40,67,79,0.8);
 
-			font-size: 22px;
+			&.sticky {
+				position: relative;
+				background-color: rgb(32,54,63);
+			}
+		}
+
+		#newAssetButton
+		{
+			@include flex-shrink(0);
+
+			color: white;
 			font-weight: bold;
+			font-size: 18px;
+			background-color: rgba(40, 67, 79, 0.8);
+			border: none;
+			border-radius: 3px;
 		}
 	}
 
 	#propertyBrowser
 	{
 		margin-left: 2px;
+		overflow: auto;
 
 		& > * {
 			margin: 2px 0;
 		}
 
-		input, textarea {
+		input, textarea
+		{
 			&:not([disabled]) {
 				color: black;
+			}
+			&:not([type=button]):disabled {
+				background-color: #ccc;
+			}
+		}
+
+		p, span, label
+		{
+			&.fixed-height
+			{
+				min-height: 1.2em;
 			}
 		}
 
@@ -131,6 +160,11 @@
 			@include justify-content(center);
 			@include align-items(center);
 
+			p#filename
+			{
+				font-size: 16px;
+			}
+
 			input#fileInput
 			{
 				position: absolute;
@@ -144,8 +178,17 @@
 				cursor: pointer;
 			}
 
-			input#typeInput {
+			#typeInput
+			{
 				z-index: 1;
+
+				input, select {
+					direction: rtl;
+				}
+
+				select {
+					width: 20px;
+				}
 			}
 
 			span {
@@ -159,6 +202,7 @@
 		p#url {
 			text-align: center;
 			font-size: 18px;
+			word-wrap: break-word;
 		}
 
 		#permissions

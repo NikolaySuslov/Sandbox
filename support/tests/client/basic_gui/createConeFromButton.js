@@ -11,7 +11,7 @@ module.exports = {
 
 		//Create cone from button
 		.nextGUID('testCone')
-		.click('#MenuCreateConeicon')
+		.$click('#MenuCreateConeicon')
 		//Verify cone
 		.pause(6000).then(function() {
 			testUtils.assertNodeExists("testCone", function(assertStatus, msg){

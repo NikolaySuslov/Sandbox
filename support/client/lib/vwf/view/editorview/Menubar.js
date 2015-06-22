@@ -5,25 +5,77 @@ function clearCameraModeIcons() {
     $('#MenuCameraFreeicon').removeClass('iconselected');
 }
 
-/*
-define(vwf/view/modelupload],function(modelupload) { 
-	return {
-		initialize: function() {
-			modelupload.init();
-			$('asdflkj').click(funciton(){
-				modelupload.show(function(newurl){   
-					_Editor.loadMeshByUrld(new url)
-					_Editor.loadMesh(val, 'subDriver/threejs/asset/vnd.three.js+json');
-				});
-			)
-	...
-	}
-}
-*/
-
 
 define(['vwf/view/editorview/manageAssets'], function(manageAssets)
 {
+	function updateMenuState()
+	{
+		function nodeInherits(node, ancestor)
+		{
+			if(!node)
+				return false;
+			else if(node == ancestor)
+				return true;
+			else
+				return nodeInherits( vwf.prototype(node), ancestor );
+		}
+
+		var node = _Editor.GetSelectedVWFNode(),
+			selection = !!node,
+			hasMaterial = !!(node && node.properties && node.properties.materialDef),
+			isBehavior = !!(node && nodeInherits(node.id, 'http-vwf-example-com-behavior-vwf')),
+			isEntityAsset = !!(node && node.properties && node.properties.sourceAssetId),
+			isMaterialAsset = !!(node && node.properties && node.properties.materialDef && node.properties.materialDef.sourceAssetId),
+			isGroup = !!(node && nodeInherits(node.id, 'sandboxGroup-vwf')),
+			loggedIn = !!_UserManager.GetCurrentUserName(),
+			hasAvatar = !!(loggedIn && _UserManager.GetAvatarForClientID(_UserManager.GetCurrentUserID()));
+
+		console.log('Updating menu state: hasAvatar =', hasAvatar, 'loggedIn =', loggedIn);
+
+		$('#MenuLogIn').parent()
+			.toggleClass('disabled', loggedIn);
+		$('#MenuLogOut').parent()
+			.toggleClass('disabled', !loggedIn);
+
+		$('#MenuAssetsSaveAsEntity').parent()
+			.toggleClass('disabled', !selection);
+		$('#MenuAssetsSaveAsMaterial').parent()
+			.toggleClass('disabled', !hasMaterial);
+		$('#MenuAssetsSaveAsBehavior').parent()
+			.toggleClass('disabled', !isBehavior);
+		$('#MenuAssetsSave').parent()
+			.toggleClass('disabled', !isEntityAsset && !isMaterialAsset);
+		$('#MenuAssetsSaveEntity').parent()
+			.toggleClass('disabled', !isEntityAsset || !selection);
+		$('#MenuAssetsSaveMaterial').parent()
+			.toggleClass('disabled', !isMaterialAsset || !hasMaterial);
+		$('#MenuAssetsSaveBehavior').parent()
+			.toggleClass('disabled', !isEntityAsset || !isBehavior);
+
+		$('#MenuFocusSelected').parent()
+			.toggleClass('disabled', !selection);
+
+		$('#MenuHierarchy').parent()
+			.toggleClass('disabled', !selection);
+		$('#MenuUngroup').parent()
+			.toggleClass('disabled', !isGroup);
+		$('#MenuOpenGroup').parent()
+			.toggleClass('disabled', !isGroup);
+		$('#MenuCloseGroup').parent()
+			.toggleClass('disabled', !isGroup);
+
+		$('#MenuLocation').parent()
+			.toggleClass('disabled', !hasAvatar);
+		$('#MenuAlign').parent()
+			.toggleClass('disabled', !selection);
+		$('#MenuSplineTools').parent()
+			.toggleClass('disabled', !selection);
+		$('#ToolsShowID').parent()
+			.toggleClass('disabled', !selection);
+		$('#ToolsShowVWF').parent()
+			.toggleClass('disabled', !selection);
+	}
+
 	return {
 
         initialize: function()
@@ -127,11 +179,62 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
     
             }
 
+			// determine disabled status when selection changes
+			$(document).on('selectionChanged', updateMenuState);
+
+			// load asset manager
 			manageAssets.initialize();
-            $('#MenuToolsManageAssets').click(function(e){
+
+			// hook up assets menu
+            $('#MenuManageAssets').click(function(e){
 				manageAssets.refreshData();
                 $('#manageAssetsDialog').dialog('open');
             });
+
+			$('#MenuAssetsSaveAsEntity').click(function(e){
+				manageAssets.refreshData();
+				manageAssets.uploadSelectedEntity();
+                $('#manageAssetsDialog').dialog('open');
+			});
+
+			$('#MenuAssetsSaveAsMaterial').click(function(e){
+				manageAssets.refreshData();
+				manageAssets.uploadSelectedMaterial();
+                $('#manageAssetsDialog').dialog('open');
+			});
+
+			$('#MenuAssetsSaveAsBehavior').click(function(e){
+				manageAssets.refreshData();
+				manageAssets.uploadSelectedBehavior();
+                $('#manageAssetsDialog').dialog('open');
+			});
+
+			$('#MenuAssetsSaveAsFile').click(function(e){
+				manageAssets.refreshData();
+				manageAssets.uploadFile();
+                $('#manageAssetsDialog').dialog('open');
+			});
+
+			$('#MenuAssetsSaveEntity').click(function(e){
+				manageAssets.refreshData(function(){
+					manageAssets.uploadSelectedEntity(true);
+				});
+                $('#manageAssetsDialog').dialog('open');
+			});
+
+			$('#MenuAssetsSaveMaterial').click(function(e){
+				manageAssets.refreshData(function(){
+					manageAssets.uploadSelectedMaterial(true);
+				});
+                $('#manageAssetsDialog').dialog('open');
+			});
+
+			$('#MenuAssetsSaveBehavior').click(function(e){
+				manageAssets.refreshData(function(){
+					manageAssets.uploadSelectedBehavior(true);
+				});
+                $('#manageAssetsDialog').dialog('open');
+			});
 
 
 
@@ -240,9 +343,6 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
             $('#MenuMulti').click(function(e) {
                 _Editor.SetGizmoMode(_Editor.Multi);
             });
-            $('#MenuSaveCopy').click(function(e) {
-                _InventoryManager.Take();
-            });
             $('#MenuShare').click(function(e) {
                 _PermissionsManager.show();
             });
@@ -275,16 +375,13 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
             $('#MenuDelete').click(function(e) {
                 _Editor.DeleteSelection();
             });
-            $('#MenuPublish').click(function(e) {
-                _InventoryManager.Publish();
-            });
             $('#MenuChat').click(function(e) {
                 $('#ChatWindow').dialog('open');
             });
             $('#MenuUsers').click(function(e) {
                _UserManager.showPlayers();
             });
-            $('#MenuModels').click(function(e) {
+            $('#MenuAssets3DRBrowse').click(function(e) {
                 _ModelLibrary.show();
             });
             $('#MenuSnapLarge').click(function(e) {
@@ -312,17 +409,6 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
                 else
                     _ScriptEditor.show();
             });
-            $('#MenuInventory').click(function(e) {
-                if (_InventoryManager.isOpen())
-                    _InventoryManager.hide();
-                else {
-                    _InventoryManager.show();
-                    $("#InventoryTypeChoicePersonal").click()
-                }
-    
-    
-            });
-    
     
     
             $('#MenuPhysicsEditor').click(function(e) {
@@ -339,15 +425,6 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
                     _PrimitiveEditor.hide();
                 else
                     _PrimitiveEditor.show();
-            });
-            $('#MenuGlobalInventory').click(function(e) {
-                if (_InventoryManager.isOpen())
-                    _InventoryManager.hide();
-                else {
-                    _InventoryManager.show();
-                    $("#InventoryTypeChoiceGlobal").click()
-                }
-    
             });
             $('#MenuLatencyTest').click(function(e) {
                 var e = {};
@@ -481,7 +558,7 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
     
     
             $('#MenuHelpBrowse').click(function(e) {
-                window.open('http://vwf.adlnet.gov/r/c/documentation/', '_blank');
+                window.open('http://sandboxdocs.readthedocs.org/en/latest/', '_blank');
             });
             $('#MenuHelpAbout').click(function(e) {
                 $('#NotifierAlertMessage').dialog('open');
@@ -779,7 +856,7 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
                 }
             });
     
-            $('#MenuCreateUploadMesh').click(function(e) {
+            $('#MenuAssets3DRUpload').click(function(e) {
                 _ModelLibrary.showUpload();
             });
     
@@ -943,7 +1020,15 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
     
             //make every clicked menu item close all menus
             // $('#smoothmenu1').find('[id]').filter(':only-child').click(function(){ddsmoothmenu.closeall({type:'click',target:'asd'})});
-    	}
+    	},
+
+		calledMethod: function(id, evtname, data)
+		{
+			console.log('Menu calledMethod', id, evtname);
+			if(id == vwf.application() && evtname == 'clientConnected'){
+				updateMenuState();
+			}
+		}
     };
 
 });

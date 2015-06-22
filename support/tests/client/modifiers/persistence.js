@@ -1,10 +1,13 @@
 module.exports = {
-    'Create and delete a world and verify persistence': function(browser, finished) {
+    'Tests creating modifier and verifying persistence': function(browser, finished) {
         global.browser = browser;
         var testUtils = global.testUtils;
 		var passed = true;
 		var outStr = "";
 		var worldId;
+		
+		var nodeName = "testWorldPrim";
+		var modifier = "Bend";
 		
         browser
 			.login(function(err, val){
@@ -30,13 +33,33 @@ module.exports = {
 			.waitForExist('#preloadGUIBack', 60000)
 			.waitForVisible('#preloadGUIBack', 60000, true)
 			
-			.nextGUID("testWorldPrim")
+			.nextGUID(nodeName)
 			.$click("#MenuCreateSphereicon")
 			.pause(6000).then(function() {
-				testUtils.assertNodeExists("testWorldPrim", function(assertStatus, msg){
+				testUtils.assertNodeExists(nodeName, function(assertStatus, msg){
 					passed = passed && !!assertStatus;
 					outStr += "First time: " + msg + "; ";
 				});
+			})
+			
+			//Create the modifier
+			.pause(1000)
+			.click("#MenuCreate")
+			.pause(500)
+			.$click("#MenuModifiers")
+			.pause(500)
+			.$click("#MenuCreate" + modifier)
+			.pause(5000)
+			
+			//Ensure the modifier exists..
+			.getChildren(nodeName, function(err, children){
+				if(children[0] && children[0].indexOf(modifier.toLowerCase()) > -1){
+					outStr += modifier + " (" + children[0] + ") modifier found; ";
+				}
+				else{
+					passed = true;
+					outStr += modifier + " modifier NOT found; ";
+				}
 			})
 			
 			//Exit world
@@ -51,14 +74,25 @@ module.exports = {
 			.waitForExist('#preloadGUIBack', 60000)
 			.waitForVisible('#preloadGUIBack', 60000, true)
 			.pause(6000).then(function() {
-				testUtils.assertNodeExists("testWorldPrim", function(assertStatus, msg){
+				testUtils.assertNodeExists(nodeName, function(assertStatus, msg){
 					passed = passed && !!assertStatus;
 					outStr += "Second time: " + msg + "; ";
 				});
 			})
+			.pause(1000)
 			
+			.getChildren(nodeName, function(err, children){
+				if(children[0] && children[0].indexOf(modifier.toLowerCase()) > -1){
+					outStr += modifier + " (" + children[0] + ") modifier found; ";
+				}
+				else{
+					passed = true;
+					outStr += modifier + " modifier NOT found; ";
+				}
+				
+			})
 			.saveDataBeforeUnload()
-			.pause(1000).then(function(){
+			.then(function(){
 				browser.deleteWorld(worldId, function(err){
 					if(err){
 						passed = false;
@@ -70,6 +104,6 @@ module.exports = {
 					
 					finished(passed, outStr);
 				});
-			});			
+			});
     }
 }

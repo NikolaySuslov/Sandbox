@@ -7797,10 +7797,9 @@ THREE.Object3D.prototype = {
 
             this.orthoMatrixWorld.copy(this.matrixWorld);
             if (this instanceof THREE.Bone) {
-                var skin = this.skin || this;
-                while (!(skin instanceof THREE.SkinnedMesh))
-                    skin = skin.parent;
-                this.orthoMatrixWorld.orthogonalize(skin.matrixWorld);
+               if(this.skin)
+                	this.orthoMatrixWorld.orthogonalize(this.skin.matrixWorld);
+                
             } else {
 
                 this.orthoMatrixWorld.orthogonalize();
@@ -17797,8 +17796,8 @@ THREE.ShaderLib = {
             "tFogColor = mix( gl_FragColor, vec4( fogColor, gl_FragColor.w ), fogFactor );\n" +
             "#endif\n" +
             "#endif\n" +
-            "   gl_FragColor = vec4(mix(cubeColor.xyz,skycolor,colorBlend),1.0);\n" +
-            "   gl_FragColor = vec4(mix(gl_FragColor.xyz,tFogColor.xyz,fogBlend),1.0);\n" +
+            "   vec4 temp = vec4(mix(cubeColor.xyz,skycolor,colorBlend),1.0);\n" +
+            "   gl_FragColor = vec4(mix(temp.xyz,tFogColor.xyz,fogBlend),1.0);\n" +
             "}\n",
 
         //the default shader - the one used by the analytic solver, just has some simple stuff
@@ -21673,8 +21672,10 @@ THREE.WebGLRenderer = function ( parameters ) {
 
 	function setupVertexAttributes( material, programAttributes, geometryAttributes, startIndex ) {
 
-		for ( var attributeName in programAttributes ) {
+		var keys = Object.keys(programAttributes)
+		for ( var i = 0; i < keys.length; i++ ) {
 
+			var attributeName = keys[i];
 			var attributePointer = programAttributes[ attributeName ];
 			var attributeItem = geometryAttributes[ attributeName ];
 
@@ -29670,6 +29671,10 @@ THREE.Animation.prototype.debug = function(size) {
     this.debugroot = debugroot;
 }
 
+var tempAniPos = new THREE.Vector3();
+var tempAniScale = new THREE.Vector3(1,1,1);
+var tempAniQuat = new THREE.Quaternion();
+var tempAniMatrix = new THREE.Matrix4();
 THREE.Animation.prototype.setKey = function(keyf) {
 
     if (!this.data) return;
@@ -29684,7 +29689,7 @@ THREE.Animation.prototype.setKey = function(keyf) {
         var key = this.data.hierarchy[h].keys[Math.floor(keyf)];
         var key2 = this.data.hierarchy[h].keys[Math.floor(keyf + 1)];
 
-        object.matrixAutoUpdate = true;
+        object.matrixAutoUpdate = false;
         //object.matrix.copy(key.matrix);
         //object.updateMatrixWorld();
         //object.matrixWorldNeedsUpdate = true;
@@ -29698,25 +29703,26 @@ THREE.Animation.prototype.setKey = function(keyf) {
             */
         	var keypos =  key.parentspacePos || key.pos;
         	var keyrot =  key.parentspaceRot || key.rot;
-        	var keyscl =  key.parentspaceScl || key.scl;
+      //  	var keyscl =  key.parentspaceScl || key.scl;
 
         	var key2pos =  key2.parentspacePos || key2.pos;
         	var key2rot =  key2.parentspaceRot || key2.rot;
-        	var key2scl =  key2.parentspaceScl || key2.scl;
+        //	var key2scl =  key2.parentspaceScl || key2.scl;
 
-            object.position.x = keypos[0] * l2 + key2pos[0] * l;
-            object.position.y = keypos[1] * l2 + key2pos[1] * l;
-            object.position.z = keypos[2] * l2 + key2pos[2] * l;
+            tempAniPos.x = keypos[0] * l2 + key2pos[0] * l;
+            tempAniPos.y = keypos[1] * l2 + key2pos[1] * l;
+            tempAniPos.z = keypos[2] * l2 + key2pos[2] * l;
 
-            object.scale.x = keyscl[0] * l2 + key2scl[0] * l;
-            object.scale.y = keyscl[1] * l2 + key2scl[1] * l;
-            object.scale.z = keyscl[2] * l2 + key2scl[2] * l;
+       //     tempAniScale.x = keyscl[0] * l2 + key2scl[0] * l;
+       //     tempAniScale.y = keyscl[1] * l2 + key2scl[1] * l;
+       //     tempAniScale.z = keyscl[2] * l2 + key2scl[2] * l;
 
-            object.quaternion.set(keyrot.x, keyrot.y, keyrot.z, keyrot.w);
-            object.quaternion.slerp(key2rot, l);
+            tempAniQuat.set(keyrot.x, keyrot.y, keyrot.z, keyrot.w);
+            tempAniQuat.slerp(key2rot, l);
 
-
-            object.updateMatrix();
+            tempAniMatrix.compose(tempAniPos,tempAniQuat,tempAniScale);
+            object.matrix.copy(tempAniMatrix);
+            object.matrixWorldNeedsUpdate = true;
             //object.matrixWorld.multiplyMatrices(this.root.matrixWorld,object.matrix);
 
 

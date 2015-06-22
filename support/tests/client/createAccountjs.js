@@ -14,11 +14,11 @@ module.exports.test = function(browser, cb)
     .click('input[type="submit"]').pause(200)
     .url(function(err, url)
     {
-        if (url.value == 'http://localhost:3000/adl/sandbox/')
-            {
-                cb(true)
-                return;
-            }
+        if (url && url.value == 'http://localhost:3000/adl/sandbox/')
+		{
+			cb(true)
+			return;
+		}
         else
         {
             browser.getText(".help-block")

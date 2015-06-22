@@ -52,7 +52,7 @@
     "winston": "~0.8.3",
     "ws": "~0.4.25",
     "yamljs": "~0.1.4",
-    "SandboxAssetServer": "git://github.com/adlnet/SandboxAssetServer.git#v1.2.2"
+    "SandboxAssetServer": "git://github.com/adlnet/SandboxAssetServer.git#development"
   },
   "devDependencies": {},
   "scripts": {

@@ -1199,11 +1199,15 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
 
         ticking: function(vwfTime) {
 
+            //this takes 5% of our CPU time... do any of these nodes do anything with the tick?
+           
             for (var i in this.state.nodes) {
                 var node = this.state.nodes[i];
                 var threeObject = node.threeObject;
                 if (node.ticking)
+                {
                     node.ticking();
+                }
             }
         }
 

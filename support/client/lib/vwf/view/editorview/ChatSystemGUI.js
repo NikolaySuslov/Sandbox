@@ -175,7 +175,9 @@ define({
 			vwf.callMethod('index-vwf', 'playSound', ['./sounds/ChatDing.wav'])
 			var message = JSON.parse(e);
 			var color = 'darkred';
-			var displayNameSender = vwf.getProperty(vwf.application(), 'clients')[message.sender].name;;
+			var displayNameSender = message.sender;
+			if(vwf.getProperty(vwf.application(), 'clients')[message.sender])
+				displayNameSender = vwf.getProperty(vwf.application(), 'clients')[message.sender].name;
 			var text = replaceURLWithHTMLLinks(message.text);
 
 			if (message.sender == vwf.moniker())

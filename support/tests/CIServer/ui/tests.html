@@ -69,15 +69,49 @@ $(document).ready(function()
 							$("#run" + testID).button();
 							$("#" + testID).append("<div class='testtitle'>" + tests[i].title + "</div>");
 							$("#" + testID).append("<div class='testfile'>" + tests[i].filename + "</div>");
-							$("#" + testID).append("<div class='teststatus'>" + tests[i].status + "</div>");
-							$("#" + testID).append("<div class='testresult'>" + tests[i].result + "</div>");
-							$("#" + testID).append("<div class='testmessage'>" + tests[i].message + "</div>");
+							$("#" + testID).append("<div class='teststatus topstatus'>" + tests[i].status + "</div>");
+							
+							//$("#" + testID).append("<div class='testmessage'>" + tests[i].message + "</div>");
 						}else
 						{
 							
 							$("#" + testID +" .teststatus").text(tests[i].status)
 							$("#" + testID +" .testresult").text(tests[i].result)
 							$("#" + testID +" .testmessage").text(tests[i].message)
+						}
+						for(var k = 0 ; k < tests[i].runs.length; k++)
+						{
+							var oldTestID = testID;
+							testID  = testID+tests[i].runs[k].browsername;
+							
+								$("#"+oldTestID).append("<div class='runRow' id = '" + testID+"' ></div>")
+								
+								$("#" + testID).attr('test',i)
+								
+								$("#" + testID).append("<div class='testtitle'>" + tests[i].runs[k].browsername + "</div>");
+								$("#" + testID).append("<div class='testfile'>" + "" + "</div>");
+								$("#" + testID).append("<div class='runStatus teststatus'>" + tests[i].runs[k].status + "</div>");
+								$("#" + testID).append("<div class='runResult testresult'>" + tests[i].runs[k].result + "</div>");
+								$("#" + testID).append("<div class='testmessage'>" + tests[i].runs[k].message + "</div>");
+								
+								
+
+								if(tests[i].runs[k].status == 'error')
+								{
+									$("#" + oldTestID + ".teststatus").text('error')
+								}
+								if(tests[i].runs[k].result == 'error')
+								{
+									$("#" + oldTestID + ".testresult").text('error')
+									$("#" + oldTestID).css('background-color','#FF9');
+								}
+								if(tests[i].runs[k].result == 'failed')
+								{
+									$("#" + oldTestID + ".testresult").text('failed')
+									$("#" + oldTestID).css('background-color','#F99');
+								}
+								
+							testID = oldTestID;
 						}
 					}
 					$('#log').text(status.log);
@@ -111,7 +145,7 @@ $(document).ready(function()
 			}, 500)
 			window.setInterval(function()
 			{
-			//	window.location.reload();
+				window.location.reload();
 			}, 60000) 
 })
 </script>

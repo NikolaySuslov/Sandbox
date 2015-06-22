@@ -6,30 +6,38 @@ module.exports = {
 		global.browser = browser;
 		var testUtils = global.testUtils;
 			passed = true,
-			outStr = "",
-			// noSel = "No Selection";
+			outStr = "";
 		
 		browser.loadBlankScene()
+		
+		//Show side tab hierarchy
+		//selection can be watched here as well
+		.pause(1000)
+		.$click('#SideTabShow')
+		.waitForVisible('#editorPanelhierarchyManagertitle')
+		.$click('#editorPanelhierarchyManagertitle')
+		.pause(2000)
+   
 		.nextGUID('testSphere')
 		.$click('#MenuCreateSphereicon')
 
 		//Verify Selection of Sphere
 		.pause(3000).isNodeSelected("testSphere", function(err, r) {
 			if(r) {
-				outStr += "testSphere is selected. " /*+ msg + "; "*/;
+				outStr += "testSphere is selected. ";
 			} else {
 				passed = false;
-				outStr += "testSphere is not selected. " /*+ msg + "; "*/;
+				outStr += "testSphere is not selected. ";
 			}
 		})
 		//Select None and Verify
 		.pause(3000).$click('#MenuSelectNoneicon')
 		.isNodeSelected('testSphere', function(err, r) {
 			if(!r) {
-				outStr += "testSphere is not selected. " /*+ msg + "; "*/;
+				outStr += "testSphere is not selected. ";
 			} else {
 				passed = false;
-				outStr += "testSphere is selected. " /*+ msg + "; "*/;
+				outStr += "testSphere is selected. ";
 			}
 		})
 		
@@ -49,10 +57,10 @@ module.exports = {
 		//Verify Selection of Cylinder
 		.pause(3000).isNodeSelected("testCylinder", function(err, r) {
 			if(r) {
-				outStr += "testCylinder is selected. " /*+ msg + "; "*/;
+				outStr += "testCylinder is selected. ";
 			} else {
 				passed = false;
-				outStr += "testCylinder is not selected. " /*+ msg + "; "*/;
+				outStr += "testCylinder is not selected. ";
 			}
 		})
 		//Select None and Verify
@@ -65,30 +73,30 @@ module.exports = {
 		
 		.isNodeSelected('testCylinder', function(err, r) {
 			if(!r) {
-				outStr += "testCylinder is not selected. " /*+ msg + "; "*/;
+				outStr += "testCylinder is not selected. ";
 			} else {
 				passed = false;
-				outStr += "testCylinder is selected. " /*+ msg + "; "*/;
+				outStr += "testCylinder is selected. ";
 			}
 		})
 		//Verify Sphere is still not selected
 		.isNodeSelected('testSphere', function(err, r) {
 			if(!r) {
-				outStr += "testSphere is not selected either. " /*+ msg + "; "*/;
+				outStr += "testSphere is not selected either. ";
 			} else {
 				passed = false;
-				outStr += "testSphere is selected. " /*+ msg + "; "*/;
+				outStr += "testSphere is selected. ";
 			}
 		})
 		
 		//Verify Cylinder
-		browser.pause(3000).then(function() {
+		.pause(3000).then(function() {
 			testUtils.assertNodeExists("testCylinder", function(assertStatus, msg) {
 				passed = passed && !!assertStatus;
 				outStr += "Cylinder exists: " + msg + "; ";
-				finished(passed, outStr);
+				browser.pause(2000).then(finished(passed, outStr, false));
 			});
 		});
-	
+
 	}
 }

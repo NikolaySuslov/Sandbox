@@ -457,9 +457,10 @@ scripts:
             this.receivingCameraBroadcast = false;
         this.simTime = this.simTime +1;
     }
-        this.getSkyMat = function()
+    this.getSkyMat = function()
     {
     
+        if(!this.skycube) return null;
         return this.skycube.material;
     
     }

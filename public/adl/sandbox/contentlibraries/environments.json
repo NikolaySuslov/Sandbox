@@ -1,32 +1,38 @@
-{
-	"Grassy Plain":{
+[
+	{
+		"name": "Grassy Plain",
 		"url":"./contentlibraries/environments/vwf/grassyplain.vwf.json",
 		"preview":"./contentlibraries/environments/thumbs/grassyplain.png",
 		"type":"environment"
 	},
-	"Desert Sunset":{
+	{
+		"name": "Desert Sunset",
 		"url":"./contentlibraries/environments/vwf/desertsunset.vwf.json",
 		"preview":"./contentlibraries/environments/thumbs/desertsunset.PNG",
 		"type":"environment"
 	},
-	"Space":{
+	{
+		"name": "Space",
 		"url":"./contentlibraries/environments/vwf/space.vwf.json",
 		"preview":"./contentlibraries/environments/thumbs/space.png",
 		"type":"environment"
 	},
-	"Night":{
+	{
+		"name": "Night",
 		"url":"./contentlibraries/environments/vwf/night.vwf.json",
 		"preview":"./contentlibraries/environments/thumbs/night.png",
 		"type":"environment"
 	},
-	"Fog":{
+	{
+		"name": "Fog",
 		"url":"./contentlibraries/environments/vwf/fog.vwf.json",
 		"preview":"./contentlibraries/environments/thumbs/fog.jpg",
 		"type":"environment"
 	},
-	"Stormy":{
+	{
+		"name": "Stormy",
 		"url":"./contentlibraries/environments/vwf/stormy.vwf.json",
 		"preview":"./contentlibraries/environments/thumbs/stormy.jpg",
 		"type":"environment"
 	}
-}
+]

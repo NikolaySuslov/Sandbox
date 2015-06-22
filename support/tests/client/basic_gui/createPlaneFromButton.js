@@ -11,7 +11,7 @@ module.exports = {
 
 		//Create plane from button
 		.nextGUID('testPlane')
-		.click('#MenuCreatePlaneicon')
+		.$click('#MenuCreatePlaneicon')
 		//Verify plane
 		.pause(6000).then(function() {
 			testUtils.assertNodeExists("testPlane", function(assertStatus, msg){

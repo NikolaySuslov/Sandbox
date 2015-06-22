@@ -105,7 +105,8 @@ function readFiles(nextStep) {
                     result: null,
                     message: null,
                     title: test.title,
-                    filename: test.filename
+                    filename: test.filename,
+                    runs:[]
                 }
             }
         } catch (e) {
@@ -114,7 +115,8 @@ function readFiles(nextStep) {
                 result: null,
                 message: null,
                 title: filename,
-                filename: filename
+                filename: filename,
+                runs:[]
             }
 
         }
@@ -125,13 +127,14 @@ function readFiles(nextStep) {
 function run_one_test(test, nextTest) {
 
     var id = test.filename + ":" + test.title;
-   /* report.tests[id] = {
+    report.tests[id] = {
         status: "running",
         result: null,
         message: null,
         title: test.title,
-        filename: test.filename
-    }*/
+        filename: test.filename,
+        runs: []
+    }
     var originalTitle = test.title;
     webdriverio = require('webdriverio');
     options = {
@@ -139,7 +142,7 @@ function run_one_test(test, nextTest) {
             browserName: 'firefox'
         }
     };
-    async.eachSeries(['chrome'], function(browserName, nextBrowser) {
+    async.eachSeries(['chrome','firefox','ie11'], function(browserName, nextBrowser) {
         async.series([
             function initBrowser(cb) {
                 options.desiredCapabilities.browserName = browserName;
@@ -151,7 +154,7 @@ function run_one_test(test, nextTest) {
             },
             function runTheTest(cb) {
                 test.title = originalTitle ;
-                run_one_test_one_browser(test, options.desiredCapabilities.browserName, cb)
+                run_one_test_one_browser(test, options.desiredCapabilities.browserName, report.tests[id], cb)
             },
             function closeTheBrowser(cb)
             {
@@ -164,28 +167,21 @@ function run_one_test(test, nextTest) {
     },function()
     {
         test.title = originalTitle;
-       /* report.tests[id] = {
-        status: "complete",
-        result: null,
-        message: null,
-        title: test.title,
-        filename: test.filename
-    }*/
+        report.tests[id].status = "complete";
         nextTest();
     })
 }
 
-function run_one_test_one_browser(thistest, browsername, next) {
+function run_one_test_one_browser(thistest, browsername, report, next) {
 
     //setup reporting data
-    var id = thistest.filename + ":" + thistest.title;
-    report.tests[id] = {
+    var run = {
         status: "running",
         result: null,
         message: null,
-        title: thistest.title,
-        filename: thistest.filename
+        browsername:browsername
     }
+    report.runs.push(run);
     var timeoutID = null;
     var handler = null;
     //create an error context to catch exceptions and crashes in async code
@@ -193,9 +189,9 @@ function run_one_test_one_browser(thistest, browsername, next) {
     domain.on('error', function(err) {
         //log error and go to next test on error
         var id = thistest.filename + ":" + thistest.title;
-        report.tests[id].status = "error";
-        report.tests[id].result = "error";
-        report.tests[id].message = err.toString()
+        run.status = "error";
+        run.result = "error";
+        run.message = err.toString()
         logger.log(id);
         logger.log(err.stack);
         logger.log("DOMAIN ERROR")
@@ -207,18 +203,18 @@ function run_one_test_one_browser(thistest, browsername, next) {
             next();
         }, 500)
     })
-    logger.log("starting test " + id);
+    //logger.log("starting test " + id);
     //run the test in the error handling context
 
     handler = function(e) {
         //should return false or true
         logger.log("EXCEPTION", JSON.stringify(e))
 
-        report.tests[id].status = "error";
+        run.status = "error";
 
-        report.tests[id].result = "error"
+        run.result = "error"
 
-        report.tests[id].message = " " + e.toString() + "; ";
+        run.message = " " + e.toString() + "; ";
         global.clearTimeout(timeoutID);
         domain.exit();
         process.removeListener('uncaughtException', handler);
@@ -231,11 +227,11 @@ function run_one_test_one_browser(thistest, browsername, next) {
             //should return false or true
             logger.log("TIMEOUT")
 
-            report.tests[id].status = "timeout";
+            run.status = "timeout";
 
-            report.tests[id].result = "timeout"
+            run.result = "timeout"
 
-            report.tests[id].message = e;
+            run.message = e;
             global.clearTimeout(timeoutID);
             domain.exit();
             process.removeListener('uncaughtException', handler);
@@ -247,16 +243,16 @@ function run_one_test_one_browser(thistest, browsername, next) {
         //    timeoutID = global.setTimeout(timeout, 60 * 1000)
     process.on('uncaughtException', handler);
     //the actual test
-    domain.bind(thistest.test)(global.browser, function(success, message) {
+    domain.bind(thistest.test)(global.browser, global.testUtils.completeTest(function(success, message) {
         //should return false or true
         logger.log("SUCCESS")
 
-        report.tests[id].status = "complete";
+        run.status = "complete";
         if (success)
-            report.tests[id].result = "passed"
+            run.result = "passed"
         else
-            report.tests[id].result = "failed";
-        report.tests[id].message = message;
+            run.result = "failed";
+        run.message = message;
         global.clearTimeout(timeoutID);
         domain.exit();
         process.removeListener('uncaughtException', handler);
@@ -265,7 +261,7 @@ function run_one_test_one_browser(thistest, browsername, next) {
             next();
         }, 500)
 
-    })
+    }));
 
 
 }

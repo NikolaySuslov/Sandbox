@@ -13,6 +13,7 @@ var fills = {
         this.setImmediate();
         this.functionBind();
         this._deepEquals();
+        this.debounce();
         window.ToSafeID = function(value) {
             return value.replace(/[^A-Za-z0-9]/g, "");
         }
@@ -37,6 +38,24 @@ var fills = {
         window.RunPrefixMethod = RunPrefixMethod;
 
 
+    },
+    debounce:function()
+    {
+    	function debounce(func, wait, immediate) {
+			var timeout;
+			return function() {
+				var context = this, args = arguments;
+				var later = function() {
+					timeout = null;
+					if (!immediate) func.apply(context, args);
+				};
+				var callNow = immediate && !timeout;
+				clearTimeout(timeout);
+				timeout = setTimeout(later, wait);
+				if (callNow) func.apply(context, args);
+			};
+		};
+		window.debounce = debounce;
     },
     GUID: function()
     {

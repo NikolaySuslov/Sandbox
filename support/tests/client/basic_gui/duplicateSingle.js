@@ -20,14 +20,7 @@ module.exports = {
 				outStr += "Sphere exists: " + msg + "; ";
 			});
 		})
-		//Verify no other sphere
-		.then(function() {
-			testUtils.assertNodeExists('DupSphere1', function(assertStatus, msg) {
-				passed = passed && !assertStatus;
-				outStr += "DupSphere1 exists: " + msg + "; ";
-			});
-		})
-		
+
 		.pause(6000)
 		//Duplicate via Button
 		.nextGUID('DupSphere1')
@@ -41,9 +34,11 @@ module.exports = {
 		.click('#MenuDuplicate')
 		
 		//Duplicate via Context Menu
-		// .pause(1000)
-		// .nextGUID('DupSphere3')
-		
+		.pause(1000)
+		.nextGUID('DupSphere3')
+		.rightClick('#index-vwf')
+		.waitForVisible('#ContextMenu', 1000)
+		.$click('#ContextMenuDuplicate')
 		
 		//Verify Duplicates
 		.pause(3000).then(function() {
@@ -56,16 +51,16 @@ module.exports = {
 			testUtils.assertNodeExists('DupSphere2', function(assertStatus, msg) {
 				passed = passed && !!assertStatus;
 				outStr += "Dup Menu: " + msg + "; ";
+				// finished(passed, outStr);
+			});
+		})
+		.pause(3000).then(function() {
+			testUtils.assertNodeExists('DupSphere3', function(assertStatus, msg) {
+				passed = passed && !!assertStatus;
+				outStr += "Dup Context Menu: " + msg + "; ";
 				finished(passed, outStr);
 			});
 		})
-		// .pause(3000).then(function() {
-			// testUtils.assertNodeExists('DupSphere3', function(assertStatus, msg) {
-				// passed = passed && !!assertStatus;
-				// outStr += "Dup Context Menu: " + msg + "; ";
-				// finished(passed, outStr);
-			// });
-		// })
 		
 
 	

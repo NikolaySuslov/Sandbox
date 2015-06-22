@@ -223,10 +223,8 @@ define(function() {
 			};
 			ret.vwfID = nodeID;
 
-			var vwfnode = _Editor.getNode(nodeID);
-			ret.name = ret.vwfID;
-			if (vwfnode.properties && vwfnode.properties.DisplayName)
-				ret.name = vwfnode.properties.DisplayName;
+			
+			ret.name = vwf.getProperty(nodeID,'DisplayName') || nodeID;
 
 			var children = vwf.children(nodeID);
 			if (children)
@@ -386,6 +384,7 @@ define(function() {
 
 			if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
 		}
+		this.BuildGUI = this.BuildGUI.bind(this);
 		this.appendThreeChildDOM = function(node, parentDiv, type) {
 			
 			//there are one or 2 objects that should never be listed in the scene
@@ -448,26 +447,17 @@ define(function() {
 
 				if(method == 'ready' && this.isOpen())
 				{
-				window.setTimeout(function() {
-					this.BuildGUI();
-				}.bind(this), 500)
+				debounce(this.BuildGUI, 500);
 			    }
 
 			
 		}
 		this.deletedNode = function(id) {
-
-			
-				window.setTimeout(function() {
-					this.BuildGUI();
-				}.bind(this), 500)
-
-			
+				debounce(this.BuildGUI, 500);
 		}
 		this.satProperty = function(id,propname,val)
 		{
-			if(propname == 'DisplayName' && this.isOpen())
-				this.BuildGUI();
+			debounce(this.BuildGUI, 500);
 		}
 		
 		

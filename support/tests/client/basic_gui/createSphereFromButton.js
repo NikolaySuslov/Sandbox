@@ -11,7 +11,7 @@ module.exports = {
 
 		//Create sphere from button
 		.nextGUID('testSphere')
-		.click('#MenuCreateSphereicon')
+		.$click('#MenuCreateSphereicon')
 		//Verify sphere
 		.pause(6000).then(function() {
 			testUtils.assertNodeExists("testSphere", function(assertStatus, msg){
