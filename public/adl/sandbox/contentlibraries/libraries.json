@@ -2,7 +2,6 @@
     "L-System generator": {
         "url": "./contentlibraries/lsystem.json"
     },
-
 	"My Entities": {
 		"url": "./vwfdatamanager.svc/library/my-entities"
 	},

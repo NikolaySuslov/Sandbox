@@ -345,9 +345,7 @@ define(function() {
 
                 function createProto(proto) {
 
-                    $.getJSON(data.url, function(proto) {
-
-                      if (typeof proto == "string"){
+                   if (typeof proto == "string"){
                         proto = JSON.parse(proto);
                        }
 
