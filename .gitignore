@@ -19,3 +19,4 @@ config.json
 /public/adl/sandbox/marsgame/*
 *.pem
 *.orig
+.sass-cache

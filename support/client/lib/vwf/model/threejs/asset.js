@@ -387,26 +387,10 @@
                     }
                 }
             }
-            this.removeLights = function(node)
-            {
-                if (node instanceof THREE.DirectionalLight ||
-                    node instanceof THREE.PointLight ||
-                    node instanceof THREE.SpotLight ||
-                    node instanceof THREE.AmbientLight)
-                {
-                    node.parent.remove(node);
-                    return;
-                }
-                if (node && node.children)
-                {
-                    for (var i = 0; i < node.children.length; i++)
-                        this.removeLights(node.children[i]);
-                }
-            }
+            
             this.cleanTHREEJSnodes = function(node)
             {
                 var list = [];
-                this.removeLights(node);
                 this.GetAllLeafMeshes(node, list);
                 for (var i = 0; i < list.length; i++)
                 {
@@ -423,11 +407,7 @@
                     {
                         materials = materials.concat(list[i].material.materials)
                     }
-                    for (var j in materials)
-                    {
-                        if (materials[j].hasOwnProperty('map') && !materials[j].map)
-                            materials[j].map = _SceneManager.getTexture('white.png');
-                    }
+                   
                     var def;
                     //pass all materials through the material system to normalize them with the render options
                     if (!(list[i].material instanceof THREE.MeshFaceMaterial))
@@ -440,45 +420,17 @@
                     else
                     {
                         def = [];
-                        for (j = 0; j < list[i].material.materials.length; j++)
+                        for (var j = 0; j < list[i].material.materials.length; j++)
                             def[j] = _MaterialCache.getDefForMaterial(list[i].material.materials[j]); //this break objects that have a complex structure that has a single node as a meshFaceMaterial
                         list[i].material = new THREE.MeshFaceMaterial();
                         _MaterialCache.setMaterial(list[i], def);
                     }
-                    if (list[i] instanceof THREE.SkinnedMesh)
-                        list[i].material.skinning = true;
-                    list[i].material = list[i].material.clone();
+                    
                     if (!this.materialDef)
                         this.materialDef = [];
                     if (this.materialDef.constructor === Array)
                         this.materialDef.push(def); //we must remember the value, otherwise when we fire the getter in materialdef.js, we will get
-                    //the def generated from the material, which may have been edited by the above on one client but not another
-                    //If the incomming mesh does not have UVs on channel one, fill with zeros.
-                    if (list[i].geometry instanceof THREE.Geometry && (!list[i].geometry.faceVertexUvs[0] || list[i].geometry.faceVertexUvs[0].length == 0))
-                    {
-                        list[i].geometry.faceVertexUvs[0] = [];
-                        for (var k = 0; k < list[i].geometry.faces.length; k++)
-                        {
-                            if (!list[i].geometry.faces[k].d)
-                                list[i].geometry.faceVertexUvs[0].push([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]);
-                            else
-                                list[i].geometry.faceVertexUvs[0].push([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]);
-                        }
-                    }
-                    //lets set all animations to frame 0
-                    if (list[i].animationHandle)
-                    {
-                        list[i].CPUPick([0, 0, 0], [0, 0, 1],
-                        _SceneManager.defaultPickOptions,[]); //this is sort of a silly way to initialize the bone handles, but it works
-                        list[i].animationHandle.setKey(this.animationFrame);
-                        list[i].updateMatrixWorld();
-                        //odd, does not seem to update matrix on first child bone. 
-                        //how does the bone relate to the skeleton?
-                        for (var j = 0; j < list[i].children.length; j++)
-                        {
-                            list[i].children[j].updateMatrixWorld(true);
-                        }
-                    }
+                    
                 }
                 if (this.materialDef && this.materialDef.length === 1)
                     this.materialDef = this.materialDef[0];

@@ -41,7 +41,7 @@ define([],
                     $('#' + this.contentID).hide();
                     if (!this.isDisabled() && this.BuildGUI)
                         this.BuildGUI();
-                    if(!this.isOpen())
+                  
                     $('#' + this.contentID).show('blind', function() {
                         if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
                     });

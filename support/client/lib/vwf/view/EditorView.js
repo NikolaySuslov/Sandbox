@@ -271,6 +271,7 @@ function InitializeEditor() {
         require("vwf/view/editorview/Toolbar").initialize();
 
         require("vwf/view/editorview/Menubar").initialize();
+        _EditorView.addManager(require("vwf/view/editorview/Menubar"));
         require("vwf/view/editorview/SideTabs").initialize();
 
         require("vwf/view/localization/translate").initialize();

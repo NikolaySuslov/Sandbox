@@ -34,7 +34,6 @@ function SplineTool() {
     });
 
 
-
     $('#SplineToolGUItitle').append('<a id="SplineToolclose" href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" style="display: inline-block;float: right;"><span class="ui-icon ui-icon-closethick">close</span></a>');
     $('#SplineToolGUItitle').prepend('<img class="headericon" src="../vwf/view/editorview/images/icons/inventory.png" />');
     $('#SplineToolGUI').css('border-bottom', '5px solid #444444')
@@ -43,9 +42,14 @@ function SplineTool() {
         _SplineTool.hide()
     });
 
+    $('#SplineToolGUIRefine').addClass('icondisabled');
+    $('#SplineToolGUIRemove').addClass('icondisabled');
+    $('#SplineToolGUIClear').addClass('icondisabled');
+    $('#SplineToolGUIDraw').addClass('icondisabled');
+    $('#SplineToolGUISmooth').addClass('icondisabled');
+    $('#SplineToolGUIReduce').addClass('icondisabled');
 
     $('#SplineToolGUIEditPoints').click(function(e) {
-
 
 
         if (!self.active) {
@@ -68,7 +72,6 @@ function SplineTool() {
         var node = _Editor.getNode(_Editor.GetSelectedVWFID());
 
 
-
         if (_Editor.getSelectionCount() != 1) {
             _Notifier.alert('Select a single line object before using the Spline tool.');
             return;
@@ -79,7 +82,8 @@ function SplineTool() {
             self.deactivate();
             return;
         }
-        if (vwf.getProperty(node.id, 'type') == 'Spline') {
+        // the spline tools can only be used on a raw line, not a line type like star...
+        if (node.source != "vwf/model/threejs/line.js") {
             alertify.confirm('The Spline tools can only be used on a line object. The selected object can be converted into an editable line. This action cannot be undone. Continue?', function(e) {
                 if (!e) {
                     self.deactivate();
@@ -107,6 +111,15 @@ function SplineTool() {
             return;
         }
         $('#SplineToolGUIEditPoints').children().css('background-color', 'red');
+
+
+        $('#SplineToolGUIRefine').removeClass('icondisabled');
+        $('#SplineToolGUIRemove').removeClass('icondisabled');
+        $('#SplineToolGUIClear').removeClass('icondisabled');
+        $('#SplineToolGUIDraw').removeClass('icondisabled');
+        $('#SplineToolGUISmooth').removeClass('icondisabled');
+        $('#SplineToolGUIReduce').removeClass('icondisabled');
+
         _Editor.addTool('Spline', self);
         _Editor.setActiveTool('Spline');
 
@@ -185,7 +198,6 @@ function SplineTool() {
             var dist = MATH.distanceVec3([vec.x, vec.y, vec.z], campos);
 
 
-
             self.display.children[i].scale.x = dist / 100;
             self.display.children[i].scale.y = dist / 100;
             self.display.children[i].scale.z = dist / 100;
@@ -215,9 +227,15 @@ function SplineTool() {
             _dScene.remove(this.display);
         _dView.unbind('prerender', self.prerender);
         self.active = false;
+        $('#SplineToolGUIRefine').addClass('icondisabled');
+        $('#SplineToolGUIRemove').addClass('icondisabled');
+        $('#SplineToolGUIClear').addClass('icondisabled');
+        $('#SplineToolGUIDraw').addClass('icondisabled');
+        $('#SplineToolGUISmooth').addClass('icondisabled');
+        $('#SplineToolGUIReduce').addClass('icondisabled');
+        _Editor.SetSelectMode('Pick');
     }
     $('#SplineToolGUIRefine').click(function(e) {
-
 
 
         if (self.mouseupCallback != self.refine) {
@@ -235,7 +253,6 @@ function SplineTool() {
     $('#SplineToolGUIDraw').click(function(e) {
 
 
-
         if (self.mouseupCallback != self.draw) {
             self.mouseupCallback = self.draw;
             self.mousedownCallback = null;
@@ -247,7 +264,6 @@ function SplineTool() {
             self.unselectAllModeButtons();
         }
     });
-
 
 
     $('#SplineToolGUISmooth').click(function(e) {
@@ -304,7 +320,6 @@ function SplineTool() {
         _Editor.updateGizmoLocation();
     });
     $('#SplineToolGUIRemove').click(function(e) {
-
 
 
         self.points.splice(self.selectedIndex, 1);

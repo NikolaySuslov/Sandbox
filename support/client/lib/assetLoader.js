@@ -101,6 +101,69 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                         cb(assetLoader.cache[type][url]);
                     });
                 }
+                this.cleanMaterial = function(mat, skinning)
+                {
+                    if( mat instanceof THREE.MeshFaceMaterial)
+                    {
+                        for(var i =0; i < mat.materials.length; i++)
+                            this.cleanMaterial(mat.materials[i],skinning)
+                    }else
+                    {
+                        if (mat.hasOwnProperty('map') && !mat.map)
+                            mat.map = _SceneManager.getTexture('white.png');
+
+                        mat.skinning = skinning;
+                    }
+                }
+                this.cleanThreeJSMesh = function(root)
+                {
+                    var self = this;
+                    root.traverse(function(o)
+                    {
+                        if(o instanceof THREE.Light)
+                        {
+                            o.parent.remove(o);
+                        }
+                        if(o instanceof THREE.Mesh)
+                        {
+                            o.geometry.dynamic = true;
+                            o.castShadow = _SettingsManager.getKey('shadows');
+                            o.receiveShadow = _SettingsManager.getKey('shadows');
+                            self.cleanMaterial(o.material,o instanceof THREE.SkinnedMesh)
+                            o.material = o.material.clone();
+
+                            if (o.geometry instanceof THREE.Geometry && (!o.geometry.faceVertexUvs[0] || o.geometry.faceVertexUvs[0].length == 0))
+                            {
+                                o.geometry.faceVertexUvs[0] = [];
+                                for (var k = 0; k < o.geometry.faces.length; k++)
+                                {
+                                    if (!o.geometry.faces[k].d)
+                                        o.geometry.faceVertexUvs[0].push([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]);
+                                    else
+                                        o.geometry.faceVertexUvs[0].push([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]);
+                                }
+                            }
+                            //lets set all animations to frame 0
+                            if (o.animationHandle)
+                            {
+                                o.CPUPick([0, 0, 0], [0, 0, 1],
+                                _SceneManager.defaultPickOptions,[]); //this is sort of a silly way to initialize the bone handles, but it works
+                                o.animationHandle.setKey(this.animationFrame);
+                                o.updateMatrixWorld();
+                                //odd, does not seem to update matrix on first child bone. 
+                                //how does the bone relate to the skeleton?
+                                for (var j = 0; j < list[i].children.length; j++)
+                                {
+                                    o.children[j].updateMatrixWorld(true);
+                                }
+                            }
+
+                        }
+
+
+
+                    })
+                }
                 this.BuildCollisionData = function(root, cb3)
                 {
                     var self = this;
@@ -147,6 +210,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                         loader.load(url, function(asset)
                         {
                             //console.log(url, performance.now() - time);
+                            assetLoader.cleanThreeJSMesh(asset.scene);
                             assetLoader.BuildCollisionData(asset.scene, function(cb3)
                             {
                                 delete asset.dae;
@@ -192,6 +256,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                                 }
                                 asset = shim;
                             }
+                            assetLoader.cleanThreeJSMesh(asset.scene);
                             assetLoader.BuildCollisionData(asset.scene, function(cb3)
                             {
                                 cb2(asset);
@@ -236,6 +301,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                             ],
                             function done()
                             {
+                                assetLoader.cleanThreeJSMesh(asset.scene);
                                 assetLoader.BuildCollisionData(asset.scene, function(cb3)
                                 {
                                     cb2(asset);
@@ -248,6 +314,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                         var time = performance.now();
                         loader.load(url, function(asset)
                         {
+                            assetLoader.cleanThreeJSMesh(asset.scene);
                             assetLoader.BuildCollisionData(asset.scene, function(cb3)
                             {
                                 delete asset.dae;
@@ -273,6 +340,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                         }, function(asset)
                         {
                             //console.log(url, performance.now() - time);
+                            assetLoader.cleanThreeJSMesh(asset.scene);
                             assetLoader.BuildCollisionData(asset.scene, function(cb3)
                             {
                                 //console.log(url, performance.now() - time);
@@ -292,6 +360,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                         }, function(asset)
                         {
                             //console.log(url, performance.now() - time);
+                            assetLoader.cleanThreeJSMesh(asset.scene);
                             assetLoader.BuildCollisionData(asset.scene, function(cb3)
                             {
                                 //console.log(url, performance.now() - time);
@@ -349,6 +418,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                                     console.log(url, performance.now() - time);
                                     return cb2(asset);
                                 }
+                                assetLoader.cleanThreeJSMesh(asset.scene);
                                 assetLoader.BuildCollisionData(asset.scene, function(cb3)
                                 {
                                     // console.log(url, performance.now() - time);

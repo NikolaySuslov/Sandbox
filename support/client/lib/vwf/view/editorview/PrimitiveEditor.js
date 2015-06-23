@@ -175,6 +175,10 @@ define(function() {
         }
         this.BuildGUI = function()
         {
+           
+            var node = _Editor.getNode(this.selectedID);
+            if(!node) return;
+
             this.currentWidgets = {};
             this.inSetup = true;
             this.clearPropertyEditorDialogs();
@@ -189,8 +193,7 @@ define(function() {
             
             $("#accordion").children('.modifiersection').remove();
             //update to ensure freshness
-            var node = _Editor.getNode(this.selectedID);
-            if(!node) return;
+           
             node.properties = vwf.getProperties(node.id);
             if (!node.properties) return;
 

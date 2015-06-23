@@ -306,6 +306,12 @@ define(function() {
 
 			if(!this.ready)
 				return;
+
+			if (this.SelectionBounds != null) {
+					this.SelectionBounds.parent.remove(this.SelectionBounds);
+					this.SelectionBounds = null;
+			}
+
 			$('#hierarchyManagerMakeNode').hide();
 			_RenderManager.removeHilightObject(HierarchyManager.previewNode);
 			
@@ -447,9 +453,8 @@ define(function() {
 
 				if(method == 'ready' && this.isOpen())
 				{
-				debounce(this.BuildGUI, 500);
+					debounce(this.BuildGUI, 500);
 			    }
-
 			
 		}
 		this.deletedNode = function(id) {

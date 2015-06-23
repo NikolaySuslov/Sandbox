@@ -610,7 +610,6 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 		initialize: function()
 		{
 			// actually insert the html
-			$("<link rel='stylesheet' href='vwf/view/editorview/css/assets.css'/>").appendTo(document.head);
 			$('<div id="manageAssetsContainer"></div>').appendTo(document.body);
 			$('#manageAssetsContainer').load('vwf/view/editorview/manageAssets.html',function()
 			{

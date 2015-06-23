@@ -28,7 +28,7 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
 			isMaterialAsset = !!(node && node.properties && node.properties.materialDef && node.properties.materialDef.sourceAssetId),
 			isGroup = !!(node && nodeInherits(node.id, 'sandboxGroup-vwf')),
 			loggedIn = !!_UserManager.GetCurrentUserName(),
-			hasAvatar = !!(loggedIn && _UserManager.GetAvatarForClientID(_UserManager.GetCurrentUserID()));
+			hasAvatar = !!(loggedIn && _UserManager.GetAvatarForClientID(vwf.moniker()));
 
 		console.log('Updating menu state: hasAvatar =', hasAvatar, 'loggedIn =', loggedIn);
 
@@ -36,6 +36,13 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
 			.toggleClass('disabled', loggedIn);
 		$('#MenuLogOut').parent()
 			.toggleClass('disabled', !loggedIn);
+
+		$('#MenuCopy').parent()
+			.toggleClass('disabled', !selection);
+		$('#MenuDuplicate').parent()
+			.toggleClass('disabled', !selection);
+		$('#MenuDelete').parent()
+			.toggleClass('disabled', !selection);
 
 		$('#MenuAssetsSaveAsEntity').parent()
 			.toggleClass('disabled', !selection);
@@ -1024,8 +1031,7 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
 
 		calledMethod: function(id, evtname, data)
 		{
-			console.log('Menu calledMethod', id, evtname);
-			if(id == vwf.application() && evtname == 'clientConnected'){
+			if(/^character-vwf/.test(id) && evtname == 'ready'){
 				updateMenuState();
 			}
 		}

@@ -190,7 +190,7 @@ define(function ()
 			{
 				var node = this.getSaveNodePrototype(scene.children[i].id);
 				if (node.extends != "character.vwf" && node.extends != 'http://vwf.example.com/camera.vwf') nodes.push(node);
-				if (node.extends == "character.vwf" && node.properties.ownerClientID == null) nodes.push(node);
+				
 			}
 			
 			//note: we only save the scene properteis, so that users cannot overwrite parts of the 
