@@ -30,8 +30,6 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
 			loggedIn = !!_UserManager.GetCurrentUserName(),
 			hasAvatar = !!(loggedIn && _UserManager.GetAvatarForClientID(vwf.moniker()));
 
-		console.log('Updating menu state: hasAvatar =', hasAvatar, 'loggedIn =', loggedIn);
-
 		$('#MenuLogIn').parent()
 			.toggleClass('disabled', loggedIn);
 		$('#MenuLogOut').parent()
@@ -900,6 +898,9 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
             });
     
     
+            $('#MenuCreateEmpty').click(function(e) {
+                _Editor.CreatePrim('node', _Editor.GetInsertPoint(), null, null, document.PlayerNumber, '');
+            });
             $('#MenuCreateSphere').click(function(e) {
                 _Editor.CreatePrim('sphere', _Editor.GetInsertPoint(), [.5, 1, 1], 'checker.jpg', document.PlayerNumber, '');
             });

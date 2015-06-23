@@ -1936,65 +1936,70 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             translation[2] = this.SnapTo(translation[2], MoveSnap);
             translation[2] += .001;
             var BoxProto = {
-                extends: type + '2.vwf',
+                extends: (type==='node' ? 'http://vwf.example.com/node3' : type+'2')+'.vwf',
                 properties: {}
             };
-            BoxProto.type = 'subDriver/threejs';
-            BoxProto.source = 'vwf/model/threejs/' + type + '.js';
             var proto = BoxProto;
 
-            var defaultmaterialDef = {
-                shininess: 15,
-                alpha: 1,
-                ambient: {
-                    r: 1,
-                    g: 1,
-                    b: 1
-                },
-                color: {
-                    r: 1,
-                    g: 1,
-                    b: 1,
-                    a: 1
-                },
-                emit: {
-                    r: 0,
-                    g: 0,
-                    b: 0
-                },
-                reflect: 0.8,
-                shadeless: false,
-                shadow: true,
-                specularColor: {
-                    r: 0.5773502691896258,
-                    g: 0.5773502691896258,
-                    b: 0.5773502691896258
-                },
-                specularLevel: 1,
-                layers: [{
+            if( type !== 'node' ){
+                BoxProto.source = 'vwf/model/threejs/' + type + '.js';
+                BoxProto.type = 'subDriver/threejs';
+                var defaultmaterialDef = {
+                    shininess: 15,
                     alpha: 1,
-                    blendMode: 0,
-                    mapInput: 0,
-                    mapTo: 1,
-                    offsetx: 0,
-                    offsety: 0,
-                    rot: 0,
-                    scalex: 1,
-                    scaley: 1,
-                    src: "checker.jpg"
-                }]
-            }
+                    ambient: {
+                        r: 1,
+                        g: 1,
+                        b: 1
+                    },
+                    color: {
+                        r: 1,
+                        g: 1,
+                        b: 1,
+                        a: 1
+                    },
+                    emit: {
+                        r: 0,
+                        g: 0,
+                        b: 0
+                    },
+                    reflect: 0.8,
+                    shadeless: false,
+                    shadow: true,
+                    specularColor: {
+                        r: 0.5773502691896258,
+                        g: 0.5773502691896258,
+                        b: 0.5773502691896258
+                    },
+                    specularLevel: 1,
+                    layers: [{
+                        alpha: 1,
+                        blendMode: 0,
+                        mapInput: 0,
+                        mapTo: 1,
+                        offsetx: 0,
+                        offsety: 0,
+                        rot: 0,
+                        scalex: 1,
+                        scaley: 1,
+                        src: "checker.jpg"
+                    }]
+                }
 
-            proto.properties.materialDef = defaultmaterialDef;
+                proto.properties.materialDef = defaultmaterialDef;
+                proto.properties.type = 'primitive';
+            }
+            else {
+                proto.properties.glyphURL = '../vwf/view/editorview/images/icons/sphere.png';
+            }
 
             proto.properties.transform = MATH.transposeMat4(MATH.translateMatrix(translation));
 
             proto.properties.owner = owner;
 
-            proto.properties.type = 'primitive';
-
             proto.properties.DisplayName = self.GetUniqueName(type);
             var newname = GUID();
+            
             this.createChild('index-vwf', newname, proto, null, null);
             this.SelectOnNextCreate([newname])
         }.bind(this);
