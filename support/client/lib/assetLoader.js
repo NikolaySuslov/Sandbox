@@ -152,7 +152,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                                 o.updateMatrixWorld();
                                 //odd, does not seem to update matrix on first child bone. 
                                 //how does the bone relate to the skeleton?
-                                for (var j = 0; j < list[i].children.length; j++)
+                                for (var j = 0; j < o.children.length; j++)
                                 {
                                     o.children[j].updateMatrixWorld(true);
                                 }
