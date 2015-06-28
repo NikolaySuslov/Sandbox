@@ -135,6 +135,9 @@ define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
 				//this.renderObject(findviewnode(_Editor.GetSelectedVWFID()), scene, camera);
 			}
 			this.renderer.setDepthTest(false);
+			this.renderer.clear(false,true);
+			this.renderer.context.enable(this.renderer.context.DEPTH_TEST)
+			this.renderer.context.disable(this.renderer.context.CULL_FACE);
 			this.renderObject(_Editor.GetMoveGizmo(), scene, camera);
 		}
 		this.flattenObject = function(object)
@@ -184,7 +187,7 @@ define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
 							matSkinOrNot = this.overrideMaterialSkin2;
 						if(material == this.overrideMaterial3 && renderObject.object instanceof THREE.SkinnedMesh)
 							matSkinOrNot = this.overrideMaterialSkin3;
-
+						
 						if (renderObject.object.geometry instanceof THREE.BufferGeometry)
 							this.renderer.renderBufferDirect(camera, [], null, matSkinOrNot || renderObject.object.material, renderObject.object.geometry, renderObject.object)
 						else if (renderObject.object.geometry instanceof THREE.Geometry)

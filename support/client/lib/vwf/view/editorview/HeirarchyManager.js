@@ -383,14 +383,27 @@ define(function() {
 				this.appendThreeChildDOM(VWFChildren.children[i], 'VWFChildren', 'vwf');
 
 
+			//only show the scenenode children of an asset
+			var node = _Editor.GetSelectedVWFID();
+			var found = false;
+			while(node)
+			{
+				if(node == 'asset-vwf')
+					found = true;
+				node = vwf.prototype(node)
+			}
+			if(found)
+			{
 			var THREEChildren = HierarchyManager.getTHREEChildren();
 			for (var i = 0; i < THREEChildren.children.length; i++)
 				this.appendThreeChildDOM(THREEChildren.children[i], 'THREEChildren', 'three');
 
+			}
 
 			if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
 		}
 		this.BuildGUI = this.BuildGUI.bind(this);
+		this.BuildGUI = debounce(this.BuildGUI, 250);
 		this.appendThreeChildDOM = function(node, parentDiv, type) {
 			
 			//there are one or 2 objects that should never be listed in the scene
@@ -453,16 +466,16 @@ define(function() {
 
 				if(method == 'ready' && this.isOpen())
 				{
-					debounce(this.BuildGUI, 500);
+					this.BuildGUI();
 			    }
 			
 		}
 		this.deletedNode = function(id) {
-				debounce(this.BuildGUI, 500);
+				this.BuildGUI();
 		}
 		this.satProperty = function(id,propname,val)
 		{
-			debounce(this.BuildGUI, 500);
+			this.BuildGUI();
 		}
 		
 		

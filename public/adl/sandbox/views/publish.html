@@ -48,11 +48,10 @@ color: lightgray;
 
 <script type="text/javascript">
 	var sid = '{{sid}}'; 
+	var lastActiveCamera = "";
 	$(document).ready(function()
 	{
 		
-			
-		$('#txtCamera').hide();	
 		$.ajax(root + '/vwfDataManager.svc/statedata?SID=' + sid,
 		{
 			cache:false,
@@ -67,7 +66,6 @@ color: lightgray;
 				{
 
 					$('#txtInstanceDescription').prop('disabled', false);
-					$('#chkDefaultCamera').prop('disabled', false);
 					$('#chkSinglePlayer').prop('disabled', false);
 					$('#chkAllowTools').prop('disabled', false);
 					$('#chkAllowAnonymous').prop('disabled', false);
@@ -87,9 +85,8 @@ color: lightgray;
 						$('#chkCreateAvatar')[0].checked = true;
 					if(data.publishSettings.camera)
 					{
-						$('#chkDefaultCamera')[0].checked = true;
-						$('#txtCamera').show('fade');
-						$('#txtCamera').val(data.publishSettings.camera);
+						lastActiveCamera = data.publishSettings.camera;
+						$('#txtCamera').val(lastActiveCamera);
 					}
 
 				   var checked = $('#chkSinglePlayer')[0].checked;
@@ -115,10 +112,13 @@ color: lightgray;
 		$.ajax(root + '/vwfDataManager.svc/cameras?SID=' + sid, {
 			cache: false,
 			success: function(data,status,xhr){
+				data.unshift({id: "", name: "Editor Camera"});
 				vwfPortalModel.cameraList(data);
+				$('#txtCamera').val(lastActiveCamera);
 			},
 			error: function(status,xhr,err){
 				$('#error').text("Error: " + xhr.responseText);
+				vwfPortalModel.cameraList([{id: "", name: "Editor Camera"}]);
 			}
 		});
 
@@ -130,23 +130,6 @@ color: lightgray;
 		$('#chkAllowTools').prop('disabled', true);
 		$('#chkAllowAnonymous').prop('disabled', true);
 		$('#chkCreateAvatar').prop('disabled', true);
-
-
-
-		
-
-		$('#chkDefaultCamera').click(
-		 function(e){
-		   var checked = ($(this).is(':checked'));
-		   if(checked)
-		   {
-		   		$('#txtCamera').hide('fade');	
-		   		$('#txtCamera').val('');	
-		   }
-		   	else
-		   		$('#txtCamera').show('fade');	
-		 }
-		);
 
 		$('#chkSinglePlayer').click(
 		 function(e){
@@ -244,12 +227,12 @@ color: lightgray;
 				<input type='checkbox' id='chkAllowAnonymous'  name='AllowAnonymous'></input><label for='AllowAnonymous'>Allow Anonymous Users</label>
 				<br/>
 				<input type='checkbox' id='chkCreateAvatar' name='CreateAvatar'></input><label for='CreateAvatar'>Create Avatar for Each User</label>
-				<br/>
-				<input type='checkbox' id='chkDefaultCamera' name='DefaultCamera'  checked='checked'></input><label for='DefaultCamera'>Use Default Camera</label>
+				<br/><br/>
+				<label for='Camera'>Choose Camera</label>
 				<br/>
 				<select id='txtCamera' style="padding: 0em;" class="col-md-5 form-control" name="Camera" data-bind="options: $root.cameraList, optionsText: 'name', optionsValue: 'id'"></select>
 				<br/>
-				<br/>
+				<br/><br/>
 				<input type="submit" class='btn btn-default' style="margin-top:7px;"  value="Save"/>
 			</fieldset>
 		</form>

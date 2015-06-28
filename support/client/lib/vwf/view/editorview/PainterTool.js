@@ -62,6 +62,7 @@ function PainterTool() {
             _Editor.setActiveTool('Painter');
             _dScene.add(_PainterTool.display);
             _Editor.SetSelectMode('None');
+            _PainterTool.currentClickCallback = _PainterTool.createObject;
         } else {
             $(this).next().children().css('background-color', '');
             _Editor.setActiveTool('Gizmo');

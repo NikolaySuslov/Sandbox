@@ -19,8 +19,7 @@ THREE.glTFLoader = function (showStatus) {
 THREE.glTFLoader.prototype = new THREE.Loader();
 THREE.glTFLoader.prototype.constructor = THREE.glTFLoader;
 
-THREE.glTFLoader.prototype.load = function( url, callback ) {
-    
+THREE.glTFLoader.prototype.load = function( url, callback, animationOnly ) {
     var theLoader = this;
     // Utilities
 
@@ -35,17 +34,17 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
 
         return color;
     }
-    
+
     function convertAxisAngleToQuaternion(rotations, count)
     {
         var q = new THREE.Quaternion;
         var axis = new THREE.Vector3;
         var euler = new THREE.Vector3;
-        
+
         var i;
         for (i = 0; i < count; i++) {
             axis.set(rotations[i * 4], rotations[i * 4 + 1],
-                    rotations[i * 4 + 2]).normalize();
+                rotations[i * 4 + 2]).normalize();
             var angle = rotations[i * 4 + 3];
             q.setFromAxisAngle(axis, angle);
             rotations[i * 4] = q.x;
@@ -107,12 +106,12 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
 
         geometry.computeBoundingSphere();
     }
-    
+
     ClassicGeometry.prototype.checkFinished = function() {
         if(this.indexArray && this.loadedAttributes === this.totalAttributes) {
-            
+
             this.buildBufferGeometry();
-            
+
             this.finished = true;
 
             if(this.onload) {
@@ -146,7 +145,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
         this.indices = indices;
         this.geometry = geometry;
     };
-    
+
     // Delegate for processing vertex attribute buffers
     var VertexAttributeDelegate = function() {};
 
@@ -203,7 +202,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
             }
         }
     }
-    
+
     VertexAttributeDelegate.prototype.bufferResourceAvailable = function(glResource, ctx) {
         var geom = ctx.geometry;
         var attribute = ctx.attribute;
@@ -221,7 +220,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
             floatArray = new Float32Array(glResource, 0, attribute.count * componentsPerElementForGLType(attribute.type));
             geom.geometry.addAttribute( 'normal', new THREE.BufferAttribute( floatArray, 3 ) );
         } else if ((semantic == "TEXCOORD_0") || (semantic == "TEXCOORD" )) {
-            
+
             nComponents = componentsPerElementForGLType(attribute.type);
             floatArray = new Float32Array(glResource, 0, attribute.count * nComponents);
             // N.B.: flip Y value... should we just set texture.flipY everywhere?
@@ -241,11 +240,11 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
             geom.geometry.addAttribute( 'skinIndex', new THREE.BufferAttribute( floatArray, nComponents ) );
         }
     }
-    
+
     VertexAttributeDelegate.prototype.resourceAvailable = function(glResource, ctx) {
 
         this.bufferResourceAvailable(glResource, ctx);
-        
+
         var geom = ctx.geometry;
         geom.loadedAttributes++;
         geom.checkFinished();
@@ -268,13 +267,13 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
     };
 
     Mesh.prototype.addPrimitive = function(geometry, material) {
-        
+
         var self = this;
         geometry.onload = function() {
             self.loadedGeometry++;
             self.checkComplete();
         };
-        
+
         this.primitives.push({
             geometry: geometry,
             material: material,
@@ -301,8 +300,8 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
         // Assumes that the geometry is complete
         this.primitives.forEach(function(primitive) {
             /*if(!primitive.mesh) {
-                primitive.mesh = new THREE.Mesh(primitive.geometry, primitive.material);
-            }*/
+             primitive.mesh = new THREE.Mesh(primitive.geometry, primitive.material);
+             }*/
             var material = primitive.material;
             if (!(material instanceof THREE.Material)) {
                 material = theLoader.createShaderMaterial(material);
@@ -318,7 +317,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
     var Material = function(params) {
         this.params = params;
     };
-    
+
     // Delegate for processing animation parameter buffers
     var AnimationParameterDelegate = function() {};
 
@@ -341,7 +340,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
             default:
                 break;
         }
-        
+
         return glResource;
     };
 
@@ -379,7 +378,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
         this.loadedParameters++;
         this.checkFinished();
     };
-    
+
     Animation.prototype.checkFinished = function() {
         if(this.loadedParameters === this.totalParameters) {
             // Build animation
@@ -390,7 +389,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
             }
         }
     };
-    
+
     // Delegate for processing inverse bind matrices buffer
     var InverseBindMatricesDelegate = function() {};
 
@@ -410,7 +409,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
             default:
                 break;
         }
-        
+
         return glResource;
     };
 
@@ -473,10 +472,10 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
         if (this._entries[entryID]) {
             console.warn("entry["+entryID+"] is being overwritten");
         }
-    
+
         this._entries[entryID] = new ResourceEntry(entryID, object, description );
     };
-    
+
     Resources.prototype.getEntry = function(entryID) {
         return this._entries[entryID];
     };
@@ -487,11 +486,11 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
 
     LoadDelegate = function() {
     }
-    
+
     LoadDelegate.prototype.loadCompleted = function(callback, obj) {
         callback.call(Window, obj);
     }
-    
+
     // Loader
 
     var ThreeGLTFLoader = Object.create(glTFParser, {
@@ -521,13 +520,13 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
             writable: true,
             value : []
         },
-        
+
         animations: {
             enumerable: true,
             writable: true,
             value : []
         },
-        
+
         // Implement WebGLTFLoader handlers
 
         handleBuffer: {
@@ -609,7 +608,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
 //                return new THREE.MeshPhongMaterial(material.params);
 //            }
 //        },
-        
+
 //        createShaderParams : {
 //            value: function(materialId, values, params, instanceProgram) {
 //                var program = this.resources.getEntry(instanceProgram.program);
@@ -622,7 +621,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
 //                }
 //            }
 //        },
-        
+
         threeJSMaterialType : {
             value: function(materialId, technique, values, params) {
 
@@ -696,8 +695,8 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                         }
                     }
                 }
-               
-                var texture = LoadTexture(texturePath);
+
+                var texture = LoadTexture('checker.jpg');
                 if (texture && textureParams) {
 
                     if (textureParams.wrapS == WebGLRenderingContext.REPEAT)
@@ -714,7 +713,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
 
                     params.map = texture;
                 }
-                
+
                 var envMapPath = null;
                 var envMapParams = null;
                 var reflective = values.reflective;
@@ -805,7 +804,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
             }
         },
 
-        
+
         handleMaterial: {
             value: function(entryID, description, userInfo) {
                 //this should be rewritten using the meta datas that actually create the shader.
@@ -813,11 +812,11 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                 var technique = this.resources.getEntry(description.instanceTechnique.technique);
                 var materialParams = {};
                 var values = description.instanceTechnique.values;
-                
+
                 var materialType = this.threeJSMaterialType(entryID, technique, values, materialParams);
 
                 var material = new materialType(materialParams);
-                
+
                 this.resources.setEntry(entryID, material, description);
 
                 return true;
@@ -837,7 +836,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
 
                 for (var i = 0 ; i < primitivesDescription.length ; i++) {
                     var primitiveDescription = primitivesDescription[i];
-                    
+
                     if (primitiveDescription.primitive === WebGLRenderingContext.TRIANGLES) {
 
                         var geometry = new ClassicGeometry();
@@ -848,18 +847,18 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                         var indices = this.resources.getEntry(primitiveDescription.indices);
                         var bufferEntry = this.resources.getEntry(indices.description.bufferView);
                         var indicesObject = {
-                                bufferView : bufferEntry,
-                                byteOffset : indices.description.byteOffset,
-                                count : indices.description.count,
-                                id : indices.entryID,
-                                type : indices.description.type
+                            bufferView : bufferEntry,
+                            byteOffset : indices.description.byteOffset,
+                            count : indices.description.count,
+                            id : indices.entryID,
+                            type : indices.description.type
                         };
-                        
+
                         var indicesContext = new IndicesContext(indicesObject, geometry);
                         var alreadyProcessedIndices = THREE.GLTFLoaderUtils.getBuffer(indicesObject, indicesDelegate, indicesContext);
                         /*if(alreadyProcessedIndices) {
-                            indicesDelegate.resourceAvailable(alreadyProcessedIndices, indicesContext);
-                        }*/
+                         indicesDelegate.resourceAvailable(alreadyProcessedIndices, indicesContext);
+                         }*/
 
                         // Load Vertex Attributes
                         var allAttributes = Object.keys(primitiveDescription.attributes);
@@ -874,7 +873,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                                 attribute = description.attributes[attributeID];
                                 attribute.id = attributeID;
                                 this.resources.setEntry(attributeID, attribute, attribute);
-            
+
                                 var bufferEntry = this.resources.getEntry(attribute.bufferView);
                                 attributeEntry = this.resources.getEntry(attributeID);
 
@@ -885,22 +884,22 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                             }
 
                             var attributeObject = {
-                                    bufferView : bufferEntry,
-                                    byteOffset : attribute.byteOffset,
-                                    byteStride : attribute.byteStride,
-                                    count : attribute.count,
-                                    max : attribute.max,
-                                    min : attribute.min,
-                                    type : attribute.type,
-                                    id : attributeID             
+                                bufferView : bufferEntry,
+                                byteOffset : attribute.byteOffset,
+                                byteStride : attribute.byteStride,
+                                count : attribute.count,
+                                max : attribute.max,
+                                min : attribute.min,
+                                type : attribute.type,
+                                id : attributeID
                             };
-                            
+
                             var attribContext = new VertexAttributeContext(attributeObject, semantic, geometry);
 
                             var alreadyProcessedAttribute = THREE.GLTFLoaderUtils.getBuffer(attributeObject, vertexAttributeDelegate, attribContext);
                             /*if(alreadyProcessedAttribute) {
-                                vertexAttributeDelegate.resourceAvailable(alreadyProcessedAttribute, attribContext);
-                            }*/
+                             vertexAttributeDelegate.resourceAvailable(alreadyProcessedAttribute, attribContext);
+                             }*/
                         }, this);
                     }
                 }
@@ -915,13 +914,13 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                 {
                     var znear = description.perspective.znear;
                     var zfar = description.perspective.zfar;
-                    var yfov = description.perspective.yfov;                    
+                    var yfov = description.perspective.yfov;
                     var xfov = description.perspective.xfov;
                     var aspect_ratio = description.perspective.aspect_ratio;
 
                     if (!aspect_ratio)
-                        aspect_ratio = 1; 
-                    
+                        aspect_ratio = 1;
+
                     if (yfov === undefined)
                     {
                         if (xfov)
@@ -930,9 +929,9 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                             // aspect_ratio = xfov / yfov
                             yfov = xfov / aspect_ratio;
                         }
-                        
+
                     }
-                    
+
                     if (yfov)
                     {
                         camera = new THREE.PerspectiveCamera(yfov, aspect_ratio, znear, zfar);
@@ -942,12 +941,12 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                 {
                     camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, znear, zfar );
                 }
-                
+
                 if (camera)
                 {
                     this.resources.setEntry(entryID, camera, description);
                 }
-                
+
                 return true;
             }
         },
@@ -961,33 +960,33 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                 {
                     var lparams = description[type];
                     var color = RgbArraytoHex(lparams.color);
-                    
+
                     switch (type) {
                         case "directional" :
                             light = new THREE.DirectionalLight(color);
                             light.position.set(0, 0, 1);
-                        break;
-                        
+                            break;
+
                         case "point" :
                             light = new THREE.PointLight(color);
-                        break;
-                        
+                            break;
+
                         case "spot " :
                             light = new THREE.SpotLight(color);
                             light.position.set(0, 0, 1);
-                        break;
-                        
-                        case "ambient" : 
+                            break;
+
+                        case "ambient" :
                             light = new THREE.AmbientLight(color);
-                        break;
+                            break;
                     }
                 }
 
                 if (light)
                 {
-                    this.resources.setEntry(entryID, light, description);   
+                    this.resources.setEntry(entryID, light, description);
                 }
-                
+
                 return true;
             }
         },
@@ -1000,7 +999,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                 });
             }
         },
-        
+
         handleNode: {
             value: function(entryID, description, userInfo) {
 
@@ -1013,9 +1012,9 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                 else {
                     threeNode = new THREE.Object3D();
                 }
-                
+
                 threeNode.name = description.name;
-                
+
                 this.resources.setEntry(entryID, threeNode, description);
 
                 var m = description.matrix;
@@ -1028,7 +1027,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                     var t = description.translation;
                     var r = description.rotation;
                     var s = description.scale;
-                    
+
                     var position = t ? new THREE.Vector3(t[0], t[1], t[2]) :
                         new THREE.Vector3;
                     if (r) {
@@ -1038,16 +1037,16 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                         new THREE.Quaternion;
                     var scale = s ? new THREE.Vector3(s[0], s[1], s[2]) :
                         new THREE.Vector3;
-                    
+
                     var matrix = new THREE.Matrix4;
                     matrix.compose(position, rotation, scale);
                     threeNode.matrixAutoUpdate = false;
                     threeNode.matrixWorldNeedsUpdate = true;
-                    threeNode.applyMatrix(matrix);                    
+                    threeNode.applyMatrix(matrix);
                 }
 
                 var self = this;
-                
+
                 // Iterate through all node meshes and attach the appropriate objects
                 //FIXME: decision needs to be made between these 2 ways, probably meshes will be discarded.
                 var meshEntry;
@@ -1076,7 +1075,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                 if (description.instanceSkin) {
 
                     var skinEntry =  this.resources.getEntry(description.instanceSkin.skin);
-                    
+
                     if (skinEntry) {
 
                         var skin = skinEntry.object;
@@ -1089,16 +1088,16 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                             meshEntry = this.resources.getEntry(meshID);
                             theLoader.meshesRequested++;
                             meshEntry.object.onComplete(function(mesh) {
-                                
+
                                 skin.meshes.push(mesh);
                                 theLoader.meshesLoaded++;
                                 theLoader.checkComplete();
                             });
                         }, this);
-                        
+
                     }
                 }
-                                
+
                 if (description.camera) {
                     var cameraEntry = this.resources.getEntry(description.camera);
                     if (cameraEntry) {
@@ -1114,11 +1113,11 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                         this.lights.push(lightEntry.object);
                     }
                 }
-                
+
                 return true;
             }
         },
-        
+
         buildNodeHirerachy: {
             value: function(nodeEntryId, parentThreeNode) {
                 var nodeEntry = this.resources.getEntry(nodeEntryId);
@@ -1138,7 +1137,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
 
         buildSkin: {
             value: function(node) {
-            
+
                 var skin = node.instanceSkin.skin;
                 if (skin) {
                     node.instanceSkin.skeletons.forEach(function(skeleton) {
@@ -1162,12 +1161,12 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
 
                                     threeMesh = new THREE.SkinnedMesh(primitive.geometry.geometry, material, false);
                                     threeMesh.add(rootSkeleton);
-                                    
+
                                     var geometry = primitive.geometry.geometry;
                                     var j;
                                     if (geometry.vertices) {
                                         for ( j = 0; j < geometry.vertices.length; j ++ ) {
-                                            geometry.vertices[j].applyMatrix4( skin.bindShapeMatrix );  
+                                            geometry.vertices[j].applyMatrix4( skin.bindShapeMatrix );
                                         }
                                     }
                                     else if (geometry.attributes.position) {
@@ -1185,7 +1184,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                                     if (threeMesh && dobones) {
 
                                         material.skinning = true;
-                                        
+
                                         threeMesh.boneInverses = [];
                                         var jointsIds = skin.jointsIds;
                                         var bones = [];
@@ -1196,19 +1195,19 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                                             var nodeForJoint = this.joints[jointId];
                                             var joint = this.resources.getEntry(nodeForJoint).object;
                                             if (joint) {
-                                                
+
                                                 joint.skin = threeMesh;
                                                 bones.push(joint);
-                                                
+
                                                 var m = skin.inverseBindMatrices;
                                                 var mat = new THREE.Matrix4().set(
-                                                        m[i * 16 + 0],  m[i * 16 + 4],  m[i * 16 + 8],  m[i * 16 + 12],
-                                                        m[i * 16 + 1],  m[i * 16 + 5],  m[i * 16 + 9],  m[i * 16 + 13],
-                                                        m[i * 16 + 2],  m[i * 16 + 6],  m[i * 16 + 10], m[i * 16 + 14],
-                                                        m[i * 16 + 3],  m[i * 16 + 7],  m[i * 16 + 11], m[i * 16 + 15]
-                                                    );
+                                                    m[i * 16 + 0],  m[i * 16 + 4],  m[i * 16 + 8],  m[i * 16 + 12],
+                                                    m[i * 16 + 1],  m[i * 16 + 5],  m[i * 16 + 9],  m[i * 16 + 13],
+                                                    m[i * 16 + 2],  m[i * 16 + 6],  m[i * 16 + 10], m[i * 16 + 14],
+                                                    m[i * 16 + 3],  m[i * 16 + 7],  m[i * 16 + 11], m[i * 16 + 15]
+                                                );
                                                 boneInverses.push(mat);
-                                                
+
                                             } else {
                                                 console.log("WARNING: jointId:"+jointId+" cannot be found in skeleton:"+skeleton);
                                             }
@@ -1216,30 +1215,30 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
 
                                         threeMesh.bind(new THREE.Skeleton(bones, boneInverses, false));
                                     }
-                                    
+
                                     if (threeMesh) {
                                         threeMesh.castShadow = true;
                                         node.add(threeMesh);
                                     }
-                                    
-                                }, this);                               
+
+                                }, this);
                             }
-                            
+
                         }
 
-                    
+
                     }, this);
-                    
+
                 }
             }
         },
-         
+
         buildSkins: {
             value: function(node) {
 
                 if (node.instanceSkin)
                     this.buildSkin(node);
-                
+
                 var children = node.children;
                 if (children) {
                     children.forEach( function(child) {
@@ -1248,12 +1247,12 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                 }
             }
         },
-        
+
         createMeshAnimations : {
             value : function(root) {
-                    this.buildSkins(root);
-                }
-        },        
+                this.buildSkins(root);
+            }
+        },
 
         handleScene: {
             value: function(entryID, description, userInfo) {
@@ -1281,20 +1280,20 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                 return true;
             }
         },
-        
+
         addNodeAnimationChannel : {
             value : function(name, channel, interp) {
                 if (!this.nodeAnimationChannels)
                     this.nodeAnimationChannels = {};
-                
+
                 if (!this.nodeAnimationChannels[name]) {
                     this.nodeAnimationChannels[name] = [];
                 }
-                
+
                 this.nodeAnimationChannels[name].push(interp);
             },
         },
-        
+
         createAnimations : {
             value : function() {
                 for (var name in this.nodeAnimationChannels) {
@@ -1306,61 +1305,61 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                     //}
                     var anim = new THREE.glTFAnimation(nodeAnimationChannels);
                     anim.name = "animation_" + name;
-                    this.animations.push(anim);                     
+                    this.animations.push(anim);
                 }
             }
         },
-        
+
         buildAnimation: {
             value : function(animation) {
-            
+
                 var interps = [];
                 var i, len = animation.channels.length;
                 for (i = 0; i < len; i++) {
-                    
+
                     var channel = animation.channels[i];
                     var sampler = animation.samplers[channel.sampler];
                     if (sampler) {
-    
+
                         var input = animation.parameters[sampler.input];
                         if (input && input.data) {
-                            
+
                             var output = animation.parameters[sampler.output];
                             if (output && output.data) {
-                                
+
                                 var target = channel.target;
                                 var node = this.resources.getEntry(target.id);
                                 if (node) {
 
                                     var path = target.path;
-                                    
+
                                     if (path == "rotation")
                                     {
                                         convertAxisAngleToQuaternion(output.data, output.count);
                                     }
-                                    
+
                                     var interp = {
-                                            keys : input.data,
-                                            values : output.data,
-                                            count : input.count,
-                                            target : node.object,
-                                            path : path,
-                                            type : sampler.interpolation
+                                        keys : input.data,
+                                        values : output.data,
+                                        count : input.count,
+                                        target : node.object,
+                                        path : path,
+                                        type : sampler.interpolation
                                     };
-                                    
+
                                     this.addNodeAnimationChannel(target.id, channel, interp);
                                     interps.push(interp);
                                 }
                             }
                         }
                     }
-                }               
+                }
             }
         },
-        
+
         handleAnimation: {
             value: function(entryID, description, userInfo) {
-            
+
                 var self = this;
                 theLoader.animationsRequested++;
                 var animation = new Animation();
@@ -1370,8 +1369,8 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                     theLoader.animationsLoaded++;
                     theLoader.animations.push(animation);
                     theLoader.checkComplete();
-                };              
-                
+                };
+
                 animation.channels = description.channels;
                 animation.samplers = description.samplers;
                 this.resources.setEntry(entryID, animation, description);
@@ -1381,7 +1380,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                     console.log("MISSING_PARAMETERS for animation:"+ entryID);
                     return false;
                 }
-    
+
                 // Load parameter buffers
                 var params = Object.keys(parameters);
                 params.forEach( function(param) {
@@ -1394,20 +1393,20 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                     accessor = accessor.object;
                     var bufferView = this.resources.getEntry(accessor.bufferView);
                     var paramObject = {
-                            bufferView : bufferView,
-                            byteOffset : accessor.byteOffset,
-                            count : accessor.count,
-                            type : accessor.type,
-                            id : accessor.bufferView,
-                            name : param             
+                        bufferView : bufferView,
+                        byteOffset : accessor.byteOffset,
+                        count : accessor.count,
+                        type : accessor.type,
+                        id : accessor.bufferView,
+                        name : param
                     };
-                    
+
                     var paramContext = new AnimationParameterContext(paramObject, animation);
 
                     var alreadyProcessedAttribute = THREE.GLTFLoaderUtils.getBuffer(paramObject, animationParameterDelegate, paramContext);
                     /*if(alreadyProcessedAttribute) {
-                        vertexAttributeDelegate.resourceAvailable(alreadyProcessedAttribute, attribContext);
-                    }*/
+                     vertexAttributeDelegate.resourceAvailable(alreadyProcessedAttribute, attribContext);
+                     }*/
                 }, this);
 
                 return true;
@@ -1425,13 +1424,13 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
         handleSkin: {
             value: function(entryID, description, userInfo) {
                 // Save skin entry
-            
+
                 var skin = {
                 };
-                
+
                 var m = description.bindShapeMatrix;
                 skin.bindShapeMatrix = new THREE.Matrix4().fromArray( m );
-                
+
                 skin.jointsIds = description.joints;
                 var inverseBindMatricesDescription = description.inverseBindMatrices;
                 skin.inverseBindMatricesDescription = inverseBindMatricesDescription;
@@ -1440,20 +1439,20 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                 var bufferEntry = this.resources.getEntry(inverseBindMatricesDescription.bufferView);
 
                 var paramObject = {
-                        bufferView : bufferEntry,
-                        byteOffset : inverseBindMatricesDescription.byteOffset,
-                        count : inverseBindMatricesDescription.count,
-                        type : inverseBindMatricesDescription.type,
-                        id : inverseBindMatricesDescription.bufferView,
-                        name : skin.inverseBindMatricesDescription.id             
+                    bufferView : bufferEntry,
+                    byteOffset : inverseBindMatricesDescription.byteOffset,
+                    count : inverseBindMatricesDescription.count,
+                    type : inverseBindMatricesDescription.type,
+                    id : inverseBindMatricesDescription.bufferView,
+                    name : skin.inverseBindMatricesDescription.id
                 };
-                
+
                 var context = new InverseBindMatricesContext(paramObject, skin);
 
                 var alreadyProcessedAttribute = THREE.GLTFLoaderUtils.getBuffer(paramObject, inverseBindMatricesDelegate, context);
 
                 var bufferView = this.resources.getEntry(skin.inverseBindMatricesDescription.bufferView);
-                skin.inverseBindMatricesDescription.bufferView = 
+                skin.inverseBindMatricesDescription.bufferView =
                     bufferView.object;
                 this.resources.setEntry(entryID, skin, description);
                 return true;
@@ -1475,7 +1474,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                 return true;
             }
         },
-        
+
         handleError: {
             value: function(msg) {
 
@@ -1483,7 +1482,7 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
                 return true;
             }
         },
-        
+
         _delegate: {
             value: new LoadDelegate,
             writable: true
@@ -1511,13 +1510,13 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
     var rootObj = new THREE.Object3D();
 
     var self = this;
-    
+
     var loader = Object.create(ThreeGLTFLoader);
     loader.initWithPath(url);
-    loader.load(new Context(rootObj, 
-                        function(obj) {
-                        }), 
-                null);
+    loader.load(new Context(rootObj,
+            function(obj) {
+            }),
+        {animationOnly: animationOnly || false});
 
     this.loader = loader;
     this.callback = callback;
@@ -1527,26 +1526,26 @@ THREE.glTFLoader.prototype.load = function( url, callback ) {
 
 THREE.glTFLoader.prototype.callLoadedCallback = function() {
     var result = {
-            scene : this.rootObj,
-            cameras : this.loader.cameras,
-            animations : this.loader.animations,
-            rawAnimationChannels : this.loader.nodeAnimationChannels
+        scene : this.rootObj,
+        cameras : this.loader.cameras,
+        animations : this.loader.animations,
+        rawAnimationChannels : this.loader.nodeAnimationChannels
     };
-    
+
     this.callback(result);
 }
 
 THREE.glTFLoader.prototype.checkComplete = function() {
-    if (this.meshesLoaded == this.meshesRequested 
+    if (this.meshesLoaded == this.meshesRequested
 //            && this.shadersLoaded == this.shadersRequested
-            && this.animationsLoaded == this.animationsRequested)
+        && this.animationsLoaded == this.animationsRequested)
     {
-        
+
         for (var i = 0; i < this.pendingMeshes.length; i++) {
             var pending = this.pendingMeshes[i];
             pending.mesh.attachToNode(pending.node);
         }
-        
+
         for (var i = 0; i < this.animationsLoaded; i++) {
             var animation = this.animations[i];
             this.loader.buildAnimation(animation);
@@ -1554,9 +1553,8 @@ THREE.glTFLoader.prototype.checkComplete = function() {
 
         this.loader.createAnimations();
         this.loader.createMeshAnimations(this.rootObj);
-        
+
         this.callLoadedCallback();
     }
 }
-
 

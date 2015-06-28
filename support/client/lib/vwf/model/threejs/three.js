@@ -17821,15 +17821,15 @@ THREE.ShaderLib = {
                 },
                 colorBlend: {
                     type: "f",
-                    value: 0
+                    value: 1
                 },
                 ApexColor: {
                     type: "c",
-                    value: new THREE.Color(0x0077FF)
+                    value: new THREE.Color(0xCCCCCC)
                 },
                 HorizonColor: {
                     type: "c",
-                    value: new THREE.Color(0xffffff)
+                    value: new THREE.Color(0x999999)
                 },
 
             }

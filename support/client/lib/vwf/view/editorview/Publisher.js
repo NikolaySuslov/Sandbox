@@ -58,8 +58,11 @@ define([], function() {
                 var idList = list[1];
 
                 alertify.choice("Choose the camera to use in the Published Scene", function(ok, val) {
-                    $('#chooseCamera').button('option', 'label', val);
-                    $('#chooseCamera').attr('cameraID', idList[camList.indexOf(val)]);
+					//Only update if ok button was pressed, not cancel
+					if(ok){
+						$('#chooseCamera').button('option', 'label', val);
+						$('#chooseCamera').attr('cameraID', idList[camList.indexOf(val)]);
+					}
                 }, camList)
             })
             $(window).on('setstatecomplete', function() {
@@ -385,29 +388,33 @@ define([], function() {
                     dataType: "text",
                     success: function(data, status, xhr) {
                         var windowObjectReference;
-                        var strWindowFeatures = "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes";
+                        var strWindowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=no,status=no";
                         windowObjectReference = window.open("../../.." + newID.replace(/_/g, "/"), "TESTPUBLISH", strWindowFeatures);
                         var thisconsole = console;
                         if (windowObjectReference) {
-                            $(document.body).append("<div id='publishblocker' style='position:absolute;top:0px;bottom:0px;left:0px;right:0px;background-color:black;opacity:.8;z-index:10000000' ></div>");
+                            $(document.body).append("<div id='publishblocker' style='position: absolute;top: 0px;bottom: 0px;left: 0px;right: 0px;background-color: black;opacity: .8;z-index: 10000000;color: white;font-size: 30em;text-align: center;vertical-align: middle;margin: auto;padding-top: 1em;' >Testing</div>");
                             _dView.paused = true;
-                            windowObjectReference.onbeforeunload = function() {
+                            var pollForClose = function() {
 
-                                jQuery.ajax({
-                                    type: 'DELETE',
-                                    url: './vwfDataManager.svc/state?SID=' + newID,
-                                    dataType: "text",
-                                    success: function(data, status, xhr) {
-                                        $('#publishblocker').remove();
-                                        _dView.paused = false;
-                                    },
-                                    error: function(xhr, status, err) {
+                                if(windowObjectReference.closed == true)
+                                {
+                                    jQuery.ajax({
+                                        type: 'DELETE',
+                                        url: './vwfDataManager.svc/state?SID=' + newID,
+                                        dataType: "text",
+                                        success: function(data, status, xhr) {
+                                            $('#publishblocker').remove();
+                                            _dView.paused = false;
+                                        },
+                                        error: function(xhr, status, err) {
 
-                                    }
+                                        }
 
-                                });
-
+                                    });
+                                }else
+                                setTimeout(pollForClose,500)
                             };
+                            setTimeout(pollForClose,500)
                         }
                     },
                     error: function(xhr, status, err) {

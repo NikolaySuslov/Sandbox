@@ -199,6 +199,7 @@ var getCapabilities = function(){
 		}).length === 0){
 			$('#goodtogo').show();
 			settings.compatability.satisfied = true;
+			window.localStorage['sandboxPreferences'] = JSON.stringify(settings);
 			alertify.alert('{{#translate}}Great! It looks like this browser is supported{{/translate}}. {{#translate}}Click OK to return to the loading page{{/translate}}.',function()
 			{
 				window.history.back();	
@@ -210,7 +211,6 @@ var getCapabilities = function(){
 	}
 	window.onbeforeunload = function()
 	{
-
 		window.localStorage['sandboxPreferences'] = JSON.stringify(settings);
 	}
 	$(document).ready(function()
@@ -265,90 +265,8 @@ var getCapabilities = function(){
 		var websocket = window.WebSocket?true:false;
 		$('#websocket').text(websocket);
 
-		var mouseDetected = false;
-		function onMouseMove(e) {
-		  window.removeEventListener('mousemove', onMouseMove, false);
-		  mouseDetected = true;
-		  $('#mouseDetected').text(mouseDetected);
-		  updateColors();
-		}
-
-		var mouseLeft = false;
-		var mouseRight = false;
-		var mouseMiddle = false;
-		var stage = 0;
-		function onMouseClick(e) {
-			e.preventDefault();
-
-			if(e.button == 0 && stage == 0)
-			{
-				$('#alertify-ok')[0].click();
-				window.setTimeout(function(){
-
-					stage++;
-				
-		  		mouseLeft = true;
-		  		$('#mouseLeft').text(mouseLeft);
-		  		
-		  		alertify.confirm('{{#translate}}Click the middle mouse button{{/translate}}',function(ok){if(!ok){alertify.alert('{{#translate}}Shoot! You need a three button mouse to use the Sandbox{{/translate}}.',function(){window.location = '/';})}});
-		  		$('#alertify-ok')[0].style.display = 'none'
-				},1000)
-				
-		  	}
-		  	if(e.button == 1 && stage == 1)
-			{
-				$('#alertify-ok')[0].click();
-				window.setTimeout(function(){
-
-				stage++;
-				
-		  		mouseMiddle = true;
-		  		$('#mouseMiddle').text(mouseMiddle);
-		  		
-		  		alertify.confirm('{{#translate}}Click the right mouse button{{/translate}}',function(ok){if(!ok){alertify.alert('{{#translate}}Shoot! You need a three button mouse to use the Sandbox{{/translate}}.',function(){window.location = '/';})}});
-		  		$('#alertify-ok')[0].style.display = 'none'
-		  		},1000)
-		  	}
-		  	if(e.button == 2 && stage == 2)
-			{
-				$('#alertify-ok')[0].click();
-				window.setTimeout(function(){
-
-				stage++;
-				
-		  		mouseRight = true;
-		  		$('#mouseRight').text(mouseRight);
-		  		
-		  		window.addEventListener('DOMMouseScroll', onMouseWheel, false);
-		  		window.addEventListener('mousewheel', onMouseWheel, false);
-		  		alertify.confirm('{{#translate}}Roll the mouse wheel{{/translate}}',function(ok){if(!ok){alertify.alert('{{#translate}}Shoot! You need a three button mouse to use the Sandbox{{/translate}}.',function(){window.location = '/';})}});
-		  		$('#alertify-ok')[0].style.display = 'none'
-		  		},1000)
-		  	}
-		 updateColors();
-		}
-		var mouseWheel = false;
-		function onMouseWheel(e) {
-			mouseWheel = true;
-			$('#mouseWheel').text(mouseWheel);
-			$('#alertify-ok')[0].click();
-			window.setTimeout(function(){
-
-				
-				updateColors();
-			},1000)
-			
-		}
-
-		alertify.confirm('{{#translate}}Click the left mouse button{{/translate}}',function(ok){if(!ok){alertify.alert('{{#translate}}Shoot! You need a three button mouse to use the Sandbox{{/translate}}.',function(){window.location = '/';})}});
-		$('#alertify-ok')[0].style.display = 'none'
-
 		
-		window.addEventListener('mousemove', onMouseMove, false);
-		window.addEventListener('mousedown', onMouseClick, false);
-
-		
-		var socket = io.connect( window.location.protocol + "//"+window.location.host);
+		var socket = io(window.location.host,{reconnection : false,transports:['websocket'],query:'pathname=test'});
 		socket.on( "connect", function() {
                   $('#socketconnection').text("Successful");
                   updateColors();
@@ -359,11 +277,9 @@ var getCapabilities = function(){
 			updateColors();
 
 			alertify.confirm('{{#translate}}Shoot! Your browser is unable to connect via a WebSocket to our server! This might be a firewall issue{{/translate}}. {{#translate}}Check that WebSockets are allowed on port 80{{/translate}}.',function(){window.location = '/';});
-
 	    } );
-
-	    
-
+	    socket.connect();
+	
 		updateColors();
 		});	
 	
@@ -445,47 +361,7 @@ var getCapabilities = function(){
 		Untested
 	</div>
 </div>
-<div class="row">
-	<div class="col-md-3 ">
-		Mouse Detected:
-	</div>
-	<div id = 'mouseDetected' class="col-md-4 ">
-		Not Detected
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-3 ">
-		Mouse Left Button:
-	</div>
-	<div id = 'mouseLeft' class="col-md-4 ">
-		Not Detected
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-3 ">
-		Mouse Middle Button:
-	</div>
-	<div id = 'mouseMiddle' class="col-md-4 ">
-		Not Detected
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-3 ">
-		Mouse Right Button:
-	</div>
-	<div id = 'mouseRight' class="col-md-4 ">
-		Not Detected
-	</div>
-</div>
 
-<div class="row">
-	<div class="col-md-3 ">
-		Mouse Wheel:
-	</div>
-	<div id = 'mouseWheel' class="col-md-4 ">
-		Not Detected
-	</div>
-</div>
 
 
 <div class="row">

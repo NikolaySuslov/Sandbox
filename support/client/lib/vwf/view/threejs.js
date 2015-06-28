@@ -858,7 +858,10 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 if (threeObject instanceof THREE.Scene) {
                     if (propertyName == 'skyColorBlend') {
                         if (window._dSky && _dSky.material)
+                        {
+                        
                             _dSky.material.uniforms.colorBlend.value = propertyValue;
+                        }
                     }
                     if (propertyName == 'skyFogBlend') {
                         if (window._dSky && _dSky.material)

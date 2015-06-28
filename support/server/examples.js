@@ -6,7 +6,7 @@ exports.getExampleData = function(name,cb)
 	name = name.split('_');
 	name = name[name.length -2];
 
-	var path = libpath.normalize('../../public'+'/adl/sandbox'+'/examples/' + name +"/state");
+	var path = libpath.normalize('../../public'+'/adl/sandbox'+'/examples/' + name +"/state.json");
         path = libpath.resolve(__dirname, path);
 
 	fs.readFile(path ,'utf8',function(err,data)
@@ -25,7 +25,7 @@ exports.getState = function(name,cb)
 	name = name.split('_');
 	name = name[name.length -2];
 
-	var path = libpath.normalize('../../public'+'/adl/sandbox'+'/examples/' + name +"/state");
+	var path = libpath.normalize('../../public'+'/adl/sandbox'+'/examples/' + name +"/state.json");
         path = libpath.resolve(__dirname, path);
 	//sync call
 	if(!cb)
@@ -59,7 +59,7 @@ exports.getExampleMetadata = function(name,cb)
 {	
 	name = name.split('_');
 	name = name[name.length -2];
-	var path = libpath.normalize('../../public'+'/adl/sandbox'+'/examples/' + name +"/metadata");
+	var path = libpath.normalize('../../public'+'/adl/sandbox'+'/examples/' + name +"/metadata.json");
         path = libpath.resolve(__dirname, path);
 	fs.readFile(path ,'utf8',function(err,data)
 	{
@@ -67,7 +67,7 @@ exports.getExampleMetadata = function(name,cb)
 			cb(JSON.parse(data));
 		}catch(e)
 		{
-			cb({title:"",description:"",publishSettings:{allowAnonymous:true,persistence:false,allowTools:true,createAvatar:true,singlePlayer:true}});
+			cb({title:"",description:"",isExample:true,publishSettings:{allowAnonymous:true,persistence:false,allowTools:true,createAvatar:true,singlePlayer:true}});
 		}
 	});
 
@@ -77,7 +77,7 @@ exports.saveExampleData = function(URL,name,data,cb)
 {
 	name = name.split('_');
 	name = name[name.length -2];
-	var path = libpath.normalize('../../public'+'/adl/sandbox'+'/examples/' + name +"/state");
+	var path = libpath.normalize('../../public'+'/adl/sandbox'+'/examples/' + name +"/state.json");
         path = libpath.resolve(__dirname, path);
 	if(URL.loginData && URL.loginData.UID == global.adminUID)
 	{

@@ -18,12 +18,8 @@ properties:
   ___physics_enabled: true
   EditorData:
     BodyA:
-      type: "nodeid"
-      displayname: "Select Body A"
-      property: "___physics_joint_body_A"
-    BodyB:
-      type: "nodeid"
-      displayname: "Select Body B"
-      property: "___physics_joint_body_B"
+      type: "sectionTitle"
+      displayname: "Please See Physics Editor"
+
 
 

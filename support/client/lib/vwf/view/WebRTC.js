@@ -136,7 +136,10 @@ define(["module", "vwf/view", "vwf/view/rtcObject"], function(module, view, RTCO
 				this.rtc[params.target] = new RTCObject(
 					$('#vidFrame'+ToSafeID(params.target)+' video#self')[0],
 					$('#vidFrame'+ToSafeID(params.target)+' video#remote')[0],
-					this.send, null
+					this.send, null,
+					function(status){
+						$('#vidFrame'+ToSafeID(params.target)+' #connectionStatus').text( status.text ).css( 'color', status.color );
+					}
 				);
 
 				this.rtc[params.target].rtcTarget = params.target;
@@ -146,7 +149,7 @@ define(["module", "vwf/view", "vwf/view/rtcObject"], function(module, view, RTCO
 				};
 				var typeWord = this.rtc[params.target].mode.video ? 'Video' : 'Voice';
 				//	$('#vidFrame').dialog('option', 'title', typeWord+' chat with '+this.rtcTarget);
-				$('#vidFrame #messagePanel').css('z-index', -1);
+				$('#vidFrame'+ToSafeID(params.target)+' #messagePanel').css('z-index', -1);
 				//	$('#vidFrame').dialog('open');
 				
 
@@ -167,12 +170,15 @@ define(["module", "vwf/view", "vwf/view/rtcObject"], function(module, view, RTCO
 
 								
 								console.log('Call accepted');
-								$('#vidFrame #messagePanel').css('z-index', -1);
+								$('#vidFrame'+ToSafeID(params.sender)+' #messagePanel').css('z-index', -1);
 								this.createVidFrame(params.sender);
 								this.rtc[params.sender] = new RTCObject(
 									$('#vidFrame'+ToSafeID(params.sender)+' video#self')[0],
 									$('#vidFrame'+ToSafeID(params.sender)+' video#remote')[0],
-									this.send, null
+									this.send, null,
+									function(status){
+										$('#vidFrame'+ToSafeID(params.sender)+' #connectionStatus').text( status.text ).css( 'color', status.color );
+									}
 								);
 								this.rtc[params.sender].rtcTarget = params.sender;
 
@@ -180,7 +186,7 @@ define(["module", "vwf/view", "vwf/view/rtcObject"], function(module, view, RTCO
 								this.rtc[params.sender].mode = {audio: params.rtcData.mediaDescription.audio, video: !!params.rtcData.mediaDescription.video};
 								var typeWord = params.rtcData.mediaDescription.video ? 'Video' : 'Voice';
 								//	$('#vidFrame').dialog('option', 'title', typeWord+' chat with '+this.rtcTarget);
-								$('#vidFrame #messagePanel').css('z-index', 1);
+								$('#vidFrame'+ToSafeID(params.sender)+' #messagePanel').css('z-index', 1);
 								//	$('#vidFrame #message').html('Incoming '+typeWord.toLowerCase()+' call from '+this.rtcTarget);
 								//	$('#vidFrame').dialog('open');
 
@@ -190,7 +196,8 @@ define(["module", "vwf/view", "vwf/view/rtcObject"], function(module, view, RTCO
 								$('#vidFrame' + ToSafeID(params.sender)).show();
 							} else {
 								console.log('Call rejected');
-								$('#videoClose').click();
+								$('#vidFrame'+ToSafeID(params.sender)+' #videoClose').click();
+								vwf_view.kernel.callMethod('index-vwf', 'rtcDisconnect', {target: params.sender, sender: vwf.moniker()});
 							}
 
 						}.bind(this));

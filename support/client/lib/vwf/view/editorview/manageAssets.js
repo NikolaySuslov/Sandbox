@@ -75,6 +75,7 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 			$rootScope.new = {
 				name: '<new asset>',
 				type: '???',
+				license: 'CC-BY',
 				permissions: {
 					user: {
 						read: true,
@@ -446,6 +447,10 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 						url += queryChar+'description='+ encodeURIComponent( $scope.selected.description );
 						queryChar = '&';
 					}
+					if( $scope.selected.license ){
+						url += queryChar+'license='+ encodeURIComponent( $scope.selected.license );
+						queryChar = '&';
+					}
 					if( $scope.selected.group_name ){
 						url += queryChar+'group_name='+ encodeURIComponent( $scope.selected.group_name );
 						queryChar = '&';
@@ -541,6 +546,7 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 					var meta = {
 						name: $scope.selected.name, 
 						description: $scope.selected.description, 
+						license: $scope.selected.license,
 						thumbnail: $scope.selected.thumbnail,
 						width: $scope.selected.width || null,
 						height: $scope.selected.height || null,

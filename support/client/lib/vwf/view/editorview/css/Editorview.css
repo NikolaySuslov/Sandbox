@@ -638,6 +638,17 @@ border-left: 1px solid;
 		left: 0px;
 
 	}
+	#hidescripteditor{
+		text-align: center;
+		line-height: 20px;
+		margin-left: 3px; /* Adding this here because .icon:hover will change it to 2px */
+		
+	}
+	#maximizescripteditor{
+		text-align: center;
+		line-height: 19px;
+		margin-left: 3px; /* Adding this here because .icon:hover will change it to 2px */
+	}
 	#toolbar
 	{
 		z-index: 100;

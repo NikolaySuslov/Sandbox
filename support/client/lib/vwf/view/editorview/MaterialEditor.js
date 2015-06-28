@@ -725,8 +725,20 @@ define(["vwf/view/editorview/mapbrowser", "vwf/view/editorview/colorpicker.js"],
             _MaterialEditor.BuildGUI();
         }
         this.SelectionChanged = function(e, node) {
+            
+            function nodeShouldHaveMaterial(node)
+            {
+                console.log(node);
+                if(!node)
+                    return false;
+                else if( /^(prim2-vwf|asset-vwf|index-vwf)$/.test(node) )
+                    return true;
+                else
+                    return nodeShouldHaveMaterial( vwf.prototype(node) );
+            }
+
             try {
-                if (node) {
+                if (node && nodeShouldHaveMaterial(node.id)) {
                     this.enable();
                     var mat = vwf.getProperty(node.id, 'materialDef');
                     if (!mat)

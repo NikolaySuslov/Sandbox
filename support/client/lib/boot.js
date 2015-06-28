@@ -4,9 +4,6 @@ require.config({
         "vwf": "../vwf"
     },
     shim: {
-		'vwf/view/editorview/lib/angular': {
-			exports: 'angular'
-		},
 		'vwf/view/editorview/lib/angular-resource': {
 			deps: ['vwf/view/editorview/lib/angular']
 		},
@@ -51,6 +48,7 @@ define([
     "vwf/model/stage/log",
     "vwf/kernel/view",
     "vwf/view/document",
+    'vwf/view/editorview/lib/angular',
     "vwf/view/EditorView",
     "vwf/view/threejs",
     "vwf/view/googleEarth",

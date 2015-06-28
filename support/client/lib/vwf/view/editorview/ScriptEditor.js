@@ -192,8 +192,8 @@ define(function() {
 		this.EventChanged = false;
 		//$('#ScriptEditor').resize(function(){_ScriptEditor.resize()});
 		$('#scripteditortitle').prepend('<div class="headericon script"  />');
-		$('#scripteditortitle').append('<div id="maximizescripteditor" style="float:right;margin-right: 20px;" class="icon up2" />');
-		$('#scripteditortitle').append('<div id="hidescripteditor" class="icon down" style="float:right"  />');
+		$('#scripteditortitle').append('<div id="maximizescripteditor" style="float:right;margin-right: 20px;" class="icon glyphicon glyphicon-chevron-up" />');
+		$('#scripteditortitle').append('<div id="hidescripteditor" class="icon glyphicon glyphicon-chevron-down" style="float:right;"  />');
 		$('#hidescripteditor').click(function() {
 			_ScriptEditor.hide();
 		});
@@ -204,12 +204,12 @@ define(function() {
 				$('#ScriptEditor').css('top', getHeight('smoothmenu1') + getHeight('toolbar') + 'px');
 				$('#ScriptEditor').attr('maximized', true);
 				$('#ScriptEditor').css('height', $(window).height() - getHeight('toolbar') - getHeight('smoothmenu1') - getHeight('statusbar') + 'px');
-				$('#maximizescripteditor').attr('class', 'icon window');
+				$('#maximizescripteditor').attr('class', 'icon glyphicon glyphicon-resize-small');
 			} else {
 				$('#ScriptEditor').css('top', $('#ScriptEditor').attr('originaltop') + 'px');
 				$('#ScriptEditor').css('height', $(window).height() - $('#ScriptEditor').offset().top - getHeight('statusbar') + 'px');
 				$('#ScriptEditor').removeAttr('maximized');
-				$('#maximizescripteditor').attr('class', 'icon up2');
+				$('#maximizescripteditor').attr('class', 'icon glyphicon glyphicon-chevron-up');
 				var scripteditorheight = $('#ScriptEditor').offset().top;
 				if (scripteditorheight != 0) scripteditorheight = $(window).height() - scripteditorheight;
 				$('#index-vwf').css('height', window.innerHeight - getHeight('smoothmenu1') - getHeight('statusbar') - getHeight('toolbar') - (scripteditorheight - 25) + 'px');
@@ -638,6 +638,7 @@ define(function() {
 									paramstr = '()';
 								paramstr = paramstr.substr(0, paramstr.length - 1) + ')';
 								_ScriptEditor.setSelectedMethod(name, 'function ' + name + paramstr + '{\n\n console.log("got here"); \n\n}');
+								_ScriptEditor.SaveMethodClicked();
 							});
 						}
 
@@ -693,6 +694,7 @@ define(function() {
 								if (paramcount == 0)
 									paramstr = '()';
 								_ScriptEditor.setSelectedEvent(name, 'function ' + name + paramstr + '{\n\n console.log("got here"); \n\n}');
+								_ScriptEditor.SaveEventClicked();
 							});
 						}
 

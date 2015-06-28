@@ -390,6 +390,7 @@ function startVWF() {
                         baseUrl: './support/client/lib/',
                         name: './load',
                         out: './build/load.js',
+                        wrapShim:'true',
                         optimize: "uglify",
                         onBuildWrite: function(name, path, contents) {
                             logger.info('Writing: ' + name);

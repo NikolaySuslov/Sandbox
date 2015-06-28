@@ -724,10 +724,11 @@ function saveInstanceState(id, data, cb)
                 {
                     getInstance(id, function(state)
                     {
+
                         updateInstance(id,
                         {
                             lastUpdate: (new Date()),
-                            updates: 1 + state.updates,
+                            updates: 1 + (state? state.updates : 0),
                             objects: parsedData.length
                         }, function()
                         {

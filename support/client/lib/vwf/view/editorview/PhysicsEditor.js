@@ -258,7 +258,7 @@ define([], function() {
             this.addPropertyEditorDialog(nodeid, propertyName, $('#' + propertyName + nodeid), 'check');
         }
         this.createNodeID = function(parentdiv, nodeid, propertyName, displayName) {
-            $(parentdiv).append('<div style="margin-top: 5px;margin-bottom: 5px;"><div >' + displayName + '</div><input type="text" style="display: inline;width: 50%;padding: 2px;border-radius: 5px;font-weight: bold;" id="' + nodeid + propertyName + '" nodename="' + nodeid + '" propname="' + propertyName + '"/><div  style="float:right;width:45%;height:2em" id="' + nodeid + propertyName + 'button" nodename="' + nodeid + '" propname="' + propertyName + '"/></div><div style="clear:both" />');
+            $(parentdiv).append('<div style="margin-top: 5px;margin-bottom: 5px;"><div >' + displayName + '</div><input type="text" style="  background-color: black; color: white; display: inline;width: 50%;padding: 2px;border-radius: 5px;font-weight: bold;" id="' + nodeid + propertyName + '" nodename="' + nodeid + '" propname="' + propertyName + '"/><div  style="float:right;width:45%;height:2em" id="' + nodeid + propertyName + 'button" nodename="' + nodeid + '" propname="' + propertyName + '"/></div><div style="clear:both" />');
             $('#' + nodeid + propertyName).attr('disabled', 'disabled');
             $('#' + nodeid + propertyName + 'button').button({
                 label: 'Choose Node'
@@ -270,6 +270,7 @@ define([], function() {
                 _Editor.TempPickCallback = function(node) {
                     if (!node) return;
                     $('#' + nodename + propname).val(node.id);
+                    _RenderManager.flashHilight(findviewnode(node.id))
                     _Editor.TempPickCallback = null;
                     _Editor.SetSelectMode('Pick');
                     _PhysicsEditor.setProperty(nodename, propname, node.id);

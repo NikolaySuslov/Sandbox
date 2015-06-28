@@ -97,7 +97,6 @@ var global = window;
                 if (this._isAbsolutePath(path)) {
                     return path;
                 }
-
                 return this.baseURL + path;
             }
         },
@@ -198,24 +197,26 @@ var global = window;
                 var methodForType = {
                     "buffers" : this.handleBuffer,
                     "bufferViews" : this.handleBufferView,
-                    "shaders" : this.handleShader,
-                    "programs" : this.handleProgram,
-                    "techniques" : this.handleTechnique,
-                    "materials" : this.handleMaterial,
-                    "meshes" : this.handleMesh,
-                    "cameras" : this.handleCamera,
-                    "lights" : this.handleLight,
                     "nodes" : this.handleNode,
-                    "scenes" : this.handleScene,
-                    "images" : this.handleImage,
                     "animations" : this.handleAnimation,
-                    "accessors" : this.handleAccessor,
-                    "skins" : this.handleSkin,
-                    "samplers" : this.handleSampler,
-                    "textures" : this.handleTexture,
-                    "videos" : this.handleVideo
-
+                    "accessors" : this.handleAccessor
                 };
+
+                if (!this._state.options.animationOnly) {
+                    methodForType.skins = this.handleSkin
+                    methodForType.samplers = this.handleSampler
+                    methodForType.textures = this.handleTexture
+                    methodForType.videos = this.handleVideo
+                    methodForType.scenes = this.handleScene
+                    methodForType.images = this.handleImage
+                    methodForType.shaders = this.handleShader
+                    methodForType.programs = this.handleProgram
+                    methodForType.techniques = this.handleTechnique
+                    methodForType.materials = this.handleMaterial
+                    methodForType.meshes = this.handleMesh
+                    methodForType.cameras = this.handleCamera
+                    methodForType.lights = this.handleLight
+                }
 
                 var success = true;
                 while (this._state.categoryIndex !== -1) {
@@ -271,16 +272,33 @@ var global = window;
                     var i = jsonPath.lastIndexOf("/");
                     this.baseURL = (i !== 0) ? jsonPath.substring(0, i + 1) : '';
                     var jsonfile = new XMLHttpRequest();
+
                     jsonfile.open("GET", jsonPath, true);
-					// this is required to avoid problems with loading large scenes
-					jsonfile.setRequestHeader("If-Modified-Since", "Sat, 01 Jan 1970 00:00:00 GMT");
-                    jsonfile.addEventListener( 'load', function ( event ) {
-                        self.json = JSON.parse(jsonfile.responseText);
-                        if (callback) {
-                            callback(self.json);
+
+
+                    jsonfile.onreadystatechange = function() {
+                        if (jsonfile.readyState == 4) {
+                            if (jsonfile.status == 200) {
+                                self.json = JSON.parse(jsonfile.responseText);
+                                var data;
+                                try {
+                                    data = eval(self.json);
+                                } catch (exception) {
+                                    data = null;
+                                }
+                                if (!data) {
+                                    callback(null);
+                                }
+                                if (callback) {
+                                    callback(self.json);
+                                }
+                            }
+                        } else {
+                            return
                         }
-                    }, false );
+                    };
                     jsonfile.send(null);
+
                 } else {
                     if (callback) {
                         callback(this.json);

@@ -5,6 +5,7 @@ properties:
   Axis: Z
   NotProto: null
   DisplayName: LookAt
+  Offset : [0,0,0]
   EditorData:
     Active:
       property: Active

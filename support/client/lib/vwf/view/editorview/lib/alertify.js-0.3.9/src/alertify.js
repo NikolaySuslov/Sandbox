@@ -665,7 +665,7 @@
 
         return {
             alert: function(message, fn, cssClass) {
-                _alertify.dialog(message, "alert", fn, "", cssClass);
+                _alertify.dialog(message, "alert", fn || function(){}, "", cssClass);
                 return this;
             },
             confirm: function(message, fn, cssClass) {

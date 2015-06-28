@@ -1,5 +1,11 @@
 [
 	{
+		"name": "Default",
+		"url":"./contentlibraries/environments/vwf/default.vwf.json",
+		"preview":"./contentlibraries/environments/thumbs/default.png",
+		"type":"environment"
+	},
+	{
 		"name": "Grassy Plain",
 		"url":"./contentlibraries/environments/vwf/grassyplain.vwf.json",
 		"preview":"./contentlibraries/environments/thumbs/grassyplain.png",

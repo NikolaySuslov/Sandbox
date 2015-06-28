@@ -62,10 +62,10 @@ properties:
   fogDensity: .005
   fogVFalloff: 1.3
   fogVFalloffStart: 0
-  skyColorBlend: 0  
+  skyColorBlend: 1  
   skyFogBlend: 0  
-  skyApexColor: [ 0 , .5 , 1.0 ]
-  skyHorizonColor: [ 0 , .5 , 1.0 ]
+  skyApexColor: [ 0.9 , 0.9 , 0.9 ]
+  skyHorizonColor: [ 0.8 , 0.8 , 0.8]
   ___physics_gravity: [ 0, 0, -9.8]
   ___physics_accuracy: 10
   ___physics_active: true
@@ -392,14 +392,23 @@ scripts:
       
 
       
-       var ground = new THREE.Mesh(new THREE.PlaneGeometry(256,256,10,10), new THREE.MeshPhongMaterial());
+       var ground = new THREE.Mesh(new THREE.PlaneGeometry(200,200,10,10), new THREE.MeshPhongMaterial());
+       var g1 = new THREE.GridHelper(100,1);
+                    _dScene.add(g1);
+                    g1.rotation.x = Math.PI/2;
+                    g1.position.z = -.01;
+                  
+                    window._gGrid = g1;
+                    g1.updateMatrixWorld();
+       this.grid = g1;
+       g1.visible = true;             
        ground.receiveShadow = _SettingsManager.getKey('shadows');
        ground.PickPriority = -1;
-       
+       this.grid.InvisibleToCPUPick = true;
        
        var grassTex = THREE.ImageUtils.loadTexture('textures/gridnew.png');
        
-     
+      ground.visible = false;
        ground.material.map = grassTex;
         grassTex.wrapS = THREE.RepeatWrapping;
         grassTex.wrapT = THREE.RepeatWrapping;
@@ -413,6 +422,7 @@ scripts:
        
        if(this.materialDef)
        this.setTexture(this.materialDef);
+      
        var l = new THREE.DirectionalLight();
        this.sun = l;
        this.sun.name = 'Sun';
@@ -680,6 +690,7 @@ scripts:
                     shadow:_SettingsManager.getKey('shadows'),
                     specularColor:{r:0.5773502691896258,g:0.5773502691896258,b:0.5773502691896258},
                     specularLevel:1,
+                    wireframe:true,
                     layers:[
                       {  alpha: 1,
                         blendMode: 0,
@@ -698,7 +709,20 @@ scripts:
     this.setTexture = function(value)
     {
              if(this.groundplane)
-              _MaterialCache.setMaterial(this.groundplane,value)       
+             {
+
+                _MaterialCache.setMaterial(this.groundplane,value)       
+                if(this.materialDef && this.materialDef.internal_val.wireframe)
+               {
+                  this.groundplane.visible = false;
+                  this.grid.visible = true;
+               }else
+               {
+                  this.groundplane.visible = true;
+                  this.grid.visible = false;
+               }
+             }
+
     }
     
     this.deinitialize = function()

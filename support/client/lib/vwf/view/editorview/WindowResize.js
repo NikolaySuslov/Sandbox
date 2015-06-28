@@ -285,15 +285,7 @@ define({
             if (!toolsLoaded) return false;
             return !toolsHidden;
         }
-        $('#vwf-root').keypress(function(e) {
-            if (e.charCode == 92) {
-                if (!toolsLoaded) return;
-                if (!toolsHidden)
-                    hideTools();
-                else
-                    showTools();
-            }
-        });
+        
 
     }
    

@@ -58,12 +58,13 @@ if (!window.jQuery) {
                         function() {
                             require(["closure/vec/vec3.js", "closure/vec/vec4.js"],
                                 function() {
-                                    require(["closure/vec/mat4.js", "closure/vec/quaternion.js", "alea.js", "mash.js", "jquery-encoder-0.1.0.js", "rAF.js", "centerinclient.js"],
+                                    require(["closure/vec/mat4.js", "closure/vec/quaternion.js", "alea.js", "mash.js", "jquery-encoder-0.1.0.js", "rAF.js", "centerinclient.js",'vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify'],
                                         function() {
+                                            window.alertify = require('vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify');
                                             require(["boot"], function(boot) {
                                                 //ok, the loading stage is complete - fire up some initial gui logic
 
-                                                startup(boot);
+                                                promptTest(boot);
                                             })
                                         })
                                 })
@@ -76,6 +77,28 @@ if (!window.jQuery) {
         //note that the boot module returns a function that does all the VWF setup
         startup(boot);
     })
+}
+
+function promptTest(boot)
+{
+
+       
+        var settings = localStorage['sandboxPreferences'] && JSON.parse(window.localStorage['sandboxPreferences'])
+        if(!settings || !settings.compatability.satisfied)
+        {
+            alertify.confirm("It looks like you haven't been here before. It's best if you take the compatability test first. Would you like to test your browser now?",
+                function(ok)
+                {   
+                    if(ok)
+                    window.location.pathname = '/adl/sandbox/test';
+                    else
+                        startup(boot);
+                })
+
+        }else
+        startup(boot);
+
+
 }
 
 //ok, at this point, we have all the libraries. Let's do a bit of gui logic and setup
