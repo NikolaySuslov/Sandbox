@@ -62,7 +62,8 @@
                 "src": "./contentlibraries/environments/assets/concrete.jpg"
             }],
             "type": "phong",
-            "side": 2
+            "side": 2,
+			"wireframe": false
         },
         "skyAtmosphereDensity": 0.02
     }

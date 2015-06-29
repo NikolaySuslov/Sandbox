@@ -17,7 +17,7 @@
         this.settingProperty = function(propertyName,propertyValue)
         {
             
-            console.log(this.getRoot())
+           
            // for example, we can maniuplate a bone like this without createing a VWF node for the bone
            // instead the driver  does all the work.
            // if(propertyName == 'armScale')

@@ -712,7 +712,7 @@ scripts:
              {
 
                 _MaterialCache.setMaterial(this.groundplane,value)       
-                if(this.materialDef && this.materialDef.internal_val.wireframe)
+                if(value && value.wireframe)
                {
                   this.groundplane.visible = false;
                   this.grid.visible = true;

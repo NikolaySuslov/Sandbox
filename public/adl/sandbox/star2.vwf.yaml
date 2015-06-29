@@ -15,7 +15,7 @@
 extends: spline.vwf
 properties:
   radius:
-  radius2:
+  radius2: 2
   steps:
   EditorData:
     radius: 

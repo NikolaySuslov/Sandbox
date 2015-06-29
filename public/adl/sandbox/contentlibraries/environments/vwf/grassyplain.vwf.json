@@ -60,7 +60,8 @@
                 "src": "./contentlibraries/environments/assets/grass.jpg"
             }],
             "type": "phong",
-            "side": 2
+            "side": 2,
+			"wireframe": false
         },
         "skyAtmosphereDensity": 5
     }

@@ -32,7 +32,8 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
 			isExample = !!_DataManager.getInstanceData().isExample,
 			userIsOwner = _UserManager.GetCurrentUserName() != _DataManager.getInstanceData().owner,
 			worldIsPersistent = _DataManager.getInstanceData().publishSettings.persistence,
-			worldIsSinglePlayer = _DataManager.getInstanceData().publishSettings.SinglePlayer;
+			worldIsSinglePlayer = _DataManager.getInstanceData().publishSettings.SinglePlayer,
+			worldHasTerrain = !!window._dTerrain;
 
 		$('#MenuLogIn').parent()
 			.toggleClass('disabled', loggedIn);
@@ -46,6 +47,9 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
 			.toggleClass('disabled', isExample || !userIsOwner);
 		$('#TestLaunch').parent()
 			.toggleClass('disabled', !(worldIsPersistent && userIsOwner) || worldIsSinglePlayer || isExample);
+
+		$('#MenuCreateTerrainGrass').parent()
+			.toggleClass('disabled', !worldHasTerrain);
 
 		$('#MenuCopy').parent()
 			.toggleClass('disabled', !selection);
@@ -836,6 +840,15 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
             $('#MenuCreateParticlesBasic').click(function(e) {
                 _Editor.createParticleSystem('basic', _Editor.GetInsertPoint(), document.PlayerNumber);
             });
+            $('#MenuCreateParticlesSpray').click(function(e) {
+                _Editor.createParticleSystem('spray', _Editor.GetInsertPoint(), document.PlayerNumber);
+            });
+            $('#MenuCreateParticlesSuspended').click(function(e) {
+                _Editor.createParticleSystem('suspended', _Editor.GetInsertPoint(), document.PlayerNumber);
+            });
+            $('#MenuCreateParticlesAtmospheric').click(function(e) {
+                _Editor.createParticleSystem('atmospheric', _Editor.GetInsertPoint(), document.PlayerNumber);
+            });
             $('#MenuCreateLightPoint').click(function(e) {
                 _Editor.createLight('point', _Editor.GetInsertPoint(), document.PlayerNumber);
             });
@@ -984,12 +997,14 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
             });
     
             $('#MenuCreateTerrainGrass').click(function(e) {
-                if (!_dTerrain) {
+				try {
+	                var parent = _dTerrain.ID;
+				}
+				catch(e){
                     alertify.alert('The scene must first contain a terrain object');
-                    return
-                }
-                var parent = _dTerrain.ID;
-    
+                    return;
+				}
+
                 var GrassProto = {
                     extends: 'http://vwf.example.com/node3.vwf',
                     properties: {}
@@ -1003,22 +1018,24 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
     
             });
     
-            $('#MenuCreateTerrainDecorator').click(function(e) {
-                if (!_dTerrain) {
-                    alertify.alert('The scene must first contain a terrain object');
-                    return
-                }
-            });
-    
             $('#MenuViewRenderNormal').click(function(e) {
                 _dView.setRenderModeNormal();
+                require("vwf/view/threejs/editorCameraController").getController('Orbit').orbitPoint(newintersectxy);
+                require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
+                require("vwf/view/threejs/editorCameraController").updateCamera();
             });
             $('#MenuViewRenderStereo').click(function(e) {
                 _dView.setRenderModeStereo()
             });
              $('#MenuViewRenderVR').click(function(e) {
-                _dView.setRenderModeVR();
-                require("vwf/view/threejs/editorCameraController").setCameraMode('VR');
+                
+                if (navigator.getVRDevices) {
+                        _dView.setRenderModeVR();
+                        require("vwf/view/threejs/editorCameraController").setCameraMode('VR');
+                }else
+                {
+                    alertify.alert("WebVR is not supported on this browser.");
+                }
             });
     
             $('#TestSettings').click(function(e) {

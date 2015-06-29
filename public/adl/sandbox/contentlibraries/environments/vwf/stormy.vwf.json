@@ -67,7 +67,8 @@
                 "src": "./contentlibraries/environments/assets/stone2.png"
             }],
             "type": "phong",
-            "side": 2
+            "side": 2,
+			"wireframe": false
         },
         "skyAtmosphereDensity": 0.62
     }

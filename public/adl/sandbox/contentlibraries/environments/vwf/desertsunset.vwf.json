@@ -70,7 +70,8 @@
                 "src": "./contentlibraries/environments/assets/waternormal.jpg"
             }],
             "type": "phong",
-            "side": 2
+            "side": 2,
+			"wireframe": false
         },
         "skyAtmosphereDensity": 1,
         "shadowDarkness": 0.65

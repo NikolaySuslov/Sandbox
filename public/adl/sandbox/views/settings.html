@@ -13,7 +13,8 @@
             useSimpleMaterials:false,
             resolutionScale: 1,
             filtering:true,
-            stereoOffset:.3
+            stereoOffset:.3,
+            antialias:true
         }
         for(var i in defaults)
         	if(settings[i] === undefined)
@@ -31,6 +32,7 @@
 			settings.filtering = $('#filtering:checked').val()?true:false;
 			settings.resolutionScale = 1.0/$('#resolution').slider('value');
 			settings.stereoOffset = $('#stereoOffset').slider('value')/200.0;
+			settings.antialias = $('#antialias:checked').val()?true:false;
 			window.localStorage['sandboxPreferences'] = JSON.stringify(settings);
 		}
 
@@ -52,11 +54,17 @@
 		else
 			$('#simple').removeAttr('checked');
 
+		if(settings.antialias)
+			$('#antialias').attr('checked', 'checked');
+		else
+			$('#antialias').removeAttr('checked');
+
 		window.setInterval(function()
 		{
 			settings.shadows = $('#shadows:checked').val()?true:false;
 			settings.useSimpleMaterials = $('#simple:checked').val()?true:false;
 			settings.filtering = $('#filtering:checked').val()?true:false;
+			settings.antialias = $('#antialias:checked').val()?true:false;
 			settings.resolutionScale = 1.0/$('#resolution').slider('value');
 			settings.stereoOffset = $('#stereoOffset').slider('value')/200.0;
 			window.localStorage['sandboxPreferences'] = JSON.stringify(settings);
@@ -66,14 +74,15 @@
 	
 
 </script>
-<div id="content" class="row" style="margin:10px auto;float:none;text-align:center;height:260px;">
-	<div class="col-md-5" style="margin:10px auto;float:none;text-align:center;height:260px;">
+<div id="content" class="row" style="margin:10px auto;float:none;text-align:center;">
+	<div class="col-md-5" style="margin:10px auto;float:none;text-align:center;">
 		<form data-bind="submit:handleLoginButton" >
 			<fieldset>
 				<legend style="padding-bottom:5px;">{{#translate}}Player Settings{{/translate}}</legend>
 				<div class="col-md-10" style="margin:0 auto;float:none;">
 					
 					<input id="shadows" checked='checked' type='checkbox' style='margin-right:.5em' name='shadows'></input><label for='shadows'>Enable Shadows</label><br/>
+					<input id="antialias" checked='checked' type='checkbox' style='margin-right:.5em' name='antialias'></input><label for='antialias'>Antialiasing</label><br/>
 					<input id="filtering" checked='checked' type='checkbox' style='margin-right:.5em' name='filtering'></input><label for='filtering'>Enable Anisotropic Filtering</label><br/>
 					<input id="simple"  type='checkbox' style='margin-right:.5em' name='simple'></input><label for='filtering'>Use Simple Materials</label><br/>
 					

@@ -69,14 +69,14 @@ exports.ResetPassword = function(username,response)
 			respond(response,500,"User not found");
 			return;
 		}
-		logger.debug(user1);
+		logger.info(user1);
 		var newPassword = GenerateTempPassword();
 		if(!user1.Salt) user1.Salt = GUID();
 		var clientHash = self.EncryptPassword(newPassword,username,user1.Salt);
-		logger.debug(newPassword,username,user1.Salt);
-		logger.debug(clientHash);
+		logger.info(newPassword,username,user1.Salt);
+		logger.info(clientHash);
 		var serverHash = Hash(clientHash);
-		logger.debug(serverHash);
+		logger.info(serverHash);
 		var data = {};
 		
 		data.TempPassword = {
@@ -143,7 +143,7 @@ exports.UpdatePassword = function (URL,response)
 		respond(response,401,'bad password');
 		return;
 	}
-	log(URL.query.P);
+	
 	data.Password = Hash(URL.query.P);
 	//remove the temp pass from the database
 	data.TempPassword = null;

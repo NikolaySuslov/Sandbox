@@ -1808,6 +1808,48 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                     DisplayName: self.GetUniqueName('ParticleSystem')
                 }
             };
+
+			var props = {};
+			switch(type){
+				case 'spray':
+					props = {
+						emitterType: 'point', solver: 'AnalyticShader', velocityMode: 'cartesian',
+						particleCount: 200, maxRate: 0.75, minLifeTime: 1, maxLifeTime: 1,
+						minVelocity: [-1,-1,2], maxVelocity: [1,1,5],
+						minAcceleration: [0,0,-9.82], maxAcceleration: [0,0,-9.82],
+						startSize: 0.04, endSize: 0.04, sizeRange: 0.02,
+						startAlpha: 1, endAlpha: 0.5, alphaRange: 0, alphaTest: 0.75
+					};
+				break;
+				case 'suspended':
+					props = {
+						emitterType: 'box', emitterSize: [10,10,10], solver: 'AnalyticShader', velocityMode: 'cartesian',
+						particleCount: 200, maxRate: 0.75, minLifeTime: 1, maxLifeTime: 168,
+						minVelocity: [-0.01,-0.01,-0.01], maxVelocity: [0.01,0.01,0.01],
+						minAcceleration: [0,0,0], maxAcceleration: [0,0,0],
+						startSize: 0.03, endSize: 0.03, sizeRange: 0,
+						startAlpha: 0.5, endAlpha: 0.25, alphaRange: 0, alphaTest: 0.28,
+						startColor_noAplha: [0.43,0.43,0.43], endColor_noAplha: [0.43,0.43,0.43]
+					};
+				break;
+				case 'atmospheric':
+					props = {
+						emitterType: 'box', emitterSize: [10,10,10], solver: 'AnalyticShader', velocityMode: 'cartesian',
+						particleCount: 1000, maxRate: 1, minLifeTime: 1, maxLifeTime: 1,
+						minVelocity: [-1,-1,-5], maxVelocity: [1,1,-15],
+						minAcceleration: [0,0,0], maxAcceleration: [0,0,0],
+						startSize: 0.02, endSize: 0, sizeRange: 0,
+						startAlpha: 1, endAlpha: 1, alphaRange: 0, alphaTest: 0.5,
+						startColor_noAplha: [1,1,1], endColor_noAplha: [1,1,1]
+					};
+				break;
+
+			}
+
+			for(var i in props){
+				proto.properties[i] = props[i];
+			}
+
             var newname = GUID();
             this.createChild('index-vwf', newname, proto, null, null);
             this.SelectOnNextCreate([newname]);

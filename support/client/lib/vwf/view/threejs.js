@@ -456,6 +456,14 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                         }
 
                     }
+                    if(window._Editor && this.nodes[i] && window._Editor.isSelected(i))
+                    {
+                        this.nodes[i].lastAnimationFrame = null;
+                        this.nodes[i].thisAnimationFrame = null;
+                        this.nodes[i].lastTickTransform = null;
+                        this.nodes[i].lastFrameInterp = null;
+                        this.nodes[i].thisTickTransform = null;
+                    }
                 }
 
 
@@ -1577,11 +1585,11 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     try {
                         sceneNode.renderer = new THREE.WebGLRenderer({
                             canvas: mycanvas,
-                            antialias: true,
+                            antialias: _SettingsManager.getKey('antialias'),
                             alpha: false,
                             stencil: false,
                             depth: true,
-                            preserveDrawingBuffer: true,
+                            preserveDrawingBuffer: false,
                             devicePixelRatio: window.devicePixelRatio
 
                         });
@@ -1646,7 +1654,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                             //create a new renderer and set all pointers to it
                             renderer = _dRenderer = sceneNode.renderer = new THREE.WebGLRenderer({
                                 canvas: mycanvas,
-                                antialias: true,
+                                antialias: _SettingsManager.getKey('antialias'),
                                 alpha: false,
                                 stencil: false,
                                 devicePixelRatio: window.devicePixelRatio

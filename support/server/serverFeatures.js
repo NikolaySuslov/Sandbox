@@ -80,13 +80,14 @@ function prettyWorldURL(req, res, next)
             {
                var worldURL = worlds[0]._key;
                worldURL = worldURL.replace(/_/g,'/');
+               worldURL = worldURL.replace('/adl/sandbox', global.configuration.appPath)
                _302(worldURL,res);
                return;
             }
             //If there are more than one, create a page with links to each
             if(worlds && Object.keys(worlds).length > 1)
             {
-              worlds = Object.keys(worlds);
+              //worlds = Object.keys(worlds);
               
               res.writeHead(200, {
                 "Content-Type": "text/html",
@@ -101,11 +102,12 @@ function prettyWorldURL(req, res, next)
             
               
                //create a link for each world
-               for(var i = 0; i < worlds.length; i++)
+               for(var i =0; i < worlds.length; i++)
                {
-                var worldURL = worlds[i];
+               
+                var worldURL = worlds[i]._key;
                 worldURL = worldURL.replace(/_/g,'/');
-                
+                worldURL = worldURL.replace('/adl/sandbox', global.configuration.appPath)
                 res.write(  "<a href='"+worldURL+"'>"+worldURL+"</a><br/>" );
                 
                }

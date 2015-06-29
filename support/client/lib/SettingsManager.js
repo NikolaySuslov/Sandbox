@@ -25,7 +25,8 @@ define(function ()
             stereoOffset:.25,
             normalMapTerrain:true,
             triPlanerMapTerrain:false,
-            disableWebGL:false
+            disableWebGL:false,
+            antialias:true
         }
         this.readQueryString = function()
         {
