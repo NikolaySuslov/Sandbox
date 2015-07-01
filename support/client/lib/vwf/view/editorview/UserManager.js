@@ -417,7 +417,7 @@ define(function() {
 
             if (!profile) profile = {};
 
-            this.PlayerProto.source = profile.avatarModel || './avatars/VWS_Business_Female1.DAE';
+            this.PlayerProto.source = profile.avatarModel || './avatars/VWS_Business_Male2.DAE';
 
             this.PlayerProto.properties.cycles = {
                 stand: {
@@ -512,7 +512,7 @@ define(function() {
                     "offsetx": 0,
                     "offsety": 0,
                     "alpha": 1,
-                    "src": profile.avatarTexture || "./avatars/VWS_B_Female1-1.jpg",
+                    "src": profile.avatarTexture || "./avatars/VWS_B_Male2-3.jpg",
                     "mapInput": 0
                 }],
                 "type": "phong",

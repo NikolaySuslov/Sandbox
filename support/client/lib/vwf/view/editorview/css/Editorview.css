@@ -548,6 +548,9 @@ transition: background 1s, opacity 1s;
 		margin-bottom: 2px;
 		background-color:lightblue;
 	}
+	.icon:active {
+		background-color: #7B7B7B;
+	}
 	.iconselected
 	{
 		background-color: rgb(58, 143, 255);

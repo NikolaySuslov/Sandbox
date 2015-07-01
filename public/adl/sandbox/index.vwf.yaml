@@ -275,7 +275,6 @@ properties:
         - Morning
         - Evening
         - Morning2
-        - Storm
         - ThunderStorm
         - Night1
         - Night2
@@ -287,7 +286,6 @@ properties:
         - early_morning
         - evening  
         - morning  
-        - stormy
         - StormClouds   
         - night1
         - night2

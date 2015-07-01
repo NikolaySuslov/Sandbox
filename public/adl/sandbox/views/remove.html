@@ -10,7 +10,8 @@
 			cache:false,
 			success:function(data,status,xhr)
 			{
-				setup();
+				//Commented out because setup is not defined.
+				//setup();
 				var data = JSON.parse(xhr.responseText);
 				$('#txtInstanceName').val(data.title);
 				$('#txtInstanceDescription').val(data.description);

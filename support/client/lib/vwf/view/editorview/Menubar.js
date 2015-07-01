@@ -30,7 +30,7 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
 			loggedIn = !!_UserManager.GetCurrentUserName(),
 			hasAvatar = !!(loggedIn && _UserManager.GetAvatarForClientID(vwf.moniker())),
 			isExample = !!_DataManager.getInstanceData().isExample,
-			userIsOwner = _UserManager.GetCurrentUserName() != _DataManager.getInstanceData().owner,
+			userIsOwner = _UserManager.GetCurrentUserName() == _DataManager.getInstanceData().owner,
 			worldIsPersistent = _DataManager.getInstanceData().publishSettings.persistence,
 			worldIsSinglePlayer = _DataManager.getInstanceData().publishSettings.SinglePlayer,
 			worldHasTerrain = !!window._dTerrain;
@@ -50,6 +50,13 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
 
 		$('#MenuCreateTerrainGrass').parent()
 			.toggleClass('disabled', !worldHasTerrain);
+
+		$('#MenuCopy').parent()
+			.toggleClass('disabled', !selection);
+		$('#MenuDuplicate').parent()
+			.toggleClass('disabled', !selection);
+		$('#MenuDelete').parent()
+			.toggleClass('disabled', !selection);
 
 		$('#MenuCopy').parent()
 			.toggleClass('disabled', !selection);
@@ -584,7 +591,7 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
             });
             $('#MenuHelpAbout').click(function(e) {
                 $('#NotifierAlertMessage').dialog('open');
-                $('#NotifierAlertMessage').html('VWF Sandbox version 0.99 <br/> VWF 0.6 <br/>Rob Chadwick, ADL <br/> robert.chadwick.ctr@adlnet.gov<br/> texture attribution: <br/>http://opengameart.org/content/45-high-res-metal-and-rust-texture-photos CC-BY-3.0<br/>http://opengameart.org/content/golgotha-textures  public domain<br/>http://opengameart.org/content/p0sss-texture-pack-1  CC-BY-3.0<br/>http://opengameart.org/content/117-stone-wall-tilable-textures-in-8-themes    GPL2<br/>http://opengameart.org/content/wall-grass-rock-stone-wood-and-dirt-480 public domain<br/>http://opengameart.org/content/29-grounds-and-walls-and-water-1024x1024  CC-By-SA<br/>http://opengameart.org/content/filth-texture-set  GPL2');
+                $('#NotifierAlertMessage').load("./about.html");
                 $('#NotifierAlertMessage').dialog('option', 'height', 'auto');
                 $('#NotifierAlertMessage').dialog('option', 'width', 'auto');
             });
@@ -1057,7 +1064,7 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
             list = $('#smoothmenu1').find('[id]');
     
             //make every clicked menu item close all menus
-            // $('#smoothmenu1').find('[id]').filter(':only-child').click(function(){ddsmoothmenu.closeall({type:'click',target:'asd'})});
+            $('#smoothmenu1 li').not('li:has(ul)').click(function(e){ddsmoothmenu.closeall({type:'mouseleave'})});
     	},
 
 		calledMethod: function(id, evtname, data)

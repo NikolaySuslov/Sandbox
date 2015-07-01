@@ -728,7 +728,6 @@ define(["vwf/view/editorview/mapbrowser", "vwf/view/editorview/colorpicker.js"],
             
             function nodeShouldHaveMaterial(node)
             {
-                console.log(node);
                 if(!node)
                     return false;
                 else if( /^(prim2-vwf|asset-vwf|index-vwf)$/.test(node) )

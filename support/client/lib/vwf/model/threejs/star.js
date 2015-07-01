@@ -2,7 +2,7 @@
 		function star(childID, childSource, childName)
 		{
 			
-			this.radius = 1;
+			this.radius = 2.1;
 			this.radius2 = 1;
 			this.steps = 10;
 			

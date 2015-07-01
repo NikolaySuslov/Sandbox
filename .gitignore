@@ -20,3 +20,4 @@ config.json
 *.pem
 *.orig
 .sass-cache
+configserver.json

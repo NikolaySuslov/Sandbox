@@ -7,24 +7,24 @@ module.exports.WARNING = parseInt("010", 2);
 module.exports.SEVERE = parseInt("100", 2);
 
 module.exports.hookupUtils = function(browser) {
-    console.log('hook up utils');
+	console.log('hook up utils');
 
 	browser.addCommand("login", function(cb) {
-        module.exports.login(cb);
-    });
-    browser.addCommand("loadBlankScene", function(cb) {
-        module.exports.loadBlankScene(cb)
-    });
-    browser.addCommand("nextGUID", function(GUID,cb) {
-        browser.execute(function(id) {
-            window.GUID.nextGUID = id;
-        }, GUID,function(err,r){
-        	cb()
-        })
-    });
-    browser.addCommand("createNode", function(nodeDef) {
-        var cb = arguments[arguments.length -1]
-        browser.execute(function(node) {
+		module.exports.login(cb);
+	});
+	browser.addCommand("loadBlankScene", function(cb) {
+		module.exports.loadBlankScene(cb)
+	});
+	browser.addCommand("nextGUID", function(GUID,cb) {
+		browser.execute(function(id) {
+			window.GUID.nextGUID = id;
+		}, GUID,function(err,r){
+			cb()
+		})
+	});
+	browser.addCommand("createNode", function(nodeDef) {
+		var cb = arguments[arguments.length -1]
+		browser.execute(function(node) {
 
             var name = GUID();
             vwf_view.kernel.createChild(vwf.application(), name, node);
@@ -86,12 +86,12 @@ module.exports.hookupUtils = function(browser) {
     });
 	browser.addCommand("$click", function(cssSelector) {
 		var cb = arguments[arguments.length -1];
-        browser.execute(function(a) {
-        	return $(a).click();
-        }, cssSelector,function(err, jqObj)
-        {
-        	cb(null, jqObj);
-        });
+		browser.execute(function(a) {
+			return $(a).click();
+		}, cssSelector,function(err, jqObj)
+		{
+			cb(null, jqObj);
+		});
 	});	
 	browser.addCommand("$keydown", function(cssSelector, key) {
 		var cb = arguments[arguments.length -1];
@@ -120,11 +120,11 @@ module.exports.hookupUtils = function(browser) {
         browser.execute(function(c, k) {
 			var e = $.Event("keypress");
 			e.which = e.keyCode = k.charCodeAt(0);
-        	return $(c).trigger(e);
-        }, cssSelector, key, function(err, jqObj)
-        {
-        	cb(null, jqObj);
-        });
+			return $(c).trigger(e);
+		}, cssSelector, key, function(err, jqObj)
+		{
+			cb(null, jqObj);
+		});
 	});
 	browser.addCommand("saveDataBeforeUnload", function(){
 		var cb = arguments[arguments.length -1];
@@ -135,13 +135,14 @@ module.exports.hookupUtils = function(browser) {
 				return true;
 			}
 			
-        	return false;
-        }, function(err, didSave)
-        {
-        	cb(null, didSave);
-        });
+			return false;
+		}, function(err, didSave)
+		{
+			cb(null, didSave);
+		});
 	});	
 	browser.addCommand("hasViewNode", function(nodeName) {
+
 		var cb = arguments[arguments.length -1];
         browser.execute(function(a) {
 			try{
@@ -233,31 +234,54 @@ module.exports.hookupUtils = function(browser) {
         });
     });
 	browser.addCommand("selectNodes", function(nodename) {
-        
-        var cb = arguments[arguments.length -1]
-        browser.execute(function(a) {
+		
+		var cb = arguments[arguments.length -1]
+		browser.execute(function(a) {
 			var isSelected = true;
 			var ids = [];
 			for(var i = 0; i < a.length; i++) {
 				ids.push(vwf.find(vwf.application(), a[i])[0]);
 				
 			}
-			_Editor.SelectObject(ids);
+			_Editor.SelectObjectPublic(ids);
 			for(i = 0; i < ids.length; i++) {
 				
 				isSelected = isSelected && _Editor.isSelected("" + ids[i]);
 			}
 			return isSelected;
-        }, nodename,function(err, r)
-        {
-        	
-        	cb(err, r ? r.value: null)
-        });
-    });
+		}, nodename,function(err, r)
+		{
+			
+			cb(err, r ? r.value: null)
+		});
+	});
+	browser.addCommand("selectNodesWithID", function(nodename) {
+		
+		var cb = arguments[arguments.length -1]
+		browser.execute(function(a) {
+			var isSelected = true;
+			var ids = [];
+			for(var i = 0; i < a.length; i++) {
+				// ids.push(vwf.find(vwf.application(), a[i])[0]);
+				ids.push(a[i])
+			}
+			
+			_Editor.SelectObjectPublic(ids);
+			for(i = 0; i < ids.length; i++) {
+				
+				isSelected = isSelected && _Editor.isSelected("" + ids[i]);
+			}
+			return isSelected;
+		}, nodename,function(err, r)
+		{
+			
+			cb(err, r ? r.value: null)
+		});
+	});
 	browser.addCommand("getSelectedNodes", function(nodename) {
-        
-        var cb = arguments[arguments.length -1]
-        browser.execute(function() {
+		
+		var cb = arguments[arguments.length -1]
+		browser.execute(function() {
 			
 			var nodes = [];
 			for(var i = 0; true; i++) {
@@ -268,11 +292,10 @@ module.exports.hookupUtils = function(browser) {
 					break;
 				}
 			}
-            
+			
 			return nodes;
 			
-			
-			
+
         }, nodename,function(err, r)
         {
         	
@@ -334,7 +357,7 @@ module.exports.getConsoleLog = function(level, contains, cb){
 
 module.exports.login = function(cb){
 	browser
-        .url('http://localhost:3000/adl/sandbox/')
+		.url('http://localhost:3000/adl/sandbox/')
 		.waitForExist("#logina", 1500, function(err, value){
 			console.log("This is the value: " + value);
 			if(!err){
@@ -364,38 +387,38 @@ module.exports.login = function(cb){
 		});
 };
 module.exports.loadBlankScene = function(cb) {
-    browser
-        //.url('http://localhost:3000/adl/sandbox/example_blank/?norender=true')
-        .url('http://localhost:3000/adl/sandbox/example_blank/')
-        .waitForExist('#preloadGUIBack', 60000)
-        .waitForVisible('#preloadGUIBack', 60000, true)
-        .pause(3000).then(cb);
+	browser
+		//.url('http://localhost:3000/adl/sandbox/example_blank/?norender=true')
+		.url('http://localhost:3000/adl/sandbox/example_blank/')
+		.waitForExist('#preloadGUIBack', 60000)
+		.waitForVisible('#preloadGUIBack', 60000, true)
+		.pause(3000).then(cb);
 
 
 }
 module.exports.nextGUID = function(GUID) {
-    browser.execute(function(id) {
-        window.GUID.nextGUID = id;
-    }, GUID);
+	browser.execute(function(id) {
+		window.GUID.nextGUID = id;
+	}, GUID);
 }
 module.exports.waitForNode = function(name, timeout, done) {
-    timeout = timeout || 500;
-    var t0 = Date.now();
-    var result
-    
-    function loop() {
-        if (!result && Date.now() - t0 < timeout) {
-            browser.execute(getNode, name, function(err, r) {
-                result = r && r.value;
-            });
-            global.setTimeout(loop, 500);
-        }
+	timeout = timeout || 500;
+	var t0 = Date.now();
+	var result
+	
+	function loop() {
+		if (!result && Date.now() - t0 < timeout) {
+			browser.execute(getNode, name, function(err, r) {
+				result = r && r.value;
+			});
+			global.setTimeout(loop, 500);
+		}
 		else{
 			done(result);
 		}
-    };
+	};
 
-    global.setTimeout(loop, 500);
+	global.setTimeout(loop, 500);
 }
 
 module.exports.getDistance = function(arr1, arr2){
@@ -409,23 +432,23 @@ module.exports.getDistance = function(arr1, arr2){
 }
 
 function getNode(name) {
-    try {
-        //adding "" is just to ensure that id is a String
-        var id = vwf.find(vwf.application(), name)[0];
-        return vwf.getNode("" + id,true);
-    } catch (e) {
-        return null;
-    }
+	try {
+		//adding "" is just to ensure that id is a String
+		var id = vwf.find(vwf.application(), name)[0];
+		return vwf.getNode("" + id,true);
+	} catch (e) {
+		return null;
+	}
 }
 
 module.exports.assertNodeExists = function(name, assert) {
-    this.waitForNode(name, 6500, function(node) {
-        console.log(JSON.stringify(node))
-        if (node) {
-            assert(true, JSON.stringify(node.id));
-        } else
-            assert(false, "timeout waiting on node creation");
-    });
+	this.waitForNode(name, 6500, function(node) {
+		console.log(JSON.stringify(node))
+		if (node) {
+			assert(true, JSON.stringify(node.id));
+		} else
+			assert(false, "timeout waiting on node creation");
+	});
 }
 
 module.exports.GUID = function(){

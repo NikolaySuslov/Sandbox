@@ -64,8 +64,18 @@ define(function() {
    
         $('#EntityLibraryMain').append("<div id='EntityLibraryAccordion'></div>");
 
-        $('entitylibraryclose').click(function(){
-            _EntityLibrary.hide();
+         var self = this;
+        $('#entitylibrarytray').click(function() {
+                
+               
+                alertify.prompt('Enter the URL for an asset library',function(ok,val)
+                {
+                    if(ok)
+                        self.addLibrary(val,val);
+                });
+        })
+        $('#entitylibraryclose').click(function(){
+            EntityLibrary.hide();
         })
         this.buildGUI = function()
         {
@@ -82,18 +92,18 @@ define(function() {
                         $('#EntityLibraryAccordion').append(section);
 
                         //for every asset in every library, setup the gui
-                        for (var curAsset=0; curAsset<libs[i].library.length; curAsset++)
-						{
-							var j = libs[i].library[curAsset].name;
+                        for (var curAsset in libs[i].library)
+                        {
+                            var j = libs[i].library[curAsset].name || curAsset;
 
                             $('#library' + ToSafeID(i)).append('<div  class = "libraryAsset">' +
                                 '<img id = "asset' + ToSafeID(i) + ToSafeID(j) + '" src="' + libs[i].library[curAsset].preview + '" draggable=true></img>' +
                                 '<div>' + j + '</div>' +
                                 '</div>'
                             );
-                            (function(i1, j1) {
+                            (function(i1, j1,k) {
 
-                                $("#asset" + ToSafeID(i1) + ToSafeID(j1.name)).on('click',function(evt)
+                                $("#asset" + ToSafeID(i1) + ToSafeID(j1.name ||k)).on('click',function(evt)
                                 {
 
                                     
@@ -101,7 +111,7 @@ define(function() {
 
                                 });
 
-                                $("#asset" + ToSafeID(i1) + ToSafeID(j1.name)).on('dragstart', function(evt) {
+                                $("#asset" + ToSafeID(i1) + ToSafeID(j1.name || k)).on('dragstart', function(evt) {
 
 
                                     var dragIcon = document.createElement('img');
@@ -115,18 +125,19 @@ define(function() {
                                         evt.originalEvent.dataTransfer.setData('text', JSON.stringify(j1));
                                     $(this).css('opacity', .5);
                                 });
-                                $("#asset" + ToSafeID(i1) + ToSafeID(j1.name)).on('dragend', function() {
+                                $("#asset" + ToSafeID(i1) + ToSafeID(j1.name ||k)).on('dragend', function() {
 
                                     $(this).css('opacity', 1);
                                      currentDrag = null;
                                 });
 
-                            })(i, libs[i].library[curAsset])
+                            })(i, libs[i].library[curAsset],j)
 
                         }
                     }
             $("#EntityLibraryAccordion").accordion({
-                       
+                        collapsible: true,
+                        heightStyle: "content",
                         activate: function() {
 
                         }
@@ -135,7 +146,7 @@ define(function() {
         this.addLibrary = function(name,url)
         {
                 var self = this;
-             $.getJSON(url, function(lib) {
+                $.getJSON(url, function(lib) {
                         self.libraries[name] = {};
                         self.libraries[name].url = url;
                         self.libraries[name].library = lib;
@@ -287,7 +298,7 @@ define(function() {
         }
         this.show = function() {
 
-			this.setup();
+            this.setup();
 
             $('#EntityLibrary').animate({
                 'left': 0
@@ -345,7 +356,7 @@ define(function() {
 
                 function createProto(proto) {
 
-                   if (typeof proto == "string"){
+                    if (typeof proto == "string"){
                         proto = JSON.parse(proto);
                        }
 
@@ -408,8 +419,8 @@ define(function() {
                         if (!proto.properties.transform)
                             proto.properties.transform = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
                        
-						// maintain reference to asset server, if applicable
-						proto.properties.sourceAssetId = data.sourceAssetId;
+                        // maintain reference to asset server, if applicable
+                        proto.properties.sourceAssetId = data.sourceAssetId;
                    
                         _Editor.createChild(ID, newname, proto);
                         _Editor.SelectOnNextCreate([newname]);
@@ -423,7 +434,7 @@ define(function() {
                 var ID = EntityLibrary.GetPick(evt);
                 if (ID) {
                     $.getJSON(data.url, function(proto) {
-						proto.sourceAssetId = data.sourceAssetId;
+                        proto.sourceAssetId = data.sourceAssetId;
                         _PrimitiveEditor.setProperty(ID, 'materialDef', proto);
                     })
                 }

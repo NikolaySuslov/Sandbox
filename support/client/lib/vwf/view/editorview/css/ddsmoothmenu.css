@@ -59,6 +59,11 @@ color: white;
 background: rgb(113, 157, 221); /*background of menu items during onmouseover (hover state)*/
 color: white;
 }
+
+
+.ddsmoothmenu ul li a:active{
+background-color: #7B7B7B; /*background of menu items during active (mouse down state)*/
+}
 	
 /*1st sub level menu*/
 .ddsmoothmenu ul li ul{

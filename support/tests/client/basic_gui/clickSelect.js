@@ -60,7 +60,7 @@ module.exports = {
 				outStr += "Box not Selected:( ";
 
 			}
-			finished(passed, outStr);
+			finished(passed, outStr, true);
 		})
 		
 

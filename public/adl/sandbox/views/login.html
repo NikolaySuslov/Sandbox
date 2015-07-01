@@ -47,16 +47,18 @@
 				redirect();
 			}else
 			{
-				$('#txtusername').val('');
+				//$('#txtusername').val('');
 				$('#txtpassword').val('');
+				$('#txtpassword').focus();
 				vwfPortalModel.errorText("Error: Please ensure your username and password are both correct");
 			}
 			
 		});
 		xhr.addEventListener("error",function()
 		{
-			$('#txtusername').val('');
+			//$('#txtusername').val('');
 			$('#txtpassword').val('');
+			$('#txtpassword').focus();
 			
 			vwfPortalModel.errorText("Error: Please ensure your username and password are both correct");
 

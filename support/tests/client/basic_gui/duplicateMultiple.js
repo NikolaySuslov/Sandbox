@@ -9,7 +9,7 @@ module.exports = {
 		var testUtils = global.testUtils,
 			passed = true,
 			outStr = "",
-			dupNodes = []
+			dupNodes = [];
 			
 		browser.loadBlankScene()
 

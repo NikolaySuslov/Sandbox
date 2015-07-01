@@ -1,3 +1,39 @@
+<script type="text/javascript" src="{{root}}/js/spin.min.js"></script>
+<script type="text/javascript">
+	var opts = {
+	  lines: 7, // The number of lines to draw
+	  length: 2, // The length of each line
+	  width: 5, // The line thickness
+	  radius: 15, // The radius of the inner circle
+	  corners: 1, // Corner roundness (0..1)
+	  rotate: 0, // The rotation offset
+	  direction: 1, // 1: clockwise, -1: counterclockwise
+	  color: '#000', // #rgb or #rrggbb or array of colors
+	  speed: 0.8, // Rounds per second
+	  trail: 60, // Afterglow percentage
+	  shadow: false, // Whether to render a shadow
+	  hwaccel: false, // Whether to use hardware acceleration
+	  className: 'spinner', // The CSS class to assign to the spinner
+	  zIndex: 2e9, // The z-index (defaults to 2000000000)
+	  top: 'auto', // Top position relative to parent in px
+	  left: 'auto' // Left position relative to parent in px
+	};
+	window.onscroll = function () { window.scrollTo(0, 0); };
+	$(document).ready(function(){
+		$("body").addClass("bodyLoad");
+	});
+	
+	$(window).load(function(){
+		//$("body").animate({opacity:1}, 500);
+		$("#loadOverlay").animate({opacity:0}, 500, 'swing', function(){
+			spinner.stop();
+			$("#loadOverlay").remove();
+		});
+		$("body").removeClass("bodyLoad");
+		window.onscroll = function(){};
+	});
+	var spinner = new Spinner(opts);
+</script>
 <script type="text/javascript">
 var buf = new Uint32Array(1);
         Math.SecureRandom = function() {
@@ -10,30 +46,30 @@ var buf = new Uint32Array(1);
             return (buf[0]) / 4294967296;
         }
  </script>   
-<div class="row">
-	<div class="col-md-7" data-bind="foreach:avatarInfo">
-		<!-- ko foreach: $root.makeAvatarArr($data) -->
-			<div class="col-md-3">
-				<div class="avatarchoice" data-bind="click:function(data, e){$root.handleAvatarClick({data:data, parent:$parent}, e)}, attr:{id:$parent.model+'_' + $data.join('-')}">
-					<img data-bind="attr:{src:'./avatars/' + $parent.texture + $data[0] +'-'+ $data[1] +'.png'}" class="avatarPortrait">
+<div id="content" class="row" style="margin:10px auto;float:none;text-align:center;">
+	<div class="col-xs-12 col-md-9" style="margin:10px auto;float:none;text-align:center;">
+		<div class="col-xs-12 col-md-7" data-bind="foreach:avatarInfo">
+			<!-- ko foreach: $root.makeAvatarArr($data) -->
+			
+				<div class="col-xs-3">
+					<div class="avatarchoice" data-bind="click:function(data, e){$root.handleAvatarClick({data:data, parent:$parent}, e)}, attr:{id:$parent.model+'_' + $data.join('-')}">
+						<img data-bind="attr:{src:'./avatars/' + $parent.texture + $data[0] +'-'+ $data[1] +'.png'}" class="avatarPortrait">
+					</div>
 				</div>
-			</div>
-		<!-- /ko -->
-	</div>
-	<div class="col-md-5">
-	
-		<div style="margin: 0;">
-			<!--<img data-bind="attr:{src:currentAvatar()?'./avatars/' + currentAvatar().parent.texture + currentAvatar().data[0] +'-'+ currentAvatar().data[1] +'.png':''}"></img>-->
-			<div id="previewRender" data-bind="style: {'visibility':!spinnerVisible()?'visible':'invisibile'}"></div>
-			<div id="avatarSpinner" data-bind="visible:spinnerVisible"></div>
-			<div style="width:40%; margin:0 auto;">
-				<button class="btn btn-primary" style="margin: 15px 0 15px 52px;" data-bind="click:saveAvatar">Save</button>
-				<span data-bind="text:saveStatus" style="margin-left: 20px;color:#468847;"></span>				
+			<!-- /ko -->
+		</div>
+		<div class="col-xs-5" style="background:none;box-shadow:none;">
+			<div style="margin: 0;">
+				<!--<img data-bind="attr:{src:currentAvatar()?'./avatars/' + currentAvatar().parent.texture + currentAvatar().data[0] +'-'+ currentAvatar().data[1] +'.png':''}"></img>-->
+				<div id="previewRender" style="margin: 0 auto; margin-top:100px;" data-bind="style: {'visibility':!spinnerVisible()?'visible':'invisibile'}"></div>
+				<div id="avatarSpinner" style="margin: 0 auto;" data-bind="visible:spinnerVisible"></div>
+				<div style="width:40%; margin:0 auto;">
+					<button class="btn btn-primary" style="margin: 15px 0 15px 52px;" data-bind="click:saveAvatar">Save</button>
+					<span data-bind="text:saveStatus" style="margin-left: 20px;color:#468847;"></span>				
+				</div>
 			</div>
 		</div>
 	</div>
-	
-
 </div>
     
 <script type="text/javascript" src="{{root}}/vwf/model/threejs/three.js"></script>
@@ -213,6 +249,7 @@ var buf = new Uint32Array(1);
 						
 						ko.applyBindings(vwfPortalModel);
 						$("#"+vwfPortalModel.currentAvatar().parent.model+'_'+vwfPortalModel.currentAvatar().data.join('-')).css('border-color', "blue");	
+						center();
 					}
 					catch (e)
 					{

@@ -169,7 +169,7 @@ function LaunchAvatar(username_in,password_in,server_in,port_in,session_in)
             "member": username,
             "parameters": [{
                     "extends": "character.vwf",
-                    "source": "./avatars/VWS_Business_Female1.DAE",
+                    "source": "./avatars/VWS_Business_Male2.DAE",
                     "type": "subDriver/threejs/asset/vnd.collada+xml",
                     "properties": {
                         "PlayerNumber": username,
@@ -279,7 +279,7 @@ function LaunchAvatar(username_in,password_in,server_in,port_in,session_in)
                                 "offsetx": 0,
                                 "offsety": 0,
                                 "alpha": 1,
-                                "src": "./avatars/VWS_B_Female1-1.jpg",
+                                "src": "./avatars/VWS_B_Male2-3.jpg",
                                 "mapInput": 0
                             }],
                             "type": "phong",

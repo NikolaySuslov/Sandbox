@@ -19,7 +19,7 @@ module.exports = {
 		.waitForVisible('#editorPanelhierarchyManagertitle')
 		.$click('#editorPanelhierarchyManagertitle')
 		.pause(1000)
-        
+		
 		//Create some prims
 		.nextGUID('John')	//parent
 		.$click('#MenuCreateSphereicon')
@@ -64,7 +64,7 @@ module.exports = {
 				passed = false;
 				outStr += "Something is wrong with the parent. "
 			}
-			browser.pause(3000).then(finished(passed, outStr, true));
+			browser.pause(3000).then(finished(passed, outStr, false));
 		});
 		
 		

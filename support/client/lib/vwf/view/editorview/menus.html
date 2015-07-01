@@ -8,10 +8,10 @@
 	<li><a  id="MenuLogIn"><div class="glyphicon glyphicon-log-in"/>Log In</a></li>
 	  <li><a  id="MenuLogOut"><div class="glyphicon glyphicon-log-out"/>Log Out</a></li>
 	  <li><a  id="MenuSaveNow"><div class="glyphicon glyphicon-floppy-disk"/>Save Now</a></li>
-	  <li><a  id="MenuShareWorld"><div class="glyphicon glyphicon-share"/>Share</a></li>
-	  <li><a  id="SetThumbnail"><div class="glyphicon glyphicon-picture"/>Set World Thumbnail</a></li>
-	  <li><a  id="TestSettings"><div class="glyphicon glyphicon-globe"/>World Settings (ctrl+9)</a></li>
-	  <li><a  id="TestLaunch"><div class="glyphicon glyphicon-play"/>Play World (ctrl+0)</a></li>
+	  <li><a  id="MenuShareWorld" title="Share a link to this world with your colleagues"><div class="glyphicon glyphicon-share"/>Share</a></li>
+	  <li><a  id="SetThumbnail" title="Takes a screenshot and designates it as the public thumbnail"><div class="glyphicon glyphicon-picture"/>Set World Thumbnail</a></li>
+	  <li><a  id="TestSettings" title="Change the publish settings of this world"><div class="glyphicon glyphicon-globe"/>World Settings (ctrl+9)</a></li>
+	  <li><a  id="TestLaunch" title="Runs the world simulation complete with physics, behaviors, player input, etc."><div class="glyphicon glyphicon-play"/>Play World (ctrl+0)</a></li>
 </ul>
 </li>
 
@@ -19,44 +19,42 @@
   <ul>
 
 	  <li><a  id="MenuUndo"><div class="glyphicon glyphicon-share-alt"/>Undo (ctrl-z)</a></li>
-	  <li><a  id="MenuRedo"><div class="glyphicon glyphicon-share-alt"/>Redo (ctrl-y)</a></li>
-	  <li style='border-bottom:3px solid gray'></li>
-	  <li><a  id="MenuCopy"><div class="glyphicon glyphicon-copy"/>Copy (ctrl-c)</a></li>
-	  <li><a  id="MenuPaste"><div class="glyphicon glyphicon-paste"/>Paste (ctrl-v)</a></li>
-	  <li><a  id="MenuDuplicate"><div class="glyphicon glyphicon-duplicate"/>Duplicate (ctrl-s)</a></li>
-	  <li><a  id="MenuDelete"><div class="glyphicon glyphicon-trash"/>Delete (del)</a></li>
-
-	  <li style='border-bottom:3px solid gray'></li>
-
-	  <li><a  id="MenuShare"><div class="glyphicon glyphicon-share"/>Set Permissions</a></li>
+	  <li><a  id="MenuRedo"><div class="glyphicon glyphicon-share-alt"/>Redo (ctrl-y)</a></li> 	  
+	  <li style='border-bottom:3px solid gray'></li> 	
+	  <li><a  id="MenuCopy" title="Copies the currently selected object(s) to the internal clipboard"><div class="glyphicon glyphicon-copy"/>Copy (ctrl-c)</a></li>
+	  <li><a  id="MenuPaste" title="Pastes previously copied object(s) from the internal clipboard"><div class="glyphicon glyphicon-paste"/>Paste (ctrl-v)</a></li>
+	  <li><a  id="MenuDuplicate" title="Duplicates currently selected object(s)"><div class="glyphicon glyphicon-duplicate"/>Duplicate (ctrl-s)</a></li>
+	  <li><a  id="MenuDelete" title="Deletes currently selected object(s)"><div class="glyphicon glyphicon-trash"/>Delete (del)</a></li>
+	  <li style='border-bottom:3px solid gray'></li> 	
+	  <li><a  id="MenuShare" title="Specify which users are authorized to modify the world"><div class="glyphicon glyphicon-share"/>Set Permissions</a></li>
 	  <li><a id="MenuSelect" >Select</a>
 		<ul>
-			<li><a  id="MenuSelectName"><div class="glyphicon glyphicon-list"/>Select By Name</a></li>
-			<li><a  id="MenuSelectPick"><div class="glyphicon glyphicon-screenshot"/>Pick (q)</a></li>
-			<li><a  id="MenuSelectNone"><div class="glyphicon glyphicon-unchecked"/>Select None</a></li>
-			<li><a  id="MenuSelectScene"><div class="glyphicon glyphicon-film"/>Select Scene</a></li>
-		</ul>
+			<li><a  id="MenuSelectName" title="Opens a dialog enabling filtering by type and selection by name"><div class="glyphicon glyphicon-list"/>Select By Name</a></li>
+			<li><a  id="MenuSelectPick" title="Reverts select mode back to default"><div class="glyphicon glyphicon-screenshot"/>Pick (q)</a></li>
+			<li><a  id="MenuSelectNone" title="Deselects selected object(s)"><div class="glyphicon glyphicon-unchecked"/>Select None</a></li>
+			<li><a  id="MenuSelectScene" title="Selects the scene node"><div class="glyphicon glyphicon-film"/>Select Scene</a></li>
+		</ul>	
 	  </li>
 	  <li><a id="MenuTransforms" >Transform</a>
 		  <ul>
-			  <li><a  id="MenuMove"><div class="glyphicon glyphicon-move"/>Move (w)</a></li>
-			  <li><a  id="MenuRotate"><div class="glyphicon glyphicon-repeat"/>Rotate (e)</a></li>
-			  <li><a  id="MenuScale"><div class="glyphicon glyphicon-fullscreen"/>Scale (r)</a></li>
-			  <li><a  id="MenuMulti"><div class="glyphicon glyphicon-screenshot"/>Multi (t)</a></li>
-			 <li style='border-bottom:3px solid gray'></li>
-			  <li><a  id="MenuLocal">Local Coords</a></li>
-			  <li><a  id="MenuWorld">World Coords</a></li>
-			  <li style='border-bottom:3px solid gray'></li>
+			  <li><a  id="MenuMove" title="Enables the move tool on the currently selected object(s)"><div class="glyphicon glyphicon-move"/>Move (w)</a></li>
+			  <li><a  id="MenuRotate" title="Enables the rotate tool on the currently selected object(s)"><div class="glyphicon glyphicon-repeat"/>Rotate (e)</a></li>
+			  <li><a  id="MenuScale" title="Enables the scale tool on the currently selected object(s)"><div class="glyphicon glyphicon-fullscreen"/>Scale (r)</a></li>
+			  <li><a  id="MenuMulti" title="Enables the all transform tools on the currently selected object(s)"><div class="glyphicon glyphicon-screenshot"/>Multi (t)</a></li>
+			 <li style='border-bottom:3px solid gray'></li> 	
+			  <li><a  id="MenuLocal" title="Transform tools are presented with respect to selected object(s) local coordinates">Local Coords</a></li>
+			  <li><a  id="MenuWorld" title="Transform tools are presented with respect to world (global) coordinates">World Coords</a></li>
+			  <li style='border-bottom:3px solid gray'></li> 	
 			  <li><a id="MenuSnaps" >Snaps</a>
 			  <ul>
-				  <li><a  id="MenuSnapLarge">Large</a></li>
-				  <li><a  id="MenuSnapMedium">Medium</a></li>
-				  <li><a  id="MenuSnapSmall">Small</a></li>
-				  <li><a  id="MenuSnapOff">Off</a></li>
-
+				  <li><a  id="MenuSnapLarge" title="Transform changes snap at large increments">Large</a></li>
+				  <li><a  id="MenuSnapMedium" title="Transform changes snap at medium increments">Medium</a></li>
+				  <li><a  id="MenuSnapSmall" title="Transform changes snap at small increments">Small</a></li>
+				  <li><a  id="MenuSnapOff" title="Turns off transform snapping">Off</a></li>
+				  
 			  </ul>
-              <li style='border-bottom:3px solid gray'></li>
-              <li  style="z-index: 100;"><a  id="ResetTransforms">Reset Transforms</a></li>
+              <li style='border-bottom:3px solid gray'></li> 	
+              <li  style="z-index: 100;"><a  id="ResetTransforms" title="Resets selected object(s) back to their original position, rotation, and scale">Reset Transforms</a></li>
 			</li>
 		  </ul>
 	  </li>
@@ -65,37 +63,37 @@
 </li>
 <li><a  id="MenuCamera">Camera</a>
   <ul>
-  <li><a  id="MenuFocusSelected" ><div class="glyphicon glyphicon-screenshot"/>Focus Selected</a></li>
+  <li><a  id="MenuFocusSelected" title="Focuses editor viewport on the currently selected object(s)"><div class="glyphicon glyphicon-screenshot"/>Focus Selected</a></li>
   <li><a>Camera Sharing</a>
   <ul>
-  <li><a  id="MenuCameraShare"><div class="glyphicon glyphicon-share"/>Share Camera View</a></li>
-  <li><a  id="MenuCameraReceive"><div class="glyphicon glyphicon-share"/>Receive Camera Broadcasts</a></li>
-  <li><a  id="MenuCameraReceiveCancel"><div class="glyphicon glyphicon-share"/>Stop Receiving Camera Broadcasts</a></li>
+  <li><a  id="MenuCameraShare" title="Begins broadcasting editor viewport"><div class="glyphicon glyphicon-share"/>Share Camera View</a></li>
+  <li><a  id="MenuCameraReceive" title="Begins viewing remote viewport broadcast, if available"><div class="glyphicon glyphicon-share"/>Receive Camera Broadcasts</a></li>
+  <li><a  id="MenuCameraReceiveCancel" title="Stops viewing remote viewport broadcast"><div class="glyphicon glyphicon-share"/>Stop Receiving Camera Broadcasts</a></li>
   </ul>
   </li>
-  <li><a  id="MenuActivateCamera"><div class="glyphicon glyphicon-video"/>Activate Camera</a></li>
+  <li><a  id="MenuActivateCamera" title="Choose which camera to view in editor viewport"><div class="glyphicon glyphicon-video"/>Activate Camera</a></li>
   <li><a id="MenuDefaultCameras" ><div class="glyphicon glyphicon-new-window"/>Default Cameras</a>
        <ul>
-	<li><a  id="MenuCameraOrbit">Orbit</a></li>
-	<li><a  id="MenuCameraFree">Free</a></li>
-	<li><a  id="MenuCamera3RDPerson">Avatar View</a></li>
-	<li><a  id="MenuCameraNavigate">Navigate</a></li>
-	<li><a  id="MenuCameraFly">Fly</a></li>
-	<li><a  id="MenuCameraDeviceOrientation">Device Orientation</a></li>
+	<li><a  id="MenuCameraOrbit" title="Camera mode that supports rotation around a fixed point">Orbit</a></li>
+	<li><a  id="MenuCameraFree" title="Camera mode that emulates a first person view">Free</a></li>
+	<li><a  id="MenuCamera3RDPerson" title="Camera mode that orients itself behind your avatar">Avatar View</a></li>
+	<li><a  id="MenuCameraNavigate" title="Camera mode best suited to navigate around large regions of space">Navigate</a></li>
+	<li><a  id="MenuCameraFly" title="Camera mode that moves forward at a set speed">Fly</a></li>
+	<li><a  id="MenuCameraDeviceOrientation" title="Camera mode that uses mobile device's sensors to control viewport, if available">Device Orientation</a></li>
        </ul></li>
   </ul>
 </li>
 <li><a  id="MenuHierarchy">Hierarchy</a>
   <ul>
-  <li><a  id="MenuSetParent" ><div class="glyphicon glyphicon-link"/>Link</a></li>
-  <li><a  id="MenuRemoveParent" ><div class="glyphicon glyphicon-link"/>Unlink</a></li>
-  <li><a  id="MenuSelectParent" ><div class="glyphicon glyphicon-arrow-up"/>Select Parent</a></li>
+  <li><a  id="MenuSetParent" title="Links the currently selected object(s) to a single parent object"><div class="glyphicon glyphicon-link"/>Link</a></li>
+  <li><a  id="MenuRemoveParent" title="Removes link (parent-child relationships) between objects"><div class="glyphicon glyphicon-link"/>Unlink</a></li>
+  <li><a  id="MenuSelectParent" title="Selects the parent of the currently selected object(s)" ><div class="glyphicon glyphicon-arrow-up"/>Select Parent</a></li>
   <li><a id="MenuGrouping" >Grouping</a>
 		<ul>
-		  <li><a  id="MenuGroup"><div class="glyphicon glyphicon-oil"/>Group</a></li>
-		  <li><a  id="MenuUngroup"><div class="glyphicon glyphicon-duplicate"/>Ungroup</a></li>
-		  <li><a  id="MenuOpenGroup"><div class="glyphicon glyphicon-resize-full"/>Open Group</a></li>
-		  <li><a  id="MenuCloseGroup"><div class="glyphicon glyphicon-resize-small"/>Close Group</a></li>
+		  <li><a  id="MenuGroup" title="Creates a VWF node and adds selected object(s) as children"><div class="glyphicon glyphicon-oil"/>Group</a></li>
+		  <li><a  id="MenuUngroup" title="Removes object(s) from selected group and deletes group node"><div class="glyphicon glyphicon-duplicate"/>Ungroup</a></li>
+		  <li><a  id="MenuOpenGroup" title="Allows individual selection of grouped objects"><div class="glyphicon glyphicon-resize-full"/>Open Group</a></li>
+		  <li><a  id="MenuCloseGroup" title="Disallows individual selection of grouped objects"><div class="glyphicon glyphicon-resize-small"/>Close Group</a></li>
 		</ul>
   </ul>
 </li>
@@ -104,100 +102,101 @@
   <ul>
     <li><a id="MenuPrimitives" >Primitives</a>
 		<ul>
-		  <li><a  id="MenuCreateEmpty">Empty</a></li>
-		  <li><a  id="MenuCreateSphere">Sphere</a></li>
-		  <li><a  id="MenuCreateBox">Box</a></li>
-		  <li><a  id="MenuCreatePlane">Plane</a></li>
-		  <li><a  id="MenuCreateCylinder">Cylinder</a></li>
-		  <li><a  id="MenuCreateCone">Cone</a></li>
-		  <li><a  id="MenuCreateText">Text</a></li>
-		  <li><a  id="MenuCreateTorus">Torus</a></li>
+		  <li><a  id="MenuCreateEmpty" title="Creates an empty VWF node">Empty</a></li>
+		  <li><a  id="MenuCreateSphere" title="Creates a sphere">Sphere</a></li>
+		  <li><a  id="MenuCreateBox" title="Creates a box">Box</a></li>
+		  <li><a  id="MenuCreatePlane" title="Creates a plane">Plane</a></li>
+		  <li><a  id="MenuCreateCylinder" title="Creates a cylinder">Cylinder</a></li>
+		  <li><a  id="MenuCreateCone" title="Creates a cone">Cone</a></li>
+		  <li><a  id="MenuCreateText" title="Creates customizable text">Text</a></li>
+		  <li><a  id="MenuCreateTorus" title="Creates a torus">Torus</a></li>
 		</ul>
 	</li>
      <li><a id="MenuShapes" >Shapes</a>
 		<ul>
-		  <li><a  id="MenuCreateLine">Line</a></li>
-		  <li><a  id="MenuCreateCircle">Circle</a></li>
-		  <li><a  id="MenuCreateStar">Star</a></li>
-		  <li><a  id="MenuCreateRectangle">Rectangle</a></li>
-		  <li><a  id="MenuCreateLSection">L Section</a></li>
-		  <li><a  id="MenuCreateTSection">T Section</a></li>
-			<li><a  id="MenuCreateTurtle">L-System generator</a></li>
+		  <li><a  id="MenuCreateLine" title="Creates a line">Line</a></li>
+		  <li><a  id="MenuCreateCircle" title="Creates a circle">Circle</a></li>
+		  <li><a  id="MenuCreateStar" title="Creates a star">Star</a></li>
+		  <li><a  id="MenuCreateRectangle" title="Creates a rectangle">Rectangle</a></li>
+		  <li><a  id="MenuCreateLSection" title="Creates an L-shaped section">L Section</a></li>
+		  <li><a  id="MenuCreateTSection" title="Creates a T-shaped section">T Section</a></li>
+		  <li><a  id="MenuCreateTurtle">L-System generator</a></li>
+
 		</ul>
 	</li>
 	<li><a id="MenuModifiers" >Modifiers</a>
 		<ul>
-		  <li><a  id="MenuCreateBend">Bend</a></li>
-		  <li><a  id="MenuCreateTwist">Twist</a></li>
-		  <li><a  id="MenuCreateTaper">Taper</a></li>
-		  <li><a  id="MenuCreatePerlinNoise">Perlin Noise</a></li>
-		  <li><a  id="MenuCreateSimplexNoise">Simplex Noise</a></li>
-		  <li><a  id="MenuCreateOffset">Offset</a></li>
-		  <li><a  id="MenuCreateStretch">Stretch</a></li>
-		  <li><a  id="MenuCreatePush">Push</a></li>
-		  <li><a  id="MenuCreateUVMap">UVMap</a></li>
-		  <li><a  id="MenuCreateCenterPivot">Center Pivot</a></li>
-		  <li><a  id="MenuCreateExtrude">Extrude</a></li>
-		  <li><a  id="MenuCreatePathExtrude">Path Extrude</a></li>
-		  <li><a  id="MenuCreateLathe">Lathe</a></li>
+		  <li><a  id="MenuCreateBend" title="Adds a Bend modifier to selected object">Bend</a></li>
+		  <li><a  id="MenuCreateTwist" title="Adds a Twist modifier to selected object">Twist</a></li>
+		  <li><a  id="MenuCreateTaper" title="Adds a Taper modifier to selected object">Taper</a></li>
+		  <li><a  id="MenuCreatePerlinNoise" title="Adds a Perlin Noise modifier to selected object">Perlin Noise</a></li>
+		  <li><a  id="MenuCreateSimplexNoise" title="Adds a Simplex Noise modifier to selected object">Simplex Noise</a></li>
+		  <li><a  id="MenuCreateOffset" title="Adds a Offset modifier to selected object">Offset</a></li>
+		  <li><a  id="MenuCreateStretch" title="Adds a Stretch modifier to selected object">Stretch</a></li>
+		  <li><a  id="MenuCreatePush" title="Adds a Push modifier to selected object">Push</a></li>
+		  <li><a  id="MenuCreateUVMap" title="Adds a UVMap modifier to selected object">UVMap</a></li>
+		  <!--<li><a  id="MenuCreateCenterPivot" title="Adds a Center Pivot modifier to selected object">Center Pivot</a></li>-->
+		  <li><a  id="MenuCreateExtrude" title="Adds a Extrude modifier to selected object">Extrude</a></li>
+		  <li><a  id="MenuCreatePathExtrude" title="Adds a Path Extrude modifier to selected object">Path Extrude</a></li>
+		  <li><a  id="MenuCreateLathe" title="Adds a Lathe modifier to selected object">Lathe</a></li>
 		</ul>
 	</li>
 	<li><a id="MenuBehaviors" >Behaviors</a>
 		<ul>
-		  <li><a  id="MenuCreateBlankBehavior">New Behavior</a></li>
-		  <li><a  id="MenuCreateBehaviorRotator">Rotator</a></li>
-		  <li><a  id="MenuCreateBehaviorOrbit">Orbit</a></li>
-		  <li><a  id="MenuCreateBehaviorHyperlink">Hyper link</a></li>
-		  <li><a  id="MenuCreateBehaviorHoverlabel">Hover label</a></li>
-		  <li><a  id="MenuCreateBehaviorPathFollow">Path Follow</a></li>
-		  <li><a  id="MenuCreateBehaviorClampToGround">Clamp To Ground</a></li>
-		  <li><a  id="MenuCreateBehaviorLookat">LookAt</a></li>
-		  <li><a  id="MenuCreateBehaviorSeek">Seek</a></li>
+		  <li><a  id="MenuCreateBlankBehavior" title="Adds an empty VWF behavior node to selected object">New Behavior</a></li>
+		  <li><a  id="MenuCreateBehaviorRotator" title="Adds a Rotator behavior to selected object">Rotator</a></li>
+		  <li><a  id="MenuCreateBehaviorOrbit" title="Adds an Orbit behavior to selected object">Orbit</a></li>
+		  <li><a  id="MenuCreateBehaviorHyperlink" title="Adds a Hyperlink to selected object">Hyperlink</a></li>
+		  <li><a  id="MenuCreateBehaviorHoverlabel" title="Adds a Hover label to selected object">Hover label</a></li>
+		  <li><a  id="MenuCreateBehaviorPathFollow" title="Adds a Path Follow behavior to selected object">Path Follow</a></li>
+		  <li><a  id="MenuCreateBehaviorClampToGround" title="Adds a Clamp To Ground behavior to selected object">Clamp To Ground</a></li>
+		  <li><a  id="MenuCreateBehaviorLookat" title="Adds a LookAt behavior to selected object">LookAt</a></li>
+		  <li><a  id="MenuCreateBehaviorSeek" title="Adds a Seek behavior to selected object">Seek</a></li>
 		</ul>
 	</li>
 	<li><a id="MenuPhysics"> Physics </a>
 		<ul>
-		  <li><a  id="MenuPhysicsPointConstraint">Point Constraint</a></li>
-		  <li><a  id="MenuPhysicsHingeConstraint">Hinge Constraint</a></li>
-		  <li><a  id="MenuPhysicsSliderConstraint">Slider Constraint</a></li>
-		  <li><a  id="MenuPhysicsFixedConstraint">Fixed Constraint</a></li>
-		</ul>
+		  <li><a  id="MenuPhysicsPointConstraint" title="Rotation of connected objects occur around a single pivot point">Point Constraint</a></li>
+		  <li><a  id="MenuPhysicsHingeConstraint" title="Rotation of connected objects occur around a single axis (or hinge)">Hinge Constraint</a></li>
+		  <li><a  id="MenuPhysicsSliderConstraint" title="Connected objects are restricted to only translation along a single axis">Slider Constraint</a></li>
+		  <li><a  id="MenuPhysicsFixedConstraint" title="Restricts local rotation and local translation of connected objects">Fixed Constraint</a></li>
+		</ul>  
 	</li>
 	<li><a id="MenuLights" >Lights</a>
 		<ul>
-		  <li><a  id="MenuCreateLightPoint">Point</a></li>
-		  <li><a  id="MenuCreateLightSpot">Spot</a></li>
-		  <li><a  id="MenuCreateLightDirectional">Directional</a></li>
+		  <li><a  id="MenuCreateLightPoint" title="Creates a Point light">Point</a></li>
+		  <li><a  id="MenuCreateLightSpot" title="Creates a Spot light">Spot</a></li>
+		  <li><a  id="MenuCreateLightDirectional" title="Creates a Directional light">Directional</a></li>
 		</ul>
 	</li>
 	<li><a id="MenuParticles" >Particles</a>
 		<ul>
-		  <li><a  id="MenuCreateParticlesBasic">Basic</a></li>
-		  <li><a  id="MenuCreateParticlesSpray">Spray</a></li>
-		  <li><a  id="MenuCreateParticlesSuspended">Suspended</a></li>
-		  <li><a  id="MenuCreateParticlesAtmospheric">Atmospheric</a></li>
+		  <li><a  id="MenuCreateParticlesBasic" title="Creates a basic particle emitter">Basic</a></li>
+		  <li><a  id="MenuCreateParticlesSpray" title="Creates a spray particle emitter">Spray</a></li>
+		  <li><a  id="MenuCreateParticlesSuspended" title="Creates a suspended (ambient dust) particle emitter">Suspended</a></li>
+		  <li><a  id="MenuCreateParticlesAtmospheric" title="Creates an atmospheric (precipitation) particle emitter">Atmospheric</a></li>
 		</ul>
 	</li>
 	<li><a id="MenuCameras" >Cameras</a>
 		<ul>
-		  <li><a  id="MenuCreateCameraPerspective">Perspective</a></li>
+		  <li><a  id="MenuCreateCameraPerspective" title="Creates a new perspective camera">Perspective</a></li>
 		</ul>
 	</li>
 	<li><a  id="Terrain">Terrain</a>
 		<ul>
-		  <li><a  id="MenuCreateTerrain">Terrain</a></li>
-		  <li><a  id="MenuCreateTerrainGrass">Grass</a></li>
+		  <li><a  id="MenuCreateTerrain" title="Generates a random terrain with rolling hills">Terrain</a></li>
+		  <li><a  id="MenuCreateTerrainGrass" title="Generates grass on an existing terrain">Grass</a></li>
 		</ul>
 	</li>
 	<li><a  id="GUI">GUI Elements</a>
 		<ul>
-		  <li><a  id="MenuCreateGUIDialog">Dialog</a></li>
-		  <li><a  id="MenuCreateGUIButton">Button</a></li>
-		  <li><a  id="MenuCreateGUILabel">Label</a></li>
-		  <li><a  id="MenuCreateGUISlider">Slider</a></li>
-		  <li><a  id="MenuCreateGUICheck">Checkbox</a></li>
-		  <li><a  id="MenuCreateGUIPanel">Panel</a></li>
-		  <li><a  id="MenuCreateGUIImage">Image</a></li>
+		  <li><a  id="MenuCreateGUIDialog" title="Creates a basic dialog box that is optionally added to a selected panel">Dialog</a></li>
+		  <li><a  id="MenuCreateGUIButton" title="Creates a button that is optionally added to a selected panel">Button</a></li>
+		  <li><a  id="MenuCreateGUILabel" title="Creates a label that is optionally added to a selected panel">Label</a></li>
+		  <li><a  id="MenuCreateGUISlider" title="Creates a slider that is optionally added to a selected panel">Slider</a></li>
+		  <li><a  id="MenuCreateGUICheck" title="Creates a checkbox that is optionally added to a selected panel">Checkbox</a></li>
+		  <li><a  id="MenuCreateGUIPanel" title="Creates a panel that is optionally added to a selected panel">Panel</a></li>
+		  <li><a  id="MenuCreateGUIImage" title="Creates an image that is optionally added to a selected panel">Image</a></li>
 		</ul>
 	</li>
 
@@ -208,26 +207,26 @@
 	<ul>
 		<li><a id="MenuAssetsSaveAs"><div class='glyphicon glyphicon-save'/>Create New Asset</a>
 			<ul>
-				<li><a id="MenuAssetsSaveAsEntity"><div class='glyphicon glyphicon-book'/>From Sel. Entity</a></li>
-				<li><a id="MenuAssetsSaveAsMaterial"><div class="glyphicon glyphicon-tint"/>From Sel. Material</a></li>
-				<li><a id="MenuAssetsSaveAsBehavior"><div class='glyphicon glyphicon-cog'/>From Sel. Behavior</a></li>
-				<li><a id="MenuAssetsSaveAsFile"><div class='glyphicon glyphicon-hdd'/>From File</a></li>
+				<li><a id="MenuAssetsSaveAsEntity" title="Creates a new reusable asset from the currently selected entity"><div class='glyphicon glyphicon-book'/>From Sel. Entity</a></li>
+				<li><a id="MenuAssetsSaveAsMaterial" title="Creates a new reusable asset from the currently selected material"><div class="glyphicon glyphicon-tint"/>From Sel. Material</a></li>
+				<li><a id="MenuAssetsSaveAsBehavior" title="Creates a new reusable asset from the currently selected behavior"><div class='glyphicon glyphicon-cog'/>From Sel. Behavior</a></li>
+				<li><a id="MenuAssetsSaveAsFile" title="Creates a new reusable asset via file upload"><div class='glyphicon glyphicon-hdd'/>From File</a></li>
 			</ul>
 		</li>
 		<li><a id='MenuAssetsSave'><div class='glyphicon glyphicon-floppy-save'/>Refresh Asset</a>
 			<ul>
-				<li><a id="MenuAssetsSaveEntity"><div class='glyphicon glyphicon-book'/>From Sel. Entity</a></li>
-				<li><a id="MenuAssetsSaveMaterial"><div class="glyphicon glyphicon-tint"/>From Sel. Material</a></li>
-				<li><a id="MenuAssetsSaveBehavior"><div class='glyphicon glyphicon-cog'/>From Sel. Behavior</a></li>
+				<li><a id="MenuAssetsSaveEntity" title="If available, updates asset with the currently selected entity modified in the Sandbox"><div class='glyphicon glyphicon-book'/>From Sel. Entity</a></li>
+				<li><a id="MenuAssetsSaveMaterial" title="If available, updates asset with the currently selected material modified in the Sandbox"><div class="glyphicon glyphicon-tint"/>From Sel. Material</a></li>
+				<li><a id="MenuAssetsSaveBehavior" title="If available, updates asset with the currently selected behavior modified in the Sandbox"><div class='glyphicon glyphicon-cog'/>From Sel. Behavior</a></li>
 			</ul>
 		</li>
 		<li><a id="MenuManageAssets"><div class="glyphicon glyphicon-cloud"/>Manage Your Assets</a></li>
 		<li style='border-bottom:3px solid gray'></li>
-		<li><a id="MenuCreateLoadMeshURL"><div class="glyphicon glyphicon-cloud-download"/>Load Mesh By URL</a></li>
+		<li><a id="MenuCreateLoadMeshURL" title="Imports a mesh hosted on a remote server"><div class="glyphicon glyphicon-cloud-download"/>Load Mesh By URL</a></li>
 		<li><a id="MenuAssets3DR">3DR</a>
 			<ul>
-				<!-- <li><a id="MenuAssets3DRUpload"><div class="glyphicon glyphicon-cloud-upload"/>Upload Mesh to 3DR</a></li> -->
-				<li><a id="MenuAssets3DRBrowse"><div class="glyphicon glyphicon-tree-deciduous"/>Browse 3D Repository</a></li>
+				<!-- <li><a id="MenuAssets3DRUpload" title="Opens file upload dialog to host mesh on the 3D Repository"><div class="glyphicon glyphicon-cloud-upload"/>Upload Mesh to 3DR</a></li> -->
+				<li><a id="MenuAssets3DRBrowse" title="Searches for and imports remote assets from the 3D Repository"><div class="glyphicon glyphicon-tree-deciduous"/>Search 3D Repository</a></li>
 			</ul>
 		</li>
 	</ul>
@@ -236,54 +235,47 @@
   <ul>
   <li><a  id="MenuLocation">Location</a>
     <ul>
-      <li><a  id="LocationGoToPosition">Go to Position...</a></li>
-      <li><a  id="LocationGoToPlacemark">Go to Placemark...</a></li>
-      <li><a  id="LocationAddPlacemark">Add Placemark...</a></li>
-      <li><a  id="LocationMoveToGround">Move to ground</a></li>
+      <li><a  id="LocationGoToPosition" title="Moves avatar to specified location">Go to Position...</a></li>
+      <li><a  id="LocationGoToPlacemark" title="Moves avatar to existing placemark">Go to Placemark...</a></li>
+      <li><a  id="LocationAddPlacemark" title="Creates a placemark at avatar's current position">Add Placemark...</a></li>
+      <li><a  id="LocationMoveToGround" title="Moves avatar to ground if there is a terrain or to ground plane otherwise">Move to ground</a></li>
     </ul>
   </li>
-  <li><a  id="MenuAlign"><div class="glyphicon glyphicon-object-align-bottom"/>Align</a></li>
-  <li><a  id="MenuBlockPainter"><div class="glyphicon glyphicon-equalizer"/>Block Painter</a></li>
-  <li><a  id="MenuSplineTools"><div class="glyphicon glyphicon-pencil"/>Spline Tools</a></li>
-  <li><a  id="ToolsShowID"><div class="glyphicon glyphicon-console"/>Show ID</a></li>
-  <li><a  id="ToolsShowVWF"><div class="glyphicon glyphicon-console"/>Show VWF Entity Definition</a></li>
-  <li><a  id="ToolsShowVWFSaveData"><div class="glyphicon glyphicon-console"/>Show Sandbox Scene Definition</a></li>
-
-
-  <li style='border-bottom:3px solid gray'></li>
-  <li><a  id="MenuToolsManageAssets"><div class="glyphicon glyphicon-cloud"/>Manage Assets</a></li>
-
-  
-
+  <li><a  id="MenuAlign" title="Aligns two objects with respect to different axes"><div class="glyphicon glyphicon-object-align-bottom"/>Align</a></li>
+  <li><a  id="MenuBlockPainter" title="'Paints' a textured cube in voxel style"><div class="glyphicon glyphicon-equalizer"/>Block Painter</a></li>
+  <li><a  id="MenuSplineTools" title="Freely manipulate a line's vertices"><div class="glyphicon glyphicon-pencil"/>Spline Tools</a></li>
+  <li><a  id="ToolsShowID" title="Displays the currently selected object's VWF ID"><div class="glyphicon glyphicon-console"/>Show ID</a></li>
+  <li><a  id="ToolsShowVWF" title="View and modify the currently selected object's entity definition JSON"><div class="glyphicon glyphicon-console"/>Show VWF Entity Definition</a></li>
+  <li><a  id="ToolsShowVWFSaveData" title="View and modify the Sandbox's scene definition JSON"><div class="glyphicon glyphicon-console"/>Show Sandbox Scene Definition</a></li>
   </ul>
 </li>
 <li><a  id="MenuWindows">Windows</a>
   <ul>
-  <li><a  id="MenuChat"><div class="glyphicon glyphicon-comment"/>Chat</a></li>
-  <li><a  id="MenuUsers"><div class="glyphicon glyphicon-user"/>Users</a></li>
-  <li><a  id="MenuMaterialEditor"><div class="glyphicon glyphicon-tint"/>Material Editor</a></li>
-  <li><a  id="MenuScriptEditor"><div class="glyphicon glyphicon-console"/>Script Editor</a></li>
-  <li><a  id="MenuObjectProperties"><div class="glyphicon glyphicon-tasks"/>Object Properties</a></li>
-  <li><a  id="MenuHierarchyManager"><div class="glyphicon glyphicon-sort-by-attributes-alt"/>Show Hierarchy</a></li>
-  <li><a  id="MenuPhysicsEditor"><div class="glyphicon glyphicon-wrench"/>Physics Editor</a></li>
+  <li><a  id="MenuChat" title="Opens the global chat dialog"><div class="glyphicon glyphicon-comment"/>Chat</a></li>
+  <li><a  id="MenuUsers" title="Adds a list of other players in this world to the sidebar"><div class="glyphicon glyphicon-user"/>Users</a></li>
+  <li><a  id="MenuMaterialEditor" title="Opens the material definition widget in sidebar"><div class="glyphicon glyphicon-tint"/>Material Editor</a></li>
+  <li><a  id="MenuScriptEditor" title="Opens the Sandbox script editor"><div class="glyphicon glyphicon-console"/>Script Editor</a></li>
+  <li><a  id="MenuObjectProperties" title="Opens the object properties widget in sidebar"><div class="glyphicon glyphicon-tasks"/>Object Properties</a></li>
+  <li><a  id="MenuHierarchyManager" title="Opens the hierarchy widget in sidebar"><div class="glyphicon glyphicon-sort-by-attributes-alt"/>Show Hierarchy</a></li>
+  <li><a  id="MenuPhysicsEditor" title="Opens the physics widget in sidebar"><div class="glyphicon glyphicon-wrench"/>Physics Editor</a></li>
   </ul>
 </li>
 <li><a  id="MenuRendering">Rendering</a>
   <ul>
-
-  <li><a  id="MenuViewHideTools">Hide Tools</a></li>
-  <li><a  id="MenuViewToggleWireframe">Toggle Wireframe</a></li>
-  <li><a  id="MenuViewToggleBones">Toggle Bone Display</a></li>
-  <li><a  id="MenuViewGlyphs">Toggle Glyphs</a></li>
-  <li><a  id="MenuViewFullscreen">Toggle Full Screen</a></li>
-  <li><a  id="MenuViewTogglePhysics">Toggle Physics Display</a></li>
-  <li><a  id="MenuViewStats">Toggle Stats</a></li>
-  <li><a  id="MenuViewInterpolation">Toggle Interpolation</a></li>
-  <li><a  id="MenuViewOctree">Toggle Octree Display</a></li>
-  <li><a  id="MenuViewRenderNormal">Normal Rendering</a></li>
-  <li><a  id="MenuViewRenderStereo">Stereo Rendering</a></li>
-  <li><a  id="MenuViewRenderVR">VR Rendering</a></li>
-  <li><a  id="MenuViewTabletDemo">Tablet Demo Mode</a></li>
+ 
+  <li><a  id="MenuViewHideTools" title="Hides all authoring tools including menu and toolbars">Hide Tools</a></li>
+  <li><a  id="MenuViewToggleWireframe" title="Toggles wireframe mode for all objects in the scene">Toggle Wireframe</a></li>
+  <li><a  id="MenuViewToggleBones" title="Toggles the display of skeleton overlay is available">Toggle Bone Display</a></li>
+  <li><a  id="MenuViewGlyphs" title="Toggles glyphs (2D representation of hard-to-select objects like camera and scene)">Toggle Glyphs</a></li>
+  <li><a  id="MenuViewFullscreen" title="Toggles full screen mode (F11)">Toggle Full Screen</a></li>
+  <li><a  id="MenuViewTogglePhysics" title="Toggles the rendering of bones in meshes">Toggle Physics Display</a></li>
+  <li><a  id="MenuViewStats" title="Toggles display of FPS counter and graph">Toggle Stats</a></li>
+  <li><a  id="MenuViewInterpolation" title="Smoothens animations by effectively increasing the framerate via interpolation">Toggle Interpolation</a></li>
+  <li><a  id="MenuViewOctree" title="Displays octree subdivision lines">Toggle Octree Display</a></li>
+  <li><a  id="MenuViewRenderNormal" title="Reverts back to default rendering mode">Normal Rendering</a></li>
+  <li><a  id="MenuViewRenderStereo" title="Renders scene in steroscopic mode">Stereo Rendering</a></li>
+  <li><a  id="MenuViewRenderVR" title="Renders scene using WebVR APIs, if available">VR Rendering</a></li>
+  <li><a  id="MenuViewTabletDemo" title="Renders the scene for mobile device VR (Google Cardboard)">Tablet Demo Mode</a></li>
 
 
 

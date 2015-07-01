@@ -11,56 +11,56 @@ module.exports = {
 		
 		//Create Line from shapes menu
 		.nextGUID('testLine')
-		.click('#MenuCreate')
+		.$click('#MenuCreate')
 		.waitForVisible('#MenuShapes')
-		.click('#MenuShapes')
+		.$click('#MenuShapes')
 		.waitForVisible('#MenuCreateLine')
-		.click('#MenuCreateLine')
+		.$click('#MenuCreateLine')
 		
 		//Create Circle from menu
 		.pause(1000)
 		.nextGUID('testCircle')
-		.click('#MenuCreate')
+		.$click('#MenuCreate')
 		.waitForVisible('#MenuShapes')
-		.click('#MenuShapes')
+		.$click('#MenuShapes')
 		.waitForVisible('#MenuCreateCircle')
-		.click('#MenuCreateCircle')
+		.$click('#MenuCreateCircle')
 		
 		//Create Star from menu
 		.pause(1000)
 		.nextGUID('testStar')
-		.click('#MenuCreate')
+		.$click('#MenuCreate')
 		.waitForVisible('#MenuShapes')
-		.click('#MenuShapes')
+		.$click('#MenuShapes')
 		.waitForVisible('#MenuCreateStar')
-		.click('#MenuCreateStar')
+		.$click('#MenuCreateStar')
 		
 		//Create Rectangle from menu
 		.pause(1000)
 		.nextGUID('testRectangle')
-		.click('#MenuCreate')
+		.$click('#MenuCreate')
 		.waitForVisible('#MenuShapes')
-		.click('#MenuShapes')
+		.$click('#MenuShapes')
 		.waitForVisible('#MenuCreateRectangle')
-		.click('#MenuCreateRectangle')
+		.$click('#MenuCreateRectangle')
 		
 		//Create lSection from menu
 		.pause(1000)
 		.nextGUID('testLSection')
-		.click('#MenuCreate')
+		.$click('#MenuCreate')
 		.waitForVisible('#MenuShapes')
-		.click('#MenuShapes')
+		.$click('#MenuShapes')
 		.waitForVisible('#MenuCreateLSection')
-		.click('#MenuCreateLSection')
+		.$click('#MenuCreateLSection')
 		
 		//Create tSection from menu
 		.pause(1000)
 		.nextGUID('testTSection')
-		.click('#MenuCreate')
+		.$click('#MenuCreate')
 		.waitForVisible('#MenuShapes')
-		.click('#MenuShapes')
+		.$click('#MenuShapes')
 		.waitForVisible('#MenuCreateTSection')
-		.click('#MenuCreateTSection')
+		.$click('#MenuCreateTSection')
 		
 		//Verify Line
 		.pause(3000).then(function() {

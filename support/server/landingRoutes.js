@@ -73,7 +73,7 @@ function getRoot() {
 
 }
 
-exports.acceptedRoutes = ['about', 'features', 'demos', 'createNotLoggedIn', 'home', 'tools', 'performancetest', 'examples', 'settings', 'restore', 'createNew', 'welcome', 'search', 'forgotPassword', 'editProfile', 'updatePassword', 'test', 'avatar', 'sandbox', 'index', 'create', 'signup', 'login', 'logout', 'edit', 'remove', 'history', 'user', 'worlds', 'admin', 'admin/users', 'admin/worlds', 'admin/edit', 'publish', 'index_ru'];
+exports.acceptedRoutes = ['about', 'features', 'demos', 'createNotLoggedIn', 'home', 'tools', 'performancetestJavascript', 'performancetestGraphics', 'examples', 'settings', 'restore', 'createNew', 'welcome', 'search', 'forgotPassword', 'editProfile', 'updatePassword', 'test', 'avatar', 'sandbox', 'index', 'create', 'signup', 'login', 'logout', 'edit', 'remove', 'history', 'user', 'worlds', 'admin', 'admin/users', 'admin/worlds', 'admin/edit', 'publish', 'index_ru'];
 
 routesMap = {
     'sandbox': {
@@ -85,7 +85,10 @@ routesMap = {
     'tools': {
         layout: 'template_vle'
     },
-    'performancetest': {
+    'performancetestJavascript': {
+        layout: 'template_vle'
+    },
+    'performancetestGraphics': {
         layout: 'template_vle'
     },
     'examples': {
@@ -153,7 +156,8 @@ routesMap = {
     },
     'avatar': {
         avatar: true,
-        requiresLogin: true
+        requiresLogin: true,
+		layout: 'plain'
     },
     'create': {
         requiresLogin: true
