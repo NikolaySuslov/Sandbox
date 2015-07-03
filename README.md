@@ -18,7 +18,7 @@ Features
 Requirements (Server)
 ---------------------
 
-* Node.js v0.8 or newer
+* Node.js v0.12.4 or newer
 * Minimal CPU and memory resources
 
 Requirements (Client)

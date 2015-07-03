@@ -1441,6 +1441,7 @@ function serve(request, response)
 	//Load the session data
 	sessions.GetSessionData(request, function(__session)
 	{
+		if(!URL.query) URL.query = {};
 		URL.loginData = __session;
 		//Allow requests to submit the username in the URL querystring if not session data
 		var UID;

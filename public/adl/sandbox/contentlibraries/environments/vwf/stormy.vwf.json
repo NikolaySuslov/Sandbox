@@ -1,31 +1,15 @@
 {
     "properties": {
-        "navmode": "none",
-        "sunColor": [1, 1, 1],
-        "sunDirection": [0.5, 1, 1],
-        "sunIntensity": 0.8,
-        "shadowDarkness": 0.65,
-        "ambientColor": [0.35, 0.35, 0.35],
+        
+
+        "ambientColor": [0.5803921568627451, 0.5568627450980392, 0.5568627450980392],
         "fogColor": [0.27450980392156865, 0.39215686274509803, 0.49019607843137253],
-        "fogNear": 0,
+        "fogDensity": 0.055,
         "fogFar": 98,
+        "fogNear": 0,
         "fogType": "exp",
-        "fogDensity": 0.022,
-        "fogVFalloff": 0.539,
-        "fogVFalloffStart": -2.5,
-        "skyColorBlend": 0.14,
-        "skyFogBlend": 0.37,
-        "skyApexColor": [0.741176470588235, 0.901960784313726, 1],
-        "skyHorizonColor": [1, 1, 1],
-        "___physics_gravity": [0, 0, -9.8],
-        "___physics_accuracy": 10,
-        "___physics_active": true,
-        "vAtmosphereDensity": 0.0005,
-        "playMode": "stop",
-        "octreeObjects": 5,
-        "octreeDepth": 16,
-        "octreeExtents": 640,
-        "skyTexture": "stormy",
+        "fogVFalloff": 0.971,
+        "fogVFalloffStart": -1.2,
         "materialDef": {
             "shininess": 4,
             "alpha": 1,
@@ -53,23 +37,35 @@
                 "g": 0.6784313725490196,
                 "b": 0.47058823529411764
             },
-            "specularLevel": 3.05,
+            "specularLevel": 0,
             "layers": [{
-                "alpha": 1,
-                "blendMode": 0,
-                "mapInput": 0,
-                "mapTo": 1,
-                "offsetx": 0.11,
-                "offsety": 0.11,
-                "rot": 0,
-                "scalex": "100",
-                "scaley": "100",
-                "src": "./contentlibraries/environments/assets/stone2.png"
-            }],
+                    "alpha": 1,
+                    "blendMode": 0,
+                    "mapInput": 0,
+                    "mapTo": 1,
+                    "offsetx": 0.11,
+                    "offsety": 0.11,
+                    "rot": 0,
+                    "scalex": "100",
+                    "scaley": "100",
+                    "src": "../vwfDataManager.svc/texture?UID=ice\\ice\\Tileable1f.png"
+                }
+            ],
             "type": "phong",
             "side": 2,
 			"wireframe": false
         },
-        "skyAtmosphereDensity": 0.62
+        "shadowDarkness": 0.3,
+        "simTime": 0,
+        "skyApexColor": [0.741176470588235, 0.901960784313726, 1],
+        "skyAtmosphereDensity": 0.62,
+        "skyColorBlend": 0.14,
+        "skyFogBlend": 0.51,
+        "skyHorizonColor": [0.06274509803921569, 0.2196078431372549, 0.3411764705882353],
+        "skyTexture": "StormClouds",
+        "sunColor": [1, 1, 1],
+        "sunDirection": [0.5, 5.25, 1],
+        "sunIntensity": 0.2,
+        "vAtmosphereDensity": 0.0005
     }
 }

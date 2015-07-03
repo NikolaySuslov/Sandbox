@@ -24,7 +24,7 @@
     "gm": "~1.8.1",
     "hogan-express": "~0.3.3",
     "http-proxy": "~1.9.0",
-    "i18next": "~1.7.1",
+    "i18next": "1.7.1",
     "jade": "~1.9.1",
     "js-yaml": "~2.0.2",
     "method-override": "~2.3.1",
@@ -60,8 +60,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rbjarnason/contact.git"
+    "url": "https://github.com/adlnet/Sandbox.git"
   },
+  "scripts": {
+    "start": "node ./app.js"
+  }, 
   "keywords": [
     "virtual",
     "world",
