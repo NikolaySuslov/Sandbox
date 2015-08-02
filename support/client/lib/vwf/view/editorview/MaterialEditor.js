@@ -163,7 +163,7 @@ define(["vwf/view/editorview/mapbrowser", "vwf/view/editorview/colorpicker.js"],
             _MaterialEditor.BuildGUI();
         }
         this.updateObject = function(skipUndo) {
-            if (document.PlayerNumber == null) {
+            if (_UserManager.GetCurrentUserName() == null) {
                 _Notifier.notify('You must log in to participate');
                 return;
             }

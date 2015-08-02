@@ -888,6 +888,23 @@
          }
          this.updateCamera();
      }
+     //zoom the camera to orbit around a given THREE.js node
+     this.zoomToThreeNode = function(node)
+     {
+        var box = node.GetBoundingBox();
+       
+        var center = [(box.max[0] + box.min[0])/2,
+        (box.max[1] + box.min[1])/2,
+        (box.max[2] + box.min[2])/2,]
+
+        if (box && box.max.indexOf(-Infinity) == -1 && box.min.indexOf(Infinity) == -1)
+            var dist = Math.max(box.max[0] - box.min[0], box.max[1] - box.min[1], box.max[2] - box.min[2]) + 2;
+        else
+            dist = 3;
+
+        this.orbitPoint(center);
+        this.zoom = dist;  
+     }
  }
  define([],function()
  {

@@ -308,7 +308,7 @@ SceneManager.prototype.SphereCast = function(center, r, opts) {
     //let's lazy update only on demand;
    
     var hitlist = this.root.SphereCast(center, r, opts || this.defaultPickOptions);
-    hitlist = hitlist.concat(this.staticRoot.SphereCast(center, opts || this.defaultPickOptions));
+    hitlist = hitlist.concat(this.staticRoot.SphereCast(center, r, opts || this.defaultPickOptions));
     for (var i = 0; i < this.specialCaseObjects.length; i++) {
         var childhits = this.specialCaseObjects[i].SphereCast(center, r, opts || this.defaultPickOptions);
         if (childhits)

@@ -63,7 +63,7 @@ define(function() {
 			HierarchyManager.explode()
 		});
 		this.createChild = function(parent, name, proto, uri, callback) {
-			if (document.PlayerNumber == null) {
+			if (_UserManager.GetCurrentUserName() == null) {
 				_Notifier.notify('You must log in to participate');
 				return;
 			}
@@ -82,7 +82,7 @@ define(function() {
 		this.offClicked = function() {
 			$('#InventoryRename').hide();
 			if (HierarchyManager.inRename) {
-				_DataManager.renamehierarchyItem(document.PlayerNumber, HierarchyManager.selectedName, $('#InventoryRename').val(), HierarchyManager.selectedType);
+				_DataManager.renamehierarchyItem(_UserManager.GetCurrentUserName(), HierarchyManager.selectedName, $('#InventoryRename').val(), HierarchyManager.selectedType);
 				HierarchyManager.BuildGUI();
 				HierarchyManager.inRename = false;
 			}
@@ -134,7 +134,7 @@ define(function() {
 					type: "link_existing/threejs",
 					source: childname,
 					properties: {
-						owner: document.PlayerNumber,
+						owner: _UserManager.GetCurrentUserName(),
 						type: '3DR Object',
 						DisplayName: childname,
 						transform: matCpy(node.matrix.elements)
@@ -162,7 +162,7 @@ define(function() {
 							type: "link_existing/threejs",
 							source: childname,
 							properties: {
-								owner: document.PlayerNumber,
+								owner: _UserManager.GetCurrentUserName(),
 								type: '3DR Object',
 								DisplayName: childname,
 								transform: matCpy(node.matrix.elements)
@@ -412,7 +412,7 @@ define(function() {
 			var classname = 'glyphicon-triangle-right hierarchyicon';
 			if(node.children.length == 0)
 				classname = " glyphicon-ban-circle hierarchyicondisable";
-			$('#' + parentDiv).append('<div id="' + thisid + 'container' + '" class="hierarchyentry" style="height:1em"><span class="hierarchytoggle glyphicon '+classname+'" id="' + thisid + 'toggle' + '"></span><span class="hierarchyItem" style="" id="' + thisid + '" /><span>');
+			$('#' + parentDiv).append('<div id="' + thisid + 'container' + '" class="hierarchyentry" style="height:1em"><span class="hierarchytoggle glyphicon '+classname+'" id="' + thisid + 'toggle' + '"></span><span class="hierarchyItem" style="" id="' + thisid + '" ></span>');
 			$('#' + thisid + 'toggle').css('cursor', 'pointer');
 			$('#' + thisid + 'toggle').click(function() {
 

@@ -6,6 +6,24 @@ var DB;
 var GUID = require('node-uuid').v4;
 
 var logger = require('./logger');
+
+function EncodeArgs(args)
+{
+    if(!args) return;
+    if(args.constructor == String) return;
+    for(var i in args)
+    {
+        if(i =='$regex')
+        {
+            args[i] = args[i].source
+         
+        }
+        else
+            EncodeArgs(args[i]);
+    }
+
+}
+
 exports.new = function(DBTablePath, cb) {
 
     return (function() {
@@ -26,7 +44,9 @@ exports.new = function(DBTablePath, cb) {
                 var message = {};
                 message.type = 'DB';
                 message.action = method;
+                EncodeArgs(args);
                 message.args = args;
+                console.log(message.args);
                 message.id = GUID();
                 this.cbs[message.id] = cb;
                 process.send(message);

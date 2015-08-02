@@ -480,7 +480,17 @@ exports.world = function(req, res, next) {
 
 
     sessions.GetSessionData(req, function(sessionData) {
-        DAL.getInstance("/adl/sandbox".replace(/\//g, "_") + "_" + req.params.page + "_", function(doc) {
+
+        //account for either supplying only the 16 digit code, or the full database key
+        //also account for appPath if full key provided
+        var worldID = req.params.page;
+        if(worldID.indexOf(global.configuration.appPath.replace(/\//g,"_")) == -1)
+        {
+            worldID = "_adl_sandbox_"+ worldID + "_";
+        }
+        worldID = worldID.replace(global.configuration.appPath.replace(/\//g,"_"),"_adl_sandbox")
+        console.log(worldID);
+        DAL.getInstance(worldID, function(doc) {
             if (!doc) {
                 res.locals = {
                     sessionData: sessionData,

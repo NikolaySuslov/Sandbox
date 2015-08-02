@@ -41,6 +41,7 @@ methods:
   keyDown:
   ready: 
   lookat: 
+  addControllingClient: 
 events:
   pointerOver:
   pointerOut:
@@ -191,7 +192,7 @@ scripts:
         var newdiv = $("#Player_" + ToSafeID(PlayerNumber) + 'label')[0];
         var self = this;
         $("#Player_" + ToSafeID(PlayerNumber) + 'label').click(function() {
-          setupPmWindow(self.ownerClientID);
+          setupPmWindow(self.ownerClientID[0]);
         })
 
         newdiv.style.left = '0px';
@@ -516,7 +517,7 @@ scripts:
 
           }
 
-          var jumpstart = 7;
+          var jumpstart = 18;
 
           if (this.cycleName == 'jump') {
 
@@ -881,11 +882,15 @@ scripts:
         this.addCycle('runningjump');
 
       }
-
+      this.addControllingClient = function(c)
+      {
+        if(this.ownerClientID.indexOf(c) == -1)
+          this.ownerClientID.push(c);
+      }
       this.keyUp = function(e) {
 
         if (this.id == 'character-vwf') return false;
-        if (vwf.client() != this.ownerClientID) return false;
+        if (this.ownerClientID.indexOf(vwf.client()) == -1) return false;
         if (!(e.keysDown.W || e.keysDown.uparrow ||e.keysDown.D||e.keysDown.A||e.keysDown.leftarrow||e.keysDown.rightarrow)) {
           this.removeMotion('walk');
           this.removeCycle('walk');
@@ -912,7 +917,7 @@ scripts:
         if (e.mods.ctrl) return false;
 
         if (this.id == 'character-vwf') return false;
-        if (vwf.client() != this.ownerClientID) return false;
+        if (this.ownerClientID.indexOf(vwf.client()) == -1 ) return false;
 
         if (e.keysDown.W || e.keysDown.uparrow  ||e.keysDown.D||e.keysDown.A || e.keysDown.leftarrow || e.keysDown.rightarrow){
 

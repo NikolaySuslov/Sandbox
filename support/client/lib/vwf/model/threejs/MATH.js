@@ -416,6 +416,19 @@ MATH.inverseMat4=function(mat){
 * multiplies two mat4's
 * @returns {MATH.Mat} the matrix multiplication of the matrices
 */
+MATH.mulMat4Vec3NoTranslate=function(mat1,vec2,arr){
+    if(!arr)
+        arr = [0,0,0];
+    arr[0] = mat1[0]*vec2[0]+mat1[1]*vec2[1]+mat1[2]*vec2[2];
+    arr[1] = mat1[4]*vec2[0]+mat1[5]*vec2[1]+mat1[6]*vec2[2];
+    arr[2] = mat1[8]*vec2[0]+mat1[9]*vec2[1]+mat1[10]*vec2[2];
+    return arr;
+};
+
+/**
+* multiplies two mat4's
+* @returns {MATH.Mat} the matrix multiplication of the matrices
+*/
 MATH.mulMat4Vec3=function(mat1,vec2,arr){
     if(!arr)
         arr = [0,0,0];

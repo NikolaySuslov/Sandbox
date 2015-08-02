@@ -94,16 +94,16 @@ define(function() {
                         //for every asset in every library, setup the gui
                         for (var curAsset in libs[i].library)
                         {
-                            var j = libs[i].library[curAsset].name || curAsset;
+                            var j = (libs[i].library[curAsset].name || curAsset) + GUID();
 
                             $('#library' + ToSafeID(i)).append('<div  class = "libraryAsset">' +
                                 '<img id = "asset' + ToSafeID(i) + ToSafeID(j) + '" src="' + libs[i].library[curAsset].preview + '" draggable=true></img>' +
-                                '<div>' + j + '</div>' +
+                                '<div>' + libs[i].library[curAsset].name || curAsset + '</div>' +
                                 '</div>'
                             );
                             (function(i1, j1,k) {
 
-                                $("#asset" + ToSafeID(i1) + ToSafeID(j1.name ||k)).on('click',function(evt)
+                                $("#asset" + ToSafeID(i1) + ToSafeID(k)).on('click',function(evt)
                                 {
 
                                     
@@ -111,7 +111,7 @@ define(function() {
 
                                 });
 
-                                $("#asset" + ToSafeID(i1) + ToSafeID(j1.name || k)).on('dragstart', function(evt) {
+                                $("#asset" + ToSafeID(i1) + ToSafeID(k)).on('dragstart', function(evt) {
 
 
                                     var dragIcon = document.createElement('img');
@@ -356,7 +356,7 @@ define(function() {
 
                 function createProto(proto) {
 
-                    if (typeof proto == "string"){
+                     if (typeof proto == "string"){
                         proto = JSON.parse(proto);
                        }
 

@@ -127,7 +127,7 @@ define(function() {
             //prevent the handlers from firing setproperties when the GUI is first setup;
             if (this.inSetup) return;
 
-            if (document.PlayerNumber == null) {
+            if (_UserManager.GetCurrentUserName() == null) {
                 _Notifier.notify('You must log in to participate');
                 return;
             }
@@ -158,7 +158,7 @@ define(function() {
         }
 
         this.callMethod = function(id, method) {
-            if (document.PlayerNumber == null) {
+            if (_UserManager.GetCurrentUserName() == null) {
                 _Notifier.notify('You must log in to participate');
                 return;
             }
@@ -899,7 +899,7 @@ define(function() {
         }
         this.deleteButtonClicked = function() {
             
-            if (document.PlayerNumber == null) {
+            if (_UserManager.GetCurrentUserName() == null) {
                 _Notifier.notify('You must log in to participate');
                 return;
             }

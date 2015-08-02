@@ -231,8 +231,9 @@ function startVWF() {
 
 			function registerAssetServer(cb)
 			{
-				if( global.configuration.hostAssets )
+				if( global.configuration.hostAssets || !global.configuration.remoteAssetServerURL )
 				{
+					global.configuration.assetDataDir = global.configuration.assetDataDir || 'assets';
 					var datadir = libpath.resolve(__dirname, '..','..', global.configuration.assetDataDir);
 
 					fs.mkdirs(datadir, function()
@@ -241,10 +242,10 @@ function startVWF() {
 
 						var assetServer = require('SandboxAssetServer');
 						app.use(global.configuration.assetAppPath, assetServer({
-							dataDir: libpath.resolve(__dirname, '..','..', global.configuration.assetDataDir),
+							dataDir: datadir,
 							sessionCookieName: 'session',
-							sessionHeader: global.configuration.assetSessionHeader,
-							sessionSecret: global.configuration.sessionSecret
+							sessionHeader: global.configuration.assetSessionHeader || 'X-Session-Header',
+							sessionSecret: global.configuration.sessionSecret || 'unsecure cookie secret'
 						}));
 						logger.info('Hosting assets locally at', global.configuration.assetAppPath);
 					});

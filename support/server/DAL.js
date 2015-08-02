@@ -1530,20 +1530,20 @@ function getStatesFilelist(id, cb)
 
 function searchStates(query, cb, start, count)
 {
-    query = new RegExp('.*' + query + '.*', 'gim');
+    query = new RegExp('.*' + query + '.*','ig');
     var search = {
         $or: [
         {
-            "val.owner": query
+            "val.owner": {$regex: query}
         },
         {
-            "val.title": query
+            "val.title": {$regex: query}
         },
         {
-            "val.description": query
+            "val.description": {$regex: query}
         },
         {
-            "_key": query
+            "_key": {$regex: query}
         }]
     }
     searchStatesInner(search, cb, start, count)

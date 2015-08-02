@@ -189,4 +189,6 @@ try {
 } catch (e) {}
 try {
     exports.messageCompress = messageCompress;
-} catch (e) {}
+} catch (e) {
+    this.messageCompress = messageCompress;
+}

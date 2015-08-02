@@ -10,7 +10,7 @@ define({
 		});
 
 		function SendChatMessage() {
-			if (document.PlayerNumber == null) {
+			if (_UserManager.GetCurrentUserName() == null) {
 				_Notifier.notify('You must log in to participate');
 				return;
 			}
@@ -24,7 +24,7 @@ define({
 		}
 
 		function SendPM(text, receiver) {
-			if (document.PlayerNumber == null) {
+			if (_UserManager.GetCurrentUserName() == null) {
 				_Notifier.notify('You must log in to participate');
 				return;
 			}

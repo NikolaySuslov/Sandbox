@@ -26,22 +26,7 @@
 
     window.console && console.debug && console.debug( "loading vwf" );
 
-    function getUTF8Length(string) {
-    var utf8length = 0;
-    for (var n = 0; n < string.length; n++) {
-        var c = string.charCodeAt(n);
-        if (c < 128) {
-            utf8length++;
-        }
-        else if((c > 127) && (c < 2048)) {
-            utf8length = utf8length+2;
-        }
-        else {
-            utf8length = utf8length+3;
-        }
-    }
-    return utf8length;
- }
+    
 
     window.vwf = new function() {
 
@@ -315,6 +300,7 @@
 
             var requireArray = [
                 { library: "domReady", active: true },
+                { library: "vwf/socket", active: true },
                 { library: "vwf/configuration", active: true },
                 { library: "vwf/kernel/model", active: true },
                 { library: "vwf/model/javascript", active: true },
@@ -803,60 +789,14 @@
                 window.location.pathname.lastIndexOf("/") );
             var protocol = window.location.protocol;
             var host = {{host}};
-
-
-
-        if ( isSocketIO07()) {
+        
+            var socketProxy = require('vwf/socket')
             if ( window.location.protocol === "https:" )
             {
-
-                socket = io(host, {secure:true, reconnection : false,transports:['websocket'],query:'pathname='+window.location.pathname});
+                socket = socketProxy(host, {secure:true, reconnection : false,transports:['websocket'],query:'pathname='+window.location.pathname});
             } else {
-                socket = io(host,{reconnection : false,transports:['websocket'],query:'pathname='+window.location.pathname});
+                socket = socketProxy(host,{reconnection : false,transports:['websocket'],query:'pathname='+window.location.pathname});
             }
-
-        } else {  // Ruby Server
-
-            socket = new io.Socket( undefined, {
-
-                // The socket is relative to the application path.
-
-                resource: window.location.pathname.slice( 1,
-                    window.location.pathname.lastIndexOf("/") ),
-
-                // Use a secure connection when the application comes from https.
-
-                secure: window.location.protocol === "https:",
-                reconnect:false,
-                port: window.location.port ||
-                    ( window.location.protocol === "https:" ? 443 : 80 ),
-
-                // The ruby socket.io server only supports WebSockets. Don't try the others.
-
-                transports: [
-                    'websocket',
-                    // 'flashsocket',
-                    // 'htmlfile',
-                    // 'xhr-multipart',
-                    // 'xhr-polling',
-                    // 'jsonp-polling',
-                ],
-
-                // Increase the timeout due to starvation while loading the scene. The server
-                // timeout must also be increased.
-                // TODO: reinstate if needed, but this needs to be handled by communicating during the load.
-
-                transportOptions: {
-                    "websocket": { timeout: 90000 }
-                    // "flashsocket": { timeout: 90000 },
-                    // "htmlfile": { timeout: 90000 },
-                    // "xhr-multipart": { timeout: 90000 },
-                    // "xhr-polling": { timeout: 90000 },
-                    // "jsonp-polling": { timeout: 90000 },
-                }
-
-            } );
-        }
 
     } catch ( e ) {
 
@@ -884,14 +824,12 @@
 
         socket.on( "connect", function() {
 
-            window.setInterval(vwf.socketMonitorInterval.bind(vwf),10000);
+           
             vwf.logger.infox( "-socket", "connected" );
 
-            if ( isSocketIO07() ) {
+           
                 vwf.moniker_ = this.id;
-            } else {  //Ruby Server
-                vwf.moniker_ = this.transport.sessionid;
-            }
+           
 
         } );
 
@@ -908,17 +846,9 @@
             // vwf.logger.debugx( "-socket", "message", message );
 
             try {   
-                vwf.socketBytesReceived += 34 + getUTF8Length(message);
-                if ( isSocketIO07() ) {
-
-                    if(message.constructor === String)
-                        var fields = JSON.parse(messageCompress.unpack(message));
-                    else
-                        var fields = message;
-
-                } else { // Ruby Server - Unpack the arguements
-                    var fields = JSON.parse( message );
-                }
+                
+              
+                var fields = message;
 
                 if(fields.action == 'goOffline')
                 {
@@ -963,11 +893,11 @@
 
         } );
 
-        if ( !isSocketIO07() ) {
+        
             // Start communication with the reflector. 
 
             socket.connect();  // TODO: errors can occur here too, particularly if a local client contains the socket.io files but there is no server; do the loopback here instead of earlier in response to new io.Socket.
-        }
+        
 
     } else if ( component_uri_or_json_or_object ) {
 
@@ -1058,11 +988,9 @@ this.send = function( nodeID, actionName, memberName, parameters, when, callback
 
     if ( socket ) {
 
-        // Send the message.
-        var message = JSON.stringify( fields );
-        message = messageCompress.pack(message);
-        vwf.socketBytesSent += 34 + getUTF8Length(message);
-        socket.send( message );
+       
+        
+        socket.send( fields );
 
     } else {
 
@@ -1113,10 +1041,9 @@ this.respond = function( nodeID, actionName, memberName, parameters, result ) {
 
         // Send the message.
 
-        var message = JSON.stringify( fields );
-        message = messageCompress.pack(message);
-        vwf.socketBytesSent += 34 + getUTF8Length(message);
-        socket.send( message );
+        
+        
+        socket.send( fields );
 
     } else {
 
@@ -2277,19 +2204,7 @@ this.promptSaveState = function()
 {
     _DataManager.saveToServer();
 }
-this.socketBytesSentLast = 0;
-this.socketBytesSent= 0;
-this.socketBytesReceivedLast = 0;
-this.socketBytesReceived= 0;
-this.socketMonitorInterval = function()
-{
-    this.socketBytesSentLast = this.socketBytesSent;
-    this.socketBytesSent = 0;
-    this.socketBytesReceivedLast = this.socketBytesReceived;
-    this.socketBytesReceived = 0;
-    console.log(this.socketBytesSentLast/10000 + 'KBps up',this.socketBytesReceivedLast/10000 +'KBps down');
-    
-},
+
 this.saveState = function(data)
 {
     var fields = {
@@ -2301,12 +2216,11 @@ this.saveState = function(data)
     if ( socket ) {
 
         // Send the message.
-        var message = JSON.stringify( fields );
-        message = messageCompress.pack(message);
+      
 
-        vwf.socketBytesSent += 34 + getUTF8Length(message);
+      
 
-        socket.send( message );
+        socket.send( fields );
     }
 
 }

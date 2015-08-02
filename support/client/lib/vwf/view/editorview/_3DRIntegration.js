@@ -432,7 +432,7 @@ define(["vwf/view/editorview/Editor"], function(Editor) {
                     
                     transform: transform ,
                     
-                    owner: document.PlayerNumber,
+                    owner: _UserManager.GetCurrentUserName(),
                     type: '3DR Object',
                     DisplayName: _ModelLibrary.MetadataCache[pid].Title
 

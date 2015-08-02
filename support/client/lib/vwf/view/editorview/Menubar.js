@@ -479,44 +479,44 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
                 _Editor.Duplicate();
             });
             $('#MenuCreatePush').click(function(e) {
-                _Editor.CreateModifier('push', document.PlayerNumber, true);
+                _Editor.CreateModifier('push', _UserManager.GetCurrentUserName(), true);
             });
             $('#MenuCreateExtrude').click(function(e) {
-                _Editor.CreateModifier('extrude', document.PlayerNumber, true);
+                _Editor.CreateModifier('extrude', _UserManager.GetCurrentUserName(), true);
             });
              $('#MenuCreatePathExtrude').click(function(e) {
-                _Editor.CreateModifier('pathextrude', document.PlayerNumber, true);
+                _Editor.CreateModifier('pathextrude', _UserManager.GetCurrentUserName(), true);
             });
             $('#MenuCreateLathe').click(function(e) {
-                _Editor.CreateModifier('lathe', document.PlayerNumber, true);
+                _Editor.CreateModifier('lathe', _UserManager.GetCurrentUserName(), true);
             });
             $('#MenuCreateTaper').click(function(e) {
-                _Editor.CreateModifier('taper', document.PlayerNumber);
+                _Editor.CreateModifier('taper', _UserManager.GetCurrentUserName());
             });
             $('#MenuCreateBend').click(function(e) {
-                _Editor.CreateModifier('bend', document.PlayerNumber);
+                _Editor.CreateModifier('bend', _UserManager.GetCurrentUserName());
             });
             $('#MenuCreateTwist').click(function(e) {
-                _Editor.CreateModifier('twist', document.PlayerNumber);
+                _Editor.CreateModifier('twist', _UserManager.GetCurrentUserName());
             });
     
             $('#MenuCreateUVMap').click(function(e) {
-                _Editor.CreateModifier('uvmap', document.PlayerNumber, true);
+                _Editor.CreateModifier('uvmap', _UserManager.GetCurrentUserName(), true);
             });
             $('#MenuCreateCenterPivot').click(function(e) {
-                _Editor.CreateModifier('centerpivot', document.PlayerNumber, true);
+                _Editor.CreateModifier('centerpivot', _UserManager.GetCurrentUserName(), true);
             });
             $('#MenuCreatePerlinNoise').click(function(e) {
-                _Editor.CreateModifier('perlinnoise', document.PlayerNumber);
+                _Editor.CreateModifier('perlinnoise', _UserManager.GetCurrentUserName());
             });
             $('#MenuCreateSimplexNoise').click(function(e) {
-                _Editor.CreateModifier('simplexnoise', document.PlayerNumber);
+                _Editor.CreateModifier('simplexnoise', _UserManager.GetCurrentUserName());
             });
             $('#MenuCreateOffset').click(function(e) {
-                _Editor.CreateModifier('offset', document.PlayerNumber);
+                _Editor.CreateModifier('offset', _UserManager.GetCurrentUserName());
             });
             $('#MenuCreateStretch').click(function(e) {
-                _Editor.CreateModifier('stretch', document.PlayerNumber);
+                _Editor.CreateModifier('stretch', _UserManager.GetCurrentUserName());
             });
     
             $('#MenuCreateBehaviorRotator').click(function(e) {
@@ -842,53 +842,53 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
     
     
             $('#MenuCreateCameraPerspective').click(function(e) {
-                _Editor.CreateCamera(_Editor.GetInsertPoint(), document.PlayerNumber);
+                _Editor.CreateCamera(_Editor.GetInsertPoint(), _UserManager.GetCurrentUserName());
             });
             $('#MenuCreateParticlesBasic').click(function(e) {
-                _Editor.createParticleSystem('basic', _Editor.GetInsertPoint(), document.PlayerNumber);
+                _Editor.createParticleSystem('basic', _Editor.GetInsertPoint(), _UserManager.GetCurrentUserName());
             });
             $('#MenuCreateParticlesSpray').click(function(e) {
-                _Editor.createParticleSystem('spray', _Editor.GetInsertPoint(), document.PlayerNumber);
+                _Editor.createParticleSystem('spray', _Editor.GetInsertPoint(), _UserManager.GetCurrentUserName());
             });
             $('#MenuCreateParticlesSuspended').click(function(e) {
-                _Editor.createParticleSystem('suspended', _Editor.GetInsertPoint(), document.PlayerNumber);
+                _Editor.createParticleSystem('suspended', _Editor.GetInsertPoint(), _UserManager.GetCurrentUserName());
             });
             $('#MenuCreateParticlesAtmospheric').click(function(e) {
-                _Editor.createParticleSystem('atmospheric', _Editor.GetInsertPoint(), document.PlayerNumber);
+                _Editor.createParticleSystem('atmospheric', _Editor.GetInsertPoint(), _UserManager.GetCurrentUserName());
             });
             $('#MenuCreateLightPoint').click(function(e) {
-                _Editor.createLight('point', _Editor.GetInsertPoint(), document.PlayerNumber);
+                _Editor.createLight('point', _Editor.GetInsertPoint(), _UserManager.GetCurrentUserName());
             });
             $('#MenuCreateLightSpot').click(function(e) {
-                _Editor.createLight('spot', _Editor.GetInsertPoint(), document.PlayerNumber);
+                _Editor.createLight('spot', _Editor.GetInsertPoint(), _UserManager.GetCurrentUserName());
             });
             $('#MenuCreateLightDirectional').click(function(e) {
-                _Editor.createLight('directional', _Editor.GetInsertPoint(), document.PlayerNumber);
+                _Editor.createLight('directional', _Editor.GetInsertPoint(), _UserManager.GetCurrentUserName());
             });
             $('#MenuCreateBox').click(function(e) {
-                _Editor.CreatePrim('box', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('box', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
             $('#MenuCreateLine').click(function(e) {
-                _Editor.CreatePrim('line', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('line', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
             $('#MenuCreateCircle').click(function(e) {
-                _Editor.CreatePrim('circle', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('circle', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
             $('#MenuCreateStar').click(function(e) {
-                _Editor.CreatePrim('star', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('star', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
             $('#MenuCreateRectangle').click(function(e) {
-                _Editor.CreatePrim('rectangle', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('rectangle', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
             $('#MenuCreateLSection').click(function(e) {
-                _Editor.CreatePrim('lsection', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('lsection', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
             $('#MenuCreateTSection').click(function(e) {
-                _Editor.CreatePrim('tsection', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('tsection', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
             $('#MenuCreateTerrain').click(function(e) {
                 if (!window._dTerrain)
-                    _Editor.CreatePrim('terrain', [0, 0, 0], [1, 1, 1], 'checker.jpg', document.PlayerNumber, '');
+                    _Editor.CreatePrim('terrain', [0, 0, 0], [1, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
                 else {
                     alertify.alert('Only one terrain can be created at a time');
                 }
@@ -932,29 +932,29 @@ define(['vwf/view/editorview/manageAssets'], function(manageAssets)
     
     
             $('#MenuCreateEmpty').click(function(e) {
-                _Editor.CreatePrim('node', _Editor.GetInsertPoint(), null, null, document.PlayerNumber, '');
+                _Editor.CreatePrim('node', _Editor.GetInsertPoint(), null, null, _UserManager.GetCurrentUserName(), '');
             });
             $('#MenuCreateSphere').click(function(e) {
-                _Editor.CreatePrim('sphere', _Editor.GetInsertPoint(), [.5, 1, 1], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('sphere', _Editor.GetInsertPoint(), [.5, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
     
             $('#MenuCreateText').click(function(e) {
-                _Editor.CreatePrim('text', _Editor.GetInsertPoint(), [.5, 1, 1], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('text', _Editor.GetInsertPoint(), [.5, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
             $('#MenuCreateTorus').click(function(e) {
-                _Editor.CreatePrim('torus', _Editor.GetInsertPoint(), [.5, 1, 1], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('torus', _Editor.GetInsertPoint(), [.5, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
             $('#MenuCreatePlane').click(function(e) {
-                _Editor.CreatePrim('plane', _Editor.GetInsertPoint(), [1, 1, 5], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('plane', _Editor.GetInsertPoint(), [1, 1, 5], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
             $('#MenuCreateCylinder').click(function(e) {
-                _Editor.CreatePrim('cylinder', _Editor.GetInsertPoint(), [1, .5, .5], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('cylinder', _Editor.GetInsertPoint(), [1, .5, .5], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
             $('#MenuCreateCone').click(function(e) {
-                _Editor.CreatePrim('cone', _Editor.GetInsertPoint(), [.500, 1, .5], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('cone', _Editor.GetInsertPoint(), [.500, 1, .5], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
             $('#MenuCreatePyramid').click(function(e) {
-                _Editor.CreatePrim('pyramid', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', document.PlayerNumber, '');
+                _Editor.CreatePrim('pyramid', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
             });
     
             $('#LocationGoToPosition').click(function(e) {

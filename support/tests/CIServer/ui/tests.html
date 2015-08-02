@@ -4,51 +4,53 @@
 <script src="jquery-ui-1.10.3.custom.min.js"> </script>
 <link rel="stylesheet" type="text/css"  href="jquery-ui-1.10.3.custom.css" > </link>
 <link rel="stylesheet" type="text/css"  href="testing.css" > </link>
-<script> 
+<script>
 $(document).ready(function()
 		{
+
+			var consts = {
+				RUNNING: "running",
+				READY: "ready",
+				ERROR: "error",
+				BUSY: "busy",
+			};
+
 			$("#runTests").button();
 			$("#runTests").click(function()
 			{
 				$.get("../runTests");
 				//window.location.reload();
-				
+
 			});
 			$("#quitTests").button();
 			$("#quitTests").click(function()
 			{
 				$.get("../quit");
-				
+
 			});
 			$("#stopTests").button();
 			$("#stopTests").click(function()
 			{
 				$.get("../stop");
-				
+
 			});
 			$("#reloadTests").button();
 			$("#reloadTests").click(function()
 			{
 				$.get("../reload");
 				//window.location.reload();
-				
+
 			});
 
 			function display()
 			{
 				$.getJSON("../status", function(status)
 				{
-					//$("#status").text(JSON.stringify(status));		
+					//$("#status").text(JSON.stringify(status));
 					//$("#tests").empty();
-					$("#gitLog").text(status.gitLog);
-					if(status.status == 1)
-						$("#test_status").text('Running');
-					if(status.status == 0)
-						$("#test_status").text('Complete');
-					if(status.status == 2)
-						$("#test_status").text('Canceling');
-					if(status.status == 3)
-						$("#test_status").text('Not Started');
+					$("#gitLog").text(status.gitLog.substr(0, 200) + "...");
+					$("#test_status").text(status.status);
+
 					var tests = status.tests;
 					$("#tests").empty();
 					for (var j in Object.keys(tests).sort())
@@ -70,11 +72,11 @@ $(document).ready(function()
 							$("#" + testID).append("<div class='testtitle'>" + tests[i].title + "</div>");
 							$("#" + testID).append("<div class='testfile'>" + tests[i].filename + "</div>");
 							$("#" + testID).append("<div class='teststatus topstatus'>" + tests[i].status + "</div>");
-							
+
 							//$("#" + testID).append("<div class='testmessage'>" + tests[i].message + "</div>");
 						}else
 						{
-							
+
 							$("#" + testID +" .teststatus").text(tests[i].status)
 							$("#" + testID +" .testresult").text(tests[i].result)
 							$("#" + testID +" .testmessage").text(tests[i].message)
@@ -83,18 +85,18 @@ $(document).ready(function()
 						{
 							var oldTestID = testID;
 							testID  = testID+tests[i].runs[k].browsername;
-							
+
 								$("#"+oldTestID).append("<div class='runRow' id = '" + testID+"' ></div>")
-								
+
 								$("#" + testID).attr('test',i)
-								
+
 								$("#" + testID).append("<div class='testtitle'>" + tests[i].runs[k].browsername + "</div>");
 								$("#" + testID).append("<div class='testfile'>" + "" + "</div>");
 								$("#" + testID).append("<div class='runStatus teststatus'>" + tests[i].runs[k].status + "</div>");
 								$("#" + testID).append("<div class='runResult testresult'>" + tests[i].runs[k].result + "</div>");
 								$("#" + testID).append("<div class='testmessage'>" + tests[i].runs[k].message + "</div>");
-								
-								
+
+
 
 								if(tests[i].runs[k].status == 'error')
 								{
@@ -110,7 +112,7 @@ $(document).ready(function()
 									$("#" + oldTestID + ".testresult").text('failed')
 									$("#" + oldTestID).css('background-color','#F99');
 								}
-								
+
 							testID = oldTestID;
 						}
 					}
@@ -132,29 +134,52 @@ $(document).ready(function()
 					$(".teststatus:contains('not started')").css("background-color",'');
 					$(".testresult:contains('null')").css("background-color",'');
 
-					$("#test_status:contains('Running')").css("background-color",'lightgreen');
-					$("#test_status:contains('Complete')").css("background-color",'green');
-					$("#test_status:contains('Canceling')").css("background-color",'orange');
+					var text = $("#test_status").text().toLowerCase().trim();
+					var color;
+					switch(text){
+						case consts.RUNNING: color = "lightgreen"; break;
+						case consts.READY: color = "green"; break;
+						case consts.ERROR: color = "red"; break;
+						case consts.BUSY: color = "orange"; break;
+						default: color = "gray";
+					}
 
+					$("#test_status").css("background-color", color);
 				});
 			}
 			display();
 			window.setInterval(function()
 			{
 				display();
-			}, 500)
+			}, 1500)
 			window.setInterval(function()
 			{
-				window.location.reload();
-			}, 60000) 
+				//window.location.reload();
+			}, 60000)
+
+			var header = $("#header");
+			var added = false;
+			$(window).on("scroll", function(e) {
+				var y = $(this).scrollTop();
+				if (!added && y > 0) {
+					added = true;
+					header.addClass("fixed-header");
+				}
+				else if(y == 0 && added) {
+					added = false;
+					header.removeClass("fixed-header");
+				}
+			});
 })
 </script>
 </head>
 <body>
-	
-	<div id = "status"> <div id="gitLog" ></div><div id="test_status" ></div> <div id="tests" ></div><div id = "runTests">Run</div>
+	<div id="header">
+		<div id="gitLog"></div><div id="test_status"></div>
+	</div>
+	<div id = "status">  <div id="tests" ></div><div id = "runTests">Run</div>
 	<div id = "quitTests">Quit</div>
-	<div id = "stopTests">Stop</div>
+	<div id = "stopTests">Clear Queue</div>
 	<div id = "reloadTests">Reload</div><pre id="log" ></pre>
 </body>
 </html>

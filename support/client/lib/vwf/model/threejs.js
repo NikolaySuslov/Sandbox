@@ -1342,7 +1342,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
     function FindChildByName(obj, childName, childType) {
 
 
-        if (obj.name == childName || obj.id == childName || obj.vwfID == childName || obj.name == 'node-' + childName) {
+        if (obj.name == childName) {
             return obj;
         } else if (obj.children && obj.children.length > 0) {
             var ret = null;

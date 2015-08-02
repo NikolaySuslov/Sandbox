@@ -30,8 +30,8 @@ function runTest(browser, finished, test){
 	
 	browser.loadBlankScene();
 
-	//do not run nonexistent test when loading glTF JSON (tests[3])
-	if(i != 3){
+	//do not run nonexistent test when loading glTF JSON
+	if(i != 2){
 		loadModel("this_shouldnt_exist", test.base)
 			.pause(1000)
 			.hasViewNode("this_shouldnt_exist", function(err, exists){
@@ -44,6 +44,9 @@ function runTest(browser, finished, test){
 				outStr += "Error message: "+success+", expected: true; ";
 			})
 			.click("#alertify-ok");
+	}
+	else{
+		outStr += "WARNING: glTF JSON loading does NOT test importing nonexistent files; ";
 	}
 		
 	loadModel(test.model, test.base)	
@@ -76,7 +79,7 @@ function runTest(browser, finished, test){
 		
 	function loadModel(modelName, base){
 		return browser.nextGUID(modelName)
-			.click("#MenuCreate")
+			.click("#MenuAssets")
 			.pause(500)
 			
 			.click("#MenuCreateLoadMeshURL")

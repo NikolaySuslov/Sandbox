@@ -754,10 +754,11 @@ function CopyInstance(URL, SID, response)
 					],
 					function copyExampleComplete(err)
 					{
+						var displayID = newid.replace("_adl_sandbox",global.configuration.appPath.replace(/\//g,"_"));
 						if (err)
 							respond(response, 500, 'Error in trying to copy world');
 						else
-							respond(response, 200, newid);
+							respond(response, 200, displayID);
 					})
 			}
 		});
@@ -1221,6 +1222,50 @@ function makeid()
 	return text;
 }
 
+
+function setState(URL, data, response)
+{
+	if (!URL.loginData)
+	{
+		respond(response, 401, 'Anonymous users cannot edit instances');
+		return;
+	}
+	try
+	{
+		data = JSON.parse(data);
+	}
+	catch (e)
+	{
+		logger.error(e);
+		respond(response, 500, 'parse error');
+		return;
+	}
+	var sid = URL.query.SID;
+	var statedata = {};
+	sid = sid.replace(/\//g, '_');
+	
+	DAL.getInstance(sid, function(state)
+	{
+		if (!state)
+		{
+			respond(response, 401, 'State not found. State ' + sid);
+			return;
+		}
+		if (state.owner == URL.loginData.UID || URL.loginData.UID == global.adminUID)
+		{
+			DAL.saveInstanceState(sid, data, function()
+			{
+				respond(response, 200, 'Saved world state ' + sid);
+			});
+		}
+		else
+		{
+			respond(response, 401, 'Not authorized to edit state ' + sid);
+		}
+	});
+}
+
+
 function setStateData(URL, data, response)
 {
 	if (!URL.loginData)
@@ -1291,9 +1336,10 @@ function createState(URL, data, response)
 		var id = "/adl/sandbox".replace(/\//g, "_") + '_' + makeid() + '_';
 		DAL.createInstance(id, statedata, function()
 		{
-			respond(response, 200, 'Created state ' + id);
-			mailTools.newWorld(URL.loginData.UID, data.title, id);
-			xapi.sendStatement(URL.loginData.UID, xapi.verbs.created, id, data.title, data.description);
+			var displayID = id.replace("_adl_sandbox",global.configuration.appPath.replace(/\//g,"_"));
+			respond(response, 200, displayID);
+			mailTools.newWorld(URL.loginData.UID, data.title, displayID);
+			xapi.sendStatement(URL.loginData.UID, xapi.verbs.created, displayID, data.title, data.description);
 		});
 	}
 	//Just return the state data, dont serve a response
@@ -1809,6 +1855,11 @@ function serve(request, response)
 						setStateData(URL, body, response);
 					}
 					break;
+				case "state":
+					{
+						setState(URL, body, response);
+					}
+					break;	
 				case "globalasset":
 					{
 						addGlobalInventoryItem(URL, body, response);

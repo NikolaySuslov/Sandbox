@@ -724,7 +724,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             // return hits;
         }
         this.DeleteSelection = function() {
-            if (document.PlayerNumber == null) {
+            if (_UserManager.GetCurrentUserName() == null) {
                 _Notifier.notify('You must log in to participate');
                 return;
             }
@@ -1770,7 +1770,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             }
         }
         this.createChild = function(parent, name, proto, uri, callback) {
-            if (document.PlayerNumber == null) {
+            if (_UserManager.GetCurrentUserName() == null) {
                 _Notifier.notify('You must log in to participate');
                 return;
             }
@@ -2086,7 +2086,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             var proto = ModProto;
             proto.properties.type = 'behavior';
             proto.properties.DisplayName = self.GetUniqueName('behavior');
-            proto.properties.owner = document.PlayerNumber;
+            proto.properties.owner = _UserManager.GetCurrentUserName();
             var id = this.GetSelectedVWFID();
             var owner = vwf.getProperty(id, 'owner');
             if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), id) == 0) {
@@ -3261,7 +3261,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 extends: 'sandboxGroup.vwf',
                 properties: {
                     type: 'Group',
-                    owner: document.PlayerNumber,
+                    owner: _UserManager.GetCurrentUserName(),
                     transform: MATH.transposeMat4(parentmat)
                 },
                 children: {}

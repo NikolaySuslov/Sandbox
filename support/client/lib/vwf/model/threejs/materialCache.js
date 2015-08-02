@@ -605,7 +605,7 @@ function MaterialCache() {
                 }
 
             }
-            if (currentmat.reflectivity) {
+            if (currentmat.reflectivity && window.vwf_view) {
                 var sky = vwf_view.kernel.kernel.callMethod(vwf.application(), 'getSkyMat')
                 if (sky) {
                     currentmat.envMap = sky.uniforms.texture.value;
@@ -738,7 +738,7 @@ function MaterialCache() {
                 }
 
             }
-            if (currentmat.reflectivity) {
+            if (currentmat.reflectivity && window.vwf_view) {
                 var sky = vwf_view.kernel.kernel.callMethod(vwf.application(), 'getSkyMat')
                 if (sky) {
                     currentmat.envMap = sky.uniforms.texture.value;
@@ -878,7 +878,7 @@ function MaterialCache() {
                 }
 
             }
-            if (currentmat.reflectivity) {
+            if (currentmat.reflectivity && window.vwf_view) {
                 var sky = vwf_view.kernel.kernel.callMethod(vwf.application(), 'getSkyMat')
                 if (sky) {
                     currentmat.envMap = sky.uniforms.texture.value;

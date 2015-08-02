@@ -1838,26 +1838,95 @@ THREE.Object3D.prototype.ignoreTest = function(ignore) {
     return false;
 }
 
-
-//no need to test bounding box here. Can only contain one mesh, and the mesh will check its own
-//boudning box.
-THREE.Object3D.prototype.CPUPick = function(origin, direction, options, ret) {
-
-  //really need to be sure we never get here!
-  //  if(origin.length !== 3 || direction.length !== 3 || !(options instanceof THREE.CPUPickOptions) || !(ret instanceof Array))
-  //      debugger;
+THREE.Object3D.prototype.testSkipPick = function(options)
+{
 
     if (options && options.filter && this) {
 
         if (!options.filter(this))
-            return null;
+            return false;
     }
 
+
     if (this.ignoreTest(options && options.ignore))
-        return null;
+        return false;
     if (options.UserRenderBatches && this.isBatched)
-        return null;
+        return false;
     if (this.InvisibleToCPUPick)
+        return false;
+    return true;
+}
+THREE.Object3D.prototype.CPUPick_internal = function(origin,direction,options,ret)
+{
+    if (!(this instanceof THREE.SkinnedMesh)) {
+
+        //at this point, were going to move the ray into the space relative to the mesh. until now, the ray has been in worldspace.
+        var modelMatrix = this.getModelMatrix([]);
+        var modelMatrix_inverse = modelMatrix.slice(0)
+        var modelMatrix_inverse = [];
+        Mat4.invert(modelMatrix, modelMatrix_inverse);
+        
+        var origin_modelSpace = MATH.mulMat4Vec3(modelMatrix_inverse, origin);
+        var direction_modelSpace = MATH.mulMat4Vec3NoTranslate(modelMatrix_inverse, direction);
+
+        if (this instanceof THREE.Mesh && !(this instanceof THREE.SkinnedMesh)) {
+            //collide with the mesh
+            var prevLen = ret.length;
+            this.geometry.CPUPick(origin_modelSpace, direction_modelSpace, options, null, this, ret);
+
+            for (var i = prevLen; i < ret.length; i++) {
+
+                //move the normal and hit point into worldspace
+                var tmp = MATH.mulMat4Vec3(modelMatrix, ret[i].point, [0, 0, 0]);
+
+                ret[i].point = tmp;
+
+                tmp = MATH.mulMat4Vec3NoTranslate(modelMatrix, ret[i].norm, [0, 0, 0]);
+
+                ret[i].norm = tmp;
+
+                tmp = Vec3.normalize(ret[i].norm, [0, 0, 0]);
+
+                ret[i].norm = tmp;
+                ret[i].distance = MATH.distanceVec3(origin, ret[i].point);
+                ret[i].object = this;
+                ret[i].priority = this.PickPriority !== undefined ? this.PickPriority : 1;
+            }
+        }
+    }
+    if (this instanceof THREE.Line) {
+        for (var i = 0; i < this.geometry.vertices.length - 1; i++) {
+            var hitdata = allocate_FaceIntersect();
+
+            var v1 = [this.geometry.vertices[i].x, this.geometry.vertices[i].y, this.geometry.vertices[i].z];
+            var v2 = [this.geometry.vertices[i + 1].x, this.geometry.vertices[i + 1].y, this.geometry.vertices[i + 1].z];
+            var hitdist = distanceLineSegment(origin_modelSpace, direction_modelSpace, v1, v2, hitdata);
+            if (hitdist < Math.min(MATH.distanceVec3(origin_modelSpace, v1), MATH.distanceVec3(origin_modelSpace, v2)) / 50) {
+                var point = MATH.mulMat4Vec3(modelMatrix, hitdata.point, [0, 0, 0]);
+                var norm = [0, 0, 1];
+                var hit = allocate_FaceIntersect(point, norm, null);
+                hit.rawPoint = hitdata.point;
+                hit.vertindex = hitdata.t < .5 ? i : i + 1;
+                hit.t = hitdata.t;
+                hit.distance = MATH.distanceVec3(origin, hit.rawPoint);
+                hit.object = this;
+                hit.priority = this.PickPriority !== undefined ? this.PickPriority : 1;
+                ret.push(hit);
+            }
+        }
+    }
+    return ret;
+}
+//no need to test bounding box here. Can only contain one mesh, and the mesh will check its own
+//boudning box.
+//Above is no longer true.... we should be exiting early here
+THREE.Object3D.prototype.CPUPick = function(origin, direction, options, ret) {
+
+  //really need to be sure we never get here!
+ //   if(origin.length !== 3 || direction.length !== 3 || !(options instanceof THREE.CPUPickOptions) || !(ret instanceof Array))
+   //     debugger;
+
+    if(!this.testSkipPick(options))
         return null;
 
     //really should be initialized before this.
@@ -1882,89 +1951,9 @@ THREE.Object3D.prototype.CPUPick = function(origin, direction, options, ret) {
         }
     }
 
-
-
-    if (this.geometry && !(this instanceof THREE.SkinnedMesh)) {
-
-        //at this point, were going to move the ray into the space relative to the mesh. until now, the ray has been in worldspace.
-        var modelMatrix = this.getModelMatrix([]);
-        var mat = modelMatrix.slice(0)
-        var tmp2 = [];
-        Mat4.invert(mat, tmp2);
-
-        mat = tmp2;
-        var newo = MATH.mulMat4Vec3(mat, origin);
-
-
-
-        
-        mat[3] = 0;
-        mat[7] = 0;
-        mat[11] = 0;
-       
-        var newd = MATH.mulMat4Vec3(mat, direction);
-        var mat2 = modelMatrix;
-        var mat3 = modelMatrix.slice(0)
-        mat3[3] = 0;
-        mat3[7] = 0;
-        mat3[11] = 0;
-
-
-
-        if (this instanceof THREE.Mesh && !(this instanceof THREE.SkinnedMesh)) {
-            //collide with the mesh
-            var prevLen = ret.length;
-            this.geometry.CPUPick(newo, newd, options, null, this, ret);
-
-            for (var i = prevLen; i < ret.length; i++) {
-
-                //move the normal and hit point into worldspace
-
-
-                var tmp = MATH.mulMat4Vec3(mat2, ret[i].point, [0, 0, 0]);
-
-                ret[i].point = tmp;
-
-                tmp = MATH.mulMat4Vec3(mat3, ret[i].norm, [0, 0, 0]);
-
-                ret[i].norm = tmp;
-
-                tmp = Vec3.normalize(ret[i].norm, [0, 0, 0]);
-
-                ret[i].norm = tmp;
-                ret[i].distance = MATH.distanceVec3(origin, ret[i].point);
-                ret[i].object = this;
-                ret[i].priority = this.PickPriority !== undefined ? this.PickPriority : 1;
-            }
-
-
-        }
-        if (this instanceof THREE.Line) {
-            for (var i = 0; i < this.geometry.vertices.length - 1; i++) {
-                var hitdata = allocate_FaceIntersect();
-
-                var v1 = [this.geometry.vertices[i].x, this.geometry.vertices[i].y, this.geometry.vertices[i].z];
-                var v2 = [this.geometry.vertices[i + 1].x, this.geometry.vertices[i + 1].y, this.geometry.vertices[i + 1].z];
-                var hitdist = distanceLineSegment(newo, newd, v1, v2, hitdata);
-                if (hitdist < Math.min(MATH.distanceVec3(newo, v1), MATH.distanceVec3(newo, v2)) / 50) {
-                    var point = MATH.mulMat4Vec3(mat2, hitdata.point, [0, 0, 0]);
-                    var norm = [0, 0, 1];
-                    var hit = allocate_FaceIntersect(point, norm, null);
-                    hit.rawPoint = hitdata.point;
-                    hit.vertindex = hitdata.t < .5 ? i : i + 1;
-                    hit.t = hitdata.t;
-                    hit.distance = MATH.distanceVec3(origin, hit.rawPoint);
-                    hit.object = this;
-                    hit.priority = this.PickPriority !== undefined ? this.PickPriority : 1;
-                    ret.push(hit);
-                }
-            }
-        }
-
-    }
-
-    return ret;
-
+    if(this.geometry)
+        return this.CPUPick_internal(origin,direction,options,ret);
+    return null;
 }
 
 function Frustrum(ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr) {

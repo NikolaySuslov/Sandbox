@@ -62,9 +62,28 @@ function GetProxyPortRandom(request, cb) {
     })
 }
 
+function DecodeArgs(args)
+{
+    if(!args) return;
+    if(args.constructor == String) return;
+    for(var i in args)
+    {
+        if(i =='$regex')
+        {
+            args[i] = new RegExp(args[i],'ig');
+
+
+        }
+        else
+            DecodeArgs(args[i]);
+    }
+}
 function HandleMessage(message, cb, client) {
     if (message.type == 'DB') {
-        DB[message.action].apply(DB, (message.args || []).concat([
+        var args = message.args || [];
+        DecodeArgs(args)
+       
+        DB[message.action].apply(DB, args.concat([
 
             function(err, key, data) {
                 message.result = [err, key, data];
@@ -191,7 +210,7 @@ async.series([
             proxies.push(p1);
             p1.port = port + i;
             p1.stdout.on('data', function(data) {
-
+                    
             }),
             p1.stdin.on('data', function(data) {
 

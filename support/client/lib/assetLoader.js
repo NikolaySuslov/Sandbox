@@ -96,7 +96,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                         cb(assetLoader.cache[type][url]);
                         return;
                     }
-                    assetLoader.load(type, url, function()
+                    assetLoader.load(url, type, function()
                     {
                         cb(assetLoader.cache[type][url]);
                     });
@@ -153,6 +153,35 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                                         o.geometry.faceVertexUvs[0].push([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]);
                                 }
                             }
+                            if(o instanceof THREE.SkinnedMesh && o.material)
+                            {
+                                if(o.material instanceof THREE.MeshFaceMaterial)
+                                    for(var i in o.material.materials)
+                                        o.material.materials[i].skinning = true;
+                                else 
+                                    o.material.skinning = true;
+                            }
+                            if(o.material)
+                            {
+                                if(o.material instanceof THREE.MeshFaceMaterial)
+                                    for(var i in o.material.materials)
+                                        o.material.materials[i].lights = true;
+                                else 
+                                    o.material.lights = true;
+                            }
+
+                            //use the code in materialCache to clean up materials before it hits the renderer
+                            {
+                                var matCache = require("./vwf/model/threejs/materialCache");
+                                if(o.material)
+                                {
+                                    var def = matCache.getDefForMaterial(o.material);
+                                    matCache.setMaterial(o,def);
+                                }
+
+
+                            }
+
                             //lets set all animations to frame 0
                             if (o.animationHandle)
                             {

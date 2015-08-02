@@ -388,8 +388,8 @@ module.exports.login = function(cb){
 };
 module.exports.loadBlankScene = function(cb) {
 	browser
-		//.url('http://localhost:3000/adl/sandbox/example_blank/?norender=true')
-		.url('http://localhost:3000/adl/sandbox/example_blank/')
+		.url('http://localhost:3000/adl/sandbox/example_blank/?norender=true')
+		//.url('http://localhost:3000/adl/sandbox/example_blank/')
 		.waitForExist('#preloadGUIBack', 60000)
 		.waitForVisible('#preloadGUIBack', 60000, true)
 		.pause(3000).then(cb);
