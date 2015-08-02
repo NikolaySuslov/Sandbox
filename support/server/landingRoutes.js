@@ -157,7 +157,7 @@ routesMap = {
     'avatar': {
         avatar: true,
         requiresLogin: true,
-		layout: 'plain'
+		layout: 'template_vle'
     },
     'create': {
         requiresLogin: true
