@@ -1,0 +1,80 @@
+@import 'polyfill';
+
+#sidepanel
+{
+	width: 320px;
+	@include flex-shrink(0);
+
+	background: #515151 url(../../../../images/ui-bg_diagonals-thick_8_333333_40x40.png) 0% 0% repeat;
+	background-size: 5%;
+	outline: none;
+	position: relative;
+
+	&.hidden
+	{
+		display: block !important;
+		visibility: visible !important;
+		width: 0;
+	}
+
+	#sidetab
+	{
+		position: absolute;
+		left: -49px;
+		top: 5%;
+		padding: 3px 15px;
+		border: 2px solid #82b8ff;
+		border-bottom: none;
+
+		@include transform(rotate(-90deg));
+
+		font-size: 12px;
+		font-family: 'Open Sans',sans-serif;
+		color: white;
+		text-shadow: 1px 1px 3px black;
+
+		background: #4c4c4c;
+		text-align: center;
+		vertical-align: middle;
+		/* border-radius: 7px; */
+		cursor: pointer;
+
+		&:hover {
+			color: #82b8ff;
+		}
+	}
+
+	.main
+	{
+		position: absolute;
+		left: 1px;
+		min-width: 318px;
+		width: 318px;
+
+		height: 100%;
+		overflow-y: auto;
+	}
+
+	.editorPanel
+	{
+		width: 100%;
+		//max-height: 400px;
+		//overflow: hidden;
+
+		.title
+		{
+			padding: 3px 4px;
+			font: 1.5em sans-serif;
+			font-weight: bold;
+			@include flex-shrink(0);
+		}
+		
+		.content
+		{
+			@include flex-grow(1);
+			color: white;
+			background: url(vwf/view/editorview/css/images/ui-bg_hexagon_5_111111_12x10.png) 50% 50% repeat rgb(36, 32, 32);
+		}
+	}
+}
+

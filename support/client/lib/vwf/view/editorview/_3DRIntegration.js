@@ -136,7 +136,7 @@ define(["vwf/view/editorview/Editor"], function(Editor) {
     }
 
     function initialize() {
-        $(document.body).append("<div id='ModelUploadDialog'></div>");
+        /*$(document.body).append("<div id='ModelUploadDialog'></div>");
         $(document.body).append("<div id='ModelLibrary'></div>");
         $(document.body).append("<div id='ModelDetails'></div>");
 
@@ -145,14 +145,14 @@ define(["vwf/view/editorview/Editor"], function(Editor) {
 
             __3DRIntegration.hookupUploadDialog();
 
-        });
+        });*/
 
-        $('#ModelLibrary').append("<div id='ModelSearchResults'></div>");
+        /*$('#ModelLibrary').append("<div id='ModelSearchResults'></div>");
         $('#ModelLibrary').append("<div id='ModelSearchPanel'></div>");
         $('#ModelSearchPanel').append("<input type='text' id='ModelSearchTerm' style='border-radius: 5px;'></input>");
         $('#ModelSearchPanel').css('overflow', 'auto');
         $('#ModelSearchPanel').append("<div id='ModelSearchButton'></div>");
-        $('#ModelSearchPanel').append("<div id='ResultsPages' style='display: inline;'></div>");
+        $('#ModelSearchPanel').append("<div id='ResultsPages' style='display: inline;'></div>");*/
         $('#ModelSearchButton').button({
             label: 'Search'
         });
@@ -305,7 +305,10 @@ define(["vwf/view/editorview/Editor"], function(Editor) {
 
                 }
             });
+
         }
+
+        __3DRIntegration.hookupUploadDialog();
 
         $('#ModelLibrary').dialog({
             title: 'Search 3DR',
@@ -359,7 +362,7 @@ define(["vwf/view/editorview/Editor"], function(Editor) {
                 }
             }
         });
-        $('#ModelLibrary').append("<div style='margin-top: 2em;color: grey;font-size: 0.8em;'>This interface allows you to load 3D models from a library of content. This content will be created at the center of your viewport. Type a search term in the box above. Click on thumbnails to display additional data about the objects. If you wish to upload content, please visit the <a target='new' href='http://3dr.adlnet.gov'>ADL 3D Repository</a>. Here, you can upload assets to be included in this virtual world. Be careful to mark your content as publically accessable, as this system can only load public content at this time.</div>");
+        //$('#ModelLibrary').append("<div style='margin-top: 2em;color: grey;font-size: 0.8em;'>This interface allows you to load 3D models from a library of content. This content will be created at the center of your viewport. Type a search term in the box above. Click on thumbnails to display additional data about the objects. If you wish to upload content, please visit the <a target='new' href='http://3dr.adlnet.gov'>ADL 3D Repository</a>. Here, you can upload assets to be included in this virtual world. Be careful to mark your content as publically accessable, as this system can only load public content at this time.</div>");
         this.currentPage = 0;
         this.pageLength = 42;
         this.Results = [];

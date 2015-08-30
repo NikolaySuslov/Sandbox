@@ -331,7 +331,7 @@
                 { library: "/socket.io/socket.io.js", active: true },
                 { library: "vwf/view/EditorView", active: true },
                 { library: "vwf/view/WebRTC", active: true },
-                { library: "vwf/view/audio", active: true },
+                { library: "vwf/model/audio", active: true },
                 { library: "messageCompress", active: true },
                 { library: "vwf/view/xapi", active: true }
 
@@ -347,7 +347,8 @@
                     { library: "ometa", active: true },
                     { library: "vwf/model/object", active: true },
                     { library: "vwf/model/wires", active: true },
-                    { library: "vwf/model/jqueryui", active: true }
+                    { library: "vwf/model/jqueryui", active: true },
+                    { library: "vwf/model/audio", active: true },
                 ],
                 view: [
                     { library: "vwf/view/glge", parameters: {"application-root":"#vwf-root"}, active: false },
@@ -360,7 +361,6 @@
                     { library: "vwf/view/webrtc", active: false},
                     { library: "vwf/view/EditorView", active: true },
                     { library: "vwf/view/WebRTC", active: true },
-                    { library: "vwf/view/audio", active: true },
                     { library: "vwf/view/xapi", active: true },
                     { library: "vwf/view/jqueryui", active: true },
 
@@ -483,7 +483,10 @@
                         "vwf/model/wires",
                         "vwf/model/threejs",
                         "vwf/model/jqueryui",
+
                         "ometa",
+
+                        "vwf/model/audio",
                         "vwf/model/object",
                     ];
 
@@ -496,7 +499,7 @@
                             "vwf/view/document",
                             "vwf/view/EditorView",
                             "vwf/view/WebRTC",
-                            "vwf/view/audio",
+                            
                             "vwf/view/xapi",
                             "vwf/view/jqueryui",
                         ];
@@ -1920,6 +1923,9 @@ this.getNode = function( nodeID, full, normalize ) {  // TODO: options to includ
     // Start the descriptor.
 
     var nodeComponent = {};
+    nodeComponent.continues = node.continues;
+
+    
 
     // Arrange the component as a patch if the node originated in a URI component. We want
     // to refer to the original URI but apply any changes that have been made to the node
@@ -2089,6 +2095,9 @@ this.getNode = function( nodeID, full, normalize ) {  // TODO: options to includ
 
     // Return the descriptor created, unless it was arranged as a patch and there were no
     // changes. Otherwise, return the URI if this is the root of a URI component.
+
+    if(nodeComponent.continues)
+        nodeComponent = objectDiff(nodeComponent,continuesDefs[nodeComponent.continues + nodeID]);
 
     if ( full || ! node.patchable || patched ) {
         return nodeComponent;
@@ -2384,7 +2393,7 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
         childIndex = childURI;
     } else {  // descendant: parent id + next from parent's sequence
         if ( useLegacyID ) {  // TODO: fix static ID references and remove
-            childID = ( childComponent.extends || nodeTypeURI ) + "." + childName;  // TODO: fix static ID references and remove
+            childID = ( childComponent.continues || childComponent.extends || nodeTypeURI ) + "." + childName;  // TODO: fix static ID references and remove
             childID = childID.replace( /[^0-9A-Za-z_]+/g, "-" );  // TODO: fix static ID references and remove
             childIndex = this.children( nodeID ).length;
         } else {
@@ -2411,7 +2420,8 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
     // Register the node.
 
     child = nodes.create( childID, childPrototypeID, childBehaviorIDs, childURI, childName, nodeID );
-
+    child.continues = childComponent.continues;
+    child.id = childID;
     // Register the node in vwf/model/object. Since the kernel delegates many node
     // information functions to vwf/model/object, this serves to register it with the
     // kernel. The node must be registered before any async operations occur to ensure that
@@ -2424,6 +2434,57 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
     // Construct the node.
 
     async.series( [
+
+         function( series_callback_async /* ( err, results ) */ ) {
+
+            if ( componentIsDescriptor( childComponent ) && childComponent.continues && componentIsURI( childComponent.continues ) ) {  // TODO: for "includes:", accept an already-loaded component (which componentIsURI exludes) since the descriptor will be loaded again
+                
+                $.getJSON(childComponent.continues,function(data)
+                {
+                   
+
+                    var cleanChildNames = function(node)
+                    {
+                        if(node.children)
+                            for(var i in node.children)
+                                cleanChildNames(node.children[i])
+
+                        if(node.children)
+                        {
+                            var keys = Object.keys(node.children)
+                            for(var i =0; i < keys.length; i++)
+                            {   
+                                var oldName = keys[i];
+
+                                var child = node.children[oldName];
+                                delete node.children[oldName];
+                                node.children[childID + oldName] = child
+                            }        
+                        }
+
+                    }
+
+                    cleanChildNames(data);
+                    continuesDefs[childComponent.continues + childID] = JSON.parse(JSON.stringify(data));
+
+                    $.extend(true,data,childComponent)
+                    childComponent = data;
+                    series_callback_async( undefined, undefined );
+                })
+                
+            
+            } else {
+
+                queue.suspend( "before beginning " + childID ); // suspend the queue
+
+                async.nextTick( function() {
+                    series_callback_async( undefined, undefined );
+                    queue.resume( "after beginning " + childID ); // resume the queue; may invoke dispatch(), so call last before returning to the host
+                } );
+
+            }
+
+        },
 
         function( series_callback_async /* ( err, results ) */ ) {
 
@@ -2475,6 +2536,8 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
             }
 
         },
+
+       
 
         function( series_callback_async /* ( err, results ) */ ) {
 
@@ -2545,7 +2608,7 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
             // Re-register the node now that we have the prototypes and behaviors.
 
             child = nodes.create( childID, childPrototypeID, childBehaviorIDs, childURI, childName, nodeID );
-
+            child.continues = childComponent.continues;
             // Re-register the node in vwf/model/object now that we have the prototypes and
             // behaviors. vwf/model/object knows that we call it more than once and only
             // updates the new information.
@@ -5412,6 +5475,68 @@ var nodeCollectionPrototype = {
 /// data about this arrangement.
 /// 
 /// @name module:vwf~nodes
+
+function objectDiff (obj1, obj2) {
+   var delta = {};
+
+    if( obj1 != obj2 && typeof obj1 == typeof obj2 && typeof obj1 == "number")
+        return obj1
+
+   if(typeof obj1 !== typeof obj2)
+   return obj1;
+   if(obj1.constructor != obj2.constructor)
+   return obj1;
+   if(obj1.constructor == String)
+   {
+      if($.trim(obj1) == $.trim(obj2))
+      return undefined;
+      else
+      return obj1;
+   }
+
+   if(obj1.constructor == Array)
+   {
+      var diff = false;
+      var ret = obj1.slice(0);
+      if(obj1.length !== obj2.length)
+        return obj1;
+
+      for(var i in obj1)
+      {
+         var ret2 = objectDiff(obj1[i],obj2[i])
+         if(ret2)
+         {
+            diff = true;
+            ret[i] = ret2;
+         }
+      }
+      if(diff)
+        return ret;
+   }
+
+   for(var i in obj1)
+   {
+        if(obj2.hasOwnProperty(i))
+            {
+                var ret = objectDiff(obj1[i],obj2[i])
+                if(ret)
+                    delta[i] = ret;
+            }else
+            {
+                delta[i] = obj1[i];
+            }
+
+   }
+   if(Object.keys(delta).length > 0)
+   return delta;
+   
+   return undefined;
+}
+
+
+var continuesDefs = {
+
+}
 
 // Note: this is a first step towards moving authoritative data out of the vwf/model/object
 // and vwf/model/javascript drivers and removing the kernel's dependency on them as special

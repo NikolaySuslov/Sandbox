@@ -1,38 +1,30 @@
-{
-    "L-System generator": {
+[
+	{
+    	"name": "L-System generator",
         "url": "./contentlibraries/lsystem.json"
     },
-	"My Entities": {
-		"url": "./vwfdatamanager.svc/library/my-entities"
+	{
+		"name": "Demo Entities",
+		"url": "./contentlibraries/entities.json"
 	},
-	"My Models": {
-		"url": "./vwfdatamanager.svc/library/my-models"
+	{
+		"name": "Materials",
+		"url": "./contentlibraries/materials.json"
 	},
-	"My Materials": {
-		"url": "./vwfdatamanager.svc/library/my-materials"
+	{
+		"name": "Environments",
+		"url": "./contentlibraries/environments.json"
 	},
-	"My Behaviors": {
-		"url": "./vwfdatamanager.svc/library/my-behaviors"
+	{
+		"name": "Behaviors",
+		"url": "./contentlibraries/behaviors.json"
 	},
-	"My Textures": {
-		"url": "./vwfdatamanager.svc/library/my-textures"
+	{
+		"name": "Primitives",
+		"url": "./contentlibraries/primitives.json"
 	},
-    "Demo Entities": {
-        "url": "./contentlibraries/entities.json"
-    },
-    "Materials": {
-        "url": "./contentlibraries/materials.json"
-    },
-    "Environments": {
-        "url": "./contentlibraries/environments.json"
-    },
-    "Behaviors": {
-        "url": "./contentlibraries/behaviors.json"
-    },
-    "Primitives": {
-        "url": "./contentlibraries/primitives.json"
-    },
-    "Cameras": {
-        "url": "./contentlibraries/cameras.json"
-    }
-}
+	{
+		"name": "Cameras",
+		"url": "./contentlibraries/cameras.json"
+	}
+]

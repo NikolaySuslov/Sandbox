@@ -62,7 +62,7 @@ function socketThreadProxy(host, options)
         var now = performance.now();
         if ( now - lastTime  > 1000)
         {
-            console.log("Messages per second: " + totalMessages)
+            //console.log("Messages per second: " + totalMessages)
             totalMessages = 0;
             lastTime = now;
         }

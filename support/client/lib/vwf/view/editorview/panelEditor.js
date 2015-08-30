@@ -15,7 +15,7 @@ define([],
             obj.open = false;
             obj.init = function() {
                 $(this.parentSelector).append("<div id='" + this.rootID + "''></div");
-                $('#' + this.rootID).attr('style', 'border-radius: 10px;width: 100%;margin: 0px;padding: 0px;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: rgb(68, 68, 68);border-left-width: 2px;border-left-style: solid;border-left-color: rgb(68, 68, 68);height: auto;')
+                $('#' + this.rootID).attr('style', 'border-radius: 10px;width: 100%;margin: 0px;padding: 0px;height: auto;')
                 //$('#' + this.rootID).attr('class', 'sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix')
                 $('#' + this.rootID).append("<div id='" + this.titleID + "''></div");
                 $('#' + this.titleID).append("<div id='" + this.iconID + "''></div");
@@ -37,7 +37,7 @@ define([],
                 })
                 this.show = function() {
                     $('#' + this.titleID).addClass('sidetab-editor-title-active')
-                    showSidePanel();
+                    _SidePanel.showPanel();
                     $('#' + this.contentID).hide();
                     if (!this.isDisabled() && this.BuildGUI)
                         this.BuildGUI();
@@ -52,7 +52,7 @@ define([],
                     if (this.isOpen()) {
                         $('#' + this.contentID).hide('blind', function() {
                             if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-                            if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible')) hideSidePanel();
+                            //if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible')) _SidePanel.hidePanel();
                             $('#' + this.titleID).removeClass('sidetab-editor-title-active')
                         });
                         if(this.onHide)

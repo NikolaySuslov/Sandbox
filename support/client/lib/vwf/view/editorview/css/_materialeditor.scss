@@ -1,0 +1,133 @@
+@import 'polyfill';
+
+#materialEditor
+{
+	slider
+	{
+		.mantissa {
+			@include display-flex();
+			@include align-items(center);
+		}
+
+		.exponent {
+			@extend .mantissa;
+			@include justify-content(flex-end);
+
+			input {
+				margin-left: 5px;
+			}
+		}
+
+		.ui-slider
+		{
+			@include flex-grow(1);
+			margin: 0 10px 0 5px;
+			font-size: 11px;
+
+			background-color: #87b7d8 !important;
+			border-color: grey;
+
+			.ui-slider-handle
+			{
+				color: lightgrey !important;
+			}
+		}
+
+		input
+		{
+			@include flex-shrink(0);
+			width: 50px;
+			color: initial;
+			padding: initial;
+		}
+	}
+
+	.colorPickerIcon
+	{
+		width: 25px;
+		height: 25px;
+		border: 2px solid lightgray;
+
+		background-color: #aaaaaa;
+		background-image: url(../images/select3.png);
+		background-position: center;
+	}
+
+	.ui-accordion .ui-accordion-content {
+		padding: 10px;
+	}
+
+	input:not([type=button]) {
+		color: black;
+	}
+
+	.horizontalLayout.centered {
+		@include justify-content(center);
+
+		input[type=button] {
+			width: 80%;
+		}
+	}
+
+	.inline
+	{
+		@include display-flex();
+		@include align-items(center);
+		@include justify-content(space-between);
+
+		margin: 10px 0;
+		cursor: default;
+	}
+
+	label
+	{
+		display: block;
+		margin: 0;
+
+		input[type=checkbox] {
+			margin: 0;
+		}
+	}
+
+	#MaterialBasicSettings
+	{
+		label#materialIndex
+		{
+			@include display-flex();
+			@include justify-content(center);
+			@include align-items(center);
+			font-size: 15px;
+
+			input {
+				padding: 0;
+				margin: 0 5px;
+				width: 30px;
+			}
+		}
+	}
+
+	#MaterialFlags
+	{
+		@include justify-content(center);
+
+		label
+		{
+			margin: 10px 0;
+		}
+	}
+
+	.textureLayer
+	{
+		.texPreview
+		{
+			@include align-items(center);
+
+			img {
+				margin: 5px;
+				height: 128px;
+				border: solid grey 1px;
+				cursor: pointer;
+			}
+		}
+	}
+}

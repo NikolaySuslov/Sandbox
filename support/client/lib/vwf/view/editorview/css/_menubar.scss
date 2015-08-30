@@ -1,0 +1,149 @@
+
+.ddsmoothmenu
+{
+	font: 12px 'Open Sans';
+	background: #424242; /*background of menu bar (default state)*/
+	height: 26px;
+	border-bottom: 1px solid #666666;
+
+	ul
+	{
+		z-index:100;
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
+
+		/*Top level list items*/
+		li
+		{
+			position: relative;
+			display: inline;
+			float: left;
+			/* font-size: 1.1em; */
+
+			&.divider
+			{
+				width: 175px;
+				border-bottom: 3px solid grey;
+			}
+
+			&.disabled
+			{
+				pointer-events: none;
+
+				a {
+					color: grey;
+				}
+			}
+
+			/*Top level menu link items style*/
+			a
+			{
+				display: block;
+				background: #424242; /*background of menu items (default state)*/
+				color: white;
+				padding: 8px 10px;
+				/* border-right: 1px solid #778; */
+				cursor:pointer;
+				text-decoration: none;
+				padding-bottom: 3px;
+				padding-top: 3px;
+				/* text-shadow: 2px 2px 2px black; */
+
+				&:link, &:visited {
+					color: white;
+				}
+
+				&.selected {
+					/*CSS class that's dynamically added to the currently active menu items' LI A element*/
+					background: rgb(113, 157, 221); 
+					color: white;
+				}
+
+				&:hover {
+					background: rgb(113, 157, 221); /*background of menu items during onmouseover (hover state)*/
+					color: white;
+				}
+
+				&:active {
+					background-color: #7B7B7B; /*background of menu items during active (mouse down state)*/
+				}
+			}
+
+			/*1st sub level menu*/
+			ul
+			{
+				position: absolute;
+				left: 0;
+				display: none; /*collapse all sub menus to begin with*/
+				visibility: hidden;
+
+				/*Sub level menu list items (undo style from Top level List Items)*/
+				li
+				{
+					display: list-item;
+					//float: none;
+					box-shadow: 3px 3px 5px;
+
+					/* Sub level menu links style */
+					a
+					{
+						font: normal 13px 'Open Sans';
+						width: 160px; /*width of sub menus*/
+						padding: 5px 6px 2px 9px;
+						margin: 0;
+						border-top-width: 0;
+						/* border-bottom: 1px solid rgb(66, 66, 66); */
+						background-color: rgba(48, 48, 48, 1);
+					}
+
+					/*All subsequent sub menu levels vertical offset after 1st level sub menu */
+					ul {
+						top: 0;
+					}
+				}
+			}
+		}
+	}
+
+	/* ######### CSS classes applied to down and right arrow images  ######### */
+	.downarrowclass {
+		position: absolute;
+		top: 6px;
+		right: 7px;
+	}
+
+	.rightarrowclass {
+		position: absolute;
+		top: 6px;
+		right: 5px;
+	}
+
+	/* ######### CSS for shadow added to sub menus  ######### */
+
+	.ddshadow { /*shadow for NON CSS3 capable browsers*/
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 0;
+		height: 0;
+		background: silver;
+	}
+
+	.toplevelshadow { /*shadow opacity for NON CSS3 capable browsers. Doesn't work in IE*/
+		opacity: 0.8;
+	}
+}
+
+* html .ddsmoothmenu ul li a
+{
+	/*IE6 hack to get sub menu links to behave correctly*/
+	display: inline-block;
+}
+
+
+/* Holly Hack for IE \*/
+* html .ddsmoothmenu {
+	height: 1%;
+} /*Holly Hack for IE7 and below*/
+

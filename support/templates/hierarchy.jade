@@ -1,0 +1,48 @@
+extends ./paneleditor
+
+block vars
+	- var settings = { name: 'hierarchyManager', controller: 'HierarchyController', title: 'Hierarchy', icon: 'hierarchy' };
+
+block content
+
+	.horizontalLayout
+		input#filter(type='search', placeholder='Filter', ng-model='filter.text')
+
+		custom-select(model='filter.type')
+			.selectedOption
+			.menu.verticalLayout
+				.icon.selectnone(title='Any Type')
+				.icon.models(title='Models', value='asset-vwf')
+				.icon.script(title='Behaviors', value='http-vwf-example-com-behavior-vwf')
+				.icon.cube(title='Primitives', value='prim2-vwf')
+				.icon.hierarchy(title='Modifiers', value='modifier')
+				.icon.camera(title='Cameras', value='SandboxCamera-vwf')
+				.icon.light(title='Lights', value='SandboxLight-vwf')
+				.icon.plane(title='Splines', value='spline-vwf')
+			
+
+	#hierarchyDisplay(tabindex='0', ng-keydown='handleKeyPress($event)')
+
+		input#makeNode(type='button', ng-show='selectedThreeNode && !selectedThreeNode.node.vwfID', ng-click='makeVWFNode()', value='Three.js > VWF', scroll-fixed='top right', style='top: 0px; right: 0px;')
+
+		ul: li
+			tree-node(node-id='index-vwf', label='Scene')
+
+
+	#hierarchyNodeTemplate(ng-non-bindable, style='display: none;')
+
+		span(ng-class='getIcon()', ng-click='toggleCollapse()')
+		span.name(ng-click='vwfNode.threeId !== node.id ? select(node, $event) : null', ng-dblclick='focusNode(node.node)'
+			ng-class='{"nonselectable": vwfNode.threeId === node.id, "selected": fields.selectedNodeIds.indexOf(node.id) > -1 || selectedThreeNode === node}'
+			adl-scroll-to='node.id === fields.selectedNode.id || node.id === selectedThreeNode.id'
+		)
+			{{label || node.name || node.id}}
+
+		ul
+			li(ng-repeat='child in node.children', ng-if='!isBound(child)')
+				tree-node.collapsed(node-id='{{node.prototype !== "threejs_node" ? child : ""}}'
+					three-id='{{node.prototype === "threejs_node" ? child : ""}}')
+
+			li(ng-if='node.threeMap && hasUnboundChild(node.threeMap[node.threeId])')
+				tree-node.three.collapsed(three-id='{{node.threeId}}', label='unbound-nodes')
+

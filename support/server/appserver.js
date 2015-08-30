@@ -15,6 +15,7 @@ var libpath = require('path'),
     fs = require('fs'),
     url = require("url"),
     mime = require('mime'),
+	jade = require('jade'),
 
     YAML = require('js-yaml');
 var DAL = require('./DAL').DAL;
@@ -205,6 +206,37 @@ function _404(response) {
     response.write("404 Not Found\n");
     response.end();
 }
+
+function ServeTemplate(req,res, filename, instanceData, url)
+{
+	if( /^jade:/.test(filename) )
+	{
+		if( url.query.notools )
+			var needsTools = false;
+		else
+			needsTools = instanceData && instanceData.publishSettings ? instanceData.publishSettings.allowTools : true;
+
+		var templateFile = libpath.join(__dirname,'..','templates', filename.slice(5)+'.jade');
+
+		try {
+			var html = jade.renderFile(templateFile, {
+				filename: templateFile,
+				pretty: '\t',
+				needsTools: needsTools,
+				instanceData: instanceData
+			});
+		}
+		catch(e){
+			console.error(e);
+			html = '<pre>'+e.message+'</pre>';
+		}
+		res.send(html);
+	}
+	else {
+		ServeFile(req, filename, res, URL);
+	}
+}
+
 //Parse and serve a YAML file
 function ServeYAML(filename, response, URL) {
     var tf = filename;
@@ -489,14 +521,16 @@ function handleRequest(request, response, next) {
                     var instanceName = appname.substr(14).replace(/\//g, '_').replace(/\\/g, '_') + instance + "_";
                     DAL.getInstance(instanceName, function(data) {
                         if (data) {
-                            ServeFile(request, filename, response, URL);
+                            //ServeFile(request, filename, response, URL);
+                            ServeTemplate(request,response, 'jade:index', data, URL);
                             callback(true, true);
                             return;
                         } else {
 
-                            require('./examples.js').getExampleData(instanceName, function(data) {
+                            require('./examples.js').getExampleMetadata(instanceName, function(data) {
                                 if (data) {
-                                    ServeFile(request, filename, response, URL);
+                                    //ServeFile(request, filename, response, URL);
+                                    ServeTemplate(request,response, 'jade:index', data, URL);
                                     callback(true, true);
                                     return;
                                 } else {

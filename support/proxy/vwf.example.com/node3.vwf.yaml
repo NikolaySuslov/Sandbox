@@ -17,6 +17,15 @@ implements:
 - http://vwf.example.com/xapi.vwf
 properties:
   inheritScale: true
+  renderDepth: 0
+  type: "Node3"
+  EditorData:
+    renderDepth:
+      property: "renderDepth"
+      type: "slider"
+      displayname: "Render Depth"
+      min: 0
+      max: 100
   audioAPI:
     get: |
           if(!this._audioAPI)

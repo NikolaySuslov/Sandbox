@@ -213,7 +213,7 @@ var NOT_STARTED = 0;
 var PENDING = 1;
 var FAILED = 2;
 var SUCCEDED = 3;
-var LOAD_FAIL_TIME = 20 * 1000;
+var LOAD_FAIL_TIME = 60 * 1000;
 var assetRegistry = function()
 {
     this.assets = {};

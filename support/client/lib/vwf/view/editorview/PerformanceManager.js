@@ -121,35 +121,36 @@ define([], function() {
 
                     if (_SettingsManager.settings.resolutionScale == 16)
                         alertify.error('Graphics performance problem detected!')
-                    this.scaleDisplayResolution();
-                    
+                    //this.scaleDisplayResolution();
                 }
             }
 
         }
         this.scaleDisplayResolution = function()
         {
-        	var resolutionScale = _SettingsManager.getKey('resolutionScale')  ;
+			window._resizeCanvas();
+
+        	/*var resolutionScale = _SettingsManager.getKey('resolutionScale')  ;
 
 
-                var oldwidth = parseInt($('#index-vwf').css('width'));
-                var oldheight = parseInt($('#index-vwf').css('height'));
+            var oldwidth = parseInt($('#index-vwf').css('width'));
+            var oldheight = parseInt($('#index-vwf').css('height'));
 
-                //if ((origWidth != self.width) || (origHeight != self.height)) {
-                $('#index-vwf')[0].height = self.height / resolutionScale;
-                $('#index-vwf')[0].width = self.width / resolutionScale;
-                if(window._dRenderer)
-                    _dRenderer.setViewport(0, 0, window.innerWidth / resolutionScale, window.innerHeight / resolutionScale)
+            //if ((origWidth != self.width) || (origHeight != self.height)) {
+            $('#index-vwf')[0].height = self.height / resolutionScale;
+            $('#index-vwf')[0].width = self.width / resolutionScale;
+            if(window._dRenderer)
+                _dRenderer.setViewport(0, 0, window.innerWidth / resolutionScale, window.innerHeight / resolutionScale)
 
-                //note, this changes some renderer internals that need to be set, but also resizes the canvas which we don't want.
-                //much of the resize code is in WindowResize.js
-                if(window._dRenderer)
-                    _dRenderer.setSize(parseInt($('#index-vwf').css('width')) / resolutionScale, parseInt($('#index-vwf').css('height')) / resolutionScale);
-                _dView.getCamera().aspect = $('#index-vwf')[0].width / $('#index-vwf')[0].height;
-                $('#index-vwf').css('height', oldheight);
-                $('#index-vwf').css('width', oldwidth);
-                _dView.getCamera().updateProjectionMatrix()
-                _dView.windowResized();
+            //note, this changes some renderer internals that need to be set, but also resizes the canvas which we don't want.
+            //much of the resize code is in WindowResize.js
+            if(window._dRenderer)
+                _dRenderer.setSize(parseInt($('#index-vwf').css('width')) / resolutionScale, parseInt($('#index-vwf').css('height')) / resolutionScale);
+            _dView.getCamera().aspect = $('#index-vwf')[0].width / $('#index-vwf')[0].height;
+            $('#index-vwf').css('height', oldheight);
+            $('#index-vwf').css('width', oldwidth);
+            _dView.getCamera().updateProjectionMatrix()
+            _dView.windowResized();*/
 
         }
         this.postFrame = function() {

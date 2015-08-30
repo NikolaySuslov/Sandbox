@@ -1,0 +1,1319 @@
+@import 'polyfill';
+
+@import 'menubar';
+@import 'assets';
+@import 'toolbar';
+@import 'statusbar';
+@import 'EntityLibrary';
+@import 'scripteditor';
+@import 'sidepanel';
+@import 'hierarchy';
+@import 'materialeditor';
+
+@-webkit-keyframes pulsing {
+	0% {
+		background-color: #20559b;
+	}
+
+	50% {
+		background-color: #669be1;
+	}
+
+	100% {
+		background-color: #84b9ff;
+	}
+}
+
+@keyframes pulsing {
+	0% {
+		background-color: #20559b;
+	}
+
+	50% {
+		background-color: #669be1;
+	}
+
+	100% {
+		background-color: #84b9ff;
+	}
+}
+
+.pulsing {
+	background-color: #3a8fff;
+	/*
+	maybe the animation is just not worth the repaint on the status bar
+	animation-name: pulsing;
+	animation-duration: 1s;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+	animation-timing-function: ease-in-out;
+	-webkit-animation-name: pulsing;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-direction: alternate;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-play-state: running;*/
+}
+
+.verticalLayout {
+	@include display-flex();
+	@include flex-direction(column);
+
+	&#toolbarLevel, &#editorLevel {
+		width: 100%;
+	}
+
+	&#toolbarLevel {
+		height: 100%;
+	}
+}
+.horizontalLayout {
+	@include display-flex();
+	@include flex-direction(row);
+
+	&#panelLevel {
+		height: 100%;
+	}
+}
+
+.spacer {
+	@include flex-grow(1);
+}
+
+
+input[type=button]
+{
+	background: #222 50% 50% repeat-x;
+	border: 1px solid #444;
+	border-radius: 2px;
+
+	font-size: 11px;
+	font-weight: bold;
+	font-family: 'Open Sans', Verdana, Arial, sans-serif;
+	color: #eee;
+
+	margin: 4px;
+
+	&:hover {
+		color: #82b8ff;
+	}
+			
+	&:disabled, &:disabled:hover {
+		color: grey;
+	}
+}
+
+[scroll-fixed] {
+	position: absolute;
+}
+
+#GlobalProgressBar {
+	vertical-align: middle;
+	display: inline-block;
+	margin: 0px 0px 0px 10px;
+	padding: 0px;
+	line-height: 100%;
+	position: relative;
+	top: -2px;
+	width: 200px;
+	overflow: hidden;
+}
+
+#GlobalProgressBarInner {
+	background: #82b8ff;
+	display: block;
+	position: relative;
+	top: -9px;
+	box-shadow: 0px 0px 3px inset;
+	border-radius: 8px;
+	font-size: 13px;
+	font-family: 'Open Sans',sans-serif;
+	font-weight: bold;
+	height: 15px;
+	padding-left: 5px;
+	white-space: nowrap;
+	line-height: initial;
+	background-image: url("../images/ajax-loader.gif");
+	background-size: 300px;
+	background-position-y: -56px;
+	background-position-x: -11px;
+	background-blend-mode: multiply;
+	background-origin: inherit;
+	max-width: 190px;
+}
+
+/* This button was generated using CSSButtonGenerator.com */
+#GlobalProgressBarBack {
+	width: 200px;
+	background: gray;
+	position: relative;
+	top: 6px;
+	box-shadow: 0px 0px 3px inset;
+	border-radius: 5px;
+	font-size: 13px;
+	font-family: 'Open Sans',sans-serif;
+	font-weight: bold;
+	height: 15px;
+}
+
+#FunctionTip {
+	top: 804.1875px;
+	left: 295px;
+	position: absolute;
+	z-index: 10000;
+	font-size: 1.5em;
+	font-family: 'Open Sans',sans-serif;
+	background: black;
+	border: 1px solid gray;
+	/* box-shadow: 2px 2px 2px gray; */
+	font-style: italic;
+	color: white;
+	margin: 0px;
+}
+
+.AutoCompleteOption {
+	font-size: 1.5em;
+	font-family: Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace;
+	padding: 0px 50px 0px 5px;
+	color: #FFF;
+	border-bottom: 1px dashed #ededed;
+}
+
+.AutoCompleteOption:hover {
+	color: #5ab4e6;
+}
+
+.AutoCompleteOptionFunction {
+	font-style: italic;
+	color: orange;
+}
+
+#AutoComplete {
+	position: absolute;
+	z-index: 10000000;
+	background: black;
+	border: 1px solid #888888;
+	/* box-shadow: 5px 5px 10px #888; */
+	/* border-radius: 5px; */
+	overflow-y: auto !important;
+	overflow-x: hidden !important;
+	margin: 0px;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+	box-shadow: 0px 0px 5px #82b8ff;
+}
+
+#alertify {
+	font-size: 1.7em;
+	top: 38%;
+}
+
+#alertify-logs {
+	font-size: 2em;
+}
+
+.playerlabel {
+	cursor: pointer;
+	font-size: 1.3em;
+	margin: 1px 5px;
+	padding: 3px;
+	/* border-radius: 7px; */
+	/* border: 1px solid #444; */
+	/* background: #222 url(images/ui-bg_glass_15_222222_1x400.png) 50% 50% repeat-x; */
+	font-weight: 700;
+	color: #eee;
+	font-family: 'Open Sans';
+}
+
+.loadchoice {
+	background-color: #DDD;
+	border-radius: 3px;
+	padding: 2px;
+	box-shadow: 3px 3px 7px grey;
+	margin-bottom: 5px;
+}
+
+.SidePanelWindowTitle {
+	padding: 3px 4px 3px 4px;
+	font: 1.5em sans-serif;
+}
+
+.SidePanelWindowBottomBorder {
+	border-bottom: 5px solid #444444;
+	border-left: 2px solid #444444;
+}
+
+.loadchoice:hover {
+	background-color: #DDF;
+	border-radius: 3px;
+	padding: 2px;
+	box-shadow: 3px 3px 7px grey;
+	margin-bottom: 5px;
+}
+
+.BigTextureThumb {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	border: 1px solid black;
+	width: 128px;
+	height: 128px;
+	margin-bottom: 10px;
+	cursor: pointer;
+}
+
+.BigTextureThumbSrc {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	border: 1px solid black;
+	margin-bottom: 10px;
+	cursor: pointer;
+	word-break: break-all;
+}
+
+#ContextMenu {
+	position: fixed;
+	z-index: 10000000;
+	top: 142px;
+	left: 114px;
+	min-width: 144px;
+	max-width: 244px;
+	display: block;
+	background: #404040;
+	font-size: 1.5em;
+	color: white;
+	font-family: 'Open Sans',sans-serif;
+	box-shadow: 2px 2px 5px black;
+	border: 1px solid gray;
+	cursor: default;
+}
+
+#ContextMenuName {
+	border-bottom: 1px solid gray;
+	height: 1em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding-bottom: 2px;
+	padding-left: 6px;
+	color: lightblue;
+}
+
+.ContextMenuAction {
+	background: #404040;
+	padding-left: 5px;
+	color: lightgreen;
+}
+
+.ContextMenuAction:hover {
+	background: #82b8ff;
+}
+
+.ContextMenuItem {
+	background: #404040;
+	padding-left: 5px;
+}
+
+.ContextMenuItem:hover {
+	background: #4040A0;
+}
+
+.textureChoice {
+	width: 50px;
+	cursor: pointer;
+	height: 50px;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 50px;
+	font-size: 0.85em;
+	display: inline-block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: black;
+	text-shadow: 1px 1px 3px white;
+}
+
+.editorCheck {
+	margin: 0px 2px 0px 0px;
+	text-align: center;
+	vertical-align: middle;
+	zoom: 1.5;
+}
+
+.editorSliderLabel {
+	display: inline-block;
+	margin-bottom: 3px;
+	margin-top: 3px;
+	font-size: 1.2em;
+	text-shadow: 1px 1px 3px #aaaaaa;
+}
+
+.nametagname {
+	border-left: 2px ridge #6666ff;
+	height: 100%;
+	border-right: 2px ridge #6666ff;
+	padding-left: 10px;
+	padding-right: 10px;
+	cursor: pointer;
+}
+
+.nametag {
+	/* pointer-events: none; */
+	position: absolute;
+	/*left: 612.7792636991876px;
+	top: 350.056008871367px;*/
+	color: white;
+	text-shadow: 1px 1px 2px black;
+	padding: 0px 18px 0px 18px;
+	box-sizing: border-box;
+	border-radius: 13px;
+	font-size: 1.5em;
+	font-family: 'Open Sans',sans-serif;
+	opacity: .8;
+	transition: background 1s, opacity 1s;
+}
+
+.nametag:hover {
+	opacity: 1;
+	background: #82b8ff;
+	box-shadow: 3px 3px 3px rgba(52, 52, 52, 0.9), -3px -3px 3px #7777cc inset;
+}
+
+.glyph {
+	position: absolute;
+	left: 0px;
+	right: 0px;
+}
+
+.textureChoice:hover {
+	background: #4040A0;
+	border: 1px inset blue;
+	width: 48px;
+	height: 48px;
+}
+
+.TransformEditorInput {
+	width: 4em;
+}
+
+.usertable {
+	width: 100%;
+	margin-bottom: 5px;
+	margin-left: 5px;
+}
+
+.headericon {
+	vertical-align: middle;
+	width: 25px;
+	height: 25px;
+	display: inline-block;
+	zoom: 1.2;
+	padding-right: 5px;
+}
+.usertable tr td {
+	font: 8pt "Open Sans";
+}
+
+.usertable tr {
+	display: block;
+	border-radius: 5px;
+	width: 100%;
+	padding-bottom: 1px;
+}
+
+.EditorDataSectionTitle {
+	text-align: center;
+	margin: 3em 0px 0px 0px;
+	border-bottom: 1px solid #444444;
+	font-size: 1.3em;
+	text-shadow: 1px 1px 5px #888888;
+}
+
+.EditorDataSectionTitle:first-child {
+	margin: 1em 0px 0px 0px;
+}
+
+
+
+.GLGEStat {
+	z-index: 999999;
+	background-color: black;
+	position: absolute;
+	border: 1px solid white;
+	border-radius: 10px;
+	opacity: .8;
+}
+
+.GLGEStat table tbody tr td {
+	color: white;
+}
+
+.vectorinputfront {
+	display: inline;
+	padding: 0;
+	width: 50px;
+	border-radius: 6px 0px 0px 6px;
+	background: transparent;
+	text-align: center;
+	border-width: 1px;
+	color: grey;
+	height: 16px;
+	margin: 1px 0px 1px -2px;
+}
+
+.vectorinput {
+	display: inline;
+	padding: 0;
+	width: 50px;
+	border-radius: 0px 0px 0px 0px;
+	background: transparent;
+	text-align: center;
+	border-width: 1px;
+	color: grey;
+	height: 16px;
+	margin: 1px 0px 1px -2px;
+}
+
+.primeditorinputbox {
+	display: inline;
+	float: right;
+	padding: 0;
+	width: 50px;
+	border-radius: 6px;
+	background: transparent;
+	text-align: center;
+	border-width: 1px;
+	color: white;
+	height: 16px;
+}
+
+@media only screen and (max-width: 800px) {
+
+	.primeditorinputbox {
+		display: block;
+		float: none;
+		margin-top: 0px;
+		margin-left: 0px;
+	}
+}
+	/*
+ * CSS Styles that are needed by jScrollPane for it to operate correctly.
+ *
+ * Include this stylesheet in your site or copy and paste the styles below into your stylesheet - jScrollPane
+ * may not operate correctly without them.
+ */
+.jspContainer {
+	overflow: hidden;
+	position: relative;
+	height: 100%;
+	z-index: 5;
+	background: #515151 url(../../../../images/ui-bg_diagonals-thick_8_333333_40x40.png) 0% 0% repeat;
+	background-size: 5%;
+	margin-top: 3px;
+}
+
+.jspPane {
+	position: absolute;
+	left: 0px !important;
+}
+
+.jspVerticalBar {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 8px;
+	height: 100%;
+	background: #424242;
+}
+
+.jspHorizontalBar {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 16px;
+	background: red;
+	display: none;
+}
+
+.jspVerticalBar * {
+	margin: 0;
+	padding: 0;
+}
+
+.jspHorizontalBar * {
+	margin: 0;
+	padding: 0;
+	display: none;
+}
+
+.jspCap {
+	display: none;
+}
+
+.jspHorizontalBar .jspCap {
+	float: left;
+}
+
+.jspTrack {
+	background: rgba(0, 0, 0, 0);
+	position: relative;
+}
+
+.jspDrag {
+	box-shadow: 1px 1px 3px inset black;
+	background: #3a8fff;
+	position: relative;
+	top: 0;
+	left: 0;
+	cursor: pointer;
+	/* box-shadow: 0px 0px 3px black inset; */
+	/* border-radius: 5px; */
+	border-left: 1px solid black;
+}
+
+.jspHorizontalBar .jspTrack,
+.jspHorizontalBar .jspDrag {
+	float: left;
+	height: 100%;
+}
+
+.jspArrow {
+	background: #50506d;
+	text-indent: -20000px;
+	display: block;
+	cursor: pointer;
+}
+
+.jspArrow.jspDisabled {
+	cursor: default;
+	background: #80808d;
+}
+
+.jspVerticalBar .jspArrow {
+	height: 16px;
+}
+
+.jspHorizontalBar .jspArrow {
+	width: 16px;
+	float: left;
+	height: 100%;
+}
+
+.jspVerticalBar .jspArrow:focus {
+	outline: none;
+}
+
+.jspCorner {
+	background: #eeeef4;
+	float: left;
+	height: 100%;
+}
+
+/* Yuk! CSS Hack for IE6 3 pixel bug :( */
+* html .jspCorner {
+	margin: 0 -3px 0 0;
+}
+
+.PrivateMessageWindow {
+	background-image: -webkit-linear-gradient(top, white 0%, #d9eeef 100%);
+	width: 99%;
+	top: 0%;
+	height: 80%;
+	padding: 0px;
+	margin: 0px;
+	position: absolute;
+	overflow-y: auto;
+}
+
+.PrivateMessageTable {
+	width: 100%;
+	background-color: transparent;
+	overflow-y: hidden;
+	overflow-x: hidden;
+}
+
+.PrivateMessageWindowText {
+	margin: 0px;
+	padding: 0px;
+	overflow: hidden;
+	border: none;
+	bottom: 38px;
+	left: 1%;
+	position: absolute;
+	width: 98%;
+	top: 0%;
+}
+
+.PrivateMessageWindow input {
+	right: 1%;
+	position: absolute;
+	padding: 5px 0 5px 10px;
+	font-size: 1.5em;
+	bottom: 0px;
+	left: 1%;
+	box-shadow: 3px 2px 10px lightgrey inset;
+	width: calc(98% - 1em);
+}
+
+.PrivateMessageWindow input:focus {
+	border: 1px solid #82b8ff;
+	box-shadow: 3px 2px 10px lightgrey inset;
+}
+
+.ChatFromOtherLabel {
+	vertical-align: middle;
+	color: #517890;
+	/* text-align: right; */
+	/* right: -3%; */
+	margin-right: 10px;
+	/* float: left; */
+	display: inline-block;
+	font-size: 1.5em;
+	font-style: italic;
+	width: 100px;
+}
+
+.ChatFromOtherText {
+	color: white;
+	/* text-align: right; */
+	font-size: 1.5em;
+	/* background: lightgreen; */
+	/* margin-right: 5px; */
+	/* border-radius: 30px; */
+	/* width: 50%; */
+	/* margin-left: auto; */
+	/* background: rgb(143,233,167); */
+	/* border: 1px solid lightgray; */
+	/* border-bottom-right-radius: 0px; */
+	/* border-top-right-radius: 25px; */
+	/* border-bottom-color: #AAA; */
+	display: inline-block;
+	vertical-align: middle;
+	clear: both;
+}
+
+.ChatFromMeLabel {
+	vertical-align: middle;
+	color: #6ea1c0;
+	/* text-align: right; */
+	/* right: -3%; */
+	margin-right: 10px;
+	/* float: left; */
+	display: inline-block;
+	font-size: 1.5em;
+	font-style: italic;
+	width: 100px;
+}
+
+.ChatFromMeText {
+	color: white;
+	/* text-align: right; */
+	font-size: 1.5em;
+	/* background: lightgreen; */
+	/* margin-right: 5px; */
+	/* border-radius: 30px; */
+	/* width: 50%; */
+	/* margin-left: auto; */
+	/* border: 1px solid lightgray; */
+	/* border-bottom-right-radius: 0px; */
+	/* border-top-right-radius: 25px; */
+	/* border-bottom-color: #AAA; */
+	display: inline-block;
+	vertical-align: middle;
+	clear: both;
+}
+
+.GlobalChatLabel {
+	vertical-align: top;
+	width: 25%;
+	min-width: 25%;
+	margin-right: 1em;
+	color: darkred;
+	display: table-cell;
+}
+
+.GlobalChatText {
+	color: darkred;
+	width: 75%;
+	max-width: 75%;
+}
+
+#ChatInput {
+	bottom: 0px;
+	position: absolute;
+	padding: 5px 0px 5px 10px;
+	font-size: 1.5em;
+	left: 1%;
+	/* box-shadow: 3px 2px 10px lightgray inset; */
+	width: 97%;
+	box-sizing: border-box;
+}
+
+#ChatInput:focus {
+	border: 1px solid #82b8ff;
+	box-shadow: 3px 2px 10px lightgrey inset;
+}
+
+#ChatLog {
+	width: 100%;
+	background-color: transparent;
+}
+
+#ChatBodyInner {
+	width: 99%;
+	top: 0%;
+	padding: 0px;
+	margin: 0px;
+	position: absolute;
+	overflow-y: hidden;
+	bottom: 38px;
+	border: none;
+}
+
+#ChatWindow {
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+.ChatFromOther {
+	margin: 5px;
+}
+
+.ChatFromMe {
+	width: 95%;
+	border-radius: 10px;
+	margin: 5px 5px 9px 5px;
+	right: 1%;
+}
+
+.ChatFromMeText a {
+	word-break: break-all;
+}
+
+.ChatFromOtherText a {
+	word-break: break-all;
+}
+
+.targetpropchoice {
+	padding-left: 1em;
+	cursor: pointer;
+	color: gray;
+	border-bottom: 1px solid #eeeeee;
+}
+
+.sourcepropchoice {
+	padding-left: 1em;
+	cursor: pointer;
+	border-bottom: 1px solid #eeeeee;
+}
+
+.wirepropselected {
+	font-weight: bold;
+	text-shadow: 1px 1px 1px #aaaaaa;
+	color: blue;
+	background: #DDF;
+}
+
+#WireEditorSelectedName {
+	height: 1em;
+	background: #EFEFEF;
+	padding: 0.5em 0em 0.5em 1em;
+	margin: 1em 1em 1em 1em;
+	border-radius: 15px;
+	border: 1px outset #aaaaaa;
+	box-shadow: 3px 3px 3px #cccccc, -3px -3px 3px #cccccc inset;
+	white-space: nowrap;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+#WireEditorSourceName {
+	height: 1em;
+	background: #EFEFEF;
+	padding: 0.5em 0em 0.5em 1em;
+	margin: 1em 1em 1em 1em;
+	border-radius: 15px;
+	border: 1px outset #aaaaaa;
+	box-shadow: 3px 3px 3px #cccccc, -3px -3px 3px #cccccc inset;
+	white-space: nowrap;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+#WireEditorSelectedProps {
+	margin-left: 1em;
+	overflow: auto;
+	bottom: 18px;
+	position: absolute;
+	top: 5em;
+	width: 94%;
+}
+
+#WireEditorSourceProps {
+	margin-left: 1em;
+	overflow: auto;
+	bottom: 18px;
+	position: absolute;
+	top: 5em;
+	width: 94%;
+}
+
+#WireEditor {
+	padding: 0px;
+	margin: 0px;
+	font-size: 1.2em;
+}
+
+.wireeditorleft {
+	position: absolute;
+	top: 0%;
+	width: 50%;
+	background: #FFF;
+	height: 80%;
+	padding: 0em 0em 0em 0em;
+	border-right: 1px solid #aaaaaa;
+	z-index: 1;
+	border-radius: 6px;
+	box-shadow: 0px 0px 10px #cccccc inset;
+}
+
+.wireeditorright {
+	position: absolute;
+	width: 50%;
+	left: 50%;
+	background: #FFF;
+	height: 80%;
+	top: 0%;
+	box-shadow: 0px 0px 10px #cccccc inset;
+	padding: 0em 0em 0em 0em;
+	border-radius: 6px;
+}
+
+#wireeditorbuttons {
+	position: absolute;
+	top: 80%;
+	width: 100%;
+	text-align: center;
+}
+
+#wireeditorLink {
+	height: 1em;
+	background: #EFEFEF;
+	padding: 1.5em 0em 1.5em 0em;
+	margin: 1em 0em 1em 0em;
+	border-radius: 15px;
+	border: 1px outset #aaaaaa;
+	box-shadow: 3px 3px 3px #cccccc, -3px -3px 3px #cccccc inset;
+	white-space: nowrap;
+	overflow: hidden;
+	margin-left: auto;
+	margin-right: auto;
+	width: 33%;
+	text-align: center;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.wiredisabled {
+	color: lightgray;
+}
+
+#wireeditordisable {
+	position: absolute;
+	top: 0%;
+	bottom: 0%;
+	left: 0%;
+	right: 0;
+	background: black;
+	opacity: .05;
+}
+
+.wirepropwired {
+	text-shadow: 1px 1px 1px gray;
+	color: darkblue;
+}
+
+#SubExp2 {
+	height: 1em;
+	background: #EFEFEF;
+	padding: 1.5em 0em 1.5em 0em;
+	margin: 1em 0em 1em 0em;
+	border-radius: 15px;
+	border: 1px outset #aaaaaa;
+	box-shadow: 3px 3px 3px #cccccc, -3px -3px 3px #cccccc inset;
+	white-space: nowrap;
+	overflow: hidden;
+	margin-left: auto;
+	margin-right: auto;
+	width: 33%;
+	text-align: center;
+	cursor: pointer;
+	display: inline-block;
+}
+
+#SubExp1 {
+	height: 1em;
+	background: #EFEFEF;
+	padding: 1.5em 0em 1.5em 0em;
+	margin: 1em 0em 1em 0em;
+	border-radius: 15px;
+	border: 1px outset #aaaaaa;
+	box-shadow: 3px 3px 3px #cccccc, -3px -3px 3px #cccccc inset;
+	white-space: nowrap;
+	overflow: hidden;
+	margin-left: auto;
+	margin-right: auto;
+	width: 33%;
+	text-align: center;
+	cursor: pointer;
+	display: inline-block;
+}
+
+#preloadGUI {
+	position: absolute;
+	width: 30%;
+	height: 15%;
+	background: white;
+	border: 1px solid gray;
+	border-radius: 6px;
+	margin-left: auto;
+	vertical-align: middle;
+	text-align: center;
+	left: 35%;
+	top: 42.5%;
+	overflow: hidden;
+	box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+	font-family: 'Open Sans',sans-serif;
+	font-size: 17px;
+}
+
+#preloadGUI .preloadCenter {
+	height: 60%;
+	-webkit-margin-after: 0;
+	-webkit-margin-before: 0;
+}
+
+#preloadguiText {
+	background: #F5F5F5;
+	height: 40%;
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+	border-top-color: #dddddd;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	border-top-style: solid;
+	border-top-width: 1px;
+	box-shadow: white 0px 1px 0px 0px inset;
+	display: block;
+	margin: -1px;
+	position: absolute;
+	width: 100%;
+	color: #ccc;
+	font-size: .7em;
+}
+
+#fullscreenlink {
+	cursor: pointer;
+}
+
+#fullscreenlink:hover {
+	color: blue;
+}
+
+#preloadprogress {
+	vertical-align: middle;
+	margin-top: auto;
+	margin-bottom: auto;
+	position: absolute;
+	height: 28%;
+	width: 95%;
+	top: 16%;
+	left: 2.5%;
+}
+
+.progress-label {
+	position: absolute;
+	font-weight: bold;
+	text-shadow: 1px 1px 3px white;
+	width: 100%;
+	margin-left: auto;
+	text-align: center;
+	height: 100%;
+	margin: 0px;
+}
+
+#preloadGUIBack {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left: 0%;
+	top: 0%;
+	background: white;
+	z-index: 100000;
+	box-shadow: 0px 0px 300px #666666 inset;
+	text-align: center;
+	font-size: 1.5em;
+	font-family: 'Open Sans',sans-serif;
+}
+
+.guinode {
+	position: absolute;
+}
+
+.guipick:hover {
+	outline: 3px solid lightblue !important;
+}
+
+.guiselected {
+	outline: 3px solid blue !important;
+}
+
+.guiselected:hover {
+	outline: 3px solid blue !important;
+}
+/* Let's get this party started */
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb
+{
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	background: #5284c7;
+
+	&:window-inactive {
+		background: #82b8ff;
+	}
+}
+
+::-webkit-scrollbar-corner {
+	background-color: inherit;
+}
+
+.libraryAsset img:hover {
+	/* box-shadow: 2px 2px 10px rgb(130, 184, 255), 9px 9px 10px black inset; */
+	border: 3px solid #3a8fff;
+}
+
+.BigTextureThumb:hover, .BigTextureThumbSrc:hover {
+	border: 3px solid #8cb9ff;
+}
+
+#loadingSplash {
+	position: absolute;
+	align-content: center;
+	text-align: center;
+	width: 80%;
+	left: 10%;
+	top: 10%;
+	border: 1px solid grey;
+	box-shadow: 10px 10px 30px;
+	border-radius: 15px;
+}
+
+#GuestLogin {
+	position: absolute;
+	left: 20px;
+	top: 20px;
+}
+
+#JSONViewButtonBar {
+	height: 2.5em;
+	margin-left: -1em;
+}
+
+#JSONViewButtonBarOk, #JSONViewButtonBarCancel, #JSONViewButtonBarLoad, #JSONViewButtonBarSave {
+	border: 1px solid #444444;
+	background: #222222 url(images/ui-bg_glass_15_222222_1x400.png) 50% 50% repeat-x;
+	font-weight: 700;
+	color: #eee;
+	margin: 1px;
+	padding: 3px 10px;
+	border-radius: 5px;
+	cursor: pointer;
+	display: inline;
+}
+
+#JSONViewButtonBarOk:hover, #JSONViewButtonBarCancel:hover, #JSONViewButtonBarLoad:hover, #JSONViewButtonBarSave:hover {
+	border: 1px solid #26b3f7;
+	background: #3a8fff url(images/ui-bg_glass_20_3a8fff_1x400.png) 50% 50% repeat-x;
+	font-weight: 700;
+	color: #fff;
+	display: inline;
+}
+
+#JSONLoadInput {
+	position: absolute;
+	opacity: 0;
+	top: 0;
+	left: 0;
+	clip: auto;
+	margin: 0px;
+	padding: 0px;
+	width: 5em;
+}
+
+.playerlabelID {
+	font-size: .6em;
+	color: gray;
+}
+
+.playerlabel .glyphicon {
+	float: right;
+	margin: 0px;
+	border: 0;
+	padding: 2px;
+	margin-left: 4px;
+	font-size: 1.5em;
+}
+
+.playerlabel .glyphicon:hover {
+	color: #84b9ff;
+}
+
+.playerlabelname {
+	display: inline-block;
+}
+
+* {
+	box-sizing: content-box;
+}
+
+* select {
+	color: black;
+}
+
+div#Translation .ui-spinner, div#Rotation .ui-spinner, div#Scale .ui-spinner {
+	border-radius: 0px;
+}
+
+div#otherprops input[type=text] {
+	color: black;
+	/* border-radius: 5px; */
+	padding: 0px;
+	margin: 2px;
+}
+
+.ui-selectmenu-button {
+	float: right;
+	margin-top: 2px;
+	clear: both;
+	border-radius: 3px;
+	width: 30px;
+}
+
+.ui-selectmenu-button span.ui-selectmenu-text {
+	padding: 0px;
+}
+
+.ui-spinner {
+	border-radius: 3px;
+	margin-top: 2px;
+}
+
+.ui-spinner-input {
+	margin: 0px 10px 0px 0px;
+}
+
+.ui-button-text {
+	display: inline-block !important;
+}
+
+.ui-button-text-only img {
+	width: 50px;
+	height: 50px;
+	display: inline-block;
+}
+
+.ui-dialog .ui-dialog-titlebar-close {
+	margin: -12px 0 0;
+}
+
+#ModelSearchTerm {
+	background: black;
+}
+
+#InventoryRename {
+	color: black;
+}
+
+.jstree-default .jstree-wholerow-clicked {
+	background: #274857;
+}
+
+.jstree-default .jstree-wholerow-hovered {
+	background: #5b89b6;
+	/* color: black !important; */
+}
+
+#guioverlay_index-vwf {
+	outline: none !important;
+}
+
+#entitylibrarytray {
+	margin-left: 1em;
+	font-size: 22.2px;
+	vertical-align: middle;
+	margin-bottom: 6px;
+	cursor: pointer;
+}
+
+#entitylibrarytray:hover {
+	color: #84b9ff;
+}
+
+ul li a .glyphicon {
+	margin-right: 1em;
+}
+
+.ui-slider {
+	clear: both;
+}
+
+.editorPanelDisableOverlay {
+	position: absolute;
+	top: 0;
+	height: 100%;
+	background-color: #333;
+	width: 100%;
+	z-index: 1000;
+	opacity: .3;
+	cursor: not-allowed;
+	display: none;
+}
+
+.editorPanelDisable {
+	color: #5e5e5e !important;
+	cursor: not-allowed;
+	pointer-events: none;
+	opacity: 0.85;
+}
+
+.sidetab-editor-title {
+	background: #3a8fff 50% 50% repeat-x;
+	cursor: pointer;
+	border-radius: 2px;
+}
+
+.sidetab-editor-title:hover {
+	text-decoration: underline;
+}
+
+.sidetab-editor-title-active {
+	background: #3a8fff 50% 50% repeat-x;
+}
+
+.sidetab-editor-title-active:hover {
+	text-decoration: underline;
+}
+
+.downarrowclass {
+	display: none;
+}

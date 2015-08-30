@@ -13,7 +13,8 @@ define(function() {
 
     function initialize() {
         this.currentUsername = null;
-        $('#sidepanel').append("<div id='UserProfileWindow' class='ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active' style='padding-bottom:5px;overflow:hidden;height:auto'></div>");
+        
+		$('#sidepanel .main').append("<div id='UserProfileWindow' class='ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active' style='padding-bottom:5px;overflow:hidden;height:auto'></div>");
         $('#UserProfileWindow').append("<div id='userprofiletitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>User Profile</span></div>");
         $('#userprofiletitle').append('<a id="userprofileclose" href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" style="display: inline-block;float: right;"><span class="ui-icon ui-icon-closethick">close</span></a>');
         $("#UserProfileWindow").append("<table id='UserProfiletable' class='usertable'></table>");
@@ -45,10 +46,10 @@ define(function() {
 
 
                 if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-                if (!$('#sidepanel').children().is(':visible')) hideSidePanel();
+                //if (!$('#sidepanel').children().is(':visible')) hideSidePanel();
             });
         });
-        $('#sidepanel').append('<div id="Players"  class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="border-radius: 2px;width: 100%;margin:0px;padding:0px">' + "<div id='playerstitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Players</span></div>" + '	 <div id="PlayerList"></div>' + '</div>');
+        $('#sidepanel .main').append('<div id="Players"  class="ui-accordion-content ui-helper-reset ui-corner-bottom ui-accordion-content-active" style="border-radius: 2px;width: 100%;margin:0px;padding:0px">' + "<div id='playerstitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='sidetab-editor-title ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Players</span></div>" + '	 <div id="PlayerList"></div>' + '</div>');
         
         ;
         $('#playerstitle').prepend('<div class="headericon users"  />');
@@ -61,8 +62,6 @@ define(function() {
                     _UserManager.showPlayers();
             })
 
-        $('#Players').css('border-bottom', '5px solid #444444')
-        $('#Players').css('border-left', '2px solid #444444')
         $(document.body).append('<div id="CreateProfileDialog"/>');
 
         $("#FollowUser").button({
@@ -209,7 +208,7 @@ define(function() {
                 $('#MenuUsersicon').addClass('iconselected');
 
             });
-            showSidePanel();
+            _SidePanel.showPanel();
             this.SelectedProfile = profile;
 
             for (i in profile) {
@@ -410,8 +409,8 @@ define(function() {
             $('#playerstitle').removeClass('sidetab-editor-title-active')
             $('#PlayerList').hide('blind', function() {
                 $('#MenuUsersicon').removeClass('iconselected');
-                if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
-                if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible')) hideSidePanel();
+                //if ($('#sidepanel').data('jsp')) $('#sidepanel').data('jsp').reinitialise();
+                //if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible')) hideSidePanel();
             });
         }
         this.hidePlayers();
@@ -482,7 +481,7 @@ define(function() {
             }
 
 
-            showSidePanel();
+            _SidePanel.showPanel();
         }
         $('#UserProfileWindow').hide();
         

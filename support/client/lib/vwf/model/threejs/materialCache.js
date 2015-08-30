@@ -449,9 +449,15 @@ function MaterialCache() {
 
             currentmat.morphTargets = value.morphTargets || false;
             currentmat.skinning = value.skinning || false;
-            currentmat.specular.r = value.specularColor.r * value.specularLevel / 10;
-            currentmat.specular.g = value.specularColor.g * value.specularLevel / 10;
-            currentmat.specular.b = value.specularColor.b * value.specularLevel / 10;
+
+			if(value.specularLevel > 1)
+				value.specularLevel /= Math.pow(10, Math.ceil(Math.log10(value.specularLevel)));
+			else if(value.specularLevel < 0)
+				value.specularLevel = 0;
+
+            currentmat.specular.r = value.specularColor.r * value.specularLevel;
+            currentmat.specular.g = value.specularColor.g * value.specularLevel;
+            currentmat.specular.b = value.specularColor.b * value.specularLevel;
 
             currentmat.side = value.side || 0;
             if (window.isIE() && currentmat.side == 2) currentmat.side = 0;
@@ -515,7 +521,13 @@ function MaterialCache() {
                 mapnames.push('bumpMap');
 
             }
-            currentmat.reflectivity = value.reflect / 10;
+
+			if(value.reflect > 1)
+				value.reflect /= Math.pow(10, Math.ceil(Math.log10(value.reflect)));
+			else if(value.reflect < 0)
+				value.reflect = 0;
+
+            currentmat.reflectivity = value.reflect;
 
 
             for (var i = 0; i < value.layers.length; i++) {
@@ -809,10 +821,15 @@ function MaterialCache() {
 
 
 
+			if(value.reflect > 1)
+				value.reflect /= Math.pow(10, Math.ceil(Math.log10(value.reflect)));
+			else if(value.reflect < 0)
+				value.reflect = 0;
+
 
 
             var mapnames = ['map'];
-            currentmat.reflectivity = value.reflect / 10;
+            currentmat.reflectivity = value.reflect;
 
 
             for (var i = 0; i < value.layers.length; i++) {
@@ -1088,6 +1105,17 @@ function MaterialCache() {
                 value: transform
             };
 
+			if(value.specularLevel > 1)
+				value.specularLevel /= Math.pow(10, Math.ceil(Math.log10(value.specularLevel)));
+			else if(value.specularLevel < 0)
+				value.specularLevel = 0;
+
+			if(value.reflect > 1)
+				value.reflect /= Math.pow(10, Math.ceil(Math.log10(value.reflect)));
+			else if(value.reflect < 0)
+				value.reflect = 0;
+
+
             // assign other random uniforms/flags
             currentmat.uniforms.diffuse.value = value.color; //{r: value.color.r, g: value.color.g, b: value.color.b};
             currentmat.uniforms.emissive.value = value.emit;
@@ -1101,7 +1129,7 @@ function MaterialCache() {
             };
             currentmat.uniforms.shininess.value = value.shininess * 5;
             currentmat.uniforms.opacity.value = value.alpha;
-            currentmat.uniforms.reflectivity.value = value.reflect / 10;
+            currentmat.uniforms.reflectivity.value = value.reflect;
             currentmat.uniforms.combine.value = value.combine || 0;
 
             currentmat.side = value.side || 0;
@@ -1138,6 +1166,18 @@ function MaterialCache() {
         }
         this.getDefForMaterial = function(currentmat) {
             try {
+
+
+                if(currentmat instanceof THREE.MeshFaceMaterial)
+                {
+                    var def = [];
+                    for(var i in currentmat.materials)
+                    {
+                        def[i] = this.getDefForMaterial(currentmat.materials[i]);
+                    }
+                    return def;
+                }
+
 
                 var value = {};
                 value.color = {}

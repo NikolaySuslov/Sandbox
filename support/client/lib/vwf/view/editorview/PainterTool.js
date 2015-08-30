@@ -1,7 +1,7 @@
 function PainterTool() {
 
 
-    $('#sidepanel').append("<div id='PainterToolGUI' class='ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active' style='padding-bottom:5px;overflow:hidden;height:auto'></div>");
+    $('#sidepanel .main').append("<div id='PainterToolGUI' class='ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active' style='padding-bottom:5px;overflow:hidden;height:auto'></div>");
 
     $('#PainterToolGUI').append("<div id='PainterToolGUItitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Painter Tool</span></div>");
     $('#PainterToolGUI').append("<input type='checkbox' id='PainterToolGUIActivteTool'></input><label for='PainterToolGUIActivteTool' style = 'display:block'/>");
@@ -28,8 +28,6 @@ function PainterTool() {
 
     $('#PainterToolGUItitle').append('<a id="paintertoolclose" href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" style="display: inline-block;float: right;"><span class="ui-icon ui-icon-closethick">close</span></a>');
     $('#PainterToolGUItitle').prepend('<img class="headericon" src="../vwf/view/editorview/images/icons/inventory.png" />');
-    $('#PainterToolGUI').css('border-bottom', '5px solid #444444')
-    $('#PainterToolGUI').css('border-left', '2px solid #444444')
     $('#PainterToolGUITexture').attr('src', './vwfDataManager.svc/texture?UID=checker.jpg');
     $('#paintertoolclose').click(function() {
         _PainterTool.hide()
@@ -372,7 +370,7 @@ function PainterTool() {
 
 
 
-        showSidePanel();
+        _SidePanel.showPanel();
         _PainterTool.open = true;
 
     }
@@ -383,8 +381,8 @@ function PainterTool() {
 
             if ($('#sidepanel').data('jsp'))
                 $('#sidepanel').data('jsp').reinitialise();
-            if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible'))
-                hideSidePanel();
+            //if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible'))
+            //    hideSidePanel();
         });
 
         var checked = ($('#PainterToolGUIActivteTool').next().attr('aria-pressed'));

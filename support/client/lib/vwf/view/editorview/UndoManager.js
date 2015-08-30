@@ -127,12 +127,12 @@ define(function ()
 			return true;
 		}
 	}
-	function SetPropertyEvent(id,property,val)
+	function SetPropertyEvent(id,property,val,oldval)
 	{
 		this.property = property;
 		this.val = JSON.parse(JSON.stringify(val || null));
 		this.id = id;
-		this.oldval = JSON.parse(JSON.stringify(vwf.getProperty(id,property) || null));
+		this.oldval = JSON.parse(JSON.stringify(oldval || vwf.getProperty(id,property) || null));
 		this.undo = function()
 		{
 			vwf_view.kernel.setProperty(this.id,this.property,this.oldval);

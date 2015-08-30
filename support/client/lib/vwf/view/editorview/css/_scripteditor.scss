@@ -1,0 +1,247 @@
+@import 'polyfill';
+
+#ScriptEditor
+{
+	&.maximized	{
+		@include flex-grow(1);
+	}
+	&.minimized {
+		height: 0;
+	}
+
+	height: 400px;
+	overflow: hidden;
+	padding: 0px 0px 0px 0px;
+	background: #111 url(images/ui-bg_hexagon_5_111111_12x10.png) 50% 50% repeat;
+	@include flex-shrink(0);
+
+	#scripteditortitle
+	{
+		padding: 3px 4px;
+		font: 1.5em sans-serif;
+		font-weight: bold;
+		@include flex-shrink(0);
+
+		.icon
+		{
+			float: right;
+			text-align: center;
+			line-height: 20px;
+			margin-left: 3px;
+			padding: 3px;
+			cursor: pointer;
+
+			&:hover {
+				background-color: lightblue;
+			}
+		}
+	}
+
+	#ScriptEditorTabs
+	{
+		@include flex-grow(1);
+	}
+
+	.tabs-nav
+	{
+		@include flex-shrink(0);
+		border-bottom: solid #333 1px;
+		background-color: black;
+
+		label
+		{	
+			font-size: 11px;
+			font-weight: bold;
+			color: rgb(238,238,238);
+			font-family: 'Open Sans', Verdana, Arial, sans-serif;
+
+			border: solid 1px rgb(68,68,68);
+			border-bottom: none;
+			border-radius: 3px 3px 0 0;
+
+			background-color: rgb(34,34,34);
+			margin: 3px 0 0 0;
+			padding: 5.5px 11px;
+			
+			&.selected {
+				background-color: rgb(174,174,174);
+				color: black;
+			}
+
+			&:first-child {
+				margin-left: 5px;
+			}
+		}
+
+		input {
+			display: none;
+		}
+	}
+
+	.tabs-panel
+	{
+		@include flex-grow(1);
+		padding: 4px 0 0 0;
+	}
+
+	.list
+	{
+		width: 190px;
+		margin-right: 5px;
+		position: relative;
+
+		overflow-y: scroll;
+		overflow-x: hidden;
+
+		@include flex-shrink(0);
+
+		.listContainer
+		{
+			width: 100%;
+			position: absolute;
+		}
+
+		.listitem
+		{
+			display: block;
+			cursor: pointer;
+			overflow: hidden;
+			background-color: #222;
+
+			font-size: 16.5px;
+			font-weight: normal;
+			text-overflow: ellipsis;
+			color: white;
+			font-family: "Open Sans", Verdana, Arial, sans-serif;
+
+			padding: 1px;
+			border: 1px solid gray;
+			border-radius: 2px;
+			margin: 2px;
+
+			input {
+				display: none;
+			}
+
+			&:hover {
+				color: #82b8ff;
+			}
+
+			&.selected {
+				background-color: #2c425e;
+			}
+	
+			&.suggestion {
+				color: #B6B6B6;
+			}
+
+			&.dirty {
+				border-color: red;
+			}
+
+			&:last-child {
+				margin-bottom: 28px;
+			}
+		}
+	}
+
+	.textinner
+	{
+		width: 100%;
+		position: relative;
+
+		.font-size-selector
+		{
+			position: absolute;
+			top: 6px;
+			right: 18px;
+
+			padding: 5px;
+			z-index: 2;
+			cursor: default;
+
+			font-size: 16px;
+
+			&:hover
+			{
+				color: whitesmoke;
+				background-color: #383838;
+				border-radius: 3px;
+			}
+
+			*:hover
+			{
+				color: #82b8ff;
+			}
+		}
+
+		.content
+		{
+			position: relative;
+			background: url(vwf/view/editorview/images/ui-bg_diagonals-thick_8_cccccc_40x40.png) 50% 50% repeat;
+			border: solid black 1px;
+			@include flex-grow(1);
+
+			&.dirty {
+				border-color: red;
+			}
+		}
+
+		// override all the bad bootstrap classes
+		pre
+		{
+			padding: 0;
+			margin: 0;
+			border: none;
+			border-radius: 0;
+			background-color: inherit;
+			font-size: 12px;
+
+			width: 100%;
+			height: 100%;
+			position: absolute;
+		}
+
+		.buttonPanel
+		{
+			@include align-items(center);
+
+			font-size: 11px;
+			font-weight: bold;
+			font-family: 'Open Sans', Verdana, Arial, sans-serif;
+			color: #eee;
+		}
+	}
+
+	#options.tabs-panel {
+		@include align-items(flex-start);
+	}
+
+	label.toggleButton
+	{
+		font-size: 11px;
+		font-weight: bold;
+		color: rgb(238,238,238);
+		font-family: 'Open Sans', Verdana, Arial, sans-serif;
+
+		border: solid 1px rgb(68,68,68);
+		border-radius: 3px;
+
+		background-color: rgb(34,34,34);
+		margin: 5px;
+		padding: 5.5px 11px;
+	
+		&:hover {
+			color: #82b8ff;
+		}
+
+		&.checked {
+			background-color: rgb(174,174,174);
+			color: black;
+		}
+
+		input {
+			display: none;
+		}
+	}
+}

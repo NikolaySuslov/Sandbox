@@ -1,0 +1,39 @@
+include ./menus
+include ./manageAssets
+include ./statusbar
+include ./3DRIntegration
+include ./toolbar
+include ./EntityLibrary
+include ./scripteditor
+include ./sidepanel
+
+mixin editorTools_head
+	+menus_head
+	+toolbar_head
+	+manageAssets_head
+	+statusbar_head
+	+3DRIntegration_head
+	+EntityLibrary_head
+	+scripteditor_head
+	+sidepanel_head
+
+mixin editorTools_body
+
+	#toolbarLevel.verticalLayout(style='display: none;')
+		+menus_body
+		+toolbar_body
+
+		#panelLevel.horizontalLayout
+			+EntityLibrary_body
+
+			#editorLevel.verticalLayout
+				block
+
+				+scripteditor_body
+
+			+sidepanel_body
+
+		+statusbar_body
+		
+	+3DRIntegration_body
+	+manageAssets_body

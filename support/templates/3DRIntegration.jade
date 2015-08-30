@@ -1,0 +1,54 @@
+
+mixin 3DRIntegration_head
+	link(rel='stylesheet', href='vwf/view/editorview/css/_3DRIntegration.css')
+
+mixin 3DRIntegration_body
+
+	#ModelUploadDialog(style='display:none')
+		.uploadbackground
+			.uploadDialog: form
+		
+				.dragArea
+					input#ModelUploadFile(type='file', accept=".zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed")
+					#drophere Drop Here
+					#browseButton Browse
+				
+				#uploadStatus Not Ready. Choose a file.
+				#uploadStats.uploadSection(style="margin-top:0px")
+					svg(width="60px", height="60px", version="1.1", xmlns="http://www.w3.org/2000/svg", style="float: left;margin: -7px 20px;")
+						path(d="M5 30 A 25 25, 0, 1, 1, 5 30.01", stroke="#555", fill="transparent", stroke-width="10")
+						path#progresspath(d="M5 30 A 25 25, 0, 1, 1, 55 30", stroke="#779", fill="transparent", stroke-width="8")
+					
+					.uploadsectionDetail
+						span File name
+						span#filename test.zip
+					.uploadsectionDetail
+						span File size
+						span#filesize(style="text-align:right") 982Kb
+					.uploadsectionDetail
+						span File type
+						span#filetype(style="text-align:right") zip
+
+				#uploadMetadata.uploadSection
+					input#uploadTitle(type="text", placeholder="Title")
+					input#uploadDescription(type="text", placeholder="Description")
+
+				#submit3DRUpload.uploadDialogButton Upload
+				#cancel3DRUpload.uploadDialogButton Cancel
+
+
+	#ModelLibrary(style='display:none')
+		#ModelSearchResults
+		#ModelSearchPanel(style='overflow:auto')
+			input#ModelSearchTerm(type='text', style='border-radius: 5px;')
+			#ModelSearchButton
+			#ResultsPages(style='display: inline;')
+		div(style='margin-top: 2em;color: grey;font-size: 0.8em;')
+			| This interface allows you to load 3D models from a library of content. This content will be created at the center of your viewport. 
+			| Type a search term in the box above. Click on thumbnails to display additional data about the objects. If you wish to upload content, 
+			| please visit the 
+			a(target='new', href='http://3dr.adlnet.gov') ADL 3D Repository
+			| . Here, you can upload assets to be included in this virtual world. Be careful to mark your content as publically accessable, as this 
+			| system can only load public content at this time.
+
+	#ModelDetails

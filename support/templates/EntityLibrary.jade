@@ -1,0 +1,25 @@
+mixin EntityLibrary_head
+	block
+
+mixin EntityLibrary_body
+
+	#EntityLibrary.hidden(ng-controller='EntityLibraryController')
+
+		#EntityLibrarySideTab(ng-click='isOpen ? hide() : show()') Library
+
+		#EntityLibraryMain.verticalLayout
+
+			#entitylibrarytitle.ui-dialog-titlebar.ui-widget-header.ui-corner-all.ui-helper-clearfix(style='padding:3px 4px 3px 4px; font:1.5em sans-serif; font-weight: bold;')
+				.headericon.properties
+				span#entitylibrarytitletext.ui-dialog-title Content Libraries
+				#entitylibrarytray.glyphicon.glyphicon-align-justify(ng-click='promptAddLibrary()')
+				a#entitylibraryclose.ui-dialog-titlebar-close.ui-corner-all(href='#', ng-click='hide()', role='button', style="display: inline-block;float: right;")
+					span.ui-icon.ui-icon-closethick close
+
+			#EntityLibraryAccordion(vws-accordion='combinedLibs')
+				h3.modifiersection(ng-repeat-start='lib in combinedLibs')
+					a(href="#"): strong {{lib.name}}
+				.modifiersection(ng-repeat-end)
+					.libraryAsset(ng-repeat='asset in lib.content', ng-click='create(asset, $event)', draggable-asset='asset')
+						lazy-img(src='asset.preview', load-when='isOpen')
+						div {{asset.name}}

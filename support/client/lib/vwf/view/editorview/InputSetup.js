@@ -2,12 +2,12 @@ define({
 	initialize:function()
 	{
 		//hook up the editor object
-		$('#vwf-root').mousedown(function(e){_Editor.mousedown(e)});
+		$('#index-vwf').mousedown(function(e){_Editor.mousedown(e)});
 		
-		$('#vwf-root').mouseup(function(e){_Editor.mouseup(e)});
-		$('#vwf-root').click(function(e){_Editor.click(e)});
+		$('#index-vwf').mouseup(function(e){_Editor.mouseup(e)});
+		$('#index-vwf').click(function(e){_Editor.click(e)});
 		$('#index-vwf').mouseleave(function(e){_Editor.mouseleave(e)});
-		$('#vwf-root').mousemove(function(e){_Editor.mousemove(e)});
+		$('#index-vwf').mousemove(function(e){_Editor.mousemove(e)});
 
 		$('#index-vwf').on('dblclick',function(e){_Editor.dblclick(e)});
 
@@ -44,7 +44,7 @@ define({
 		{
 			_Editor.blur();
 		});
-		$('#vwf-root').keydown(function(e){
+		$('#index-vwf').keydown(function(e){
 			
 			if(vwf.getProperty(vwf.application(),'playMode') == 'play') return;
 			try{
@@ -56,7 +56,7 @@ define({
 				
 			}
 		});
-		$('#vwf-root').keypress(function(e) {
+		$('#index-vwf').keypress(function(e) {
 			
             if (e.charCode == 92) {
                 if (!_EditorView.needTools()) return;
@@ -77,7 +77,7 @@ define({
 		
 		
 		
-		$('#vwf-root').keyup(function(e){
+		$('#index-vwf').keyup(function(e){
 
 			_Editor.keyup(e)
 			

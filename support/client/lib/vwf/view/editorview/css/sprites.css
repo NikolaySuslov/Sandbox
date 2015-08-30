@@ -1,4 +1,4 @@
-.undo, .redo, .physics, .axis, .camera, .cameraIcon, .chat, .cone, .copy, .cube, .cylinder, .delete, .down, .duplicate, .firstperson, .folder, .free, .grid, .grid_icon, .hierarchy, .icon_belts_axis, .inventory, .left, .light_icon, .link, .localspace, .login, .logout, .material, .models, .move, .navigate, .ParticleIcon, .paste, .pick, .plane, .properties, .pyramid, .right, .rotate, .save, .scale, .scene, .script, .selectnone, .sphere, .target, .unlink, .up, .up_folder, .up2, .user, .users, .window, .worldspace{
+.undo, .redo, .physics, .axis, .camera, .cameraIcon, .chat, .cone, .copy, .cube, .cylinder, .delete, .down, .duplicate, .firstperson, .folder, .free, .grid, .grid_icon, .hierarchy, .icon_belts_axis, .inventory, .left, .light, .link, .localspace, .login, .logout, .material, .models, .move, .navigate, .ParticleIcon, .paste, .pick, .plane, .properties, .pyramid, .right, .rotate, .save, .scale, .scene, .script, .selectnone, .sphere, .target, .unlink, .up, .up_folder, .up2, .user, .users, .window, .worldspace{
 background-image: url(../images/icons/sprites.svg) !important;
 background-origin: content-box !important;
 }
@@ -123,8 +123,8 @@ background-origin: content-box !important;
 	height: 25px;
 }
 
-.light_icon{
-	background-position: -230px -26px ;
+.light{
+	background-position: -525px -70px ;
 	width: 25px;
 	height: 25px;
 }
@@ -141,13 +141,13 @@ background-origin: content-box !important;
 	height: 25px;
 }
 
-.login{
+.logout{
 	background-position: -145px -29px ;
 	width: 25px;
 	height: 25px;
 }
 
-.logout{
+.login{
 	background-position: -117px -29px ;
 	width: 25px;
 	height: 25px;
@@ -160,7 +160,7 @@ background-origin: content-box !important;
 }
 
 .models{
-	background-position: -59px -27px ;
+	background-position: -60px -27px ;
 	width: 25px;
 	height: 25px;
 }
@@ -244,13 +244,13 @@ background-origin: content-box !important;
 }
 
 .script{
-	background-position: -303px 0;
+	background-position: -305px 0;
 	width: 25px;
 	height: 25px;
 }
 
 .selectnone{
-	background-position: -276px 0;
+	background-position: -275px 0;
 	width: 25px;
 	height: 25px;
 }
@@ -316,7 +316,7 @@ background-origin: content-box !important;
 }
 .physics
 {
-	background-position: -1242px 0px;
+	background-position: -1233px 1px;
 	width: 25px;
 	height: 25px;
 }

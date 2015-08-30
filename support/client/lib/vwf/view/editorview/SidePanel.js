@@ -1,106 +1,44 @@
-function getLeft(id,_default)
-    {
-        if(!_default) _default = 0;
-        if($('#' + id).is(':visible'))
-            return parseInt($('#' + id).css('left'));
-        else return _default;    
-    }
-    function getWidth(id,_default)
-    {
-        if(!_default) _default = 0;
-        if($('#' + id).is(':visible'))
-            return parseInt($('#' + id).width());
-        else return _default;    
-    }
-define({
-    initialize: function() {
-        var sizeTimeoutHandle;
-        $(document.body).append('<div id="sidepanel" style=""> </div>');
+'use strict';
 
-        function sizeWindowTimer() {
-            if (!_Editor.findcamera()) return;
-            _Editor.findcamera().aspect = ($('#index-vwf').width() / $('#index-vwf').height());
+define(['vwf/view/editorview/angular-app'], function(app)
+{
+	app.controller('SidePanelController', ['$scope', function($scope)
+	{
+		window._SidePanel = $scope;
 
-            _Editor.findcamera().updateProjectionMatrix();
+		$scope.isPanelOpen = function(){
+			return $('#sidepanel').width() > 0;
+		}
 
-            _ScriptEditor.resize();
-        }
+		$scope.showPanel = function(){
+			$('#sidepanel').removeClass('hidden', 400);
+		}
 
-        function createPanelShowHide() {
-          
-        }
+		$scope.hidePanel = function(){
+			$('#sidepanel').addClass('hidden', 400);
+		}
 
-        function hideSidePanel() {
-            window.clearInterval(window.sizeTimeoutHandle);
-            
-            $('#togglesidepanelicon').removeClass('right');
-            $('#togglesidepanelicon').addClass('left');
-            $('#sidepanel').animate({
-                'left': $(window).width()
-            });
-            $('#ScriptEditor').animate({
-                'width': $(window).width() - (getLeft('EntityLibrary') + getWidth('EntityLibrary'))
-            });
+		$scope.isTabOpen = function(name){
+			return $('#'+name+' .title').hasClass('sidetab-editor-title-active');
+		}
 
-            if ($('#index-vwf').length > 0) {
-                window.sizeTimeoutHandle = window.setInterval(sizeWindowTimer, 33);
-                $('#index-vwf').animate({
-                    'width': $(window).width() - (getLeft('EntityLibrary') + getWidth('EntityLibrary'))
-                }, function() {
-                    
-                    window.clearInterval(window.sizeTimeoutHandle);
-                    sizeWindowTimer();
-                    window.sizeTimeoutHandle = null;
-                    var resolutionScale = _SettingsManager.getKey('resolutionScale');
-                    $('#index-vwf')[0].height = $('#index-vwf').height() / resolutionScale;
-                    $('#index-vwf')[0].width = $(window).width() / resolutionScale;
-                    _dRenderer.setSize($('#index-vwf').width() / resolutionScale, $('#index-vwf').height() / resolutionScale, false)
-                    if (_Editor.findcamera()) {
-                        _Editor.findcamera().aspect = ($('#index-vwf').width() / $('#index-vwf').height());
-                        _Editor.findcamera().updateProjectionMatrix();
-                    }
-                });
-            }
-            $(document).trigger('sidePanelClosed');
-            $('#index-vwf').focus();
-        }
+		$scope.showTab = function(name)
+		{
+			$scope.showPanel();
+			$('#'+name+' .title').addClass('sidetab-editor-title-active');
+			$('#'+name+' .content').show('blind');
+		}
 
-        function showSidePanel() {
-            window.clearInterval(window.sizeTimeoutHandle);
-            window.sizeTimeoutHandle = window.setInterval(sizeWindowTimer, 33);
-            $('#togglesidepanelicon').addClass('right');
-            $('#togglesidepanelicon').removeClass('left');
-            $('#sidepanel .jspContainer .jspPane').css('left', 0);
-            $('#sidepanel').animate({
-                'left': $(window).width() - $('#sidepanel').width()
-            });
-            $('#ScriptEditor').animate({
-                'width': $(window).width() - $('#sidepanel').width() - (getLeft('EntityLibrary') + getWidth('EntityLibrary'))
-            });
-            $('#index-vwf').animate({
-                'width': $(window).width() - $('#sidepanel').width() - (getLeft('EntityLibrary') + getWidth('EntityLibrary'))
-            }, function() {
-                window.clearInterval(window.sizeTimeoutHandle);
-                window.sizeTimeoutHandle = null;
-                var resolutionScale = _SettingsManager.getKey('resolutionScale');
-                $('#index-vwf')[0].height = $('#index-vwf').height() / resolutionScale;
-                $('#index-vwf')[0].width = $('#index-vwf').width() / resolutionScale;
-                if(window._dRenderer)
-                    _dRenderer.setSize($('#index-vwf').width() / resolutionScale, $('#index-vwf').height() / resolutionScale, false);
-                if (_Editor.findcamera()) {
-                    _Editor.findcamera().aspect = ($('#index-vwf').width() / $('#index-vwf').height());
-                    _Editor.findcamera().updateProjectionMatrix();
-                }
-            });
-        }
+		$scope.hideTab = function(name)
+		{
+			$('#'+name+' .content').hide('blind', function(){
+				$('#'+name+' .title').removeClass('sidetab-editor-title-active');
+				if( $('#sidepanel .sidetab-editor-title-active').length === 0 )
+					$scope.hidePanel();
+			});
+		}
+	}]);
 
-        function updateScrollBars() {
-            if ($('#sidepanel').data('jsp'))
-                $('#sidepanel').data('jsp').reinitialise()
-        }
-        window.updateSidepanelScrollbars = updateScrollBars;
-        window.showSidePanel = showSidePanel;
-        window.hideSidePanel = hideSidePanel;
-        createPanelShowHide();
-    }
+	return window._SidePanel;
 });
+

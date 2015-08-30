@@ -1,118 +1,98 @@
-define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], function(angular, strToBytes)
+define(['vwf/view/editorview/angular-app','vwf/view/editorview/strToBytes', 'vwf/view/editorview/UserManager'], function(app, strToBytes)
 {
-	var app = angular.module('ManageAssetsDialog', []);
-	var dataRoot = null;
-	var appPath = '';
 	var appHeaderName = '';
 	var uploadVWFObject, setSelection;
 
-	app.run(['$http', function($http){
-		if(appHeaderName){
-			var cookie = /session=([A-Za-z0-9_.-]+)/.exec(document.cookie);
-			if(cookie){
-				$http.defaults.headers.post[appHeaderName] = cookie[1];
-				$http.defaults.headers.delete = $http.defaults.headers.delete || {};
-				$http.defaults.headers.delete[appHeaderName] = cookie[1];
-			}
-		}
-	}]);
-
-	app.factory('DataManager', ['$rootScope','$http', function($rootScope, $http)
+	app.service('AssetDataManager', ['$http','$rootScope', function($http, $rootScope)
 	{
-		dataRoot = $rootScope;
-		$rootScope.appPath = appPath;
-		$rootScope.fields = {selected: null};
-		$rootScope.assets = {};
+		var data = {};
 
-		setSelection = function(id){
-			$rootScope.fields.selected = id;
-			$rootScope.new._added = true;
-		}
-
-		$rootScope.refreshData = function(id)
+		Object.defineProperty(data, 'refresh',
 		{
-			var toComplete = 1;
-			function refCountCallback(cb){
-				toComplete--;
-				if(toComplete === 0 && cb) cb();
-			}
+			enumerable: false,
+			writable: false,
+			value: function(id)
+			{
+				var self = this;
 
-			function updateAsset(id,cb){
-				$http.get($rootScope.appPath+'/assets/'+id+'/meta?permFormat=json').success(function(data){
-					$rootScope.assets[id] = data;
-					$rootScope.assets[id].id = id;
-					refCountCallback(cb);
-				})
-				.error(function(data,status){
-					if(status === 404){
-						delete $rootScope.assets[id];
+				var toComplete = 1;
+				function refCountCallback(cb){
+					toComplete--;
+					if(toComplete === 0 && cb) cb();
+				}
+
+				function updateAsset(id,cb){
+					$http.get(data.appPath+'/assets/'+id+'/meta?permFormat=json').success(function(data,status){
+						if( status !== 304 ){
+							self[id] = data;
+							self[id].id = id;
+						}
+						refCountCallback(cb);
+					})
+					.error(function(data,status){
+						if(status === 404){
+							delete self[id];
+						}
+						refCountCallback(cb);
+					});
+				}
+
+				if(id && typeof(id) === 'string'){
+					updateAsset(id);
+				}
+				else {
+					var cb = typeof(id) === 'function' ? id : null;
+					$http.get(self.appPath+'/assets/by-user/'+_UserManager.GetCurrentUserName()).success(
+						function(list,status)
+						{
+							if( status !== 304 ){
+								var ids = Object.keys(list.assets);
+								toComplete = ids.length;
+								for(var i=0; i<ids.length; i++){
+									updateAsset(ids[i], cb);
+								}
+							}
+						}
+					);
+				}
+			}.bind(data)
+		});
+
+		$http.get('vwfDataManager.svc/saspath').success(function(appPath)
+		{
+			Object.defineProperty(data, 'appPath', {
+				enumerable: false,
+				writable: false,
+				value: appPath
+			});
+
+			// check if same origin
+			var loc = window.location;
+			var a = document.createElement('a');
+			a.href = appPath;
+
+			if( !(a.hostname == loc.hostname && a.port == loc.port && a.protocol == loc.protocol) ){
+				$.get(appPath+'/session-header-name', function(data){
+					appHeaderName = data;
+					var cookie = /session=([A-Za-z0-9_.-]+)/.exec(document.cookie);
+					if(cookie){
+						$http.defaults.headers.post[appHeaderName] = cookie[1];
+						$http.defaults.headers.delete = $http.defaults.headers.delete || {};
+						$http.defaults.headers.delete[appHeaderName] = cookie[1];
 					}
-					refCountCallback(cb);
 				});
 			}
+		});
 
-			if(id && typeof(id) === 'string'){
-				updateAsset(id);
-			}
-			else {
-				var cb = typeof(id) === 'function' ? id : null;
-				$http.get($rootScope.appPath+'/assets/by-user/'+_UserManager.GetCurrentUserName()).success(
-					function(list)
-					{
-						$rootScope.assets = {};
-						var ids = Object.keys(list.assets);
-						toComplete = ids.length;
-						for(var i=0; i<ids.length; i++){
-							updateAsset(ids[i], cb);
-						}
-					}
-				);
-			}
-		}
+		$rootScope.$watch('fields.worldIsReady', function(){
+			data.refresh();
+		});
 
-		// build resonable defaults for new uploads
-		$rootScope.resetNew = function(){
-			$rootScope.new = {
-				name: '<new asset>',
-				type: '???',
-				license: 'CC-BY',
-				permissions: {
-					user: {
-						read: true,
-						write: true,
-						delete: true
-					},
-					group: {
-						read: true
-					},
-					other: {
-						read: true
-					}
-				}
-			};
-
-			if($rootScope.fields.selected === 'new')
-				$rootScope.fields.selected = null;
-		}
-		$rootScope.resetNew();
-
-		$rootScope.prettifyType = function(type){
-			switch(type){
-				case 'application/vnd.vws-entity+json':
-					return 'VWS Entity';
-				case 'application/vnd.vws-material+json':
-					return 'VWS Material';
-				case 'application/vnd.vws-behavior+json':
-					return 'VWS Behavior';
-				default:
-					return type;
-			}
-		};
-
-		return null;
+		window._AssetLibrary = data;
+		return data;
 	}]);
 
-	app.filter('sortKeys', function(){
+	app.filter('sortByProp', function(){
 		return function(input, field, reverse)
 		{
 			input = input || {};
@@ -136,7 +116,7 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 		};
 	});
 
-	app.filter('filterThumbs', function(){
+	app.filter('filterAssetThumbs', function(){
 		return function(input, enabled)
 		{
 			if(enabled)
@@ -157,7 +137,7 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 		};
 	});
 
-	app.filter('searchFor', function(){
+	app.filter('searchForAsset', function(){
 		return function(input,term)
 		{
 			var re = new RegExp(term, 'i');
@@ -180,31 +160,6 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 				return input + 'B';
 		}
 	});
-	/*app.directive('adlSticky', function()
-	{
-		return {
-			'restrict': 'A',
-			'link': function(scope,element,attr)
-			{
-				var parent = element.parent()[0];
-				parent.onscroll = updateState;
-				$('#manageAssetsDialog').on('dialogresize', updateState);
-				scope.$watch(function(){ return parent.scrollHeight; }, updateState);
-
-				function updateState(e)
-				{
-					//console.log( parent.scrollTop, parent.clientHeight, parent.scrollHeight );
-					if( parent.scrollTop+parent.clientHeight < parent.scrollHeight ){
-						element.toggleClass('sticky', true);
-						element.css('bottom', parent.scrollHeight-parent.clientHeight-parent.scrollTop);
-					}
-					else {
-						element.toggleClass('sticky', false);
-					}
-				}
-			}
-		};
-	});*/
 
 	app.directive('adlScrollTo', ['$timeout', function($timeout)
 	{
@@ -215,7 +170,7 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 			},
 			link: function(scope,element,attr)
 			{
-				var elem = element[0], parent = element.parent()[0];
+				var elem = element[0], parent = element.scrollParent()[0];
 
 				scope.$watch('scrollTo', function(newval){
 					if( newval )
@@ -223,13 +178,20 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 						// delay until next cycle, when elem.offset* will evaluate
 						$timeout(function()
 						{
-							var elemBottom = elem.offsetTop+elem.clientHeight;
+							var elemBottom = elem.offsetTop+$(elem).height();
+							var elemRight = elem.offsetLeft+$(elem).width();
 							var parentBottom = parent.scrollTop+parent.clientHeight;
+							var parentRight = parent.scrollLeft+parent.clientWidth;
 
 							if( elem.offsetTop < parent.scrollTop )
 								parent.scrollTop = elem.offsetTop;
 							else if( elemBottom > parentBottom )
 								parent.scrollTop = parent.scrollTop + (elemBottom - parentBottom) + 3;
+
+							if( elem.offsetLeft < parent.scrollLeft )
+								parent.scrollLeft = elem.offsetLeft;
+							else if( elem.offsetLeft > parentRight-100 )
+								parent.scrollLeft = Math.min(elemRight, elem.offsetLeft+100, parent.scrollWidth) - parent.clientWidth + 3;
 						});
 					}
 				});
@@ -237,14 +199,13 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 		};
 	}]);
 
-	app.controller('AssetListController', ['$scope','$rootScope','DataManager', function($scope,$rootScope)
+	app.controller('AssetManagerController', ['$scope','$http','AssetDataManager', function($scope, $http, assets)
 	{
+		$scope.assets = assets;
+
+		$scope.selectedAsset = null;
 		$scope.hideThumbs = true;
 
-	}]);
-
-	app.controller('AssetPropertiesController', ['$scope','$rootScope','$http','DataManager', function($scope,$rootScope,$http)
-	{
 		$scope.knownTypes = [
 			'image/png', 'image/jpeg', 'image/dds',
 			'model/vnd.collada+xml', 'model/vnd.three.js+json', 'model/vnd.gltf+json',
@@ -252,8 +213,54 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 			'application/octet-stream', 'application/json'
 		].sort();
 
+		setSelection = function(id){
+			$scope.selectedAsset = id;
+			if( id === 'new' )
+				$scope.new._added = true;
+		}
+		$scope.setSelection = setSelection;
+
+		// build resonable defaults for new uploads
+		$scope.resetNew = function(){
+			$scope.new = {
+				name: '<new asset>',
+				type: '???',
+				license: 'CC-BY',
+				permissions: {
+					user: {
+						read: true,
+						write: true,
+						delete: true
+					},
+					group: {
+						read: true
+					},
+					other: {
+						read: true
+					}
+				}
+			};
+
+			if($scope.selectedAsset === 'new')
+				$scope.selectedAsset = null;
+		}
+		$scope.resetNew();
+
+		$scope.prettifyType = function(type){
+			switch(type){
+				case 'application/vnd.vws-entity+json':
+					return 'VWS Entity';
+				case 'application/vnd.vws-material+json':
+					return 'VWS Material';
+				case 'application/vnd.vws-behavior+json':
+					return 'VWS Behavior';
+				default:
+					return type;
+			}
+		};
+
 		// keep 'selected' in sync with currently selected asset
-		$scope.$watchGroup(['fields.selected', 'assets[fields.selected]', 'new'], function(newvals)
+		$scope.$watchGroup(['selectedAsset', 'assets[selectedAsset]', 'new'], function(newvals)
 		{
 			$scope.clearFileInput();
 
@@ -367,7 +374,7 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 			if(!existingId)
 			{
 				$scope.resetNew();
-				$scope.fields.selected = 'new';
+				$scope.selectedAsset = 'new';
 				$scope.new.filedata = strToBytes( JSON.stringify(cleanObj) );
 				$scope.new.filename = name;
 				$scope.new.type = type;
@@ -377,7 +384,7 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 			}
 			else
 			{
-				$scope.fields.selected = existingId;
+				$scope.selectedAsset = existingId;
 				$scope.assets[existingId].filedata = strToBytes( JSON.stringify(cleanObj) );
 				$scope.assets[existingId].filename = name;
 				$scope.assets[existingId].type = type;
@@ -392,14 +399,14 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 		// since file inputs are read-only...
 		$scope.clearFileInput = function(){
 			var input = $('#manageAssetsDialog #fileInput');
-			input.replaceWith( input.val('').prop('disabled', !$scope.fields.selected).clone(true) );
+			input.replaceWith( input.val('').prop('disabled', !$scope.selectedAsset).clone(true) );
 		}
 
 
 		$scope.getAssetUrl = function(id){
 			if(!id) return '';
 			else if(id === 'new') return 'Unsaved Asset';
-			else return $scope.appPath+'/assets/'+id;
+			else return $scope.assets.appPath+'/assets/'+id;
 		};
 
 		// generate octal perms from checkbox array
@@ -437,7 +444,7 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 				{
 					var perms = $scope.getPackedPermissions();
 
-					var url = $scope.appPath+'/assets/new';
+					var url = $scope.assets.appPath+'/assets/new';
 					var queryChar = '?';
 					if( $scope.selected.name ){
 						url += queryChar+'name='+ encodeURIComponent( $scope.selected.name );
@@ -480,8 +487,8 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 							if($scope.selected._uploadCallback)
 								$scope.selected._uploadCallback(xhr.responseText);
 
-							$scope.refreshData(xhr.responseText);
-							$scope.fields.selected = xhr.responseText;
+							$scope.assets.refresh(xhr.responseText);
+							$scope.selectedAsset = xhr.responseText;
 							$scope.resetNew();
 							$scope.clearFileInput();
 						}
@@ -511,7 +518,7 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 				function checkRemaining(){
 					toComplete -= 1;
 					if( toComplete === 0 ){
-						$scope.refreshData($scope.selected.id);
+						$scope.assets.refresh($scope.selected.id);
 					}
 				}
 
@@ -530,7 +537,7 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 						}
 						checkRemaining();
 					});
-					xhr.open('POST', $scope.appPath+'/assets/'+$scope.selected.id);
+					xhr.open('POST', $scope.assets.appPath+'/assets/'+$scope.selected.id);
 					xhr.setRequestHeader('Content-Type', $scope.selected.type);
 
 					if( $http.defaults.headers.post[appHeaderName] ){
@@ -552,7 +559,7 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 						height: $scope.selected.height || null,
 						isTexture: $scope.selected.isTexture
 					};
-					$http.post($scope.appPath+'/assets/'+$scope.selected.id+'/meta', meta).success(checkRemaining)
+					$http.post($scope.assets.appPath+'/assets/'+$scope.selected.id+'/meta', meta).success(checkRemaining)
 					.error(function(data,status){
 						alertify.alert('Failed to post metadata: '+data);
 						checkRemaining();
@@ -562,7 +569,7 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 				if($scope.selected._groupDirty)
 				{
 					toComplete += 1;
-					$http.post($scope.appPath+'/assets/'+$scope.selected.id+'/meta/group_name', $scope.selected.group_name).success(checkRemaining)
+					$http.post($scope.assets.appPath+'/assets/'+$scope.selected.id+'/meta/group_name', $scope.selected.group_name).success(checkRemaining)
 					.error(function(data,status){
 						alertify.alert('Failed to change group: '+data);
 						checkRemaining();
@@ -573,7 +580,7 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 				{
 					var perms = $scope.getPackedPermissions();
 					toComplete += 1;
-					$http.post($scope.appPath+'/assets/'+$scope.selected.id+'/meta/permissions', perms.toString(8)).success(checkRemaining)
+					$http.post($scope.assets.appPath+'/assets/'+$scope.selected.id+'/meta/permissions', perms.toString(8)).success(checkRemaining)
 					.error(function(data,status){
 						alertify.alert('Failed to change permissions: '+data);
 						checkRemaining();
@@ -586,15 +593,15 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 		{
 			alertify.confirm('Are you POSITIVE you want to delete this asset?', function()
 			{
-				$http.delete($scope.appPath+'/assets/'+id)
+				$http.delete($scope.assets.appPath+'/assets/'+id)
 				.success(function(){
-					$scope.refreshData(id);
-					$scope.fields.selected = null;
+					$scope.assets.refresh(id);
+					$scope.selectedAsset = null;
 				})
 				.error(function(data){
 					alertify.alert('Delete failed: '+data);
-					$scope.refreshData(id);
-					$scope.fields.selected = null;
+					$scope.assets.refresh(id);
+					$scope.selectedAsset = null;
 				});
 			});
 		}
@@ -615,42 +622,13 @@ define(['vwf/view/editorview/lib/angular','vwf/view/editorview/strToBytes'], fun
 
 		initialize: function()
 		{
-			// actually insert the html
-			$('<div id="manageAssetsContainer"></div>').appendTo(document.body);
-			$('#manageAssetsContainer').load('vwf/view/editorview/manageAssets.html',function()
-			{
-				$('#manageAssetsDialog').dialog({
-					title: 'Manage Assets',
-					width: 600,
-					height: 600,
-					autoOpen: false
-				});
-
-				$.get('vwfDataManager.svc/saspath', function(data)
-				{
-					appPath = data;
-
-					// check if same origin
-					var loc = window.location;
-					var a = document.createElement('a');
-					a.href = appPath;
-
-					if( a.hostname == loc.hostname && a.port == loc.port && a.protocol == loc.protocol ){
-						// no need to fetch header name, just initialize
-						angular.bootstrap($('#manageAssetsDialog')[0], ['ManageAssetsDialog']);
-					}
-					else {
-						$.get(appPath+'/session-header-name', function(data){
-							appHeaderName = data;
-							angular.bootstrap($('#manageAssetsDialog')[0], ['ManageAssetsDialog']);
-						});
-					}
-				});
+			$('#manageAssetsDialog').dialog({
+				title: 'Manage Assets',
+				width: 600,
+				height: 600,
+				autoOpen: false
 			});
-		},
 
-		refreshData: function(cb){
-			dataRoot.refreshData(cb);
 		},
 
 		uploadSelectedEntity: function(overwrite)

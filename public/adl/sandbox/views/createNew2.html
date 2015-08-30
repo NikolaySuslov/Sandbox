@@ -78,7 +78,8 @@ color: lightgray;
 					contentType: "application/json; charset=utf-8",
 					success:function(data,status,xhr)
 					{
-						var newLocation = data.replace("Created state _adl_sandbox_", "").replace("_", "");
+						var len = data.length;
+						var newLocation = data.substr(len-18,16)
 						window.location = "{{root}}" + "/world/" + newLocation;
 					},
 					error:function(xhr,status,err)

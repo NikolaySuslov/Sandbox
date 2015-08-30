@@ -1,0 +1,28 @@
+mixin statusbar_head
+	block
+
+mixin statusbar_body
+
+	#statusbar.statusbar(style='bottom: 100%')
+		#TimeControl
+			#playButton.timeControl
+			#pauseButton.timeControl
+			#stopButton.timeControl
+		#statusbarinner
+			#SceneSaved.statusbarElement Not Saved
+			#StatusSelectedName.statusbarElement(style='color: rgb(175,209,253);') No Selection
+			#StatusMouseOverName.statusbarElement(style='color: rgb(175,209,253);') No Selection
+			#StatusSelectedID.statusbarElement(style='display: none') No Selection
+			#StatusPickMode.statusbarElement Pick: None
+			#StatusSnaps.statusbarElement Snaps: 15deg, .5m, .1%
+			#StatusAxis.statusbarElement Axis: -1
+			#StatusCoords.statusbarElement World Coords
+			#StatusTransform.statusbarElement Move
+			#StatusGizmoLocation.statusbarElement [0,0,0]
+			#StatusCameraLocation.statusbarElement [0,0,0]
+			if instanceData
+				#StatusWorldTitle.statusbarElement(style='color: rgb(175,209,253);')= instanceData.title
+			.statusbarElement Logged in as:
+			#StatusUserName.statusbarElement(style='border: none; color: rgb(175,209,253);')
+
+

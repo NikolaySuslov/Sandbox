@@ -82,7 +82,7 @@ var lightgreenBoundingBoxMaterial = new THREE.LineBasicMaterial();
     lightgreenBoundingBoxMaterial.color.g = .7;
     lightgreenBoundingBoxMaterial.color.b = .7;
 
-define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(Log, ProgressBar) {
+define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/editorview/angular-app","vwf/view/editorview/transformTool"], function(Log, ProgressBar, angularapp,transformTool) {
     var originalGizmoPos;
     var Editor = {};
     var isInitialized = false;
@@ -117,6 +117,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
         this.selectionMarquee = null;
         var WorldCoords = 0;
         var LocalCoords = 1;
+        var ParentCoords = 2;
         var CoordSystem = WorldCoords;
         var NewSelect = 0;
         var Add = 2;
@@ -140,10 +141,10 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
         var OldX = 0;
         var OldY = 0;
         var MouseMoved = false;
-        document.AxisSelected = -1;
+        
         this.TempPickCallback = null;
         this.translationPropertyName = 'translation';
-        this.transformPropertyName = 'transform';
+        this.transformPropertyName = 'worldTransform';
         this.scalePropertyName = 'scale';
 
         var instanceData = _DataManager.getInstanceData() || {};
@@ -151,44 +152,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
         var needTools = _EditorView.needTools();
 
         if (needTools) {
-            $(document.body).append('<div id="statusbar" class="statusbar" />');
-            $('#statusbar').css('top', (document.height - 25) + 'px');
-
-            $('#statusbar').append('<div id="TimeControl" style="height: 59px;display: inline-block;margin-top: -42px;background: #444;border-radius: 5px;border: 1px solid #555;"><div class="timeControl" id="playButton"></div><div id="pauseButton" class="timeControl"></div><div id="stopButton" class="timeControl"></div></div>');
-            $('#statusbar').append('<div id="statusbarinner"></div>');
-            $('#statusbarinner').append('<div id="SceneSaved" class="statusbarElement" />');
-            $('#SceneSaved').text('Not Saved');
-            $('#statusbarinner').append('<div id="StatusSelectedName" style="color:rgb(175, 209, 253);" class="statusbarElement" />');
-            $('#StatusSelectedName').text('No Selection');
-            $('#statusbarinner').append('<div id="StatusMouseOverName" style="color:rgb(175, 209, 253);" class="statusbarElement" />');
-            $('#StatusMouseOverName').text('No Selection');
-            $('#statusbarinner').append('<div id="StatusSelectedID" class="statusbarElement" style="display:none" />');
-            $('#StatusSelectedID').text('No Selection');
-            $('#statusbarinner').append('<div id="StatusPickMode" class="statusbarElement" />');
-            $('#StatusPickMode').text('Pick: None');
-            $('#statusbarinner').append('<div id="StatusSnaps" class="statusbarElement" />');
-            $('#StatusSnaps').text('Snaps: 15deg, .5m, .1%');
-            $('#statusbarinner').append('<div id="StatusAxis" class="statusbarElement" />');
-            $('#StatusAxis').text('Axis: -1');
-            $('#statusbarinner').append('<div id="StatusCoords" class="statusbarElement" />');
-            $('#StatusCoords').text('World Coords');
-            $('#statusbarinner').append('<div id="StatusTransform" class="statusbarElement" />');
-            $('#StatusTransform').text('Move');
-            $('#statusbarinner').append('<div id="StatusGizmoLocation" class="statusbarElement" />');
-            $('#StatusGizmoLocation').text('[0,0,0]');
-            $('#statusbarinner').append('<div id="StatusCameraLocation" class="statusbarElement" />');
-            $('#StatusCameraLocation').text('[0,0,0]');
-
-            var instanceData = _DataManager.getInstanceData()
-            if (instanceData) {
-                $('#statusbarinner').append('<div id="StatusWorldTitle" style="color:rgb(175, 209, 253);" class="statusbarElement" />');
-                $('#StatusWorldTitle').text(instanceData.title);
-                
-            }
-            $('#statusbarinner').append('<div style="" class="statusbarElement" >Logged in as:');
-            $('#statusbarinner').append('<div id="StatusUserName" style="border: none;color:rgb(175, 209, 253);" class="statusbarElement" />');
-
-
+            $('#statusbar').css('display', 'block');
 
             $('#playButton').click(function() {
                 _Publisher.playWorld();
@@ -228,65 +192,12 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             $('#ContextMenu').hide();
             $('#ContextMenu').css('z-index', '-1');
             MouseMoved = false;
+            this.mouseDownScreenPoint = [e.clientX, e.clientY];
             if (MoveGizmo && e.button == 0) {
 
-                ////console.log(vwf.views[0].lastPick.object.uid);
-                var axis = -1;
-                for (var i = 0; i < MoveGizmo.children.length; i++) {
-                    if (vwf.views[0].lastPick)
-                        if (vwf.views[0].lastPick.object)
-                            if (vwf.views[0].lastPick.object == MoveGizmo.children[i]) axis = MoveGizmo.allChildren.indexOf(MoveGizmo.children[i]);
-                }
-                document.AxisSelected = axis;
-                OldX = e.clientX;
-                OldY = e.clientY;
-                this.updateGizmoOrientation(true);
-                var t = new THREE.Vector3();
-                t.setFromMatrixPosition(MoveGizmo.parent.matrixWorld);
-                var gizpos = [t.x, t.y, t.z];
-                var campos = this.getCameraPosition();
+                MoveGizmo.mouseDown(e);
 
-                //we need to cache these values, because we use relative offsets in the move code
-                //if the object moves while the mouse is down (and it was not expected ie note generated by the move tool)
-                //the the relative motion would get all crazy.
-                //we do all the relative mouse motion from the center at mousedown.
-                this.mouseDownGizPos = gizpos;
-                this.mouseDownCamPos = campos;
-
-
-
-                var ray = this.GetWorldPickRay(e);
-                var dxy = this.intersectLinePlaneTEST(ray, campos, gizpos, WorldZ);
-                oldintersectxy = dxy; //MATH.addVec3(campos,MATH.scaleVec3(ray,dxy));
-
-                var dxz = this.intersectLinePlaneTEST(ray, campos, gizpos, WorldY);
-                oldintersectxz = dxz; //MATH.addVec3(campos,MATH.scaleVec3(ray,dxz));
-                var dyz = this.intersectLinePlaneTEST(ray, campos, gizpos, WorldX);
-                oldintersectyz = dyz; //MATH.addVec3(campos,MATH.scaleVec3(ray,dyz));
-                if (document.AxisSelected == 3 || document.AxisSelected == 16 || document.AxisSelected == 4 || document.AxisSelected == 17 || document.AxisSelected == 5 || document.AxisSelected == 18) {
-                    dxy = this.intersectLinePlane(ray, campos, gizpos, CurrentZ);
-                    oldintersectxy = MATH.addVec3(campos, MATH.scaleVec3(ray, dxy));
-                    dxz = this.intersectLinePlane(ray, campos, gizpos, CurrentY);
-                    oldintersectxz = MATH.addVec3(campos, MATH.scaleVec3(ray, dxz));
-                    dyz = this.intersectLinePlane(ray, campos, gizpos, CurrentX);
-                    oldintersectyz = MATH.addVec3(campos, MATH.scaleVec3(ray, dyz));
-
-                }
-                var relgizxy = MATH.subVec3(gizpos, oldintersectxy);
-                relgizxy = MATH.scaleVec3(relgizxy, 1.0 / MATH.lengthVec3(relgizxy));
-                oldzrot = Math.acos(MATH.dotVec3(CurrentX, relgizxy));
-                if (MATH.dotVec3(CurrentY, relgizxy) > -.01) oldzrot *= -1;
-                var relgizxz = MATH.subVec3(gizpos, oldintersectxz);
-                relgizxz = MATH.scaleVec3(relgizxz, 1.0 / MATH.lengthVec3(relgizxz));
-                oldyrot = -Math.acos(MATH.dotVec3(CurrentX, relgizxz));
-                if (MATH.dotVec3(CurrentZ, relgizxz) > -.01) oldyrot *= -1;
-                var relgizyz = MATH.subVec3(gizpos, oldintersectyz);
-                relgizyz = MATH.scaleVec3(relgizyz, 1.0 / MATH.lengthVec3(relgizyz));
-                oldxrot = -Math.acos(MATH.dotVec3(CurrentZ, relgizyz));
-                if (MATH.dotVec3(CurrentY, relgizyz) > -.01) oldxrot *= -1;
-                this.mouseDownScreenPoint = [e.clientX, e.clientY];
-                this.lastScalePoint = e.clientY;
-                if (document.AxisSelected == -1 && SelectMode == 'Pick') {
+                if (MoveGizmo.getAxis() == -1 && SelectMode == 'Pick') {
                     this.MouseLeftDown = true;
 
                     this.selectionMarquee.css('left', this.mouseDownScreenPoint[0]);
@@ -296,21 +207,8 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                     this.selectionMarquee.css('border', '2px dotted darkslategray');
                     this.selectionMarquee.css('pointer-events', 'all');
                 }
-                $('#StatusAxis').text('Axis: ' + axis);
-                for (var i = 0; i < MoveGizmo.allChildren.length; i++) {
-                    if (MoveGizmo.allChildren[i].material) {
-                        var c = MoveGizmo.allChildren[i].material.originalColor;
-                        MoveGizmo.allChildren[i].material.color.setRGB(c.r, c.g, c.b);
-                        MoveGizmo.allChildren[i].material.emissive.setRGB(c.r, c.g, c.b);
-                    }
-                }
-                if (axis >= 0) {
-                    this.saveTransforms();
-                    if (MoveGizmo.allChildren[axis].material) {
-                        MoveGizmo.allChildren[axis].material.color.setRGB(.5, .5, .5);
-                        MoveGizmo.allChildren[axis].material.emissive.setRGB(.5, .5, .5);
-                    }
-                }
+                
+                
             }
         }.bind(this);
         this.GetUniqueName = function(newname, addcount) {
@@ -346,11 +244,11 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             var campos = this.getCameraPosition();
             var pickopts = new THREE.CPUPickOptions();
             pickopts.OneHitPerMesh = true;
-            MoveGizmo.InvisibleToCPUPick = true;
+            
             var pick = this.ThreeJSPick(campos, ray, {
-                OneHitPerMesh: false
+                OneHitPerMesh: false, ignore:[this.GetMoveGizmo().getGizmoBody()]
             });
-            MoveGizmo.InvisibleToCPUPick = false;
+            
             var vwfnode;
             while (pick && pick.object && !pick.object.vwfID) pick.object = pick.object.parent;
             if (pick && pick.object) vwfnode = pick.object.vwfID;
@@ -385,7 +283,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             var dispName;
             if (vwfnode) dispName = vwf.getProperty(vwfnode, 'DisplayName');
             if (!dispName) dispName = vwfnode;
-            $('#ContextMenuName').text(dispName || vwfnode || "{none selected}");
+            $('#ContextMenuName').html((dispName || vwfnode || "{none selected}").escape());
             $('#ContextMenuName').attr('VWFID', vwfnode);
             $('#ContextMenu').show();
             $('#ContextMenu').css('z-index', '1000000');
@@ -428,18 +326,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 this.selectionMarquee.css('border', 'none');
                 this.selectionMarquee.css('pointer-events', 'none');
                 this.mouseUpScreenPoint = [e.clientX, e.clientY];
-                if (MoveGizmo) {
-                    for (var i = 0; i < MoveGizmo.allChildren.length; i++) {
-                        if (MoveGizmo.allChildren[i].material) {
-                            var c = MoveGizmo.allChildren[i].material.originalColor;
-                            MoveGizmo.allChildren[i].material.color.setRGB(c.r, c.g, c.b);
-                            MoveGizmo.allChildren[i].material.emissive.setRGB(c.r, c.g, c.b);
-                        }
-                    }
-                    document.AxisSelected = -1;
-                    $('#StatusAxis').text('Axis: -1');
-
-                }
+                this.MoveGizmo.mouseLeave();
             }
         }
         this.restoreTransforms = function() {
@@ -497,7 +384,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             if(_Editor.GetSelectedVWFID() && !_PrimitiveEditor.isOpen())
                 _PrimitiveEditor.show();
             if(_Editor.GetSelectedVWFID() && _PrimitiveEditor.isOpen())
-                showSidePanel();
+                _SidePanel.showPanel();
             },20)
             
              this.mouseup(e);
@@ -511,16 +398,16 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 this.dblclick_Gizmo(e)
                 return;
             }
-            if (e.button == 2 && !MouseMoved && document.AxisSelected == -1) {
+            if (e.button == 2 && !MouseMoved && MoveGizmo.getAxis() == -1) {
 
                 self.ShowContextMenu(e);
                 this.undoPoint = null;
                 return false;
             }
-            if (e.button == 2 && document.AxisSelected != -1) {
+            if (e.button == 2 && MoveGizmo.getAxis() != -1) {
                 this.undoPoint = null;
                 this.restoreTransforms();
-                document.AxisSelected = -1;
+                MoveGizmo.setAxis(-1);
                 this.mouseDownScreenPoint = null;
                 return false;
             }
@@ -530,10 +417,9 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
 
             this.mouseUpTime = performance.now();
            
-
             this.mouseUpScreenPoint = [e.clientX, e.clientY];
 
-            if (document.AxisSelected == -1 && e.button == 0) {
+            if (MoveGizmo.getAxis() == -1 && e.button == 0) {
                 if (SelectMode == 'Pick' && this.mouseDownScreenPoint) {
                     var w = this.mouseUpScreenPoint[0] - this.mouseDownScreenPoint[0];
                     var h = this.mouseUpScreenPoint[1] - this.mouseDownScreenPoint[1];
@@ -641,13 +527,13 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                         var ray;
                         var campos = this.getCameraPosition();
                         ray = this.GetWorldPickRay(e);
-                        self.GetMoveGizmo().InvisibleToCPUPick = true;
+                       
                         var pick = this.ThreeJSPick(campos, ray, {
                             filter: function(o) {
                                 return !(o.isAvatar === true)
-                            }
+                            },ignore:[self.GetMoveGizmo().getGizmoBody()]
                         });
-                        self.GetMoveGizmo().InvisibleToCPUPick = false;
+                        
                         var dxy = pick.distance;
                         newintersectxy = MATH.addVec3(campos, MATH.scaleVec3(ray, dxy * .99));
                         var dxy2 = this.intersectLinePlane(ray, campos, [0, 0, 0], [0, 0, 1]);
@@ -668,29 +554,21 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             this.selectionMarquee.css('border', 'none');
             this.selectionMarquee.css('pointer-events', 'none');
 
-            if (document.AxisSelected != -1 && this.undoPoint) {
+            if (MoveGizmo.getAxis() != -1 && this.undoPoint) {
                 for (var i = 0; i < SelectedVWFNodes.length; i++)
                     this.undoPoint.list[i].val = vwf.getProperty(SelectedVWFNodes[i].id, 'transform');
                 _UndoManager.pushEvent(this.undoPoint);
                 this.undoPoint = null;
+            }else if(MoveGizmo.getAxis() != -1)
+            {
+                MoveGizmo.mouseUp(e);
             }
 
-            if (document.AxisSelected == 15) {
+            if (MoveGizmo.getAxis() == 15) {
                 this.SetCoordSystem(CoordSystem == WorldCoords ? LocalCoords : WorldCoords);
                 this.updateGizmoOrientation(true);
             }
-            if (MoveGizmo) {
-                for (var i = 0; i < MoveGizmo.allChildren.length; i++) {
-                    if (MoveGizmo.allChildren[i].material) {
-                        var c = MoveGizmo.allChildren[i].material.originalColor;
-                        MoveGizmo.allChildren[i].material.color.setRGB(c.r, c.g, c.b);
-                        MoveGizmo.allChildren[i].material.emissive.setRGB(c.r, c.g, c.b);
-                    }
-                }
-                document.AxisSelected = -1;
-                $('#StatusAxis').text('Axis: -1');
-                this.updateGizmoOrientation(true);
-            }
+            
             this.mouseDownScreenPoint = null;
         }.bind(this);
         this.GetAllLeafMeshes = function(threeObject, list) {
@@ -748,13 +626,13 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
 
                     _UndoManager.recordDelete(SelectedVWFNodes[s].id);
                     vwf_view.kernel.deleteNode(SelectedVWFNodes[s].id);
-                    $('#StatusSelectedID').text('No Selection');
-                    $('#StatusSelectedName').text('No Selection');
-                    $('#StatusPickMode').text('Pick: None');
+                    $('#StatusSelectedID').html(('No Selection').escape());
+                    $('#StatusSelectedName').html(('No Selection').escape());
+                    $('#StatusPickMode').html(('Pick: None').escape());
 
                 }
                 if (_PrimitiveEditor.isOpen()) _PrimitiveEditor.hide();
-                if (_MaterialEditor.isOpen()) _MaterialEditor.hide();
+                if (_SidePanel.isTabOpen('materialEditor')) _SidePanel.hideTab('materialEditor');
                 if (_ScriptEditor.isOpen()) _ScriptEditor.hide();
             }
             _UndoManager.stopCompoundEvent();
@@ -934,7 +812,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
 
 
             //here, we update the selection bounds rect when the selction transforms
-            if (window._Editor && propname == _Editor.transformPropertyName && _Editor.isSelected(id)) {
+            if (window._Editor && propname == 'transform' && _Editor.isSelected(id)) {
                 _Editor.updateBoundsTransform(id);
                 if (vwf.client() == vwf.moniker()) {
                     if (_Editor.waitingForSet.length)
@@ -951,7 +829,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 }]);
             }
             if (window._Editor && propname == 'DisplayName' && _Editor.isSelected(id)) {
-                $('#StatusSelectedName').text(val);
+                $('#StatusSelectedName').html((val).escape());
             }
 
 
@@ -1246,11 +1124,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             if (!MoveGizmo || MoveGizmo == null) {
                 return;
             }
-            var tpos = new THREE.Vector3();
-            tpos.setFromMatrixPosition(MoveGizmo.parent.matrixWorld);
-            originalGizmoPos = [tpos.x, tpos.y, tpos.z];
-            //updateGizmoSize();
-            this.updateGizmoOrientation(false);
+
             if (this.MouseLeftDown) {
                 this.mouseLastScreenPoint = [e.clientX, e.clientY];
                 var w = this.mouseLastScreenPoint[0] - this.mouseDownScreenPoint[0];
@@ -1266,445 +1140,29 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                     this.selectionMarquee.css('top', this.mouseLastScreenPoint[1]);
                 }
             }
-            if (document.AxisSelected != -1) //the user has clicked over one of the transform tool handles
+
+
+            if(!this.MouseLeftDown)
+
             {
-                if (!this.undoPoint) //only create an undo record if we don't currently have one
-                {
-                    this.undoPoint = new _UndoManager.CompoundEvent();
-                    for (var i = 0; i < SelectedVWFNodes.length; i++)
-                        this.undoPoint.push(new _UndoManager.SetPropertyEvent(SelectedVWFNodes[i].id, 'transform', null)) // we are going to track this as it changes, and only record the new value on mouseup
-                }
-                var relscreeny = this.lastScalePoint - e.clientY;
-
-
-
-                var t = new THREE.Vector3();
-                t.setFromMatrixPosition(MoveGizmo.parent.matrixWorld);
-                var gizpos = this.mouseDownGizPos;
-                $('#StatusGizmoLocation').text(this.displayVec(gizpos));
-                var campos = this.mouseDownCamPos;
-                $('#StatusCameraLocation').text(this.displayVec(campos));
-                var ray = this.GetWorldPickRay(e);
-                var IntersectPlaneNormalX = CurrentX;
-                var IntersectPlaneNormalY = CurrentY;
-                var IntersectPlaneNormalZ = CurrentZ;
-                var rotmat2 = this.GetRotationMatrix(toGMat(this.findviewnode(SelectedVWFNodes[0].id).matrix)); //MATH.angleAxis(aa[3] * 0.0174532925,[aa[0],aa[1],aa[2]]);
-                var invRot2 = MATH.inverseMat4(rotmat2);
-                var MoveAxisX = CurrentX;
-                var MoveAxisY = CurrentY;
-                var MoveAxisZ = CurrentZ;
-                var dxy = this.intersectLinePlaneTEST(ray, campos, gizpos, CurrentZ);
-                var newintersectxy = dxy; //MATH.addVec3(campos,MATH.scaleVec3(ray,dxy));
-                var dxz = this.intersectLinePlaneTEST(ray, campos, gizpos, CurrentY);
-                var newintersectxz = dxz; //MATH.addVec3(campos,MATH.scaleVec3(ray,dxz));
-                var dyz = this.intersectLinePlaneTEST(ray, campos, gizpos, CurrentX);
-                var newintersectyz = dyz; //MATH.addVec3(campos,MATH.scaleVec3(ray,dyz));
-                if (document.AxisSelected == 3 || document.AxisSelected == 16 || document.AxisSelected == 4 || document.AxisSelected == 17 || document.AxisSelected == 5 || document.AxisSelected == 18) {
-                    dxy = this.intersectLinePlane(ray, campos, gizpos, CurrentZ);
-                    newintersectxy = MATH.addVec3(campos, MATH.scaleVec3(ray, dxy));
-                    dxz = this.intersectLinePlane(ray, campos, gizpos, CurrentY);
-                    newintersectxz = MATH.addVec3(campos, MATH.scaleVec3(ray, dxz));
-                    dyz = this.intersectLinePlane(ray, campos, gizpos, CurrentX);
-                    newintersectyz = MATH.addVec3(campos, MATH.scaleVec3(ray, dyz));
-                }
-                var relintersectxy = MATH.subVec3(newintersectxy, oldintersectxy);
-                var relintersectxz = MATH.subVec3(newintersectxz, oldintersectxz);
-                var relintersectyz = MATH.subVec3(newintersectyz, oldintersectyz);
-
-                var relgizxy = MATH.toUnitVec3(MATH.subVec3(gizpos, newintersectxy));
-                var relgizxz = MATH.toUnitVec3(MATH.subVec3(gizpos, newintersectxz));
-                var relgizyz = MATH.toUnitVec3(MATH.subVec3(gizpos, newintersectyz));
-
-                var newrotz;
-                var newroty;
-                var newrotx;
-
-
-
-                newrotz = Math.acos(MATH.dotVec3(CurrentX, MATH.toUnitVec3(relgizxy)));
-                if (MATH.dotVec3(CurrentY, relgizxy) > -.01) newrotz *= -1;
-
-
-
-                newroty = -Math.acos(MATH.dotVec3(CurrentX, MATH.toUnitVec3(relgizxz)));
-                if (MATH.dotVec3(CurrentZ, relgizxz) > -.01) newroty *= -1;
-
-
-
-                newrotx = Math.acos(MATH.dotVec3(CurrentY, MATH.toUnitVec3(relgizyz)));
-                if (MATH.dotVec3(CurrentZ, relgizyz) > -.01) newrotx *= -1;
-
-                var relrotz = oldzrot - newrotz;
-                var relroty = oldyrot - newroty;
-                var relrotx = oldxrot - newrotx;
-
-                if (Math.abs(relrotz) < 6) relrotz *= 1.33;
-                if (Math.abs(relroty) < 6) relroty *= 1.33;
-                if (Math.abs(relrotx) < 6) relrotx *= 1.33;
-                relrotz = this.SnapTo(relrotz, RotateSnap);
-                relroty = this.SnapTo(relroty, RotateSnap);
-                relrotx = this.SnapTo(relrotx, RotateSnap);
-                var SnapType = null;
-                if (this.isMove(document.AxisSelected)) SnapType = MoveSnap;
-                if (this.isScale(document.AxisSelected)) SnapType = ScaleSnap;
-                if (SnapType != null) {
-                    relintersectxy[0] = this.SnapTo(relintersectxy[0], SnapType);
-                    relintersectxy[1] = this.SnapTo(relintersectxy[1], SnapType);
-                    relintersectxy[2] = this.SnapTo(relintersectxy[2], SnapType);
-                    relintersectxz[0] = this.SnapTo(relintersectxz[0], SnapType);
-                    relintersectxz[1] = this.SnapTo(relintersectxz[1], SnapType);
-                    relintersectxz[2] = this.SnapTo(relintersectxz[2], SnapType);
-                    relintersectyz[0] = this.SnapTo(relintersectyz[0], SnapType);
-                    relintersectyz[1] = this.SnapTo(relintersectyz[1], SnapType);
-                    relintersectyz[2] = this.SnapTo(relintersectyz[2], SnapType);
-                }
-                if (relrotz != 0) oldzrot = newrotz;
-                if (relroty != 0) oldyrot = newroty;
-                if (relrotx != 0) oldxrot = newrotx;
-                if (MATH.lengthVec3(relintersectxy) != 0) oldintersectxy = MATH.addVec3(oldintersectxy, relintersectxy);
-                if (MATH.lengthVec3(relintersectxz) != 0) oldintersectxz = MATH.addVec3(oldintersectxz, relintersectxz);;
-                if (MATH.lengthVec3(relintersectyz) != 0) oldintersectyz = MATH.addVec3(oldintersectyz, relintersectyz);;
-                //save some time and bail is nothing is changing
-                if (MATH.lengthVec3(relintersectxy) == 0 && MATH.lengthVec3(relintersectxz) == 0 && MATH.lengthVec3(relintersectyz) == 0) return;
-                var ScaleXY = [0, 0, 0];
-                ScaleXY[0] = relintersectxy[0] / 1;
-                ScaleXY[1] = relintersectxy[1] / 1;
-                ScaleXY[2] = relintersectxy[2] / 1;
-                var ScaleXZ = [0, 0, 0];
-                ScaleXZ[0] = relintersectxz[0] / 1;
-                ScaleXZ[1] = relintersectxz[1] / 1;
-                ScaleXZ[2] = relintersectxz[2] / 1;
-                var ScaleYZ = [0, 0, 0];
-                ScaleYZ[0] = relintersectyz[0] / 1;
-                ScaleYZ[1] = relintersectyz[1] / 1;
-                ScaleYZ[2] = relintersectyz[2] / 1;
-                var scalemult = .5;
-                var wasMoved = false;
-                var wasRotated = false;
-                var wasScaled = false;
-                var PickDist = 10000 / (vwf.views[0].lastPick ? vwf.views[0].lastPick.distance : 1);
-                //var tempscale = vwf.getProperty(SelectedVWFNode.id,'scale');
-                //var s = this.findviewnode(SelectedVWFNode.id).getScale();
-                var gizposoffset = null;
-                //this is a list of the plane normals sorted by dot to the ray
-                var planeDots = this.getPlaneDots(ray);
-                if (document.AxisSelected == 0) {
-                    wasMoved = true;
-
-                    //if the best plane to use is X, use the second best plane
-                    var plane = planeDots[0] == 'X' ? planeDots[1] : planeDots[0]
-                    if (plane == 'Z')
-                        gizposoffset = this.MoveTransformGizmo(CurrentX, relintersectxy[0]);
-                    else if (plane == 'Y')
-                        gizposoffset = this.MoveTransformGizmo(CurrentX, relintersectxz[0]);
-
-
-                }
-                if (document.AxisSelected == 1) {
-                    wasMoved = true;
-                    var plane = planeDots[0] == 'Y' ? planeDots[1] : planeDots[0]
-                    if (plane == 'X')
-                        gizposoffset = this.MoveTransformGizmo(CurrentY, relintersectyz[1]);
-                    else if (plane == 'Z')
-                        gizposoffset = this.MoveTransformGizmo(CurrentY, relintersectxy[1]);
-                }
-                if (document.AxisSelected == 2) {
-                    wasMoved = true;
-                    var plane = planeDots[0] == 'Z' ? planeDots[1] : planeDots[0]
-                    if (plane == 'X')
-                        gizposoffset = this.MoveTransformGizmo(CurrentZ, relintersectyz[2]);
-                    else if (plane == 'Y')
-                        gizposoffset = this.MoveTransformGizmo(CurrentZ, relintersectxz[2]);
-                }
-                if (document.AxisSelected == 12) {
-                    wasMoved = true;
-                    gizposoffset = this.MoveTransformGizmo(MoveAxisX, relintersectxy[0]);
-                    gizposoffset = MATH.addVec3(gizposoffset, this.MoveTransformGizmo(MoveAxisY, relintersectxy[1]));
-                }
-                if (document.AxisSelected == 13) {
-                    wasMoved = true;
-                    gizposoffset = this.MoveTransformGizmo(MoveAxisX, relintersectxz[0]);
-                    gizposoffset = MATH.addVec3(gizposoffset, this.MoveTransformGizmo(MoveAxisZ, relintersectxz[2]));
-                }
-                if (document.AxisSelected == 14) {
-                    wasMoved = true;
-                    gizposoffset = this.MoveTransformGizmo(MoveAxisY, relintersectyz[1]);
-                    gizposoffset = MATH.addVec3(gizposoffset, this.MoveTransformGizmo(MoveAxisZ, relintersectyz[2]));
-                }
-                var backupScreeny = relscreeny;
-                for (var s = 0; s < SelectedVWFNodes.length; s++) {
-                    relscreeny = backupScreeny;
-                    if (SelectedVWFNodes[s]) {
-
-                        var tempscale = null;
-                        if (lastscale[s]) {
-                            tempscale = [lastscale[s][0], lastscale[s][1], lastscale[s][2]]; //[s.x,s.y,s.z];
-                            if (document.AxisSelected == 6 || document.AxisSelected == 20) {
-                                wasScaled = true;
-                                tempscale[0] += scalemult * ScaleXY[0];
-                            }
-                            if (document.AxisSelected == 7 || document.AxisSelected == 21) {
-                                wasScaled = true;
-                                tempscale[1] += scalemult * ScaleXY[1];
-                            }
-                            if (document.AxisSelected == 8 || document.AxisSelected == 22) {
-                                wasScaled = true;
-                                tempscale[2] += scalemult * ScaleXZ[2];
-                            }
-                            if (document.AxisSelected == 23) {
-                                wasScaled = true;
-                                tempscale[0] += -scalemult * ScaleXY[0];
-                            }
-                            if (document.AxisSelected == 24) {
-                                wasScaled = true;
-                                tempscale[1] += -scalemult * ScaleXY[1];
-                            }
-                            if (document.AxisSelected == 25) {
-                                wasScaled = true;
-                                tempscale[2] += -scalemult * ScaleXZ[2];
-                            }
-                        }
-                        if (document.AxisSelected == 19) // || document.AxisSelected == 10 || document.AxisSelected == 11)
-                        {
-
-
-                            if (relscreeny > 10) {
-                                while (relscreeny > 10) {
-                                    wasScaled = true;
-                                    tempscale[2] *= 1.0 + this.ScaleSnap;
-                                    tempscale[1] *= 1.0 + this.ScaleSnap;
-                                    tempscale[0] *= 1.0 + this.ScaleSnap;
-                                    this.lastScalePoint -= 10;
-                                    relscreeny -= 10;
-                                }
-                            }
-                            if (relscreeny < -10) {
-
-                                while (relscreeny < -10) {
-                                    wasScaled = true;
-                                    tempscale[2] *= 1.0 - this.ScaleSnap;
-                                    tempscale[1] *= 1.0 - this.ScaleSnap;
-                                    tempscale[0] *= 1.0 - this.ScaleSnap;
-                                    this.lastScalePoint += 10;
-                                    relscreeny += 10;
-                                }
-                            }
-
-                        }
-                        if (document.AxisSelected == 9) // || document.AxisSelected == 10 || document.AxisSelected == 11)
-                        {
-                            wasScaled = true;
-                            tempscale[2] += scalemult * ScaleXY[0];
-                            tempscale[1] += scalemult * ScaleXY[0];
-                            tempscale[0] += scalemult * ScaleXY[0];
-                        }
-                        if (document.AxisSelected == 10) // || document.AxisSelected == 10 || document.AxisSelected == 11)
-                        {
-                            wasScaled = true;
-                            tempscale[2] += scalemult * ScaleYZ[1];
-                            tempscale[1] += scalemult * ScaleYZ[1];
-                            tempscale[0] += scalemult * ScaleYZ[1];
-                        }
-                        if (document.AxisSelected == 11) // || document.AxisSelected == 10 || document.AxisSelected == 11)
-                        {
-                            wasScaled = true;
-                            tempscale[2] += scalemult * ScaleXZ[2];
-                            tempscale[1] += scalemult * ScaleXZ[2];
-                            tempscale[0] += scalemult * ScaleXZ[2];
-                        }
-                        var rotationTransform;
-                        if (document.AxisSelected == 3 || document.AxisSelected == 16) {
-                            wasRotated = true;
-                            var amountToRotate = relrotx;
-                            //if the Z plane is at too hard an angle, the rel rotate around the Z axis is sort of crazy
-                            //instead, use the motion on the X or Y, as found by the intersection with either the xz or yz plane
-                            if (Math.abs(MATH.dotVec3(ray, CurrentX)) < .3) {
-                                var plane = planeDots[0] == 'X' ? planeDots[1] : planeDots[0]
-                                if (plane == 'Z')
-                                    amountToRotate = sign(MATH.dotVec3(ray, CurrentZ)) * relintersectxy[1];
-                                else if (plane == 'Y')
-                                    amountToRotate = -sign(MATH.dotVec3(ray, CurrentY)) * relintersectxz[2];
-                            }
-                            //note we use the world Z here - local / global / parent is handled in GetRotationTransform
-                            rotationTransform = this.GetRotationTransform(WorldX, amountToRotate);
-                        }
-                        if (document.AxisSelected == 4 || document.AxisSelected == 17) {
-                            wasRotated = true;
-                            var amountToRotate = relroty;
-                            //if the Z plane is at too hard an angle, the rel rotate around the Z axis is sort of crazy
-                            //instead, use the motion on the X or Y, as found by the intersection with either the xz or yz plane
-                            if (Math.abs(MATH.dotVec3(ray, CurrentY)) < .3) {
-                                var plane = planeDots[0] == 'Y' ? planeDots[1] : planeDots[0]
-                                if (plane == 'Z')
-                                    amountToRotate = -sign(MATH.dotVec3(ray, CurrentZ)) * relintersectxy[0];
-                                else if (plane == 'X')
-                                    amountToRotate = sign(MATH.dotVec3(ray, CurrentX)) * relintersectyz[2];
-                            }
-                            //note we use the world Z here - local / global / parent is handled in GetRotationTransform
-                            rotationTransform = this.GetRotationTransform(WorldY, amountToRotate);
-                        }
-                        if (document.AxisSelected == 5 || document.AxisSelected == 18) {
-                            wasRotated = true;
-                            var amountToRotate = relrotz;
-                            //if the Z plane is at too hard an angle, the rel rotate around the Z axis is sort of crazy
-                            //instead, use the motion on the X or Y, as found by the intersection with either the xz or yz plane
-                            if (Math.abs(MATH.dotVec3(ray, CurrentZ)) < .3) {
-                                var plane = planeDots[0] == 'Z' ? planeDots[1] : planeDots[0]
-                                if (plane == 'X')
-                                    amountToRotate = -sign(MATH.dotVec3(ray, CurrentX)) * relintersectyz[1];
-                                else if (plane == 'Y')
-                                    amountToRotate = sign(MATH.dotVec3(ray, CurrentY)) * relintersectxz[0];
-                            }
-                            //note we use the world Z here - local / global / parent is handled in GetRotationTransform
-                            rotationTransform = this.GetRotationTransform(WorldZ, amountToRotate);
-                        }
-
-                        //here, we need to figure out if any of the shapes the user is moving are parents of each other.
-                        //this moves the object, then moves it again because its parent moves
-                        //makes sense and is sort of correct, but not what the user is expecting;
-                        var parentSelected = false;
-                        var nodeid = SelectedVWFNodes[s].id;
-                        while (vwf.parent(nodeid)) {
-                            nodeid = vwf.parent(nodeid);
-                            parentSelected = parentSelected || this.isSelected(nodeid);
-                        }
-
-                        if (!parentSelected) {
-                            if (wasMoved) {
-                                var gizoffset = MATH.subVec3([MoveGizmo.position.x, MoveGizmo.position.y, MoveGizmo.position.z], originalGizmoPos);
-                                gizoffset = this.TransformOffset(gizposoffset, SelectedVWFNodes[s].id); //this.TransformOffset(gizoffset,SelectedVWFNodes[s].id);
-                                var transform = this.getTransformCallback(SelectedVWFNodes[s].id);
-                                transform[12] += gizoffset[0];
-                                transform[13] += gizoffset[1];
-                                transform[14] += gizoffset[2];
-                              
-                                //when moving in world space, snap directly to worldspace.
-                                //Note that you can't do this in local space, because local space snaps might 
-                                //not fall nicely on worldspace snaps
-                                if(CoordSystem == WorldCoords)
-                                {
-                                    transform[12] = this.SnapTo(transform[12],MoveSnap);
-                                    transform[13] = this.SnapTo(transform[13],MoveSnap);
-                                    transform[14] = this.SnapTo(transform[14],MoveSnap);
-                                }
-                                lastpos[s] = [transform[12], transform[13], transform[14]];
-                                var success = this.setTransformCallback(SelectedVWFNodes[s].id, transform);
-
-                            }
-                            if (wasScaled && tempscale[0] > 0 && tempscale[1] > 0 && tempscale[2] > 0) {
-
-                                var relScale = MATH.subVec3(tempscale, lastscale[s]);
-                                var transform = this.getTransformCallback(SelectedVWFNodes[s].id);
-
-                                var sx = MATH.lengthVec3([transform[0], transform[4], transform[8]]);
-                                var sy = MATH.lengthVec3([transform[1], transform[5], transform[9]]);
-                                var sz = MATH.lengthVec3([transform[2], transform[6], transform[10]]);
-                                transform[0] *= tempscale[0] / sx;
-                                transform[4] *= tempscale[0] / sx;
-                                transform[8] *= tempscale[0] / sx;
-                                transform[1] *= tempscale[1] / sy;
-                                transform[5] *= tempscale[1] / sy;
-                                transform[9] *= tempscale[1] / sy;
-                                transform[2] *= tempscale[2] / sz;
-                                transform[6] *= tempscale[2] / sz;
-                                transform[10] *= tempscale[2] / sz;
-                                //var success = this.setScaleCallback(SelectedVWFNodes[s].id, [tempscale[0], tempscale[1], tempscale[2]]);
-                                if (SelectedVWFNodes.length == 1)
-                                    var success = this.setTransformCallback(SelectedVWFNodes[s].id, transform);
-                                if (SelectedVWFNodes.length > 1) {
-
-                                    var gizoffset = MATH.subVec3(lastpos[s], originalGizmoPos);
-                                    gizoffset[0] /= lastscale[s][0];
-                                    gizoffset[1] /= lastscale[s][1];
-                                    gizoffset[2] /= lastscale[s][2];
-                                    gizoffset[0] *= tempscale[0];
-                                    gizoffset[1] *= tempscale[1];
-                                    gizoffset[2] *= tempscale[2];
-                                    var newloc = MATH.addVec3(originalGizmoPos, gizoffset);
-                                    lastpos[s] = newloc;
-                                    transform[12] = newloc[0];
-                                    transform[13] = newloc[1];
-                                    transform[14] = newloc[2];
-                                    var success = this.setTransformCallback(SelectedVWFNodes[s].id, transform);
-
-                                }
-                                lastscale[s] = tempscale;
-                            }
-                            if (wasRotated) {
-                                var transform = this.getTransformCallback(SelectedVWFNodes[s].id);
-                                var x = transform[12];
-                                var y = transform[13];
-                                var z = transform[14];
-                                var scale = this.getScaleCallback(SelectedVWFNodes[s].id);
-                                transform[12] = 0;
-                                transform[13] = 0;
-                                transform[14] = 0;
-                                transform = MATH.mulMat4(transform, rotationTransform);
-                                transform[12] = x;
-                                transform[13] = y;
-                                transform[14] = z;
-                                lastpos[s] = [x, y, z];
-                                if (SelectedVWFNodes.length == 1) {
-                                    var success = this.setTransformCallback(SelectedVWFNodes[s].id, transform);
-                                }
-                                if (SelectedVWFNodes.length > 1) {
-                                    //if more than one object is selected, update the new transform to
-                                    //rotate around the gizmo
-                                    var parentmat = toGMat(self.findviewnode(SelectedVWFNodes[s].id).parent.matrixWorld);
-                                    var parentmatinv = MATH.inverseMat4(parentmat);
-                                    var parentgizloc = MATH.mulMat4Vec3(parentmatinv, originalGizmoPos);
-                                    var gizoffset = MATH.subVec3(lastpos[s], parentgizloc);
-                                    var rotmat = MATH.inverseMat4(rotationTransform);
-                                    gizoffset = MATH.mulMat4Vec3(rotmat, gizoffset);
-                                    var newloc = MATH.addVec3(parentgizloc, gizoffset);
-                                    lastpos[s] = newloc;
-                                    transform[12] = newloc[0];
-                                    transform[13] = newloc[1];
-                                    transform[14] = newloc[2];
-                                    var success = this.setTransformCallback(SelectedVWFNodes[s].id, transform);
-
-
-                                }
-                            }
-                        }
-
-                        self.updateGizmoOrientation(false);
-                    }
-                }
-
-            } else //there is no axis handle selected
-            {
-
-                var axis = -1;
-                for (var i = 0; i < MoveGizmo.children.length; i++) {
-                    if (vwf.views[0].lastPick && vwf.views[0].lastPick.object && vwf.views[0].lastPick.object == MoveGizmo.children[i]) axis = i;
-                }
-                //display the name of the objject under the mouse
-                if (vwf.views[0].lastPickId) {
-                    var mouseovernode = vwf.getProperty(vwf.views[0].lastPickId, 'DisplayName') || vwf.views[0].lastPickId;
-                    //avoid triggering a repaint of the status bar if the value is not changed
-                    if($('#StatusMouseOverName').text() !== mouseovernode)
-                        $('#StatusMouseOverName').text(mouseovernode );
-                } else {
-                    if($('#StatusMouseOverName').text() !== 'Scene')
-                        $('#StatusMouseOverName').text('Scene');
-                }
-
-
-                for (var i = 0; i < MoveGizmo.children.length; i++) {
-                    if (i != document.AxisSelected)
-                        if (MoveGizmo.children[i].material) {
-                            var c = MoveGizmo.children[i].material.originalColor;
-                            MoveGizmo.children[i].material.color.setRGB(c.r, c.g, c.b);
-                            MoveGizmo.children[i].material.emissive.setRGB(c.r, c.g, c.b);
-                        }
-                }
-                if (axis >= 0)
-                    if (MoveGizmo.children[axis].material) {
-                        MoveGizmo.children[axis].material.color.setRGB(1, 1, 1);
-                        MoveGizmo.children[axis].material.emissive.setRGB(1, 1, 1);
-                    }
+                MoveGizmo.mouseMoved(e);
             }
+
+             //display the name of the objject under the mouse
+            if (vwf.views[0].lastPickId)
+            {
+                var mouseovernode = vwf.getProperty(vwf.views[0].lastPickId, 'DisplayName') || vwf.views[0].lastPickId;
+                //avoid triggering a repaint of the status bar if the value is not changed
+                if ($('#StatusMouseOverName').text() !== mouseovernode)
+                    $('#StatusMouseOverName').html((mouseovernode).escape());
+            }
+            else
+            {
+                if ($('#StatusMouseOverName').text() !== 'Scene')
+                    $('#StatusMouseOverName').html(('Scene').escape());
+            }
+           
+            
         }.bind(this);
         this.isOwner = function(id, player) {
             var owner = vwf.getProperty(id, 'owner');
@@ -1730,13 +1188,13 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             if (e) {
                 var ray;
                 ray = this.GetWorldPickRay(e);
-                self.GetMoveGizmo().InvisibleToCPUPick = true;
+               
                 var pick = this.ThreeJSPick(campos, ray, {
                     filter: function(o) {
                         return !(o.isAvatar === true)
-                    }
+                    },ignore:[self.GetMoveGizmo().getGizmoBody()]
                 });
-                self.GetMoveGizmo().InvisibleToCPUPick = false;
+                
                 var newintersectxy = [0, 0, 0];
                 if (pick) {
                     var dxy = pick.distance;
@@ -2289,13 +1747,13 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                     else {
                         var ray;
                         ray = this.GetWorldPickRay(this.ContextShowEvent);
-                        self.GetMoveGizmo().InvisibleToCPUPick = true;
+                        
                         var pick = this.ThreeJSPick(campos, ray, {
                             filter: function(o) {
                                 return !(o.isAvatar === true)
-                            }
+                            },ignore:[self.GetMoveGizmo().getGizmoBody()]
                         });
-                        self.GetMoveGizmo().InvisibleToCPUPick = false;
+                        
                         var dxy = pick.distance;
                         newintersectxy = MATH.addVec3(campos, MATH.scaleVec3(ray, dxy * .99));
                         var dxy2 = this.intersectLinePlane(ray, campos, [0, 0, 0], [0, 0, 1]);
@@ -2379,35 +1837,17 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
         this.getTransformCallback = this.getTransform;
         this.getTranslationCallback = this.getTranslation;
 
-        this.updateGizmoOrientation = function(updateBasisVectors) {
-            if (CoordSystem == LocalCoords && SelectedVWFNodes[0]) {
-                var aa = vwf.getProperty(SelectedVWFNodes[0].id, 'rotation');
-                var rotmat = this.GetRotationMatrix(MATH.transposeMat4(vwf.getProperty(this.GetSelectedVWFID(), 'worldTransform'))); //MATH.angleAxis(aa[3] * 0.0174532925,[aa[0],aa[1],aa[2]]);
-                var invRot = MATH.inverseMat4(rotmat);
-                var invRotT = MATH.transposeMat4(invRot);
-                MoveGizmo.parent.matrixAutoUpdate = false;
-                for (var i = 0; i < 16; i++)
-                    if (i != 12 && i != 13 && i != 14) MoveGizmo.parent.matrix.elements[i] = invRotT[i];
-                    //MoveGizmo.matrix.setRotationFromQuaternion(q);
-                MoveGizmo.parent.updateMatrixWorld(true);
-                if (updateBasisVectors) {
-                    CurrentZ = MATH.mulMat4Vec3(invRot, WorldZ);
-                    CurrentX = MATH.mulMat4Vec3(invRot, WorldX);
-                    CurrentY = MATH.mulMat4Vec3(invRot, WorldY);
-                }
-            } else {
-                //var rotmat = this.GetRotationMatrix(this.findviewnode(SelectedVWFNode.id).parent.getModelthis.Matrix());//MATH.angleAxis(aa[3] * 0.0174532925,[aa[0],aa[1],aa[2]]);
-                var q = new THREE.Quaternion();
-                var rotmat = new THREE.Matrix4();
-                rotmat.elements = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-                for (var i = 0; i < 16; i++)
-                    if (i != 12 && i != 13 && i != 14) MoveGizmo.parent.matrix.elements[i] = rotmat.elements[i];
-                MoveGizmo.parent.updateMatrixWorld(true);
-                //var invRot = MATH.inverseMat4(rotmat);
-                CurrentZ = WorldZ; //MATH.mulMat4Vec3(invRot,WorldZ);
-                CurrentX = WorldX; //MATH.mulMat4Vec3(invRot,WorldX);
-                CurrentY = WorldY; //MATH.mulMat4Vec3(invRot,WorldY);
-            }
+        this.updateGizmoOrientation = function() {
+            
+            //prefer the override value
+
+
+            if(CoordSystem == LocalCoords)
+                this.MoveGizmo.updateOrientation(this.getTransformCallback(this.GetSelectedVWFID()));
+            if(CoordSystem == WorldCoords)
+                this.MoveGizmo.updateOrientation(this.getTransformCallback(vwf.application()));
+            if(CoordSystem == ParentCoords)
+                this.MoveGizmo.updateOrientation(this.getTransformCallback(vwf.parent(this.GetSelectedVWFID())));
         }.bind(this);
         this.triggerSelectionChanged = function(VWFNode) {
 
@@ -2418,38 +1858,16 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             //$(document).trigger('selectionTransformedLocal', [VWFNode]);
         }.bind(this);
         this.updateGizmoLocation = function() {
-            if (!this.GetSelectedVWFID()) return;
-            var viewnode = this.findviewnode(this.GetSelectedVWFID());
-            if (!viewnode)
-                return;
-            var childmat = vwf.getProperty(this.GetSelectedVWFID(), 'worldTransform');
-            lastpos[0] = [childmat[12], childmat[13], childmat[14]];
-            var gizpos = [0, 0, 0];
-            gizpos = [childmat[12], childmat[13], childmat[14]];
-
-
-            //new fix to allow drivers to trick editor with fake transform data
-            var matt2 = this.getTranslationCallback(this.GetSelectedVWFID());
-            gizpos = matt2; //[matt2[12], matt2[13], matt2[14]];
-
-
-
-            for (var s = 1; s < SelectedVWFNodes.length; s++) {
-
-                //this.findviewnode(SelectedVWFNodes[s].id).updatethis.Matrix();
-                var nextchildmat = vwf.getProperty(SelectedVWFNodes[s].id, "worldTransform");
-                gizpos[0] += nextchildmat[12];
-                gizpos[1] += nextchildmat[13];
-                gizpos[2] += nextchildmat[14];
-                var trans = this.getTranslationCallback(SelectedVWFNodes[s].id);
-                lastpos[s] = trans;
-                lastscale[s] = this.getScaleCallback(SelectedVWFNodes[s].id);
+            var transforms = [];
+            for(var i in SelectedVWFNodes)
+            {
+               var node = findviewnode(SelectedVWFNodes[i].id);
+               if(node)
+               {
+                transforms.push(node.matrixWorld.elements);    
+               }
             }
-            gizpos[0] /= SelectedVWFNodes.length;
-            gizpos[1] /= SelectedVWFNodes.length;
-            gizpos[2] /= SelectedVWFNodes.length;
-            MoveGizmo.parent.matrix.setPosition(new THREE.Vector3(gizpos[0], gizpos[1], gizpos[2]));
-            MoveGizmo.parent.updateMatrixWorld(true);
+            MoveGizmo.updateLocation(transforms);
         }
         this.updateBounds = function() {
             return; /// disable all drawing of bounding boxes
@@ -2568,12 +1986,12 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             if(!node.properties) node.properties = {};
             return node;
         }
-        this.SelectObjectPublic = function(VWFNodeid) {
+        this.SelectObjectPublic = function(VWFNodeid, pickmod) {
             if (SelectMode == 'TempPick') {
                 if (this.TempPickCallback) this.TempPickCallback(_Editor.getNode(VWFNodeid));
             } else {
 
-                this.SelectObject(VWFNodeid, this.PickMod);
+                this.SelectObject(VWFNodeid, pickmod !== undefined ? pickmod : this.PickMod);
             }
         }
         this.SelectObject = function(VWFNode, selectmod, skipUndo) //the skip undo flag is necessary so that the undomanager can trigger new selections without messing up the undostack
@@ -2639,9 +2057,10 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 else this.SelectedVWFID = null;
                 this.triggerSelectionChanged(SelectedVWFNodes[0]);
                 if (MoveGizmo == null) {
-                    BuildMoveGizmo();
+                    
+                    this.BuildMoveGizmo();
                 }
-                MoveGizmo.InvisibleToCPUPick = false;
+                
                 this.backupTransfroms = [];
                 if (SelectedVWFNodes[0]) {
 
@@ -2660,7 +2079,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                     this.updateGizmoOrientation(true);
                 } else {
                     this.hideMoveGizmo();
-                    MoveGizmo.InvisibleToCPUPick = true;
+                    
                     if (SelectionBounds.length > 0) {
                         for (var i = 0; i < SelectionBounds.length; i++) {
                             SelectionBounds[i].parent.remove(SelectionBounds[i], true);
@@ -2671,17 +2090,17 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 }
 
 
-                $('#StatusSelectedID').text('No Selection');
-                $('#StatusSelectedName').text('No Selection');
+                $('#StatusSelectedID').html(('No Selection').escape());
+                $('#StatusSelectedName').html(('No Selection').escape());
                 if (SelectedVWFNodes.length > 0) {
                     if (SelectedVWFNodes.length == 1)
-                        $('#StatusSelectedID').text(SelectedVWFNodes[0].id);
+                        $('#StatusSelectedID').html((SelectedVWFNodes[0].id).escape());
                     else
-                        $('#StatusSelectedID').text(SelectedVWFNodes.length + ' objects');
+                        $('#StatusSelectedID').html((SelectedVWFNodes.length + ' objects').escape());
 
-                    $('#StatusSelectedName').text(vwf.getProperty(SelectedVWFNodes[0].id, 'DisplayName') || SelectedVWFNodes[0].id);
+                    $('#StatusSelectedName').html((vwf.getProperty(SelectedVWFNodes[0].id, 'DisplayName') || SelectedVWFNodes[0].id).escape());
                     for (var i = 1; i < SelectedVWFNodes.length; i++)
-                        $('#StatusSelectedName').text($('#StatusSelectedName').text() + ', ' + vwf.getProperty(SelectedVWFNodes[i].id, 'DisplayName'));
+                        $('#StatusSelectedName').html(($('#StatusSelectedName').text() + ', ' + vwf.getProperty(SelectedVWFNodes[i].id, 'DisplayName')).escape());
                 }
                 // do some hilighting of GUI nodes to refect selection
                 $('.guiselected').off('dblclick', this.guiNodeDragStart);
@@ -2707,15 +2126,11 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
         }
         this.hideMoveGizmo = function() {
 
-
-            while (MoveGizmo.children.length) {
-                MoveGizmo.remove(MoveGizmo.children[MoveGizmo.children.length - 1])
-            }
+            this.MoveGizmo.hide();
         }
         this.showMoveGizmo = function() {
 
-
-            this.SetGizmoMode(this.GizmoMode);
+            this.MoveGizmo.show();
         }
         this.updateBoundsAndGizmoLoc = function() {
             self.updateGizmoLocation();
@@ -2731,289 +2146,24 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
         var tempvec1 = [0, 0, 0];
         var transposeTemp = [];
         this.updateGizmoSize = function() {
-
-            tgizpos[0] = MoveGizmo.parent.matrixWorld.elements[12];
-            tgizpos[1] = MoveGizmo.parent.matrixWorld.elements[13];
-            tgizpos[2] = MoveGizmo.parent.matrixWorld.elements[14];
-            var campos = this.getCameraPosition();
-            var dist = MATH.lengthVec3(Vec3.subtract(tgizpos, campos, tempvec1));
-            var cam = this.findcamera();
-            cam.updateMatrixWorld(true);
-            var fovadj = cam.fov / 75;
-            cam.matrixWorldInverse.getInverse(cam.matrixWorld);
-            tgizpos2 = MATH.mulMat4Vec3(MATH.transposeMat4(cam.matrixWorldInverse.elements, transposeTemp), tgizpos, tgizpos2);
-            dist = -tgizpos2[2] / 65;
-            var oldscale = [MoveGizmo.matrix.elements[0], MoveGizmo.matrix.elements[5], MoveGizmo.matrix.elements[10]];
-            MoveGizmo.matrix.scale(new THREE.Vector3(1 / oldscale[0], 1 / oldscale[1], 1 / oldscale[2]));
-            var windowXadj = 1600.0 / $(window).width();
-            var windowYadj = 1200.0 / $(window).height();
-            var winadj = Math.max(windowXadj, windowYadj);
-            MoveGizmo.matrix.scale(new THREE.Vector3(dist * winadj * fovadj, dist * winadj * fovadj, dist * winadj * fovadj));
-
-            tempcammatinverse.getInverse(MoveGizmo.parent.matrixWorld);
-            tcamposGizSpace = MATH.mulMat4Vec3(MATH.transposeMat4(tempcammatinverse.elements, transposeTemp), campos, tcamposGizSpace);
-            //document.title = tcamposGizSpace[0];
-            MoveGizmo.matrix.scale(new THREE.Vector3(tcamposGizSpace[0] > 0 ? 1 : -1, tcamposGizSpace[1] > 0 ? 1 : -1, tcamposGizSpace[2] > 0 ? 1 : -1));
-
-            MoveGizmo.updateMatrixWorld(true);
+            MoveGizmo.updateSize();
         }.bind(this);
         this.BuildMoveGizmo = function() {
-            var red = [1, 0, 0, 1];
-            var green = [0, 1, .0, 1];
-            var blue = [0, 0, 1, 1];
-            if (MoveGizmo != null) return;
-            //temp mesh for all geometry to test
-            var cubeX = new THREE.Mesh(new THREE.BoxGeometry(10.00, .40, .40), new THREE.MeshLambertMaterial({
-                color: 0xFF0000,
-                emissive: 0xFF0000,
-                ambient: 0xFF0000
-            }));
-            cubeX.position.set(5.00, .15, .15);
-            var cubeY = new THREE.Mesh(new THREE.BoxGeometry(.40, 10.00, .40), new THREE.MeshLambertMaterial({
-                color: 0x00FF00,
-                emissive: 0x00FF00,
-                ambient: 0x00FF00
-            }));
-            cubeY.position.set(.15, 5.00, .15);
-            var cubeZ = new THREE.Mesh(new THREE.BoxGeometry(.40, .40, 10.00), new THREE.MeshLambertMaterial({
-                color: 0x0000FF,
-                emissive: 0x0000FF,
-                ambient: 0x0000FF
-            }));
-            cubeZ.position.set(.15, .15, 5.00);
-            MoveGizmo = new THREE.Object3D();
-            MoveGizmo.allChildren = [];
-            MoveGizmo.allChildren.push(cubeX);
-            MoveGizmo.allChildren.push(cubeY);
-            MoveGizmo.allChildren.push(cubeZ);
-            cubeX.geometry.setPickGeometry(new THREE.BoxGeometry(10.00, 1.80, 1.80));
-            cubeY.geometry.setPickGeometry(new THREE.BoxGeometry(1.80, 10.00, 1.80));
-            cubeZ.geometry.setPickGeometry(new THREE.BoxGeometry(1.80, 1.80, 10.00));
+
+            this.MoveGizmo = new transformTool();
+            this.MoveGizmo.init();
+            MoveGizmo = this.MoveGizmo;
+            _SceneManager.addToRoot(this.MoveGizmo.getGizmoHead());
+            this.findscene().add(this.MoveGizmo.getGizmoHead(), true);
 
 
-            var arrowX = new THREE.Mesh(new THREE.CylinderGeometry(0, 1, 2, 10, 0), cubeX.material);
-            cubeX.add(arrowX, true);
-            arrowX.rotation.z = -90 * 0.0174532925;
-            arrowX.position.x = 5
-
-            var arrowY = new THREE.Mesh(new THREE.CylinderGeometry(0, 1, 2, 10, 0), cubeY.material);
-            cubeY.add(arrowY, true);
-            //arrowX.rotation.z = -90 * 0.0174532925;
-            arrowY.position.y = 5
-
-            var arrowZ = new THREE.Mesh(new THREE.CylinderGeometry(0, 1, 2, 10, 0), cubeZ.material);
-            cubeZ.add(arrowZ, true);
-            arrowZ.rotation.y = -90 * 0.0174532925;
-            arrowZ.rotation.z = -90 * 0.0174532925
-            arrowZ.position.z = 5
-
-            var rotx = new THREE.Mesh(new THREE.TorusGeometry(7, .50, 4, 20), new THREE.MeshLambertMaterial({
-                color: 0xFF0000,
-                emissive: 0xFF0000,
-                ambient: 0xFF0000
-            }));
-            var roty = new THREE.Mesh(new THREE.TorusGeometry(7, .50, 4, 20), new THREE.MeshLambertMaterial({
-                color: 0x00FF00,
-                emissive: 0x00FF00,
-                ambient: 0x00FF00
-            }));
-            var rotz = new THREE.Mesh(new THREE.TorusGeometry(7, .50, 4, 20), new THREE.MeshLambertMaterial({
-                color: 0x0000FF,
-                emissive: 0x0000FF,
-                ambient: 0x0000FF
-            }));
-            MoveGizmo.allChildren.push(rotx);
-            roty.rotation.x = Math.PI / 2;
-            MoveGizmo.allChildren.push(roty);
-            rotx.rotation.y = Math.PI / 2;
-            MoveGizmo.allChildren.push(rotz);
-            rotz.rotation.z = 90;
-
-
-
-            MoveGizmo.allChildren.push(this.BuildBox([.5, .5, .5], [11.25, 0, 0], red)); //scale x		
-            MoveGizmo.allChildren.push(this.BuildBox([.5, .5, .5], [0, 11.25, 0], green)); //scale y
-            MoveGizmo.allChildren.push(this.BuildBox([.5, .5, .5], [0, 0, 11.25], blue)); //scale z
-            MoveGizmo.allChildren.push(this.BuildBox([.85, .85, .85], [12.25, 0, 0], red)); //scale xyz
-            MoveGizmo.allChildren.push(this.BuildBox([.85, .85, .85], [0, 12.25, 0], green)); //scale xyz
-            MoveGizmo.allChildren.push(this.BuildBox([.85, .85, .85], [0, 0, 12.25], blue)); //scale xyz
-            MoveGizmo.allChildren.push(this.BuildBox([6, 6, .1], [3, 3, -.2], [75, 75, .1, 1], .5)); //movexy
-
-            //MoveGizmo.allChildren[MoveGizmo.allChildren.length -1].geometry.setPickGeometry(new THREE.BoxGeometry( 8, 8, .30 ));
-            MoveGizmo.allChildren.push(this.BuildBox([6, .1, 6], [3.2, -.2, 3], [75, 0, 75, 1], .5)); //movexz
-            //MoveGizmo.allChildren[MoveGizmo.allChildren.length -1].geometry.setPickGeometry(new THREE.BoxGeometry( 8, .30, 8 ));
-            MoveGizmo.allChildren.push(this.BuildBox([.1, 6, 6], [-.2, 3.2, 3], [0, 75, 75, 1], .5)); //moveyz
-            //MoveGizmo.allChildren[MoveGizmo.allChildren.length -1].geometry.setPickGeometry(new THREE.BoxGeometry( .30, 8, 8 ));
-
-
-            MoveGizmo.allChildren.push(this.BuildRing(14, .2, [0, 0, 1], 30, [.5, .5, .5, 1], 90, 450)); //rotate z
-
-            var xRotation = this.BuildRing(7, 0.5, [1, 0, 0], 37, red, 0, 370);
-            xRotation.add(this.BuildBox([.5, .5, 13], [0, 0, 0], red), true);
-            xRotation.children[0].material = xRotation.material;
-            MoveGizmo.allChildren.push(xRotation); //rotate x
-
-
-            var yRotation = this.BuildRing(7, 0.5, [0, 1, 0], 37, green, 0, 370);
-            yRotation.add(this.BuildBox([.5, .5, 13], [0, 0, 0], green), true);
-            yRotation.children[0].material = yRotation.material;
-            MoveGizmo.allChildren.push(yRotation); //rotate y
-
-
-
-            var zRotation = this.BuildRing(7, 0.5, [0, 0, 1], 37, blue, 0, 370);
-            zRotation.add(this.BuildBox([.5, .5, 13], [0, 0, 0], blue), true);
-            zRotation.children[0].material = zRotation.material;
-            MoveGizmo.allChildren.push(zRotation); //rotate z
-            //MoveGizmo.allChildren.push(this.BuildBox([5, 5, 5], [0, 0, 0], [1, 1, 1, 1])); //scale uniform
-            MoveGizmo.allChildren.push(this.BuildScaleUniform()); //scale uniform
-
-            MoveGizmo.allChildren.push(this.BuildBox([0.30, 5, 5], [5, 0, 0], red)); //scale uniform
-            MoveGizmo.allChildren.push(this.BuildBox([5, .30, 5], [0, 5, 0], green)); //scale uniform
-            MoveGizmo.allChildren.push(this.BuildBox([5, 5, .30], [0, 0, 5], blue)); //scale uniform
-            MoveGizmo.allChildren.push(this.BuildBox([.30, 5, 5], [-5, 0, 0], red)); //scale uniform
-            MoveGizmo.allChildren.push(this.BuildBox([5, .30, 5], [0, -5, 0], green)); //scale uniform
-            MoveGizmo.allChildren.push(this.BuildBox([5, 5, .30], [0, 0, -5], blue)); //scale uniform
-            MoveGizmo.allChildren[0].name = 'XRotation';
-            MoveGizmo.allChildren[1].name = 'YRotation';
-            MoveGizmo.allChildren[2].name = 'ZRotation';
-            MoveGizmo.allChildren[3].name = 'XMovement';
-            MoveGizmo.allChildren[4].name = 'YMovement';
-            MoveGizmo.allChildren[5].name = 'ZMovement';
-            MoveGizmo.allChildren[6].name = 'XScale';
-            MoveGizmo.allChildren[7].name = 'YScale';
-            MoveGizmo.allChildren[8].name = 'ZScale';
-            MoveGizmo.allChildren[9].name = 'XYScale';
-            MoveGizmo.allChildren[10].name = 'YZScale';
-            MoveGizmo.allChildren[11].name = 'ZXScale';
-            MoveGizmo.allChildren[12].name = 'XYMove';
-            MoveGizmo.allChildren[13].name = 'YZMove';
-            MoveGizmo.allChildren[14].name = 'ZXMove';
-            MoveGizmo.allChildren[15].name = 'SwapCoords';
-            MoveGizmo.allChildren[16].name = 'XRotate';
-            MoveGizmo.allChildren[17].name = 'YRotate';
-            MoveGizmo.allChildren[18].name = 'ZRotate';
-            MoveGizmo.allChildren[19].name = 'ScaleUniform';
-            MoveGizmo.allChildren[20].name = 'XScale1';
-            MoveGizmo.allChildren[21].name = 'YScale1';
-            MoveGizmo.allChildren[22].name = 'ZScale1';
-            MoveGizmo.allChildren[23].name = 'XScale2';
-            MoveGizmo.allChildren[24].name = 'YScale2';
-            MoveGizmo.allChildren[25].name = 'ZScale2';
-            MoveGizmo.name = "MoveGizmo";
-            var movegizhead = new THREE.Object3D();
-            movegizhead.name = "MoveGizmoRoot";
-            movegizhead.matrixAutoUpdate = false;
-            movegizhead.add(MoveGizmo, true);
-            //since the picking system will use the scenemanager, must add.
-            //but use special add because there is no point in constantly re organizing the
-            //graph based on the gizmo
-            if (!_SceneManager) alert('No SceneManager!');
-            _SceneManager.addToRoot(movegizhead);
-            this.findscene().add(movegizhead, true);
-            MoveGizmo.matrixAutoUpdate = false;
-            for (var i = 0; i < MoveGizmo.allChildren.length; i++) {
-                MoveGizmo.allChildren[i].material.originalColor = new THREE.Color();
-                var c = MoveGizmo.allChildren[i].material.color;
-                MoveGizmo.allChildren[i].material.originalColor.setRGB(c.r, c.g, c.b);
-                //MoveGizmo.allChildren[i].renderDepth = -10000 - i;
-               // MoveGizmo.allChildren[i].material.depthTest = false;
-               // MoveGizmo.allChildren[i].material.depthWrite = false;
-                //MoveGizmo.allChildren[i].material.transparent = true;
-                MoveGizmo.allChildren[i].material.fog = false;
-                MoveGizmo.allChildren[i].PickPriority = 10;
-            }
-            this.SetGizmoMode(Move);
         }.bind(this);
         this.SetGizmoMode = function(type) {
-
-            this.GizmoMode = type;
-
-            if (!this.GetSelectedVWFID()) return;
-            if (type == Move) {
-                $('#StatusTransform').text('Move');
-                for (var i = 0; i < MoveGizmo.allChildren.length; i++) {
-                    if ((i >= 0 && i <= 2) || (i >= 12 && i <= 14)) {
-                        MoveGizmo.add(MoveGizmo.allChildren[i], true);
-                    } else {
-                        MoveGizmo.remove(MoveGizmo.allChildren[i], true);
-                    }
-                    this.GizmoMode = Move;
-                }
-            }
-            if (type == Rotate) {
-                $('#StatusTransform').text('Rotate');
-                for (var i = 0; i < MoveGizmo.allChildren.length; i++) {
-                    if (i >= 16 && i <= 18) {
-                        MoveGizmo.add(MoveGizmo.allChildren[i], true);
-                    } else {
-                        MoveGizmo.remove(MoveGizmo.allChildren[i], true);
-                    }
-                    this.GizmoMode = Rotate;
-                }
-            }
-            if (type == Scale) {
-                $('#StatusTransform').text('Scale');
-                //SetCoordSystem(LocalCoords);
-                for (var i = 0; i < MoveGizmo.allChildren.length; i++) {
-                    if (i == 19) {
-                        MoveGizmo.add(MoveGizmo.allChildren[i], true);
-                    } else {
-                        MoveGizmo.remove(MoveGizmo.allChildren[i], true);
-                    }
-                    this.GizmoMode = Scale;
-                }
-            }
-            if (type == Multi) {
-                $('#StatusTransform').text('Multi');
-                for (var i = 0; i < MoveGizmo.allChildren.length; i++) {
-                    if ([0,1,2,3,4,5,12,13,14,15,19].indexOf(i) > -1) {
-                        MoveGizmo.add(MoveGizmo.allChildren[i], true);
-                    } else {
-                        MoveGizmo.remove(MoveGizmo.allChildren[i], true);
-                    }
-                    this.GizmoMode = Multi;
-                }
-            }
-        }.bind(this);
-        this.BuildRing = function(radius1, radius2, axis, steps, color, startdeg, enddeg) {
-            var mesh = new THREE.Mesh(new THREE.TorusGeometry(radius1, radius2, 6, steps), new THREE.MeshLambertMaterial());
-            mesh.material.color.r = color[0];
-            mesh.material.color.g = color[1];
-            mesh.material.color.b = color[2];
-            mesh.material.emissive.r = color[0];
-            mesh.material.emissive.g = color[1];
-            mesh.material.emissive.b = color[2];
-            mesh.rotation.x = axis[1] * Math.PI / 2;
-            mesh.rotation.y = axis[0] * Math.PI / 2;
-            mesh.rotation.z = axis[2] * Math.PI / 2;
-            mesh.updateMatrixWorld(true);
-            return mesh;
-        }.bind(this);
-        this.BuildBox = function(size, offset, color, alpha) {
-            var mesh = new THREE.Mesh(new THREE.BoxGeometry(size[0], size[1], size[2]), new THREE.MeshLambertMaterial());
-            mesh.material.color.r = color[0];
-            mesh.material.color.g = color[1];
-            mesh.material.color.b = color[2];
-            mesh.material.ambient.r = color[0];
-            mesh.material.ambient.g = color[1];
-            mesh.material.ambient.b = color[2];
-            mesh.material.emissive.r = color[0];
-            mesh.material.emissive.g = color[1];
-            mesh.material.emissive.b = color[2];
-            mesh.material.shading = false;
-            mesh.material.transparent = true;
-            mesh.material.opacity = alpha || 1;
-            //mesh.matrix.setPosition(new THREE.Vector3(offset[0],offset[1],offset[2]));
-            for (var i = 0; i < mesh.geometry.vertices.length; i++) {
-                mesh.geometry.vertices[i].x += offset[0];
-                mesh.geometry.vertices[i].y += offset[1];
-                mesh.geometry.vertices[i].z += offset[2];
-            }
-            mesh.matrixAutoUpdate = false;
-            mesh.updateMatrixWorld(true);
-            return mesh;
-        }.bind(this);
+            if(!this.MoveGizmo)
+                this.BuildMoveGizmo();
+            this.MoveGizmo.SetGizmoMode(type);
+        }
+        
         this.BuildWireBox = function(size, offset, color, material) {
 
             var mesh = new THREE.Line(new THREE.Geometry(), material ||(new THREE.LineBasicMaterial()), THREE.LinePieces);
@@ -3069,23 +2219,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             return mesh;
         }.bind(this);
 
-        this.BuildScaleUniform = function() {
-            var mesh = new THREE.Mesh(new THREE.SphereGeometry(3, 4, 2), new THREE.MeshPhongMaterial());
-            mesh.material.color.r = .5;
-            mesh.material.color.g = .5;
-            mesh.material.color.b = 1;
-            mesh.material.emissive.r = .051;
-            mesh.material.emissive.g = .051;
-            mesh.material.emissive.b = .051;
-            mesh.material.ambient.r = 0;
-            mesh.material.ambient.g = 0;
-            mesh.material.shading = true;
-            //mesh.matrix.setPosition(new THREE.Vector3(offset[0],offset[1],offset[2]));
-
-            mesh.matrixAutoUpdate = false;
-            mesh.updateMatrixWorld(true);
-            return mesh;
-        }.bind(this);
+       
 
         //callback for setPArent. CAlled once a node is picked. Selected objects will become children of this node
         this.PickParentCallback = function(parentnode) {
@@ -3370,14 +2504,14 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
         }
         this.SetSelectMode = function(e) {
             SelectMode = e;
-            $('#StatusPickMode').text('Pick: ' + e);
+            $('#StatusPickMode').html(('Pick: ' + e).escape());
             if (e == 'Pick') {
-                $('#MenuSelectPickicon').addClass('iconselected')
+                //$('#MenuSelectPickicon').addClass('iconselected')
                 $('#glyphOverlay').show();
 
             } else {
 
-                $('#MenuSelectPickicon').removeClass('iconselected')
+                //$('#MenuSelectPickicon').removeClass('iconselected')
                 $('#glyphOverlay').hide();
 
             }
@@ -3397,13 +2531,17 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
         this.SetCoordSystem = function(e) {
             CoordSystem = e;
             if (e == WorldCoords) {
-                $('#StatusCoords').text('World Coords');
-                $('#MenuWorldicon').addClass('iconselected')
-                $('#MenuLocalicon').removeClass('iconselected');
+                $('#StatusCoords').html(('World Coords').escape());
+				setTimeout(function(){
+					angularapp.root.fields.coordSpaceSelected = 'world';
+					angularapp.root.$apply();
+				}, 0);
             } else {
-                $('#StatusCoords').text('Local Coords');
-                $('#MenuWorldicon').removeClass('iconselected');
-                $('#MenuLocalicon').addClass('iconselected')
+                $('#StatusCoords').html(('Local Coords').escape());
+				setTimeout(function(){
+					angularapp.root.fields.coordSpaceSelected = 'local';
+					angularapp.root.$apply();
+				}, 0);
             }
         }.bind(this);
         this.GetMoveGizmo = function(e) {
@@ -3413,7 +2551,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
             RotateSnap = r;
             MoveSnap = m;
             ScaleSnap = s;
-            $('#StatusSnaps').text('Snaps: ' + (r / 0.0174532925) + 'deg, ' + m + 'm, ' + s + '%');
+            $('#StatusSnaps').html(('Snaps: ' + (r / 0.0174532925) + 'deg, ' + m + 'm, ' + s + '%').escape());
         }.bind(this);
         this.GetSelectedVWFID = function(i) {
             if(!i)
@@ -3775,7 +2913,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 }
                 else if(_Editor.findviewnode(focusID)) {
 
-                    var t = _Editor.GetMoveGizmo().parent.matrixWorld.getPosition();
+                    var t = _Editor.GetMoveGizmo().getGizmoHead().matrixWorld.getPosition();
                     var gizpos = [t.x, t.y, t.z];
                     var matrix = _Editor.findviewnode(focusID).matrixWorld.elements;
                     matrix = MATH.transposeMat4(matrix);
@@ -3799,10 +2937,16 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 }
             }
         }
+        this.updateGizmo = function()
+        {
+            this.updateGizmoSize();
+            this.updateGizmoOrientation();
+            this.updateGizmoLocation();
+        }
         this.initialize = function() {
             this.BuildMoveGizmo();
             this.SelectObject(null);
-            _dView.bind('prerender', this.updateGizmoSize.bind(this));
+            _dView.bind('prerender', this.updateGizmo.bind(this));
             document.oncontextmenu = function() {
                 return false;
             };
@@ -3904,7 +3048,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
                 }, 500)
 
             }
-            if(window._RenderManager){
+            if(window._RenderManager && vwf.getProperty(vwf.application(), 'playMode') !== 'play'){
                 _RenderManager.flashHilightMult(findviewnode(childID));
                 _RenderManager.flashHilightMult(findviewnode(nodeID));
             }
@@ -3937,6 +3081,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar"], function(
         this.Multi = Multi;
         this.CoordSystem = CoordSystem;
         this.WorldCoords = WorldCoords;
+        this.ParentCoords = ParentCoords;
         this.LocalCoords = LocalCoords;
         this.MoveGizmo = MoveGizmo;
         this.RotateSnap = RotateSnap;

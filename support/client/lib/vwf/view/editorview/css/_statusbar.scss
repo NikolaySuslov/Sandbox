@@ -1,0 +1,101 @@
+.statusbar {
+	//position: fixed;
+	//width: 100%;
+	height: 25px;
+	z-index: 201;
+	background: #444;
+	white-space: nowrap;
+}
+
+#statusbarinner {
+	display: inline-block;
+	width: 100%;
+	background: #414141;
+	/* Old browsers */
+}
+
+.statusbarElement {
+	display: inline;
+	height: 100%;
+	padding-left: 5px;
+	padding-right: 5px;
+	line-height: 25px;
+	border-radius: 0px;
+	color: gray;
+	margin-left: 3px;
+	margin-right: 3px;
+	font-family: 'Open Sans',sans-serif;
+	font-size: 1.3em;
+	/* text-shadow: 1px 1px 3px black; */
+	border-left: 1px solid;
+}
+
+
+.timeControlActive {
+	background-color: blue;
+}
+
+#TimeControl {
+	height: 59px;
+	display: inline-block;
+	margin-top: -45px;
+	background: #444;
+	border-radius: 5px;
+	border: 1px solid #555555;
+	padding: 4px 4px 4px 4px;
+}
+
+$spritePath: getImgPath();
+
+#playButton {
+	background-image: url(#{$spritePath}/images/icons/sprites.svg) !important;
+	background-origin: content-box !important;
+	background-position: -212px -56px;
+	background-size: 646px;
+}
+
+#pauseButton {
+	background-image: url(#{$spritePath}/images/icons/sprites.svg) !important;
+	background-origin: content-box !important;
+	background-position: -262px -56px;
+	background-size: 645px;
+}
+
+#stopButton {
+	background-image: url(#{$spritePath}/images/icons/sprites.svg) !important;
+	background-origin: content-box !important;
+	background-position: -349px -65px;
+	background-size: 718px;
+}
+
+.timeControl {
+	text-indent: 0px;
+	display: inline-block;
+	color: #777777;
+	font-family: 'Open Sans',Arial;
+	font-size: 27px;
+	font-weight: bold;
+	font-style: normal;
+	height: 45px;
+	line-height: 45px;
+	width: 50px;
+	text-decoration: none;
+	text-align: center;
+	text-shadow: 1px 1px 0px white;
+	vertical-align: bottom;
+	margin-bottom: -3px;
+	cursor: pointer;
+	margin-right: 2px;
+	margin-bottom: -4px;
+	/* border-radius: 6px; */
+}
+
+.timeControl:hover {
+	background-color: #dfdfdf;
+}
+
+.timeControl:active {
+	background-color: #dfdfff;
+}
+
+

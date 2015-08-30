@@ -8,7 +8,7 @@ define([], function() {
                 //var base = new baseclass('hierarchyManager','Hierarchy','hierarchy',false,true,'#sidepanel')
                 //base.init();
                 //$.extend(HierarchyManager,base);
-                baseclass(PhysicsEditor,'PhysicsEditor','Physics','material',true,true,'#sidepanel')
+                baseclass(PhysicsEditor,'PhysicsEditor','Physics','physics',true,true,'#sidepanel .main')
                 
                 PhysicsEditor.init()
                 initialize.call(PhysicsEditor);

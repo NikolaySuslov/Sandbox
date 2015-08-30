@@ -1,0 +1,113 @@
+@import 'polyfill';
+
+#EntityLibrary
+{
+	position: relative;
+	width: 250px;
+	@include flex-shrink(0);
+
+	background: #515151 url(../../../../images/ui-bg_diagonals-thick_8_333333_40x40.png) 0% 0% repeat;
+	background-size: 5%;
+
+	&.hidden
+	{
+		display: block !important;
+		visibility: visible !important;
+		width: 0;
+	}
+
+
+	#EntityLibrarySideTab
+	{
+		z-index: 30;
+
+		position: absolute;
+		right: -50px;
+		width: 73px;
+		top: 5%;
+		height: 21px;
+
+		@include transform(rotate(90deg));
+
+		font-size: 12px;
+		font-family: 'Open Sans',sans-serif;
+		text-align: center;
+
+		border: 2px solid #82b8ff;
+		border-bottom: none;
+		color: white;
+		text-shadow: 1px 1px 3px black;
+		cursor: pointer;
+		background: #4c4c4c;
+		padding-left: 0px;
+
+		&:hover
+		{
+			color: #82b8ff;
+		}
+	}
+
+	#entitylibrarytitle {
+		@include flex-shrink(0);
+	}
+
+	#EntityLibraryMain
+	{
+		//width: 245px;
+		margin-top: 1px;
+		padding-right: 1px;
+
+		position: absolute;
+		right: 0px;
+		min-width: 248px;
+
+		max-height: 100%;
+	}
+
+	#EntityLibraryAccordion
+	{
+		overflow-y: auto;
+
+		& > h3:not(.ui-accordion-header-active):last-of-type, & > div:last-of-type {
+			margin-bottom: 28px;
+		}
+	}
+
+	.libraryAsset
+	{
+		text-align: center;
+		display: inline-block;
+		margin-right: 1.5em;
+		width: 73px;
+		height: 75px;
+		margin-bottom: 9px;
+
+		div
+		{
+			color: whitesmoke;
+			text-shadow: 1px 1px 5px black;
+			overflow: hidden;
+			background: rgba(0, 0, 0, 0.5);
+			position: relative;
+			/* border-radius: 10px; */
+			pointer-events: none;
+		}
+
+		img
+		{
+			width: 75px;
+			height: 75px;
+			box-sizing: border-box;
+			margin-bottom: -19px;
+			border-radius: 3px;
+			/* box-shadow: 2px 2px 5px gray; */
+			-webkit-transition: opactiy 2s;
+			/* For Safari 3.1 to 6.0 */
+			-blink-transition: opactiy 2s;
+			/* For Safari 3.1 to 6.0 */
+			transition: opactiy 2s;
+		}
+
+	}
+
+}

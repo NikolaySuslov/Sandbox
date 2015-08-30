@@ -405,22 +405,27 @@ phyObject.prototype.addForce = function(vec, offset) {
     if (vec.length !== 3) return;
     if (this.initialized === true) {
         var f = new Ammo.btVector3(vec[0], vec[1], vec[2]);
-        if (!offset) this.body.applyForce(f);
-        else {
-            var o = new Ammo.btVector3(offset[0], offset[1], offset[2]);
-            this.body.applyForce(f, o);
-        }
-        Ammo.destroy(f);
-    }
+		if(offset){
+			var o = new Ammo.btVector3(offset[0], offset[1], offset[2]);
+			this.body.applyForce(f, o);
+			Ammo.destroy(o);
+		}
+		else {
+			this.body.applyCentralForce(f);
+		}
+		Ammo.destroy(f);
+	}
 }
 //this is a global space force that is applied at every tick. Sort of a motor. Could be 
 //used to do custom per object gravity.
 phyObject.prototype.setConstantForce = function(vec) {
+    if(this.constantForce) Ammo.destroy(this.constantForce);
     if (vec) this.constantForce = new Ammo.btVector3(vec[0], vec[1], vec[2]);
     else this.constantForce = null;
 }
 //a constant torque applied at every tick
 phyObject.prototype.setConstantTorque = function(vec) {
+    if(this.constantTorque) Ammo.destroy(this.constantTorque);
     if (vec) this.constantTorque = new Ammo.btVector3(vec[0], vec[1], vec[2]);
     else this.constantTorque = null;
 }
@@ -429,7 +434,7 @@ phyObject.prototype.addTorque = function(vec) {
     if (this.initialized === true) {
         var f = new Ammo.btVector3(vec[0], vec[1], vec[2]);
         this.body.applyTorque(f);
-        //Ammo.destroy(f);
+        Ammo.destroy(f);
     }
 }
 phyObject.prototype.addForceImpulse = function(vec) {
@@ -448,39 +453,35 @@ phyObject.prototype.addTorqueImpulse = function(vec) {
         Ammo.destroy(f);
     }
 }
-phyObject.prototype.addForceOffset = function(vec, pos) {
+/*phyObject.prototype.addForceOffset = function(vec, pos) {
     if (vec.length !== 3) return;
     if (pos.length !== 3) return;
     if (this.initialized === true) {
         var f = new Ammo.btVector3(vec[0], vec[1], vec[2]);
-        var g = new Ammo.btVector3(vec[0], vec[1], vec[2]);
+        var g = new Ammo.btVector3(pos[0], pos[1], pos[2]);
         this.body.applyForce(f, g);
         Ammo.destroy(f);
         Ammo.destroy(g);
     }
-}
+}*/
 phyObject.prototype.setLinearFactor = function(vec) {
     if (vec.length !== 3) return;
     this.linearFactor = vec;
     if (this.initialized === true) {
-        var f = new Ammo.btVector3(vec[0], vec[1], vec[2]);
-        this.body.setLinearFactor(f);
-        Ammo.destroy(f);
+		//this.body.getLinearFactor().setValue(vec[0], vec[1], vec[2]);
     }
 }
 phyObject.prototype.getLinearFactor = function(vec) {
     return this.linearFactor;
 }
 phyObject.prototype.getAngularFactor = function(vec) {
-    return this.linearFactor;
+    return this.angularFactor;
 }
 phyObject.prototype.setAngularFactor = function(vec) {
     if (vec.length !== 3) return;
     this.angularFactor = vec;
     if (this.initialized === true) {
-        var f = new Ammo.btVector3(vec[0], vec[1], vec[2]);
-        this.body.setAngularFactor(f);
-        Ammo.destroy(f);
+		//this.body.getAngularFactor().setValue(vec[0], vec[1], vec[2]);
     }
 }
 phyObject.prototype.setMass = function(mass) {
@@ -585,18 +586,12 @@ phyObject.prototype.initialize = function() {
         this.body.setFriction(fric);
         var rest = this.restitution;
         this.body.setRestitution(rest);
-        var f = new Ammo.btVector3(this.linearVelocity[0], this.linearVelocity[1], this.linearVelocity[2]);
-        this.body.setLinearVelocity(f);
-        // Ammo.destroy(f);
-        var f = new Ammo.btVector3(this.angularVelocity[0], this.angularVelocity[1], this.angularVelocity[2]);
-        this.body.setAngularVelocity(f);
-        // Ammo.destroy(f);
-        var f = new Ammo.btVector3(this.angularFactor[0], this.angularFactor[1], this.angularFactor[2])
-        this.body.setAngularFactor(f);
-        // Ammo.destroy(f);
-        var f = new Ammo.btVector3(this.linearFactor[0], this.linearFactor[1], this.linearFactor[2]);
-        this.body.setLinearFactor(f);
-        // Ammo.destroy(f);
+
+        this.body.getLinearVelocity().setValue(this.linearVelocity[0], this.linearVelocity[1], this.linearVelocity[2]);
+        this.body.getAngularVelocity().setValue(this.angularVelocity[0], this.angularVelocity[1], this.angularVelocity[2]);
+        //this.body.getAngularFactor().setValue(this.angularFactor[0], this.angularFactor[1], this.angularFactor[2])
+        //this.body.getLinearFactor().setValue(this.linearFactor[0], this.linearFactor[1], this.linearFactor[2]);
+
         this.body.forceActivationState(this.activationState);
         this.body.setDeactivationTime(this.deactivationTime);
         var mat = vwf.getProperty(this.id, 'transform');
@@ -644,17 +639,13 @@ phyObject.prototype.getLinearVelocity = function() {
 phyObject.prototype.setLinearVelocity = function(vel) {
     this.linearVelocity = vel;
     if (this.initialized === true) {
-        var f = new Ammo.btVector3(vel[0], vel[1], vel[2]);
-        this.body.setLinearVelocity(f);
-        //Ammo.destroy(f);
+		this.body.getLinearVelocity().setValue(vel[0], vel[1], vel[2]);
     }
 }
 phyObject.prototype.setAngularVelocity = function(vel) {
     this.angularVelocity = vel;
     if (this.initialized === true) {
-        var f = new Ammo.btVector3(vel[0], vel[1], vel[2]);
-        this.body.setAngularVelocity(f);
-        // Ammo.destroy(f);
+		this.body.getAngularVelocity().setValue(vel[0], vel[1], vel[2]);
     }
 }
 //note - we don't store up forces when the body is not initialized, so AddTorque called before init does nothing
@@ -670,9 +661,7 @@ phyObject.prototype.getForce = function() {
 //or setConstantForce
 phyObject.prototype.setForce = function(force) {
     if (this.initialized === true) {
-        var f = new btVector3(force[0], force[1], force[2]);
-        this.body.setTotalForce(f);
-        //Ammo.destroy(f);
+        this.body.getTotalForce().setValue(force[0], force[1], force[2]);
     }
 }
 phyObject.prototype.getTorque = function() {
@@ -686,9 +675,7 @@ phyObject.prototype.getTorque = function() {
 //or setConstantTorque
 phyObject.prototype.setTorque = function(torque) {
     if (this.initialized === true) {
-        var f = new btVector3(torque[0], torque[1], torque[2]);
-        this.body.setTotalTorque(f);
-        //Ammo.destroy(f);
+        this.body.getTotalTorque().setValue(torque[0], torque[1], torque[2]);
     }
 }
 phyObject.prototype.getAngularVelocity = function() {
@@ -877,6 +864,7 @@ phyObject.prototype.setTransform = function(matrix) {
         startTransform.setRotation(q);
         Ammo.destroy(q);
         this.body.setCenterOfMassTransform(startTransform);
+        Ammo.destroy(startTransform)
         if (this.collision) {
             //update the localscaling
         }
@@ -1222,7 +1210,12 @@ phyAsset.prototype.setCollisionOffset = function(vec) {
         this.markRootBodyCollisionDirty();
     }
 }
-define(["module", "vwf/model", "vwf/configuration"], function(module, model, configuration) {
+
+require.config({shim:{
+    "vwf/model/ammo.js/ammo":{}
+}})
+
+define(["module", "vwf/model", "vwf/configuration","vwf/model/ammo.js/ammo"], function(module, model, configuration) {
     return model.load(module, {
         // == Module Definition ====================================================================
         // -- initialize ---------------------------------------------------------------------------

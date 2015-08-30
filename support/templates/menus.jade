@@ -1,0 +1,422 @@
+mixin menus_head
+	block
+
+mixin menus_body
+
+	#smoothmenu1.ddsmoothmenu(ng-controller='MenuController', style="z-index: 100;"): ul
+		li
+			a#MenuFile File
+			ul
+				li(ng-class='{"disabled": loggedIn}'): a#MenuLogIn(ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-log-in
+					| Log In
+				li(ng-class='{"disabled": !loggedIn}'): a#MenuLogOut(ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-log-out
+					| Log Out
+				li: a#MenuSaveNow(ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-floppy-disk
+					| Save Now
+				li(ng-class='{"disabled": isExample}')
+					a#MenuShareWorld(title="Share a link to this world with your colleagues", ng-click='lookUpHandler($event)')
+						.glyphicon.glyphicon-share
+						| Share
+				li(ng-class='{"disabled": isExample || !userIsOwner}')
+					a#SetThumbnail(title="Take a screenshot and designate it as the public thumbnail", ng-click='lookUpHandler($event)')
+						.glyphicon.glyphicon-picture
+						| Set World Thumbnail
+				li(ng-class='{"disabled": isExample || !userIsOwner}')
+					a#TestSettings(title="Change the publish settings of this world", ng-click='lookUpHandler($event)')
+						.glyphicon.glyphicon-globe
+						| World Settings (ctrl+9)
+				li(ng-class='{"disabled": worldIsNotLaunchable}')
+					a#TestLaunch(title="Load the world as if it were published", ng-click='lookUpHandler($event)')
+						.glyphicon.glyphicon-play
+						| Play World (ctrl+0)
+
+		li
+			a#MenuEdit Edit
+			ul
+				li: a#MenuUndo(ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-share-alt(style='transform: rotateY(180deg);')
+					| Undo (ctrl-z)
+				li: a#MenuRedo(ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-share-alt
+					| Redo (ctrl-y)
+				li.divider
+
+				li(ng-class='{"disabled": !selection}')
+					a#MenuCopy(title="Copy the currently selected object(s) to the internal clipboard", ng-click='lookUpHandler($event)')
+						.glyphicon.glyphicon-copy
+						| Copy (ctrl-c)
+				li: a#MenuPaste(title="Paste previously copied object(s) from the internal clipboard", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-paste
+					| Paste (ctrl-v)
+				li(ng-class='{"disabled": !selection}')
+					a#MenuDuplicate(title="Duplicate currently selected object(s)", ng-click='lookUpHandler($event)')
+						.glyphicon.glyphicon-duplicate
+						| Duplicate (ctrl-s)
+				li(ng-class='{"disabled": !selection}')
+					a#MenuDelete(title="Delete currently selected object(s)", ng-click='lookUpHandler($event)')
+						.glyphicon.glyphicon-trash
+						| Delete (del)
+				li.divider
+
+				li: a#MenuShare(title="Specify which users are authorized to modify the world", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-share
+					| Set Permissions
+				li
+					a#MenuSelect Select
+					ul
+						li: a#MenuSelectName(title="Select objects by type and name", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-list
+							| Select By Name
+						li: a#MenuSelectPick(title="Select objects with the mouse (default)", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-screenshot
+							| Pick (q)
+						li: a#MenuSelectNone(title="Deselect selected object(s)", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-unchecked
+							| Select None
+						li: a#MenuSelectScene(title="Select the scene node", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-film
+							| Select Scene
+
+				li
+					a#MenuTransforms Transform
+					ul
+						li: a#MenuMove(title="Enable the move tool on the currently selected object(s)", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-move
+							| Move (w)
+						li: a#MenuRotate(title="Enable the rotate tool on the currently selected object(s)", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-repeat
+							| Rotate (e)
+						li: a#MenuScale(title="Enable the scale tool on the currently selected object(s)", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-fullscreen
+							| Scale (r)
+						li: a#MenuMulti(title="Enable all transform tools on the currently selected object(s)", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-screenshot
+							| Multi (t)
+						li.divider
+
+						li: a#MenuLocal(title="Present transform tools with respect to selected object's local transform", ng-click='lookUpHandler($event)')
+							| Local Coords
+						li: a#MenuWorld(title="Present transform tools with respect to world (global) coordinates", ng-click='lookUpHandler($event)')
+							| World Coords
+						li: a#MenuObjectCenters(title="Transform the objects in place, or from the gizmo", ng-click='lookUpHandler($event)')
+							| Use Object Center	
+						li.divider
+
+						li
+							a#MenuSnaps Snaps
+							ul
+								li: a#MenuSnapLarge(title="Transform changes snap in large increments", ng-click='lookUpHandler($event)') Large
+								li: a#MenuSnapMedium(title="Transform changes snap in medium increments", ng-click='lookUpHandler($event)') Medium
+								li: a#MenuSnapSmall(title="Transform changes snap in small increments", ng-click='lookUpHandler($event)') Small
+								li: a#MenuSnapOff(title="Turns off transform snapping", ng-click='lookUpHandler($event)') Off
+						li.divider
+
+						li
+							a#ResetTransforms(title="Reset selected object(s) back to the default position, rotation, and scale", ng-click='lookUpHandler($event)')
+								| Reset Transforms
+
+		li
+			a#MenuCamera Camera
+			ul
+				
+				li(ng-class='{"disabled": !selection}')
+					a#MenuFocusSelected(title="Focus editor viewport on the currently selected object(s)", ng-click='lookUpHandler($event)')
+						.glyphicon.glyphicon-screenshot
+						| Focus Selected
+				li
+					a Camera Sharing
+					ul
+						li: a#MenuCameraShare(title="Begin broadcasting editor viewport", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-share
+							| Share Camera View
+						li: a#MenuCameraReceive(title="Begin viewing remote viewport broadcast, if available", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-share
+							| Receive Camera Broadcasts
+						li: a#MenuCameraReceive(title="Stop viewing remote viewport broadcast", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-share
+							| Stop Receiving Camera Broadcasts
+
+				li: a#MenuActivateCamera(title="Choose which camera to view in editor viewport", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-video
+					| Activate Camera
+				li
+					a#MenuDefaultCameras
+						.glyphicon.glyphicon-new-window
+						| Default Cameras
+					ul
+						li: a#MenuCameraOrbit(title="Camera mode that supports rotation around a fixed point", ng-click='lookUpHandler($event)') Orbit
+						li: a#MenuCameraFree(title="Camera mode that emulates a first person view", ng-click='lookUpHandler($event)') Free
+						li: a#MenuCamera3RDPerson(title="Camera mode that orients itself behind your avatar", ng-click='lookUpHandler($event)') Avatar View
+						li: a#MenuCameraNavigate(title="Camera mode best suited to navigate around large regions of space", ng-click='lookUpHandler($event)') Navigate
+						li: a#MenuCameraFly(title="Camera mode that moves forward at a set speed", ng-click='lookUpHandler($event)') Fly
+						li: a#MenuCameraDeviceOrientation(title="Camera mode that uses mobile device's sensors to control viewport, if available", ng-click='lookUpHandler($event)')
+							| DeviceOrientation
+
+		li(ng-class='{"disabled": !selection}')
+			a#MenuHierarchy Hierarchy
+			ul
+				li: a#MenuSetParent(title="Link the currently selected object(s) to a single parent object", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-link
+					| Link
+				li: a#MenuRemoveParent(title="Decouple selected object(s) from its parent", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-link
+					| Unlink
+				li: a#MenuSelectParent(title="Select the parent of the currently selected object(s)", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-arrow-up
+					| Select Parent
+				li
+					a#MenuGrouping Grouping
+					ul
+						li: a#MenuGroup(title="Treat all of the selected objects as one object", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-oil
+							| Group
+						li(ng-class='{"disabled": !isGroup}')
+							a#MenuUngroup(title="Break selected group back into individual objects", ng-click='lookUpHandler($event)')
+								.glyphicon.glyphicon-duplicate
+								| Ungroup
+						li(ng-class='{"disabled": !isGroup}')
+							a#MenuOpenGroup(title="Enable selection of grouped objects", ng-click='lookUpHandler($event)')
+								.glyphicon.glyphicon-resize-full
+								| Open Group
+						li(ng-class='{"disabled": !isGroup}')
+							a#MenuCloseGroup(title="Disable selection of grouped objects", ng-click='lookUpHandler($event)')
+								.glyphicon.glyphicon-resize-small
+								| Close Group
+
+		li
+			a#MenuCreate Create
+			ul
+				li
+					a#MenuPrimitives Primitives
+					ul
+						li: a#MenuCreateEmpty(title="Create an empty VWF node", ng-click='lookUpHandler($event)') Empty
+						li: a#MenuCreateSphere(title="Create a sphere", ng-click='lookUpHandler($event)') Sphere
+						li: a#MenuCreateBox(title="Create a box", ng-click='lookUpHandler($event)') Box
+						li: a#MenuCreatePlane(title="Create a plane", ng-click='lookUpHandler($event)') Plane
+						li: a#MenuCreateCylinder(title="Create a cylinder", ng-click='lookUpHandler($event)') Cylinder
+						li: a#MenuCreateCone(title="Create a cone", ng-click='lookUpHandler($event)') Cone
+						li: a#MenuCreateText(title="Create customizable text", ng-click='lookUpHandler($event)') Text
+						li: a#MenuCreateTorus(title="Create a donut shape", ng-click='lookUpHandler($event)') Torus
+				li
+					a#MenuShapes Shapes
+					ul
+						li: a#MenuCreateLine(title="Create a line", ng-click='lookUpHandler($event)') Line
+						li: a#MenuCreateCircle(title="Create a circle", ng-click='lookUpHandler($event)') Circle
+						li: a#MenuCreateStar(title="Create a star", ng-click='lookUpHandler($event)') Star
+						li: a#MenuCreateRectangle(title="Create a rectangle", ng-click='lookUpHandler($event)') Rectangle
+						li: a#MenuCreateLSection(title="Create an L-shaped section", ng-click='lookUpHandler($event)') L Section
+						li: a#MenuCreateTSection(title="Create a T-shaped section", ng-click='lookUpHandler($event)') T Section
+				li
+					a#MenuModifiers Modifiers
+					ul
+						li: a#MenuCreateBend(title="Add a Bend modifier to selected object", ng-click='lookUpHandler($event)') Bend
+						li: a#MenuCreateTwist(title="Add a Twist modifier to selected object", ng-click='lookUpHandler($event)') Twist
+						li: a#MenuCreateTaper(title="Add a Taper modifier to selected object", ng-click='lookUpHandler($event)') Taper
+						li: a#MenuCreatePerlinNoise(title="Add a Perlin Noise modifier to selected object", ng-click='lookUpHandler($event)') Perlin Noise
+						li: a#MenuCreateSimplexNoise(title="Add a Simplex Noise modifier to selected object", ng-click='lookUpHandler($event)') Simplex Noise
+						li: a#MenuCreateOffset(title="Add an Offset modifier to selected object", ng-click='lookUpHandler($event)') Offset
+						li: a#MenuCreateStretch(title="Add a Stretch modifier to selected object", ng-click='lookUpHandler($event)') Stretch
+						li: a#MenuCreatePush(title="Add a Push modifier to selected object", ng-click='lookUpHandler($event)') Push
+						li: a#MenuCreateUVMap(title="Add a UV Map modifier to selected object", ng-click='lookUpHandler($event)') UVMap
+						//li: a#MenuCreateCenterPivot(title="Add a Center Pivot modifier to selected object") Center Pivot
+						li: a#MenuCreateExtrude(title="Add an Extrude modifier to selected object", ng-click='lookUpHandler($event)') Extrude
+						li: a#MenuCreatePathExtrude(title="Add a Path Extrude modifier to selected object", ng-click='lookUpHandler($event)') Path Extrude
+						li: a#MenuCreateLathe(title="Add a Lathe modifier to selected object", ng-click='lookUpHandler($event)') Lathe
+				li
+					a#MenuBehaviors Behaviors
+					ul
+						li: a#MenuCreateBlankBehavior(title="Add an empty VWF behavior node to selected object", ng-click='lookUpHandler($event)') New Behavior
+						li: a#MenuCreateBehaviorRotator(title="Add a Rotator behavior to selected object", ng-click='lookUpHandler($event)') Rotator
+						li: a#MenuCreateBehaviorOrbit(title="Add an Orbit behavior to selected object", ng-click='lookUpHandler($event)') Orbit
+						li: a#MenuCreateBehaviorHyperlink(title="Add a Hyperlink to selected object", ng-click='lookUpHandler($event)') Hyper link
+						li: a#MenuCreateBehaviorHoverlabel(title="Add a Hover label to selected object", ng-click='lookUpHandler($event)') Hover label
+						li: a#MenuCreateBehaviorPathFollow(title="Add a Path Follow behavior to selected object", ng-click='lookUpHandler($event)') Path Follow
+						li: a#MenuCreateBehaviorClampToGround(title="Add a Clamp To Ground behavior to selected object", ng-click='lookUpHandler($event)') Clamp To Ground
+						li: a#MenuCreateBehaviorLookat(title="Add a LookAt behavior to selected object", ng-click='lookUpHandler($event)') LookAt
+						li: a#MenuCreateBehaviorSeek(title="Add a Seek behavior to selected object", ng-click='lookUpHandler($event)') Seek
+				li
+					a#MenuPhysics Physics
+					ul
+						li: a#MenuPhysicsPointConstraint(title="Rotation of connected objects occur around a single pivot point", ng-click='lookUpHandler($event)') Point Constraint
+						li: a#MenuPhysicsHingeConstraint(title="Rotation of connected objects occur around a single axis (or hinge)", ng-click='lookUpHandler($event)') Hinge Constraint
+						li: a#MenuPhysicsSliderConstraint(title="Connected objects are restricted to only translation along a single axis", ng-click='lookUpHandler($event)') Slider Constraint
+						li: a#MenuPhysicsFixedConstraint(title="Restrict local rotation and local translation of connected objects", ng-click='lookUpHandler($event)') Fixed Constraint
+				li
+					a#MenuLights Lights
+					ul
+						li: a#MenuCreateLightPoint(title="Create a point light", ng-click='lookUpHandler($event)') Point
+						li: a#MenuCreateLightSpot(title="Create a spot light", ng-click='lookUpHandler($event)') Spot
+						li: a#MenuCreateLightDirectional(title="Create a directional light", ng-click='lookUpHandler($event)') Directional
+				li
+					a#MenuParticles Particles
+					ul
+						li: a#MenuCreateParticlesBasic(title="Create a basic particle emitter", ng-click='lookUpHandler($event)') Basic
+						li: a#MenuCreateParticlesSpray(title="Create a spray particle emitter", ng-click='lookUpHandler($event)') Spray
+						li: a#MenuCreateParticlesSuspended(title="Create a suspended (ambient dust) particle emitter", ng-click='lookUpHandler($event)') Suspended
+						li: a#MenuCreateParticlesAtmospheric(title="Create an atomspheric (precipitation) particle emitter", ng-click='lookUpHandler($event)') Atmospheric
+				li
+					a#MenuCameras Cameras
+					ul
+						li: a#MenuCreateCameraPerspective(title="Create a new perspective camera", ng-click='lookUpHandler($event)') Perspective
+				li
+					a#Terrain Terrain
+					ul
+						li: a#MenuCreateTerrain(title="Generate a random terrain with rolling hills", ng-click='lookUpHandler($event)') Terrain
+						li(ng-class='{"disabled": !worldHasTerrain}')
+							a#MenuCreateTerrainGrass(title="Generate grass on an existing terrain", ng-click='lookUpHandler($event)') Grass
+				li
+					a#GUI GUI Elements
+					ul
+						li: a#MenuCreateGUIDialog(title="Create a basic dialog box that is optionally added to a selected panel", ng-click='lookUpHandler($event)') Dialog
+						li: a#MenuCreateGUIButton(title="Create a button that is optionally added to a selected panel", ng-click='lookUpHandler($event)') Button
+						li: a#MenuCreateGUILabel(title="Create a label that is optionally added to a selected panel", ng-click='lookUpHandler($event)') Label
+						li: a#MenuCreateGUISlider(title="Create a slider that is optionally added to a selected panel", ng-click='lookUpHandler($event)') Slider
+						li: a#MenuCreateGUICheck(title="Create a checkbox that is optionally added to a selected panel", ng-click='lookUpHandler($event)') Checkbox
+						li: a#MenuCreateGUIPanel(title="Create a panel that is optionally added to a selected panel", ng-click='lookUpHandler($event)') Panel
+						li: a#MenuCreateGUIImage(title="Create an image that is optionally added to a selected panel", ng-click='lookUpHandler($event)') Image
+
+		li
+			a#MenuAssets Assets
+			ul
+				li
+					a#MenuAssetsSaveAs
+						.glyphicon.glyphicon-save
+						| Create New Asset
+					ul
+						li(ng-class='{"disabled": !selection}')
+							a#MenuAssetsSaveAsEntity(title="Create a new reusable asset from the selected entity", ng-click='lookUpHandler($event)')
+								.glyphicon.glyphicon-book
+								| From Sel. Entity
+						li(ng-class='{"disabled": !hasMaterial}')
+							a#MenuAssetsSaveAsMaterial(title="Create a new reusable asset from the selected entity's material", ng-click='lookUpHandler($event)')
+								.glyphicon.glyphicon-tint
+								| From Sel. Material
+						li(ng-class='{"disabled": !isBehavior}')
+							a#MenuAssetsSaveAsBehavior(title="Create a new reusable asset from the selected behavior", ng-click='lookUpHandler($event)')
+								.glyphicon.glyphicon-cog
+								| From Sel. Behavior
+						li: a#MenuAssetsSaveAsFile(title="Creates a new reusable asset via file upload", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-hdd
+							| From File
+				li(ng-class='{"disabled": !isEntityAsset || !isMaterialAsset}')
+					a#MenuAssetsSave
+						.glyphicon.glyphicon-floppy-save
+						| Refresh Asset
+					ul
+						li(ng-class='{"disabled": !isEntityAsset}')
+							a#MenuAssetsSaveEntity(title="Overwrite selected entity's source asset with current version", ng-click='lookUpHandler($event)')
+								.glyphicon.glyphicon-book
+								| From Sel. Entity
+						li(ng-class='{"disabled": !isMaterialAsset}')
+							a#MenuAssetsSaveMaterial(title="Overwrite selected entity material's source asset with current version", ng-click='lookUpHandler($event)')
+								.glyphicon.glyphicon-tint
+								| From Sel. Material
+						li(ng-class='{"disabled": !isEntityAsset || !isBehavior}')
+							a#MenuAssetsSaveBehavior(title="Overwrite selected behavior's source asset with current version", ng-click='lookUpHandler($event)')
+								.glyphicon.glyphicon-cog
+								| From Sel. Behavior
+				li: a#MenuManageAssets(title="Open the Manage Assets dialog", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-cloud
+					| Manage Your Assets
+				li.divider
+
+				li: a#MenuCreateLoadMeshURL(title="Import a mesh hosted on a remote server", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-cloud-download
+					| Load Mesh By URL
+				li
+					a#MenuAssets3DR 3DR
+					ul
+						li: a#MenuAssets3DRUpload(title="Open file upload dialog to host mesh on the 3D Repository", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-cloud-upload
+							| Upload Mesh to 3DR
+						li: a#MenuAssets3DRBrowse(title="Search for and import remote assets from the 3D Repository", ng-click='lookUpHandler($event)')
+							.glyphicon.glyphicon-tree-deciduous
+							| Browse 3D Repository
+
+		li
+			a#MenuTools Tools
+			ul
+				li
+					a#MenuLocation Location
+					ul
+						li: a#LocationGoToPosition(title="Move avatar to specified location", ng-click='lookUpHandler($event)') Go to Position...
+						li: a#LocationGoToPlacemark(title="Move avatar to existing placemark", ng-click='lookUpHandler($event)') Go to Placemark...
+						li: a#LocationAddPlacemark(title="Create a placemark at avatar's current position", ng-click='lookUpHandler($event)') Add Placemark...
+						li: a#LocationMoveToGround(title="Move avatar to ground if there is a terrain or to ground plane otherwise", ng-click='lookUpHandler($event)') Move to ground
+				li: a#MenuAlign(title="Align two objects with respect to their bounds", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-object-align-bottom
+					| Align
+				li: a#MenuBlockPainter(title="'Paint' a textured cube in voxel style", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-equalizer
+					| Block Painter
+				li: a#MenuSplineTools(title="Freely manipulate a line's vertices", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-pencil
+					| Spline Tools
+				li: a#ToolsShowID(title="Display the currently selected object's VWF ID", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-console
+					| Show ID
+				li: a#ToolsShowVWF(title="View the currently selected object's entity definition JSON", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-console
+					| Show VWF Entity Definition
+				li: a#ToolsShowVWFSaveData(title="View the Sandbox's scene definition JSON", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-console
+					| Show Sandbox Scene Definition
+
+		li
+			a#MenuWindows Windows
+			ul
+				li: a#MenuChat(title="Open the global chat dialog", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-comment
+					| Chat
+				li: a#MenuUsers(title="Open list of other players in this world in the sidebar", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-user
+					| Users
+				li: a#MenuMaterialEditor(title="Open the material definition widget in sidebar", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-tint
+					| Material Editor
+				li: a#MenuScriptEditor(title="Open the Sandbox script editor", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-console
+					| Script Editor
+				li: a#MenuObjectProperties(title="Open the object properties widget in sidebar", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-tasks
+					| Object Properties
+				li: a#MenuHierarchyManager(title="Open the hierarchy widget in sidebar", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-sort-by-attributes-alt
+					| Show Hierarchy
+				li: a#MenuPhysicsEditor(title="Open the physics widget in sidebar", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-wrench
+					| Physics Editor
+
+		li
+			a#MenuRendering Rendering
+			ul
+				li: a#MenuViewHideTools(title="Hide all authoring tools including menu and toolbars", ng-click='lookUpHandler($event)') Hide Tools
+				li: a#MenuViewToggleWireframe(title="Toggle wireframe mode for all objects in the scene", ng-click='lookUpHandler($event)') Toggle Wireframe
+				li: a#MenuViewToggleBones(title="Toggle the display of skeleton overlay if available", ng-click='lookUpHandler($event)') Toggle Bone Display
+				li: a#MenuViewGlyphs(title="Toggle icons for lights, cameras, particles, etc.", ng-click='lookUpHandler($event)') Toggle Glyphs
+				li: a#MenuViewFullscreen(title="Toggle full screen mode (F11)", ng-click='lookUpHandler($event)') Toggle Full Screen
+				li: a#MenuViewTogglePhysics(title="Toggle display of physics collision meshes", ng-click='lookUpHandler($event)') Toggle Physics Display
+				li: a#MenuViewStats(title="Toggle display of FPS counter and graph", ng-click='lookUpHandler($event)') Toggle Stats
+				li: a#MenuViewInterpolation(title="Smooths animations by effectively increasing the framerate via interpolation", ng-click='lookUpHandler($event)') Toggle Interpolation
+				li: a#MenuViewOctree(title="Display octree subdivision lines", ng-click='lookUpHandler($event)') Toggle Octree Display
+				li: a#MenuViewRenderNormal(title="Revert back to default rendering mode", ng-click='lookUpHandler($event)') Normal Rendering
+				li: a#MenuViewRenderStereo(title="Render scene in side-by-side steroscopic mode", ng-click='lookUpHandler($event)') Stereo Rendering
+				li: a#MenuViewRenderVR(title="Render scene using WebVR APIs, if available", ng-click='lookUpHandler($event)') VR Rendering
+				li: a#MenuViewTabletDemo(title="Render scene for mobile device VR (Google Cardboard)", ng-click='lookUpHandler($event)') Tablet Demo Mode
+
+		li
+			a#MenuHelp Help
+			ul
+				li: a#MenuHelpAbout(ng-click='lookUpHandler($event)') About
+				li: a#MenuHelpBrowse(ng-click='lookUpHandler($event)') Browse All Topics...
+				li: a#MenuLatencyTest(ng-click='lookUpHandler($event)') Test Latency
+				li
+					a#MenuLanguage Language
+					ul
+						li: a#MenuEn(ng-click='lookUpHandler($event)') English
+						li: a#MenuRu(ng-click='lookUpHandler($event)') Русский
+						li: a#MenuEs_ES(ng-click='lookUpHandler($event)') Español (España)
+

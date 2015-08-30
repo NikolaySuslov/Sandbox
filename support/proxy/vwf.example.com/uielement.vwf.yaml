@@ -20,4 +20,13 @@ properties:
           return [this.transform[12],this.transform[13],this.transform[14]];
   DisplayName:
   visible:
+  EditorData:
+    visible:
+      type: check
+      displayname: Visible
+      property: visible
+    visibleToCamera:
+      type: nodeid
+      displayname: Restrict to Camera
+      property: visibleToCamera
 events:

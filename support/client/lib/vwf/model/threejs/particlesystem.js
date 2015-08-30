@@ -203,7 +203,7 @@ function CreateParticleSystem(nodeID, childID, childName) {
         "   vColor = mix(startColor,endColor,(age+fractime*3.33)/lifespan) + (random -0.5) * colorRange;\n" +
         "   vFogPosition = (modelMatrix * vec4(mix(previousPosition,position,fractime),1.0)).xyz; \n" +
         "   vec4 mvPosition = modelViewMatrix * vec4(mix(previousPosition,position,fractime), 1.0 );\n" +
-        "   float psize = mix(startSize,endSize,(age+fractime*3.33)/lifespan) + (random.y -0.5) * sizeRange;\n" +
+        "   float psize = mix(startSize,endSize,(age+fractime*6.66)/lifespan) + (random.y -0.5) * sizeRange;\n" +
         "   psize *= screenSize;" +
         "   gl_PointSize = psize * ( 1000.0/ length( mvPosition.xyz ) );\n" +
         "   gl_Position = projectionMatrix * mvPosition;\n" +
@@ -575,6 +575,7 @@ function CreateParticleSystem(nodeID, childID, childName) {
         shaderMaterial_analytic.attributes.lifespan.value[particle.i] = (particle.lifespan);
 
 
+
         shaderMaterial_analytic.attributes.acceleration.needsUpdate = true;
         shaderMaterial_analytic.attributes.velocity.needsUpdate = true;
         shaderMaterial_analytic.attributes.lifespan.needsUpdate = true;
@@ -583,7 +584,7 @@ function CreateParticleSystem(nodeID, childID, childName) {
         particle.prevworld.x = particle.x;
         particle.prevworld.y = particle.y;
         particle.prevworld.z = particle.z;
-
+        this.shaderMaterial_analytic.attributes.previousPosition.needsUpdate = true;
     }
 
     //when updating in AnalyticShader mode, is very simple, just inform the shader of new time.
@@ -867,6 +868,10 @@ function CreateParticleSystem(nodeID, childID, childName) {
         }
         this.geometry.verticesNeedUpdate = true;
         this.shaderMaterial_interpolate.attributes.previousPosition.needsUpdate = true;
+        this.material.attributes.vertexColor.needsUpdate = true;
+        this.material.attributes.size.needsUpdate = true;
+        this.material.attributes.lifespan.needsUpdate = true;
+        this.material.attributes.age.needsUpdate = true;
 
     }
     //Change the system count. Note that this must be set before the first frame renders, cant be changed at runtime.
@@ -1034,6 +1039,10 @@ function CreateParticleSystem(nodeID, childID, childName) {
                     ps.shaderMaterial_analytic.transparent = true;
                     ps.shaderMaterial_interpolate.blending = THREE.AdditiveBlending;
                     ps.shaderMaterial_interpolate.transparent = true;
+                     ps.shaderMaterial_interpolate.fog = false;
+                     ps.shaderMaterial_analytic.fog = false;
+                     ps.shaderMaterial_default.fog = false;
+                   
                 } else {
                     ps.shaderMaterial_default.blending = THREE.NormalBlending;
                     ps.shaderMaterial_default.transparent = true;
@@ -1041,6 +1050,10 @@ function CreateParticleSystem(nodeID, childID, childName) {
                     ps.shaderMaterial_analytic.transparent = true;
                     ps.shaderMaterial_interpolate.blending = THREE.NormalBlending;
                     ps.shaderMaterial_interpolate.transparent = true;
+                     ps.shaderMaterial_interpolate.fog = true;
+                     ps.shaderMaterial_analytic.fog = true;
+                     ps.shaderMaterial_default.fog = true;
+                
                 }
 
                 ps.shaderMaterial_default.needsUpdate = true;

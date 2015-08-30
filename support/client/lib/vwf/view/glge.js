@@ -52,9 +52,10 @@ define( [ "module", "vwf/view" ], function( module, view ) {
                 var glgeView = this;
                 var domWin = window;
 
-                this.canvasQuery = jQuery(this.rootSelector).append(
+                /*this.canvasQuery = jQuery(this.rootSelector).append(
                     "<canvas id='" + this.state.sceneRootID + "' class='vwf-scene' width='" + this.width + "' height='" + this.height + "'/>"
-                ).children(":last");
+                ).children(":last");*/
+				this.canvasQuery = jQuery('#index-vwf');
 
                 var canvas = this.canvasQuery.get(0);
                 window.onkeydown = function (event) {

@@ -2,8 +2,15 @@
 {
     function materialDef(childID, childSource, childName)
         {
+            this.initialized = false; 
             this.initializingNode = function()
             {
+                this.initialized = true;
+                if(this.tempmaterialdef)
+                {
+                    this.materialDef = this.tempmaterialdef;
+                    delete this.tempmaterialdef;
+                }
                 this.settingProperty('materialDef', this.materialDef);
                 if (this.dirtyStack)
                     this.dirtyStack(true);
@@ -103,6 +110,12 @@
             this.settingProperty = function(propname, propval)
                 {
                     //if it's a prim, this.build will be true. Prims must be able to reset the material, and won't pass this check
+                    if(!this.initialized && propname == 'materialDef')
+                    {
+                        this.tempmaterialdef = propval
+                        return;
+                    }
+
                     if (propname == 'materialDef' && propval)
                         if (!Object.deepEquals(propval, this.materialDef_) || this.Build)
                         {

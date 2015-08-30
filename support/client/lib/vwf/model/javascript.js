@@ -223,6 +223,74 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
 
             });
 
+            Object.defineProperty(node, "broadcast", { // same as "in"  // TODO: only define on shared "node" prototype?
+                value: function(signal,data,range)
+                    {
+                        var self = this;
+                        var thisid = self.id;
+                        var fromPos = vwf.getProperty(thisid,'worldPosition');
+                        for(var i in jsDriverSelf.nodes)
+                        {
+                            var targetNode = jsDriverSelf.nodes[i];
+                            var targetPos = vwf.getProperty(targetNode.id,'worldPosition');
+                            if(range  )
+                            {
+                                if(targetPos && fromPos && MATH.distanceVec3(fromPos,targetPos) < range)
+                                {
+                                    jsDriverSelf.callingMethod(targetNode.id,signal,[data],thisid);
+                                }
+                            }else
+                            {
+                                    jsDriverSelf.calledMethod(targetNode.id,signal,[data],thisid);
+                            }
+                        }
+                    
+                },
+               enumerable: false,
+               configurable: false
+            });
+            Object.defineProperty(node.children, "broadcast", { // same as "in"  // TODO: only define on shared "node" prototype?
+                value: function(signal,data,range)
+                    {
+                        var self = this.node;
+                        var thisid = self.id;
+                        var fromPos = vwf.getProperty(thisid,'worldPosition');
+                        var decendents = vwf.decendants(thisid);
+                        for(var i in decendents)
+                        {
+                            var targetNode = jsDriverSelf.nodes[decendents[i]];
+                            var targetPos = vwf.getProperty(targetNode.id,'worldPosition');
+                            if(range  )
+                            {
+                                if(targetPos && fromPos && MATH.distanceVec3(fromPos,targetPos) < range)
+                                {
+                                    jsDriverSelf.callingMethod(targetNode.id,signal,[data],thisid);
+                                }
+                            }else
+                            {
+                                    jsDriverSelf.calledMethod(targetNode.id,signal,[data],thisid);
+                            }
+                        }
+                },
+               enumerable: false,
+               configurable: false
+            });
+            Object.defineProperty(node, "signal", { // same as "in"  // TODO: only define on shared "node" prototype?
+                function(id,signal,data)
+                {
+                    var self = this;
+                    var thisid = self.id;
+                    var targetNode = jsDriverSelf.nodes[id];
+                    
+                    if(targetNode)
+                    {
+                        jsDriverSelf.callingMethod(targetNode.id,signal,[data],thisid);  
+                    }
+                },
+                enumerable: false,
+                configurable: false
+            });
+           
             // Define the "time", "client", and "moniker" properties.
 
             Object.defineProperty(node, "time", { // TODO: only define on shared "node" prototype?

@@ -188,7 +188,7 @@ scripts:
       }
       this.createNameTag = function(PlayerNumber) {
         if (this.id == 'character-vwf') return;
-        $(document.body).append('<div class="nametag" id="' + "Player_" + ToSafeID(PlayerNumber) + 'label' + '"><div class="nametagname ignoreMouseLeave">' + PlayerNumber + '</div></div>')
+        $('#vwf-root').append('<div class="nametag" id="' + "Player_" + ToSafeID(PlayerNumber) + 'label' + '"><div class="nametagname ignoreMouseLeave">' + PlayerNumber + '</div></div>')
         var newdiv = $("#Player_" + ToSafeID(PlayerNumber) + 'label')[0];
         var self = this;
         $("#Player_" + ToSafeID(PlayerNumber) + 'label').click(function() {
@@ -241,8 +241,8 @@ scripts:
 
         screen[1] = wh - screen[1];
 
-        div.style.top = (screen[1] + parseInt($("#index-vwf")[0].style.top)) + 'px';
-        div.style.left = (parseInt($("#index-vwf")[0].style.left) || 0) + (screen[0] - div._offsetWidth / 2) + 'px';
+        div.style.top = screen[1] + 'px';
+        div.style.left = (screen[0] - div._offsetWidth / 2) + 'px';
 
 
         if ((screen[0] < 0 || screen[0] > ww || screen[1] < 0 || screen[1] > wh)) {

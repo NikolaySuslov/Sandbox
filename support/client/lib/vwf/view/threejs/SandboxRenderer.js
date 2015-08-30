@@ -138,7 +138,7 @@ define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
 			this.renderer.clear(false,true);
 			this.renderer.context.enable(this.renderer.context.DEPTH_TEST)
 			this.renderer.context.disable(this.renderer.context.CULL_FACE);
-			this.renderObject(_Editor.GetMoveGizmo(), scene, camera);
+			this.renderObject(_Editor.GetMoveGizmo().getGizmoHead(), scene, camera);
 		}
 		this.flattenObject = function(object)
 		{

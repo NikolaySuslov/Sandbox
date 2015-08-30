@@ -1,0 +1,77 @@
+mixin scripteditor_head
+	block
+
+mixin scripteditor_body
+
+		#ScriptEditor.verticalLayout.minimized(ng-controller='ScriptEditorController', style='z-index:99')
+
+			#scripteditortitle.ui-dialog-titlebar.ui-widget-header.ui-corner-all.ui-helper-clearfix
+				.headericon.script
+				span#scripteditortitletext.ui-dialog-title ScriptEditor 
+					| {{fields.selectedNode ? '- '+(fields.selectedNode.properties.DisplayName || fields.selectedNode.id) : ''}}
+				#maximizescripteditor.icon.glyphicon.glyphicon-chevron-up(ng-hide='maximized', ng-click='maximize()')
+				#unmaximizescripteditor.icon.glyphicon.glyphicon-resize-small(ng-show='maximized', ng-click='unmaximize()')
+				#hidescripteditor.icon.glyphicon.glyphicon-chevron-down(ng-click='hide()')
+
+			#ScriptEditorTabs.verticalLayout
+				.tabs-nav
+					label(ng-class='{"selected": guiState.openTab === "methods"}')
+						input(type='radio', name='openTab', ng-model='guiState.openTab', value='methods')
+						| Methods
+					label(ng-class='{"selected": guiState.openTab === "events"}')
+						input(type='radio', name='openTab', ng-model='guiState.openTab', value='events')
+						| Events
+					label(ng-class='{"selected": guiState.openTab === "properties"}')
+						input(type='radio', name='openTab', ng-model='guiState.openTab', value='properties')
+						| Properties
+					label(ng-class='{"selected": guiState.openTab === "options"}')
+						input(type='radio', name='openTab', ng-model='guiState.openTab', value='options')
+						| Options
+
+				.tabs-panel.horizontalLayout(ng-show='guiState.openTab !== "options"')
+					.list
+						.listContainer(style='width: 100%;')
+							label.listitem(ng-repeat='item in currentList | filter: (guiState.showHiddenProperties ? {} : {name:"!__"})'
+								ng-class='{"selected": currentList.selected===item.name, "dirty": dirty[item.id]}')
+								input(type='radio', name='selectedField', ng-model='currentList.selected', ng-value='item.name')
+								| {{dirty[item.id] ? '*' : ''}}{{item.name}}
+
+							label.listitem.suggestion(ng-repeat='item in currentSuggestions | filter: hasFieldFilter'
+								ng-class='{"selected": currentList.selected===item.name, "dirty": dirty[item.id]}'
+								title='Create the "{{item.name}}" {{guiState.openTab.slice(0,-1)}}')
+								input(type='radio', name='selectedField', ng-model='currentList.selected', ng-value='item.name')
+								| {{dirty[item.id] ? '*' : ''}}{{item.name}}
+							
+					.textinner.verticalLayout
+						.font-size-selector
+							.glyphicon.glyphicon-menu-down(title='Decrease font size', ng-click='decreaseFont()')
+							.glyphicon.glyphicon-text-size(title='Default font size', ng-click='defaultFont()')
+							.glyphicon.glyphicon-menu-up(title='Increase font size', ng-click='increaseFont()')
+
+						ace-code-editor.content(disabled='fields.selectedNode.id==="index-vwf" || !guiState.openTab || !currentList.selected'
+							ng-class='{"dirty": dirty[selectedField.id]}')
+						.buttonPanel.horizontalLayout
+							input#save(type='button', value='Save {{getSingular(guiState.openTab)}}'
+								ng-disabled='!dirty[selectedField.id]', ng-click='save()')
+							input#discard(type='button', value='Discard Changes'
+								ng-disabled='!dirty[selectedField.id]', ng-click='discard()')
+							span(ng-show='fields.selectedNode.id === "index-vwf"') The Scene object is read-only.
+							.spacer
+							input#call(type='button', value='Call {{getSingular(guiState.openTab)}}'
+								ng-click='call()', ng-disabled='fields.selectedNode.id === "index-vwf"', ng-hide='guiState.openTab === "properties"')
+							input#delete(type='button', value='Delete {{getSingular(guiState.openTab)}}'
+								ng-click='delete()', ng-disabled='fields.selectedNode.id === "index-vwf"', ng-hide='guiState.openTab === "properties"')
+							input#new(type='button', value='New {{getSingular(guiState.openTab)}}'
+								ng-click='new()', ng-disabled='fields.selectedNode.id === "index-vwf"')
+							input#checkSyntax(type='button', value='Check Code'
+								ng-click='checkSyntax(true)', ng-disabled='fields.selectedNode.id === "index-vwf"')
+					
+
+				#options.tabs-panel.horizontalLayout(ng-show='guiState.openTab === "options"')
+					label.toggleButton(ng-class='{"checked": guiState.inheritPrototype}')
+						input(type="checkbox", ng-model='guiState.inheritPrototype')
+						| Show Inherited Properties
+					label.toggleButton(ng-class='{"checked": guiState.showHiddenProperties}')
+						input(type="checkbox", ng-model='guiState.showHiddenProperties')
+						| Show Hidden Properties
+

@@ -1,0 +1,111 @@
+mixin manageAssets_head
+	block
+
+mixin manageAssets_body
+
+	#manageAssetsDialog(ng-controller='AssetManagerController', style='display: none;')
+
+		#assetBrowser.verticalLayout
+
+			#controls.horizontalLayout
+				label#hideThumbs.horizontalLayout
+					input(type='checkbox', ng-model='hideThumbs')
+					span Hide thumbnails
+
+				input(type='search', ng-model='search', placeholder='Search')
+
+			#assetList
+
+				.asset.horizontalLayout(ng-class='{"selected-asset": selectedAsset === asset.id}', ng-click='setSelection(asset.id)'
+					ng-repeat='asset in assets | sortByProp:"name":true | filterAssetThumbs:hideThumbs | searchForAsset:search', adl-scroll-to='selectedAsset == asset.id')
+
+					.info.verticalLayout
+						p.name(ng-style='{"font-weight": asset._dirty ? "bold" : "normal"}') {{(asset._dirty ? '*' : '')+asset.name}}
+						p.meta {{prettifyType(asset.type)}}, {{asset.size | humanSize}} ({{asset.id}})
+
+					.nonbs-thumbnail(ng-if='!asset._basicDirty && asset.thumbnail'
+						ng-style='{"background-image": "url("+assets.appPath+"/assets/"+asset.id+"/meta/thumbnail)"}')
+
+				.newAsset.horizontalLayout(ng-show='new._added', ng-class='{"selected-asset": selectedAsset === "new"}'
+					ng-click='selectedAsset = "new"', adl-scroll-to='selectedAsset == "new"')
+					.info.verticalLayout
+						p.name(ng-style='{"font-weight": new._dirty ? "bold" : "normal"}') {{(new._dirty ? '*' : '')+new.name}}
+						p.meta {{prettifyType(new.type)}} (Unsaved)
+
+			input#newAssetButton(type='button', value='+', ng-click='new._added = true; selectedAsset = "new"')
+
+		#propertyBrowser.verticalLayout
+
+			#dragarea.verticalLayout
+				span.fixed-height {{!selectedAsset ? '' : selectedAsset==='new' ? 'Create Asset' : 'Replace Asset'}}
+				p#filename.fixed-height(ng-show='selectedAsset') {{selected.filename || 'Drag/drop or click to upload'}}
+				#typeInput.horizontalLayout(ng-show='selectedAsset && selected.filedata')
+					input(type='text', placeholder='application/octet-stream', ng-model='selected.type')
+					select(ng-model='selected.type', ng-options='prettifyType(v) for v in knownTypes')
+						option(value='') */*
+
+				input#fileInput(type='file', disabled='disabled', onchange='getFileData(this.files)')
+
+			hr
+
+			p#url.fixed-height {{getAssetUrl(selectedAsset)}}
+			label#name.verticalLayout Name
+				br
+				input(type='text', placeholder='Name', ng-model='selected.name', ng-change='selected._basicDirty = true', ng-disabled='!selectedAsset')
+
+			label#description.verticalLayout Description
+				br
+				textarea(placeholder='Description', ng-model='selected.description', ng-change='selected._basicDirty = true', ng-disabled='!selectedAsset')
+
+			label#license.verticalLayout License
+				br
+				select(ng-model='selected.license', ng-change='selected._basicDirty = true', ng-disabled='!selectedAsset')
+					option(value='CC0') CC0 Public Domain
+					option(value='CC-BY') CC Attribution
+					option(value='CC-BY-ND') CC Attribution-NoDerivs
+					option(value='CC-BY-NC') CC Attribution-NonCommercial
+					option(value='CC-BY-NC-ND') CC Attribution-NonCommercial-NoDerivs
+
+			label#thumbnail.horizontalLayout
+				span Thumbnail asset id: 
+				input(type='text', placeholder='1a2b3c4d', ng-model='selected._thumbnailId', ng-change='selected._basicDirty = true', ng-disabled='!selectedAsset')
+
+			hr
+
+			#permissions.horizontalLayout
+
+				label Permissions
+					br
+					input#group(type='text', placeholder='Group', ng-model='selected.group_name', ng-change='selected._groupDirty = true', ng-disabled='!selectedAsset')
+
+				table
+					tr
+						td
+						td R
+						td W
+						td D
+
+					- levels = ['User','Group','Other']
+					- perms = ['Read','Write','Delete']
+					each level in levels
+						tr
+							td= level
+							each perm in perms
+
+								- title = level +' '+ perm.toLowerCase()
+								- model = 'selected.permissions.'+level+'.'+perm
+								td
+									input(type='checkbox', title=title, ng-model=model
+										ng-change='selected._permsDirty = true', ng-disabled='!selectedAsset')
+
+			.spacer
+
+			hr
+
+			#buttons.horizontalLayout
+				input(type='button', ng-click='saveData(selected.id)', ng-value='selectedAsset === "new" ? "Upload" : "Save"'
+					ng-disabled='!selectedAsset || !selected._dirty')
+				input(type='button', ng-click='selectedAsset === "new" ? resetNew() : assets.refresh(selected.id)', value='Discard Changes'
+					ng-disabled='(!selectedAsset || !selected._dirty) && !selected._added')
+				input(type='button', ng-click='deleteData(selected.id)' value='Delete'
+					ng-disabled='!selectedAsset || selectedAsset === "new"')

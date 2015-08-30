@@ -1,0 +1,11 @@
+block vars
+	- var settings = { name: 'name', title: 'title', icon: 'icon', requiresSelection: false, controller: 'none' };
+
+.editorPanel.verticalLayout(id=settings.name, ng-controller=settings.controller)
+	.title.sidetab-editor-title.ui-dialog-titlebar.ui-widget-header.ui-corner-all.ui-helper-clearfix(
+		ng-click='isTabOpen("#{settings.name}") ? hideTab("#{settings.name}") : showTab("#{settings.name}")'
+	)
+		.icon.headericon(class=settings.icon)
+		span.ui-dialog-title= settings.title
+	.content(style='display: none;')
+		block content

@@ -105,20 +105,19 @@ properties:
             {
                if(!coords)
                   coords = 0;
-               if(x.length)
+               if(x.length && y.length)
                {
+                  y1 = y[1];
+                  z1 = y[2];
+                  x1 = y[0];
+                  
                   y = x[1];
                   z = x[2];
                   x = x[0];
                }
-               if(x1.length)
-               {
-                  y1 = x1[1];
-                  z1 = x1[2];
-                  x1 = x1[0];
-               }
                var force = [x,y,z];
                var pos = [x1,y1,z1];
+               
                this.___physics_addForceOffset(force,pos);
             }.bind(this);
             this.___physicsAPI.setLinearVelocity = function(x,y,z,coords)
@@ -156,6 +155,10 @@ properties:
             this.___physicsAPI.getAngularVelocity = function()
             {
                return this.___physics_velocity_angular.internal_val;
+            }.bind(this);
+            this.___physicsAPI.getMass = function()
+            {
+              return this.___physics_mass;
             }.bind(this);
         }
         return this.___physicsAPI;

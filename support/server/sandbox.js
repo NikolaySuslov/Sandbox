@@ -6,7 +6,8 @@ var libpath = require('path'),
     fs = require('fs-extra'),
     url = require("url"),
     mime = require('mime'),
-    YAML = require('js-yaml');
+    YAML = require('js-yaml'),
+	sass = require('node-sass');
 var logger = require('./logger');
 
 
@@ -240,7 +241,7 @@ function startVWF() {
 					{
 						global.configuration.assetAppPath = '/sas';
 
-						var assetServer = require('SandboxAssetServer');
+						var assetServer = require('sandbox-asset-server');
 						app.use(global.configuration.assetAppPath, assetServer({
 							dataDir: datadir,
 							sessionCookieName: 'session',
@@ -319,9 +320,25 @@ function startVWF() {
                         var path2 = libpath.normalize('../../support/client/lib/index.css'); //trick the filecache
                         path2 = libpath.resolve(__dirname, path2);
 
-                        FileCache.insertFile([path, path2], contents, fs.statSync(buildname), "utf8", cb);
-
-
+						sass.render({
+							file: libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/Editorview.scss'),
+							includePaths: [libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/')],
+							outputStyle: 'compressed',
+							functions: {
+								'getImgPath()': function(){
+									return new sass.types.String('vwf/view/editorview');
+								}
+							}
+						}, function(err,result){
+							if(err){
+								logger.error('Error compiling sass:', err);
+	                        	FileCache.insertFile([path, path2], contents, fs.statSync(buildname), "utf8", cb);
+							}
+							else {
+								var scss = result.css.toString('utf8');
+	                        	FileCache.insertFile([path, path2], contents+scss, fs.statSync(buildname), "utf8", cb);
+							}
+						});
                     }
                     //first, check if the build file already exists. if so, skip this step
                     if (fs.existsSync(libpath.resolve(libpath.join(__dirname, '..', '..', 'build', 'index.css')))) {

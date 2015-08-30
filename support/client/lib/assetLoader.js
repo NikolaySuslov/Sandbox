@@ -644,7 +644,8 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                     this.addType('unknown', this.loadUnknown);
                     this.startProgressGui = function(total)
                         {
-                            $(document.body).append('<div id = "preloadGUIBack" class=""><span id="fullscreenlink">Please enter full screen mode. Click here or hit F11.</span><img id="loadingSplash" /><div id = "preloadGUI" class=""><div class="preloadCenter"><div id="preloadprogress"><p class="progress-label">Loading...</p></div></div><div class=""><div class="" id="preloadguiText">Loading...</div></div></div></div>');
+                            //$(document.body).append('<div id = "preloadGUIBack" class=""><span id="fullscreenlink">Please enter full screen mode. Click here or hit F11.</span><img id="loadingSplash" /><div id = "preloadGUI" class=""><div class="preloadCenter"><div id="preloadprogress"><p class="progress-label">Loading...</p></div></div><div class=""><div class="" id="preloadguiText">Loading...</div></div></div></div>');
+							$('#preloadGUIBack').css('display','block');
                             $('#preloadprogress').progressbar();
                             $('#preloadprogress').progressbar("value", 0);
                             $('#preloadprogress .progress-label').text("0%");

@@ -1,7 +1,7 @@
 function TerrainTool() {
 
     var self = this;
-    $('#sidepanel').append("<div id='TerrainToolGUI' class='ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active' style='padding-bottom:5px;overflow:hidden;height:auto'></div>");
+    $('#sidepanel .main').append("<div id='TerrainToolGUI' class='ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active' style='padding-bottom:5px;overflow:hidden;height:auto'></div>");
 
     $('#TerrainToolGUI').append("<div id='TerrainToolGUItitle' style = 'padding:3px 4px 3px 4px;font:1.5em sans-serif;font-weight: bold;' class='ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' ><span class='ui-dialog-title' id='ui-dialog-title-Players'>Spline Tools</span></div>");
     $('#TerrainToolGUI').append("<input type='checkbox' id='TerrainToolGUIEditcontrolPoints'></input><label for='TerrainToolGUIEditcontrolPoints' style = 'display:block'/>");
@@ -117,8 +117,6 @@ function TerrainTool() {
 
     $('#TerrainToolGUItitle').append('<a id="TerrainToolclose" href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" style="display: inline-block;float: right;"><span class="ui-icon ui-icon-closethick">close</span></a>');
     $('#TerrainToolGUItitle').prepend('<img class="headericon" src="../vwf/view/editorview/images/icons/inventory.png" />');
-    $('#TerrainToolGUI').css('border-bottom', '5px solid #444444')
-    $('#TerrainToolGUI').css('border-left', '2px solid #444444')
     $('#TerrainToolclose').click(function() {
         _TerrainTool.hide()
     });
@@ -434,7 +432,7 @@ function TerrainTool() {
         });
 
 
-        showSidePanel();
+        _SidePanel.showPanel();
         _TerrainTool.open = true;
 
     }
@@ -445,8 +443,8 @@ function TerrainTool() {
 
             if ($('#sidepanel').data('jsp'))
                 $('#sidepanel').data('jsp').reinitialise();
-            if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible'))
-                hideSidePanel();
+            //if (!$('#sidepanel').children('.jspContainer').children('.jspPane').children().is(':visible'))
+                //hideSidePanel();
         });
 
         var checked = ($('#TerrainToolGUIActivteTool').next().attr('aria-pressed'));

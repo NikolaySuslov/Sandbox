@@ -3,16 +3,16 @@
     @import url("./vwf/view/editorview/lib/alertify.js-0.3.9/themes/alertify.bootstrap.css" );
     @import url("./vwf/view/editor/editor.css" );
     @import url("./vwf/view/editorview/css/jquery-ui-1.10.3.custom.css" );
-    @import url("./vwf/view/editorview/css/ddsmoothmenu.css" );
-    @import url("./vwf/view/editorview/css/ddsmoothmenu-v.css" );
 @import url("./vwf/view/editorview/css/sprites.css" );
 @import url("./vwf/view/editorview/css/colorpicker.css" );
 @import url("./vwf/view/editorview/css/jstreestyle.min.css");
-@import url("./vwf/view/editorview/css/Editorview.css" );
-@import url('./vwf/view/editorview/css/assets.css');
+@import url("./vwfdatamanager.svc/geteditorcss" );
 
 
-
+html, body {
+	overflow: hidden;
+	height: 100%;
+}
 
 body {
   background-color: #AAA;
@@ -28,10 +28,6 @@ table {
 
 form {
     margin: 2em;
-}
-
-label {
-  font-size: 18px;
 }
 
 input {
@@ -175,8 +171,10 @@ input {
 }
 
 #vwf-root {
-  position:absolute;
-  left:10px;
+  //position:absolute;
+  //left:10px;
+  flex-grow: 1;
+  position: relative;
 }
 
 #vwf-root > .vwf-label > .vwf-attribute {
@@ -187,10 +185,27 @@ input {
   padding: 10px;
 }
 
-#vwf-root>div, #vwf-root>canvas {
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
+#vwf-root>canvas {
+	position: absolute;
+	top: 0; left: 0;
+	width: 100%; height: 100%;
+}
+
+#vwf-root > #resizer {
+	overflow: hidden;
+	pointer-events: none;
+	z-index: -1;
+	position: absolute;
+	top: 0; left: 0;
+	width: 100%; height: 100%;
+}
+
+#vwf-root > #guioverlay_index-vwf {
+	position: absolute;
+	top: 0; left: 0;
+	width: 100%; height: 100%;
+	pointer-events: none;
+	z-index: 99;
 }
 
 .vwf-control-slider, .vwf-control-roll-slider, .vwf-control-pitch-slider, .vwf-control-yaw-slider, .vwf-control-x-slider, .vwf-control-y-slider, .vwf-control-z-slider, .vwf-control-r-slider, .vwf-control-g-slider, .vwf-control-b-slider {

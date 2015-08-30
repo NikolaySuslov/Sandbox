@@ -1,0 +1,151 @@
+extends ./paneleditor
+
+block vars
+	- var settings = { name: 'materialEditor', controller: 'MaterialController', title: 'Material', icon: 'material' };
+
+block content
+
+	#materialaccordion(vws-accordion='materialDef.layers.length')
+
+		h3: a(href="#") Material Base
+		#MaterialBasicSettings
+
+			label#materialIndex(ng-show='materialArray') Editor material index: 
+				input(type='number', min=0, max='{{materialArray.length-1}}', step=1, ng-model='activeMaterial')
+				|  of {{materialArray.length-1}}
+
+			label.inline Material Type: 
+				select(ng-model='materialDef.type', ng-disabled='!materialDef')
+					option phong
+					option mix
+					option video
+					//option camera
+
+			div(ng-show='materialDef.type === "phong" || materialDef.type === "mix" || !materialDef')
+				label Alpha:
+					br
+					slider(min=0, max=1, step=0.01, value='materialDef.alpha', disabled='!materialDef', sliding='suppressUndo')
+				label Specular level:
+					br
+					slider(min=0, max=1, step=0.01, value='materialDef.specularLevel', disabled='!materialDef', sliding='suppressUndo')
+				label Reflectiveness:
+					br
+					slider(min=0, max=1, step=0.01, value='materialDef.reflect', disabled='!materialDef', sliding='suppressUndo')
+				label Shininess:
+					br
+					slider(min=0, max=10, step=0.1, use-exponent='true', value='materialDef.shininess', disabled='!materialDef', sliding='suppressUndo')
+
+				label.inline Culling:
+					select(ng-model='materialDef.side', convert-to-number, ng-disabled='!materialDef')
+						option(value=0, label='Back') Back
+						option(value=1, label='Front') Front
+						option(value=2, label='None') None
+
+				label.inline Diffuse color:
+					color-picker(color-obj='materialDef.color', disabled='!materialDef', sliding='suppressUndo')
+
+				.inline Ambient color:
+					.verticalLayout(style='align-items: flex-end;')
+						label Linked
+							input(type='checkbox', ng-model='ambientLinked', ng-disabled='!materialDef')
+						color-picker(color-obj='materialDef.ambient', disabled='!materialDef', ng-hide='ambientLinked', sliding='suppressUndo')
+
+				label.inline Emissive color:
+					color-picker(color-obj='materialDef.emit', disabled='!materialDef', sliding='suppressUndo')
+
+				label.inline Specular color:
+					color-picker(color-obj='materialDef.specularColor', disabled='!materialDef', sliding='suppressUndo')
+
+				label.inline Blending:
+					select(ng-model='materialDef.blendMode', convert-to-number, ng-disabled='!materialDef')
+						option(value=0, label='None') None
+						option(value=1, label='Normal') Normal
+						option(value=2, label='Additive') Additive
+						option(value=3, label='Subtractive') Subtractive
+
+				.horizontalLayout.centered
+					input(type='button', value='Add Texture Layer', ng-click='addTexture()', ng-disabled='!materialDef')
+
+			div(ng-show='materialDef.type === "video"')
+				div Video source URL:
+					.verticalLayout
+						input(type='text', ng-model='videoTextureSource', ng-style='materialDef.videosrc !== videoTextureSource ? {"border-color": "red"} : {}')
+						input(type='button', value='Apply', ng-click='materialDef.videosrc = videoTextureSource')
+
+			div(ng-show='materialDef.type === "camera"')
+				label.inline Realtime camera ID:
+					select(ng-model='materialDef.RTTCameraID', ng-options='cam for cam in fields.cameras')
+						option(value="") None
+					
+
+		h3: a(href='#') Material Flags
+		#MaterialFlags.horizontalLayout
+
+			div
+				label
+					input(type='checkbox', ng-model='materialDef.fog', ng-disabled='!materialDef')
+					|  Fog Enabled
+				label
+					input(type='checkbox', ng-model='materialDef.shading', ng-disabled='!materialDef')
+					|  Shading Enabled
+				label
+					input(type='checkbox', ng-model='materialDef.metal', ng-disabled='!materialDef')
+					|  Metal
+				label
+					input(type='checkbox', ng-model='materialDef.wireframe', ng-disabled='!materialDef')
+					|  Wireframe
+				label
+					input(type='checkbox', ng-model='materialDef.depthtest', ng-disabled='!materialDef')
+					|  Depth Test
+				label
+					input(type='checkbox', ng-model='materialDef.depthwrite', ng-disabled='!materialDef')
+					|  Depth Write
+				label
+					input(type='checkbox', ng-model='materialDef.vertexColors', ng-disabled='!materialDef')
+					|  Vertex Colors
+
+		h3(ng-repeat-start='layer in materialDef.layers track by $index')
+			a(href='#') Texture Layer {{$index}}
+
+		.textureLayer(ng-repeat-end)
+
+			.texPreview.verticalLayout
+				img(ng-src='{{layer.src}}', ng-click='browseForTexture($index)')
+				span {{layer.src}}
+
+			label Alpha:
+				br
+				slider(min=0, max=1, step=0.01, value='layer.alpha', sliding='suppressUndo')
+			label Scale (x axis):
+				br
+				slider(min=-10, max=10, step=0.2, use-exponent='true', value='layer.scalex', sliding='suppressUndo')
+			label Scale (y axis):
+				br
+				slider(min=-10, max=10, step=0.2, use-exponent='true', value='layer.scaley', sliding='suppressUndo')
+			label Offset (x axis):
+				br
+				slider(min=-10, max=10, step=0.2, use-exponent='true', value='layer.offsetx', sliding='suppressUndo')
+			label Offset (y axis):
+				br
+				slider(min=-10, max=10, step=0.2, use-exponent='true', value='layer.offsety', sliding='suppressUndo')
+
+			label.inline Texture Type:
+				select(ng-model='layer.mapTo', convert-to-number)
+					option(value=1, label='Diffuse map') Diffuse map
+					option(value=2, label='Bump map') Bump map
+					option(value=3, label='Light map') Light map
+					option(value=4, label='Normal map') Normal map
+					option(value=5, label='Specular map') Specular map
+					option(value=6, label='Environment map') Environment map
+					option(value=7, label='Alpha map') Alpha map
+
+			label.inline Coordinate Type:
+				select(ng-model='layer.mapInput', convert-to-number)
+					option(value=0, label='UV Set 1') UV Set 1
+					option(value=1, label='Cube Reflection') Cube Reflection
+					option(value=2, label='Cube Refraction') Cube Refraction
+					option(value=3, label='Spherical Reflection') Spherical Reflection
+					option(value=4, label='Spherical Refraction') Spherical Refraction
+
+			.horizontalLayout.centered
+				input(type='button', value='Remove Texture Layer', ng-click='removeTexture($index)')

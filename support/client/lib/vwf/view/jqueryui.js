@@ -11,35 +11,8 @@ define(["module", "vwf/view"], function(module, view) {
 
         initialize: function() {
             this.guiNodes = {};
+            this.activeCamera = '';
             window._GUIView = this;
-            $('#vwf-root').append('<div id="guioverlay_index-vwf"/>');
-            $('#guioverlay_index-vwf').css('position', 'fixed');
-            $('#guioverlay_index-vwf').css('top', '0%');
-            $('#guioverlay_index-vwf').css('left', '0%');
-            $('#guioverlay_index-vwf').css('width', '100%');
-            $('#guioverlay_index-vwf').css('height', '100%');
-            $('#guioverlay_index-vwf').css('z-index', '99');
-            $('#guioverlay_index-vwf').css('pointer-events', 'none');
-
-            //keep the overlay aligned over the 3D view
-            var oldtop, oldleft, oldwidth, oldheight;
-            window.setInterval(function() {
-                if (oldtop != $('#index-vwf').css('top') ||
-                    oldleft != $('#index-vwf').css('left') ||
-                    oldwidth != $('#index-vwf').css('width') ||
-                    oldheight != $('#index-vwf').css('height')) {
-                    oldtop = $('#index-vwf').css('top');
-                    oldleft = $('#index-vwf').css('left');
-                    oldwidth = $('#index-vwf').css('width');
-                    oldheight = $('#index-vwf').css('height');
-                    $('#guioverlay_index-vwf').css('top', oldtop);
-                    $('#guioverlay_index-vwf').css('left', oldleft);
-                    $('#guioverlay_index-vwf').css('width', oldwidth);
-                    $('#guioverlay_index-vwf').css('height', oldheight);
-                }
-
-
-            }, 30)
 
         },
         createDialog: function(title) {
@@ -51,7 +24,8 @@ define(["module", "vwf/view"], function(module, view) {
                     title: title,
                     transform: this.getScreenCenter(),
                     owner: _UserManager.GetCurrentUserName(),
-                    DisplayName: _Editor.GetUniqueName('Dialog')
+                    DisplayName: _Editor.GetUniqueName('Dialog'),
+                    visible: true
                 }
             });
         },
@@ -70,7 +44,9 @@ define(["module", "vwf/view"], function(module, view) {
                     width: 100,
                     transform: this.getScreenCenter(),
                     owner: _UserManager.GetCurrentUserName(),
-                    DisplayName: _Editor.GetUniqueName('Slider')
+                    DisplayName: _Editor.GetUniqueName('Slider'),
+                    visible: true
+
                 }
             });
         },
@@ -88,7 +64,9 @@ define(["module", "vwf/view"], function(module, view) {
                     top: 0,
                     transform: this.getScreenCenter(),
                     owner: _UserManager.GetCurrentUserName(),
-                    DisplayName: _Editor.GetUniqueName('Button')
+                    DisplayName: _Editor.GetUniqueName('Button'),
+                    visible: true
+
                 }
             });
         },
@@ -105,7 +83,9 @@ define(["module", "vwf/view"], function(module, view) {
                     top: 0,
                     transform: this.getScreenCenter(),
                     owner: _UserManager.GetCurrentUserName(),
-                    DisplayName: _Editor.GetUniqueName('Label')
+                    DisplayName: _Editor.GetUniqueName('Label'),
+                    visible: true
+
                 }
             });
         },
@@ -123,7 +103,9 @@ define(["module", "vwf/view"], function(module, view) {
                     border_color: [1, 1, 1],
                     transform: this.getScreenCenter(),
                     owner: _UserManager.GetCurrentUserName(),
-                    DisplayName: _Editor.GetUniqueName('Panel')
+                    DisplayName: _Editor.GetUniqueName('Panel'),
+                    visible: true
+
                 }
             });
         },
@@ -138,7 +120,9 @@ define(["module", "vwf/view"], function(module, view) {
                     top: 0,
                     transform: this.getScreenCenter(),
                     owner: _UserManager.GetCurrentUserName(),
-                    DisplayName: _Editor.GetUniqueName('Image')
+                    DisplayName: _Editor.GetUniqueName('Image'),
+                    visible: true
+
                 }
             });
         },
@@ -153,18 +137,17 @@ define(["module", "vwf/view"], function(module, view) {
                     top: 0,
                     transform: this.getScreenCenter(),
                     owner: _UserManager.GetCurrentUserName(),
-                    DisplayName: _Editor.GetUniqueName('Checkbox')
+                    DisplayName: _Editor.GetUniqueName('Checkbox'),
+                    visible: true
+
                 }
             });
         },
         getScreenCenter: function() {
-            var w = $(window).width() / 2;
-            var h = $(window).height() / 2;
-
             if (this.isGUINode(vwf.prototype(this.getCreateParentNode())))
-                return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
-            return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 50, 0, 0]; //when creating on a 3D asset, default to center of screen
+            return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 50, 50, 0, 1]; //when creating on a 3D asset, default to center of screen
         },
         //when creating a gui node - if the parent is a 3D object, create normally. if it's a guinode, and that guiNode is not a panel or a dialog, create as child of world
         getCreateParentNode: function() {
@@ -215,7 +198,7 @@ define(["module", "vwf/view"], function(module, view) {
         },
         createdNode: function(nodeID, childID, childExtendsID, childImplementsIDs, childSource, childType, childURI, childName, callback /* ( ready ) */ ) {
 
-            if (this.isGUINode(childExtendsID)) {
+            if (this.isGUINode(childExtendsID) && nodeID !== 0) {
 
                 var node = this.guiNodes[childID] = {};
                 node.id = childID;
@@ -298,7 +281,7 @@ define(["module", "vwf/view"], function(module, view) {
 
                     $(node.parentdiv).append('<div id="guioverlay_' + node.id + '"/>')
                     node.div = $('#guioverlay_' + node.id)[0];
-                    $(node.div).text('');
+                    $(node.div).html(('').escape());
                     $(node.div).button();
 
                     $(node.div).on("click", function(event, ui) {
@@ -309,20 +292,20 @@ define(["module", "vwf/view"], function(module, view) {
                 if (this.isLabel(node.type)) {
                     $(node.parentdiv).append('<div id="guioverlay_' + node.id + '"/>')
                     node.div = $('#guioverlay_' + node.id)[0];
-                    $(node.div).text('');
+                    $(node.div).html(('').escape());
                     $(node.div).css('position', 'absolute');
                     $(node.div).css('font-family', 'Verdana, Arial, sans-serif')
                 }
                 if (this.isPanel(node.type)) {
                     $(node.parentdiv).append('<div id="guioverlay_' + node.id + '"/>')
                     node.div = $('#guioverlay_' + node.id)[0];
-                    $(node.div).text('');
+                    $(node.div).html(('').escape());
                     $(node.div).css('position', 'absolute');
                 }
                 if (this.isImage(node.type)) {
                     $(node.parentdiv).append('<div id="guioverlay_' + node.id + '"/>')
                     node.div = $('#guioverlay_' + node.id)[0];
-                    $(node.div).text('');
+                    $(node.div).html(('').escape());
                     $(node.div).css('position', 'absolute');
                     $(node.div).append('<img src="" />');
                     $('#guioverlay_' + node.id + ' img').css('position','absolute');
@@ -335,7 +318,7 @@ define(["module", "vwf/view"], function(module, view) {
 
                     $(node.parentdiv).append('<input type="checkbox" id="guioverlay_' + node.id + '"/>')
                     node.div = $('#guioverlay_' + node.id)[0];
-                    $(node.div).text('');
+                    $(node.div).html(('').escape());
                     $(node.div).css('position', 'absolute');
 
                     $(node.div).on("click", function(event, ui) {
@@ -375,172 +358,150 @@ define(["module", "vwf/view"], function(module, view) {
         initializedProperty: function(childID, propertyName, propertyValue) {
             this.satProperty(childID, propertyName, propertyValue);
         },
+        setNodeVisibility: function(node, show){
+            node.div.inSetter = true;
+            if(this.isDialog(node.type)){
+                if(show)
+                    $(node.div).dialog('open');
+                else
+                    $(node.div).dialog('close');
+            }
+            else {
+                if(show)
+                    $(node.div).show();
+                else
+                    $(node.div).hide();
+            }
+            node.div.inSetter = false;
+        },
         satProperty: function(childID, propertyName, propertyValue) {
 
             var node = this.guiNodes[childID];
             if (!node) return;
-            if (this.isDialog(node.type)) {
-                if (propertyName == 'transform') {
-                    var x = propertyValue[12] + '%';
-                    var y = propertyValue[13] + '%';
-                    var z = propertyValue[14];
-                    node.div.inSetter = true;
+
+            /*
+             * by property
+             */
+            if(propertyName == 'transform')
+            {
+                var x = propertyValue[12] + '%';
+                var y = propertyValue[13] + '%';
+                var z = propertyValue[14];
+
+                node.div.inSetter = true;
+                if(this.isDialog(node.type)){
                     $(node.div).parent().css('left', x);
                     $(node.div).parent().css('top', y);
-                    node.div.inSetter = false;
                 }
+                else {
+                    if((!node.style || !node.style.transform) && propertyValue.slice(0,12).reduce(function(x,y){return x||!!y;},false))
+                        $(node.div).css('transform', 'matrix3d('+propertyValue.slice(0,12).concat([0,0,0,1]).join(',')+')');
+                    if(!node.style || !node.style.left) $(node.div).css('left', x);
+                    if(!node.style || !node.style.top) $(node.div).css('top', y);
+                    if(!node.style || !node.style['z-index']) $(node.div).css('z-index', z);
+                }
+                node.div.inSetter = false;
+            }
+
+            else if (propertyName == 'visible')
+            {
+                if ((!node.visibleToCamera || node.visibleToCamera === this.activeCamera) && propertyValue)
+                    this.setNodeVisibility(node, true);
+                else
+                    this.setNodeVisibility(node, false);
+            }
+
+            else if (propertyName == 'width')
+            {
+                node.div.inSetter = true;
+                if(this.isDialog(node.type))
+                    $(node.div).dialog('option', 'width', propertyValue);
+                else if(!node.style || !node.style.width)
+                    $(node.div).css('width', propertyValue);
+                node.div.inSetter = false;
+            }
+
+            else if (propertyName == 'height')
+            {
+                node.div.inSetter = true;
+                if(this.isDialog(node.type))
+                    $(node.div).dialog('option', 'height', propertyValue);
+                else if(!node.style || !node.style.height)
+                    $(node.div).css('height', propertyValue);
+                node.div.inSetter = false;
+            }
+
+            else if (propertyName == 'visibleToCamera')
+            {
+                node.visibleToCamera = propertyValue;
+                if((!propertyValue || propertyValue === this.activeCamera) && vwf.getProperty(node.id, 'visible'))
+                    this.setNodeVisibility(node, true);
+                else
+                    this.setNodeVisibility(node, false);
+            }
+
+            else if (propertyName == 'style')
+            {
+                node.div.inSetter = true;
+                node.style = propertyValue;
+                $(node.div).css(propertyValue);
+                node.div.inSetter = false;
+            }
+
+            /*
+             * by type
+             */
+            else if (this.isDialog(node.type)) {
                 if (propertyName == 'title') {
                     node.div.inSetter = true;
                     $(node.div).dialog('option', 'title', propertyValue);
                     node.div.inSetter = false;
                 }
-                if (propertyName == 'visible') {
-                    node.div.inSetter = true;
-                    if (propertyValue)
-                        $(node.div).dialog('open');
-                    else
-                        $(node.div).dialog('close');
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'width') {
-                    node.div.inSetter = true;
-                    $(node.div).dialog('option', 'width', propertyValue);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'height') {
-                    node.div.inSetter = true;
-                    $(node.div).dialog('option', 'height', propertyValue);
-                    node.div.inSetter = false;
-                }
             }
-            if (this.isSlider(node.type)) {
+            else if (this.isSlider(node.type)) {
                 if (propertyName == 'min') {
                     node.div.inSetter = true;
                     $(node.div).slider('option', 'min', propertyValue);
                     node.div.inSetter = false;
                 }
-                if (propertyName == 'max') {
+                else if (propertyName == 'max') {
                     node.div.inSetter = true;
                     $(node.div).slider('option', 'max', propertyValue);
                     node.div.inSetter = false;
                 }
-                if (propertyName == 'visible') {
-                    node.div.inSetter = true;
-                    if (propertyValue)
-                        $(node.div).show();
-                    else
-                        $(node.div).hide();
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'step') {
+                else if (propertyName == 'step') {
                     node.div.inSetter = true;
                     $(node.div).slider('option', 'step', propertyValue);
                     node.div.inSetter = false;
                 }
-                if (propertyName == 'value') {
+                else if (propertyName == 'value') {
                     node.div.inSetter = true;
                     $(node.div).slider('option', 'value', propertyValue);
                     node.div.inSetter = false;
                 }
-                if (propertyName == 'width') {
-                    node.div.inSetter = true;
-                    $(node.div).css('width', propertyValue);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'height') {
-                    node.div.inSetter = true;
-                    $(node.div).css('height', propertyValue);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'transform') {
-                    var x = propertyValue[12] + '%';
-                    var y = propertyValue[13] + '%';
-                    var z = propertyValue[14];
-                    node.div.inSetter = true;
-                    $(node.div).css('left', x);
-                    $(node.div).css('top', y);
-                    $(node.div).css('z-index', z);
-                    node.div.inSetter = false;
+            }
+            else if (this.isButton(node.type)) {
+                if (propertyName == 'text') {
+                    $('#guioverlay_' + node.id + ' span').html((propertyValue +'').escape());
                 }
             }
-            if (this.isButton(node.type)) {
+            else if (this.isLabel(node.type)) {
                 if (propertyName == 'text') {
-                    $('#guioverlay_' + node.id + ' span').text(propertyValue);
+                    $(node.div).html((propertyValue+'').escape());
                 }
-                if (propertyName == 'transform') {
-                    var x = propertyValue[12] + '%';
-                    var y = propertyValue[13] + '%';
-                    var z = propertyValue[14];
-                    node.div.inSetter = true;
-                    $(node.div).css('left', x);
-                    $(node.div).css('top', y);
-                    $(node.div).css('z-index', z);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'visible') {
-                    node.div.inSetter = true;
-                    if (propertyValue)
-                        $(node.div).show();
-                    else
-                        $(node.div).hide();
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'width') {
-                    node.div.inSetter = true;
-                    $(node.div).css('width', propertyValue);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'height') {
-                    node.div.inSetter = true;
-                    $(node.div).css('height', propertyValue);
-                    node.div.inSetter = false;
-                }
-            }
-            if (this.isLabel(node.type)) {
-                if (propertyName == 'text') {
-                    $(node.div).text(propertyValue);
-                }
-                if (propertyName == 'transform') {
-                    var x = propertyValue[12] + '%';
-                    var y = propertyValue[13] + '%';
-                    var z = propertyValue[14];
-                    node.div.inSetter = true;
-                    $(node.div).css('left', x);
-                    $(node.div).css('top', y);
-                    $(node.div).css('z-index', z);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'visible') {
-                    node.div.inSetter = true;
-                    if (propertyValue)
-                        $(node.div).show();
-                    else
-                        $(node.div).hide();
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'width') {
-                    node.div.inSetter = true;
-                    $(node.div).css('width', propertyValue);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'height') {
-                    node.div.inSetter = true;
-                    $(node.div).css('height', propertyValue);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'font_color') {
+                else if (propertyName == 'font_color') {
 
                     $(node.div).css('color', toCSSColor(propertyValue));
                 }
-                if (propertyName == 'font_size') {
+                else if (propertyName == 'font_size') {
 
                     $(node.div).css('font-size', propertyValue + 'px');
                 }
-                if (propertyName == 'text_align') {
+                else if (propertyName == 'text_align') {
                     $(node.div).css('text-align', propertyValue);
                 }
             }
-            if (this.isCheckbox(node.type)) {
+            else if (this.isCheckbox(node.type)) {
                 if (propertyName == 'isChecked') {
                     node.div.inSetter = true;
                     if (propertyValue)
@@ -549,125 +510,55 @@ define(["module", "vwf/view"], function(module, view) {
                         $(node.div).removeAttr('checked');
                     node.div.inSetter = false;
                 }
-                if (propertyName == 'transform') {
-                    var x = propertyValue[12] + '%';
-                    var y = propertyValue[13] + '%';
-                    var z = propertyValue[14];
-                    node.div.inSetter = true;
-                    $(node.div).css('left', x);
-                    $(node.div).css('top', y);
-                    $(node.div).css('z-index', z);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'width') {
-                    node.div.inSetter = true;
-                    $(node.div).css('width', propertyValue);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'height') {
-                    node.div.inSetter = true;
-                    $(node.div).css('height', propertyValue);
-                    node.div.inSetter = false;
-                }  
-                if (propertyName == 'visible') {
-                    node.div.inSetter = true;
-                    if (propertyValue)
-                        $(node.div).show();
-                    else
-                        $(node.div).hide();
-                    node.div.inSetter = false;
-                }
 
             }
-            if (this.isImage(node.type)) {
-                if (propertyName == 'transform') {
-                    var x = propertyValue[12] + '%';
-                    var y = propertyValue[13] + '%';
-                    var z = propertyValue[14];
-                    node.div.inSetter = true;
-                    $(node.div).css('left', x);
-                    $(node.div).css('top', y);
-                    $(node.div).css('z-index', z);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'width') {
-                    node.div.inSetter = true;
-                    $(node.div).css('width', propertyValue);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'height') {
-                    node.div.inSetter = true;
-                    $(node.div).css('height', propertyValue);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'visible') {
-                    node.div.inSetter = true;
-                    if (propertyValue)
-                        $(node.div).show();
-                    else
-                        $(node.div).hide();
-                    node.div.inSetter = false;
-                }
+            else if (this.isImage(node.type)) {
                 if (propertyName == 'src') {
                     $(node.img).attr('src',propertyValue);
                 }
             }
-            if (this.isPanel(node.type)) {
-                if (propertyName == 'transform') {
-                    var x = propertyValue[12] + '%';
-                    var y = propertyValue[13] + '%';
-                    var z = propertyValue[14];
-                    node.div.inSetter = true;
-                    $(node.div).css('left', x);
-                    $(node.div).css('top', y);
-                    $(node.div).css('z-index', z);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'width') {
-                    node.div.inSetter = true;
-                    $(node.div).css('width', propertyValue);
-                    node.div.inSetter = false;
-                }
-                if (propertyName == 'height') {
-                    node.div.inSetter = true;
-                    $(node.div).css('height', propertyValue);
-                    node.div.inSetter = false;
-                }
+            else if (this.isPanel(node.type)) {
                 if (propertyName == 'background_visible') {
-                    if (!propertyValue)
-                        $(node.div).css('background-color', 'rgba(0,0,0,0)');
+                    if (!propertyValue){
+                        propertyName = 'background_color';
+                        propertyValue = '';
+                    }
                     else {
                         propertyName = 'background_color';
                         propertyValue = vwf.getProperty(node.id, 'background_color');
                     }
                 }
-                if (propertyName == 'background_color') {
+
+                if (propertyName == 'background_color' && !(node.style && node.style['background-color'])) {
 
                     $(node.div).css('background-color', toCSSColor(propertyValue));
                 }
-                if (propertyName == 'border_width') {
+                else if (propertyName == 'border_width' && !(node.style && node.style['border-width'])) {
                     $(node.div).css('border-width', propertyValue);
                     $(node.div).css('border-style', 'solid');
                 }
-                if (propertyName == 'border_radius') {
+                else if (propertyName == 'border_radius' && !(node.style && node.style['border-radius'])) {
                     $(node.div).css('border-radius', propertyValue);
                 }
-                if (propertyName == 'border_color') {
-
+                else if (propertyName == 'border_color' && !(node.style && node.style['border-color'])) {
                     $(node.div).css('border-color', toCSSColor(propertyValue));
                 }  
-                if (propertyName == 'visible') {
-                    node.div.inSetter = true;
-                    if (propertyValue)
-                        $(node.div).show();
-                    else
-                        $(node.div).hide();
-                    node.div.inSetter = false;
-                }
             }
         },
         calledMethod: function(id, name, params) {
+            if( id === 'index-vwf' && name === 'setClientCamera' && params[0] === vwf.moniker() ){
+                this.activeCamera = params[1];
 
+                for(var i in this.guiNodes){
+                    var node = this.guiNodes[i];
+                    if((!node.visibleToCamera || node.visibleToCamera === this.activeCamera) && vwf.getProperty(node.id, 'visible'))
+                        this.setNodeVisibility(node, true);
+                    else
+                        this.setNodeVisibility(node, false);
+                }
+
+
+            }
         },
         //Update the sound volume based on the position of the camera and the position of the object
         ticked: function() {

@@ -7,6 +7,7 @@ cleanup.bat
 *.bak
 /build/*
 /data/*
+/assets/*
 startup.bat
 config.json
 .directory
@@ -21,3 +22,4 @@ config.json
 *.orig
 .sass-cache
 configserver.json
+/support/client/lib/vwfbuild.js

@@ -1,0 +1,78 @@
+@import 'polyfill';
+
+#toolbar
+{
+	//position: fixed;
+	//width: 100%;
+	background-color: #424242;
+	/* background: #4c4c4c; */
+	/* Old browsers */
+	overflow: hidden;
+	white-space: nowrap;
+	border-bottom: 3px solid #454545;
+
+	@include display-flex();
+	@include justify-content(space-around);
+	@include align-items(center);
+
+	& > *
+	{
+		zoom: 1.15;
+
+		@media only screen and (max-width: 1100px){
+			zoom: 1.0;
+		}
+
+		@media only screen and (max-width: 1024px){
+			zoom: 0.8;
+		}
+	}
+
+	.icon
+	{
+		width: 25px;
+		height: 25px;
+		vertical-align: middle;
+		//margin-top: 3px;
+		//margin-left: 3px;
+		//padding: 1px;
+		margin: 3px;
+		cursor: pointer;
+		display: inline-block;
+
+		@include flex-shrink(0);
+
+		&:hover
+		{
+			/*margin-top: 1px;
+			margin-left: 1px;
+			margin-right: 2px;
+			margin-bottom: 2px;*/
+			background-color: lightblue;
+		}
+
+		&:active {
+			background-color: #7B7B7B;
+		}
+
+		&.iconselected {
+			background-color: #3a8fff;
+			padding: 2px;
+		}
+
+		&.icondisabled {
+			opacity: .1;
+			pointer-events: none;
+		}
+	}
+
+	.separator
+	{
+		vertical-align: middle;
+		border-left: 3px outset #adadad;
+		display: inline;
+		border-left-style: groove;
+		height: 30px;
+	}
+}
+

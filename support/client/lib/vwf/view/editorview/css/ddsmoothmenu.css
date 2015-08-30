@@ -1,8 +1,8 @@
 .ddsmoothmenu{
 font: 12px 'Open Sans';
 background: #424242; /*background of menu bar (default state)*/
-width: 100%;
-
+height: 26px;
+border-bottom: 1px solid #666666;
 }
 
 .ddsmoothmenu ul{
@@ -76,7 +76,7 @@ visibility: hidden;
 /*Sub level menu list items (undo style from Top level List Items)*/
 .ddsmoothmenu ul li ul li{
 display: list-item;
-float: none;
+//float: none;
 box-shadow: 3px 3px 5px;
 }
 

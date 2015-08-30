@@ -186,6 +186,7 @@ var defaultPrimMaterial = new THREE.MeshPhongMaterial();
             var sel = this.gettingProperty('isSelectable');
             var sta = this.gettingProperty('isStatic');
             var dny = this.gettingProperty('isDynamic');
+            var renderDepth = this.gettingProperty('renderDepth');
             // reset the shadows flags for the new mesh
             this.settingProperty('castShadows', cast);
             this.settingProperty('visible', this.gettingProperty('visible'));
@@ -193,10 +194,11 @@ var defaultPrimMaterial = new THREE.MeshPhongMaterial();
             this.settingProperty('passable', pass);
             this.settingProperty('isSelectable', sel);
             this.settingProperty('isStatic', sta);
+            this.settingProperty('renderDepth', renderDepth);
             //  this.settingProperty('isDynamic', dny);
 
         }
-        this.inherits = ['vwf/model/threejs/materialDef.js', 'vwf/model/threejs/shadowcaster.js', 'vwf/model/threejs/transformable.js', 'vwf/model/threejs/passable.js', 'vwf/model/threejs/visible.js', 'vwf/model/threejs/static.js', 'vwf/model/threejs/selectable.js'];
+        this.inherits = ['vwf/model/threejs/renderDepth.js','vwf/model/threejs/materialDef.js', 'vwf/model/threejs/shadowcaster.js', 'vwf/model/threejs/transformable.js', 'vwf/model/threejs/passable.js', 'vwf/model/threejs/visible.js', 'vwf/model/threejs/static.js', 'vwf/model/threejs/selectable.js'];
     }
     //default factory code
     return function(childID, childSource, childName) {

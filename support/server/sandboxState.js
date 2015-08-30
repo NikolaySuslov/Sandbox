@@ -17,7 +17,7 @@ var fixIDs = function(node)
     {
         var childComponent = node.children[i];
         var childName = childComponent.name || i;
-        var childID = childComponent.id || childComponent.uri || (childComponent["extends"]) + "." + childName.replace(/ /g, '-');
+        var childID = childComponent.id || childComponent.uri || (childComponent["continues"] || childComponent["extends"]) + "." + childName.replace(/ /g, '-');
         childID = childID.replace(/[^0-9A-Za-z_]+/g, "-");
         childComponent.id = childID;
         node.children[childID] = childComponent;
@@ -69,7 +69,7 @@ function DBstateToVWFDef(state, instanceData, cb)
             {
                 var childComponent = state[i];
                 var childName = (state[i].name || state[i].properties.DisplayName) || i;
-                var childID = childComponent.id || childComponent.uri || (childComponent["extends"]) + "." + childName.replace(/ /g, '-');
+                var childID = childComponent.id || childComponent.uri || (childComponent["continues"] || childComponent["extends"]) + "." + childName.replace(/ /g, '-');
                 childID = childID.replace(/[^0-9A-Za-z_]+/g, "-");
                 //state[i].id = childID;
                 //state2[i].id = childID;
@@ -382,7 +382,7 @@ var sandboxState = function(id, metadata,world)
     {
         var childName = name;
         if (!childName) return;
-        var childID = childComponent.id || childComponent.uri || (childComponent["extends"]) + "." + childName.replace(/ /g, '-');
+        var childID = childComponent.id || childComponent.uri || (childComponent["continues"]  || childComponent["extends"]) + "." + childName.replace(/ /g, '-');
         childID = childID.replace(/[^0-9A-Za-z_]+/g, "-");
         return childID;
     }
@@ -395,6 +395,7 @@ var sandboxState = function(id, metadata,world)
         if (!childComponent) return;
         if (!node.children) node.children = {};
         var childID = this.getID(name,childComponent);
+        console.log(childID);
         childComponent.id = childID;
         node.children[childID] = childComponent;
         node.children[childID].parent = node;
