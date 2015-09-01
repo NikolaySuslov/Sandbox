@@ -101,13 +101,13 @@ routesMap = {
         template: 'index'
     },
     'features': {
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'demos': {
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'about': {
-        layout: 'plain'
+        layout: 'template_vle'
     },
     'edit': {
         sid: true,
@@ -157,7 +157,7 @@ routesMap = {
     'avatar': {
         avatar: true,
         requiresLogin: true,
-		layout: 'plain'
+		layout: 'template_vle'
     },
     'create': {
         requiresLogin: true
