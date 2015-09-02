@@ -38,6 +38,7 @@ methods:
         
         var _offset = this.Offset.internal_val;
         var targetTransform = vwf.getProperty(this.Target,'worldTransform');
+        if(!targetTransform) return;
         var targetTrandformI =[];
        
         _offset = Mat4.multVec3(targetTransform,_offset,[]);
