@@ -189,7 +189,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 						}));
 					}
 					else if( $scope.guiState.openTab === 'properties' ){
-						newBody = angular.toJson(item.value, 4);
+
+						if (item.name.includes('ometa') == true) {
+							newBody = item.value;
+						} else { 
+							newBody = angular.toJson(item.value, 4); 
+						}
+
 					}
 
 					$scope.sessions[item.id] = ace.createEditSession(newBody);
@@ -488,16 +494,25 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 		// determine if Ace has detected any syntax errors in the current code window
 		$scope.checkSyntax = function(dialog)
 		{
+			var fieldName = $.trim($scope.selectedField.name);
+
 			var editor = document.querySelector('ace-code-editor')._editor;
 			var s = editor.getSession().getAnnotations();
 			var errors = "";
 			for (var i = 0; i < s.length; i++) {
 				if (s[i].type == 'error') errors += "<br/> line: " + s[i].row + "-" + s[i].text;
 			}
+			
+			if (fieldName.includes('ometa') == true) {
+							return true;
+			}
+
+
 			if (errors != "") {
 				alertify.alert('This script contains syntax errors, and cannot be saved. The errors are: \n' + errors.toString());
 
 				return false;
+				
 			}
 
 			if(dialog){
@@ -552,7 +567,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 				else if( $scope.guiState.openTab === 'properties' )
 				{
 					try {
-						var val = JSON.parse(rawtext);
+
+						if (fieldName.includes('ometa') == true) {
+							var val = rawtext;
+
+						} else {
+
+						var val = JSON.parse(rawtext);}
 					}
 					catch(e){
 						val = rawtext;

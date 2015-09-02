@@ -152,6 +152,7 @@ define( [ "module", "vwf/model", "ometa-js/ometa-script-tag"], function( module,
 
             if (propertyName.indexOf("ometaGrammar") > -1)
             {
+
                 var node = this.objects[nodeID];
 
                  if (propertyValue == null) {
@@ -170,7 +171,7 @@ define( [ "module", "vwf/model", "ometa-js/ometa-script-tag"], function( module,
                 var methodBody = ("'use strict'; var " + code + ";return " + lngName);
 
                 vwf.deleteMethod(nodeID, methodName);
-                vwf.createMethod(nodeID, methodName, null, methodBody);
+                vwf.createMethod(nodeID, methodName, undefined, methodBody);
 
                 //vwf.setProperty(nodeID,'ometaLng'+lngName,null);
             }
