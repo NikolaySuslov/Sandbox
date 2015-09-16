@@ -149,24 +149,27 @@ define(function ()
 			}
 			return object;
 		}
-		this.GetNode = function (id)
+		this.callGetters = function(node)
 		{
-
-			var node = _Editor.getNode(id);
 			if (node.properties)
 			{
 				for (var i in node.properties)
 				{
-					node.properties[i] = vwf.getProperty(id, i);
+					node.properties[i] = vwf.getProperty(node.id, i);
 				}
 			}
 			if (node.children)
 			{
 				for (var i in node.children)
 				{
-					node.children[i] = this.GetNode(node.children[i].id);
+					this.callGetters(node.children[i])
 				}
 			}
+		}
+		this.GetNode = function (id)
+		{
+			var node = _Editor.getNode(id);
+			this.callGetters(node);
 			return node;
 		}
 		this.compareNode = function (node1, node2)

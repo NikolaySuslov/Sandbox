@@ -232,6 +232,9 @@ function startVWF() {
 
 			function registerAssetServer(cb)
 			{
+				if(global.configuration.hostAssets === undefined)
+					global.configuration.hostAssets = true;
+
 				if( global.configuration.hostAssets || !global.configuration.remoteAssetServerURL )
 				{
 					global.configuration.assetDataDir = global.configuration.assetDataDir || 'assets';

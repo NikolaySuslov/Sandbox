@@ -24,8 +24,11 @@ function CreateParticleSystem(nodeID, childID, childName) {
         "   vColor = vertexColor + (random -0.5) * colorRange;\n" +
         "   vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );\n" +
         "   float psize = size + (random.y -0.5) * sizeRange;\n" +
-        "   psize *= screenSize;" +
-        "   gl_PointSize = psize * ( 1000.0/ length( mvPosition.xyz ) );\n" +
+        //"   psize *= screenSize;" +
+        //"   gl_PointSize = psize * ( 1000.0/ length( mvPosition.xyz ) );\n" +
+        "   vec4 p1 = vec4(mvPosition.x+0.5*psize, mvPosition.yzw);\n" +
+        "   vec4 p2 = vec4(mvPosition.x-0.5*psize, mvPosition.yzw);\n" +
+        "   gl_PointSize = max(1.0, screenSize/2.0 * 1.0/length(mvPosition.xyz) * length(projectionMatrix*p1 - projectionMatrix*p2) ); \n"+
         "   gl_Position = projectionMatrix * mvPosition;\n" +
         "   vRandom = random;" +
         "}    \n";
@@ -88,7 +91,7 @@ function CreateParticleSystem(nodeID, childID, childName) {
         },
         texture: {
             type: "t",
-            value: THREE.ImageUtils.loadTexture("textures/sprites/ball.png")
+            value: _SceneManager.getTexture("textures/sprites/ball.png")
         },
         pCount:{
             type:'f',
@@ -179,9 +182,9 @@ function CreateParticleSystem(nodeID, childID, childName) {
     });
     shaderMaterial_default.fog = true;
     //the interpolate shader blends from one simulation step to the next on the shader
-    //this	allows for a complex sim to run at a low framerate, but still have smooth motion
-    //this is very efficient, as it only requires sending data up to the gpu on each sim tick		
-    //reuse the frag shader from the normal material	
+    //this    allows for a complex sim to run at a low framerate, but still have smooth motion
+    //this is very efficient, as it only requires sending data up to the gpu on each sim tick        
+    //reuse the frag shader from the normal material    
     var vertShader_interpolate =
 
         "attribute float age; \n" +
@@ -204,8 +207,11 @@ function CreateParticleSystem(nodeID, childID, childName) {
         "   vFogPosition = (modelMatrix * vec4(mix(previousPosition,position,fractime),1.0)).xyz; \n" +
         "   vec4 mvPosition = modelViewMatrix * vec4(mix(previousPosition,position,fractime), 1.0 );\n" +
         "   float psize = mix(startSize,endSize,(age+fractime*6.66)/lifespan) + (random.y -0.5) * sizeRange;\n" +
-        "   psize *= screenSize;" +
-        "   gl_PointSize = psize * ( 1000.0/ length( mvPosition.xyz ) );\n" +
+        //"   psize *= screenSize;" +
+        //"   gl_PointSize = psize * ( 1000.0/ length( mvPosition.xyz ) );\n" +
+        "   vec4 p1 = vec4(mvPosition.x+0.5*psize, mvPosition.yzw);\n" +
+        "   vec4 p2 = vec4(mvPosition.x-0.5*psize, mvPosition.yzw);\n" +
+        "   gl_PointSize = max(1.0, screenSize/2.0 * 1.0/length(mvPosition.xyz) * length(projectionMatrix*p1 - projectionMatrix*p2) ); \n"+
         "   gl_Position = projectionMatrix * mvPosition;\n" +
         "   vRandom = random;" +
         "}    \n";
@@ -226,6 +232,7 @@ function CreateParticleSystem(nodeID, childID, childName) {
             value: []
         },
     };
+
     var shaderMaterial_interpolate = new THREE.ShaderMaterial({
         uniforms: uniforms_default,
         attributes: attributes_interpolate,
@@ -271,8 +278,11 @@ function CreateParticleSystem(nodeID, childID, childName) {
         "   vec4 mvPosition = modelViewMatrix * vec4( pos2.xyz, 1.0 );\n" +
         //find random size based on randomness, start and end size, and size range
         "   float psize = mix(startSize,endSize,lifetime/lifespan) + (random.y -0.5) * sizeRange;\n" +
-        "   psize *= screenSize;" +
-        "   gl_PointSize = psize * ( 1000.0/ length( mvPosition.xyz ) );\n" +
+        //"   psize *= screenSize;" +
+        //"   gl_PointSize = psize * ( 1000.0/ length( mvPosition.xyz ) );\n" +
+        "   vec4 p1 = vec4(mvPosition.x+0.5*psize, mvPosition.yzw);\n" +
+        "   vec4 p2 = vec4(mvPosition.x-0.5*psize, mvPosition.yzw);\n" +
+        "   gl_PointSize = max(1.0, screenSize/2.0 * 1.0/length(mvPosition.xyz) * length(projectionMatrix*p1 - projectionMatrix*p2) ); \n"+
         "   gl_Position = projectionMatrix * mvPosition;\n" +
         " vec4 nR = (random -0.5);\n" +
         //find random color based on start and endcolor, time and colorRange
@@ -351,57 +361,63 @@ function CreateParticleSystem(nodeID, childID, childName) {
 
     // create the particle system
     var particleSystem = new THREE.PointCloud(particles, shaderMaterial_default);
-
+    var self = this;
+   
+    this.threeParticleSystem = particleSystem;
+     this.threeParticleSystem.update = function(time)
+    {
+        self.update(time);
+    } 
     //keep track of the shaders
-    particleSystem.shaderMaterial_analytic = shaderMaterial_analytic;
-    particleSystem.shaderMaterial_default = shaderMaterial_default;
-    particleSystem.shaderMaterial_interpolate = shaderMaterial_interpolate;
+    this.shaderMaterial_analytic = shaderMaterial_analytic;
+    this.shaderMaterial_default = shaderMaterial_default;
+    this.shaderMaterial_interpolate = shaderMaterial_interpolate;
 
-    particleSystem.shaderMaterial_analytic.transparent = true;
-    particleSystem.shaderMaterial_default.transparent = true;
-    particleSystem.shaderMaterial_interpolate.transparent = true;
+    this.shaderMaterial_analytic.transparent = true;
+    this.shaderMaterial_default.transparent = true;
+    this.shaderMaterial_interpolate.transparent = true;
 
     //setup all the default values
-    particleSystem.minVelocity = [0, 0, 0];
-    particleSystem.maxVelocity = [0, 0, 0];
-    particleSystem.maxAcceleration = [0, 0, 0];
-    particleSystem.minAcceleration = [0, 0, 0];
-    particleSystem.minLifeTime = 30;
-    particleSystem.maxLifeTime = 30;
-    particleSystem.emitterType = 'point';
-    particleSystem.emitterSize = [0, 0, 0];
-    particleSystem.startColor = [1, 1, 1, 1];
-    particleSystem.endColor = [0, 0, 0, 1];
-    particleSystem.regenParticles = [];
-    particleSystem.maxRate = 1;
-    particleSystem.particleCount = 1000;
-    particleSystem.damping = 0;
-    particleSystem.startSize = 1;
-    particleSystem.endSize = 1;
-    particleSystem.gravity = 0;
-    particleSystem.gravityCenter = [0, 0, 0];
-    particleSystem.velocityMode = 'cartesian';
-    particleSystem.temp = new THREE.Vector3();
-    particleSystem.maxSpin = 0;
-    particleSystem.minSpin = 0;
-    particleSystem.minOrientation = 0;
-    particleSystem.maxOrientation = 0;
-    particleSystem.sizeRange = 0;
-    particleSystem.colorRange = [0, 0, 0, 0];
-    particleSystem.gravity = 0;
-    particleSystem.gravityCenter = [0, 0, 0];
-    particleSystem.textureTiles = 1;
-    particleSystem.solver = 'AnalyticShader';
-    particleSystem.depthTest = true;
-    particleSystem.opacity = 1;
-    particleSystem.additive = false;
-    particleSystem.image = null;
+    this.minVelocity = [0, 0, 0];
+    this.maxVelocity = [0, 0, 0];
+    this.maxAcceleration = [0, 0, 0];
+    this.minAcceleration = [0, 0, 0];
+    this.minLifeTime = 30;
+    this.maxLifeTime = 30;
+    this.emitterType = 'point';
+    this.emitterSize = [0, 0, 0];
+    this.startColor = [1, 1, 1, 1];
+    this.endColor = [0, 0, 0, 1];
+    this.regenParticles = [];
+    this.maxRate = 1;
+    this.particleCount = 1000;
+    this.damping = 0;
+    this.startSize = 1;
+    this.endSize = 1;
+    this.gravity = 0;
+    this.gravityCenter = [0, 0, 0];
+    this.velocityMode = 'cartesian';
+    this.temp = new THREE.Vector3();
+    this.maxSpin = 0;
+    this.minSpin = 0;
+    this.minOrientation = 0;
+    this.maxOrientation = 0;
+    this.sizeRange = 0;
+    this.colorRange = [0, 0, 0, 0];
+    this.gravity = 0;
+    this.gravityCenter = [0, 0, 0];
+    this.textureTiles = 1;
+    this.solver = 'AnalyticShader';
+    this.depthTest = true;
+    this.opacity = 1;
+    this.additive = false;
+    this.image = null;
 
 
     //create a new particle. create and store all the values for vertex attributes in each shader
-    particleSystem.createParticle = function(i) {
+    this.createParticle = function(i) {
         var particle = new THREE.Vector3(0, 0, 0);
-        this.geometry.vertices.push(particle);
+        this.threeParticleSystem.geometry.vertices.push(particle);
 
         particle.i = i;
 
@@ -422,7 +438,7 @@ function CreateParticleSystem(nodeID, childID, childName) {
         var self = this;
         //set the size - stored per vertex
         particle.setSize = function(s) {
-            self.material.attributes.size.value[this.i] = s;
+            self.threeParticleSystem.material.attributes.size.value[this.i] = s;
         }
         //set the age - stored per vertex
         particle.setAge = function(a) {
@@ -432,7 +448,7 @@ function CreateParticleSystem(nodeID, childID, childName) {
         //the lifespan - stored per vertex
         particle.setLifespan = function(a) {
             this.lifespan = a;
-            self.shaderMaterial_interpolate.attributes.lifespan.value[this.i] = this.a;
+            self.shaderMaterial_interpolate.attributes.lifespan.value[this.i] = this.lifespan;
         }
 
         //This looks like it could be computed from the start and end plus random on the shader
@@ -440,12 +456,12 @@ function CreateParticleSystem(nodeID, childID, childName) {
         shaderMaterial_analytic.attributes.acceleration.value.push(new THREE.Vector3());
         shaderMaterial_analytic.attributes.velocity.value.push(new THREE.Vector3());
         shaderMaterial_analytic.attributes.lifespan.value.push(1);
-        shaderMaterial_analytic.attributes.random.value.push(new THREE.Vector4(Math.SecureRandom(), Math.SecureRandom(), Math.SecureRandom(), Math.SecureRandom()));
+        shaderMaterial_analytic.attributes.random.value.push(new THREE.Vector4(Math.random(), Math.random(), Math.random(), Math.random()));
         return particle;
     }
 
     //Generate a new point in space based on the emitter type and size
-    particleSystem.generatePoint = function() {
+    this.generatePoint = function() {
         //generate from a point
         //TODO: specify point?
         if (this.emitterType.toLowerCase() == 'point') {
@@ -454,19 +470,19 @@ function CreateParticleSystem(nodeID, childID, childName) {
         //Generate in a box
         //assumes centered at 0,0,0
         if (this.emitterType.toLowerCase() == 'box') {
-            var x = this.emitterSize[0] * Math.SecureRandom() - this.emitterSize[0] / 2;
-            var y = this.emitterSize[1] * Math.SecureRandom() - this.emitterSize[1] / 2;
-            var z = this.emitterSize[2] * Math.SecureRandom() - this.emitterSize[2] / 2;
+            var x = this.emitterSize[0] * Math.random() - this.emitterSize[0] / 2;
+            var y = this.emitterSize[1] * Math.random() - this.emitterSize[1] / 2;
+            var z = this.emitterSize[2] * Math.random() - this.emitterSize[2] / 2;
 
             return new THREE.Vector3(x, y, z).add(this._emitterPosition);
         }
         //Generate in a sphere
         //assumes centered at 0,0,0
         if (this.emitterType.toLowerCase() == 'sphere') {
-            var u2 = Math.SecureRandom();
+            var u2 = Math.random();
             u2 = Math.pow(u2, 1 / 3);
-            var o = this.emitterSize[0] * Math.SecureRandom() * Math.PI * 2;
-            var u = this.emitterSize[1] * Math.SecureRandom() * 2 - 1;
+            var o = this.emitterSize[0] * Math.random() * Math.PI * 2;
+            var u = this.emitterSize[1] * Math.random() * 2 - 1;
             var r = this.emitterSize[2] * u2;
             var x = Math.cos(o) * Math.sqrt(1 - (u * u));
             var y = Math.sin(o) * Math.sqrt(1 - (u * u));
@@ -478,15 +494,15 @@ function CreateParticleSystem(nodeID, childID, childName) {
 
     }
     //setup the particles with new values
-    particleSystem.rebuildParticles = function() {
-        for (var i = 0; i < this.geometry.vertices.length; i++) {
-            this.setupParticle(this.geometry.vertices[i], this.matrix);
-            this.geometry.vertices[i].waitForRegen = false;
+    this.rebuildParticles = function() {
+        for (var i = 0; i < this.threeParticleSystem.geometry.vertices.length; i++) {
+            this.setupParticle(this.threeParticleSystem.geometry.vertices[i], this.threeParticleSystem.matrix);
+            this.threeParticleSystem.geometry.vertices[i].waitForRegen = false;
         }
         this.regenParticles.length = 0;
     }
     //set the particles initial values. Used when creating and resuing particles
-    particleSystem.setupParticle = function(particle, mat, inv) {
+    this.setupParticle = function(particle, mat, inv) {
 
         particle.x = 0;
         particle.y = 0;
@@ -520,26 +536,26 @@ function CreateParticleSystem(nodeID, childID, childName) {
         //Generate the initial velocity
         //In this mode, you specify a min and max x,y,z
         if (this.velocityMode == 'cartesian') {
-            particle.velocity.x = this.minVelocity[0] + (this.maxVelocity[0] - this.minVelocity[0]) * Math.SecureRandom();
-            particle.velocity.y = this.minVelocity[1] + (this.maxVelocity[1] - this.minVelocity[1]) * Math.SecureRandom();
-            particle.velocity.z = this.minVelocity[2] + (this.maxVelocity[2] - this.minVelocity[2]) * Math.SecureRandom();
+            particle.velocity.x = this.minVelocity[0] + (this.maxVelocity[0] - this.minVelocity[0]) * Math.random();
+            particle.velocity.y = this.minVelocity[1] + (this.maxVelocity[1] - this.minVelocity[1]) * Math.random();
+            particle.velocity.z = this.minVelocity[2] + (this.maxVelocity[2] - this.minVelocity[2]) * Math.random();
         }
         //In this mode, you give a pitch and yaw from 0,1, and a min and max length.
         //This is easier to emit into a circle, or a cone section
         if (this.velocityMode == 'spherical') {
 
             //random sphercial points concentrate at poles
-            /* var r = this.minVelocity[2] + (this.maxVelocity[2] - this.minVelocity[2]) * Math.SecureRandom();
-                    var t = this.minVelocity[1] + (this.maxVelocity[1] - this.minVelocity[1]) * Math.SecureRandom() * Math.PI*2;
-                    var w = this.minVelocity[0] + (this.maxVelocity[0] - this.minVelocity[0]) * Math.SecureRandom() * Math.PI - Math.PI/2;
+            /* var r = this.minVelocity[2] + (this.maxVelocity[2] - this.minVelocity[2]) * Math.random();
+                    var t = this.minVelocity[1] + (this.maxVelocity[1] - this.minVelocity[1]) * Math.random() * Math.PI*2;
+                    var w = this.minVelocity[0] + (this.maxVelocity[0] - this.minVelocity[0]) * Math.random() * Math.PI - Math.PI/2;
                     particle.velocity.x = r * Math.sin(t)*Math.cos(w);
                     particle.velocity.y = r * Math.sin(t)*Math.sin(w);
                     particle.velocity.z = r * Math.cos(t); */
 
             //better distribution
-            var o = this.minVelocity[0] + (this.maxVelocity[0] - this.minVelocity[0]) * Math.SecureRandom() * Math.PI * 2;
-            var u = this.minVelocity[1] + (this.maxVelocity[1] - this.minVelocity[1]) * Math.SecureRandom() * 2 - 1;
-            var u2 = Math.SecureRandom();
+            var o = this.minVelocity[0] + (this.maxVelocity[0] - this.minVelocity[0]) * Math.random() * Math.PI * 2;
+            var u = this.minVelocity[1] + (this.maxVelocity[1] - this.minVelocity[1]) * Math.random() * 2 - 1;
+            var u2 = Math.random();
             u2 = Math.pow(u2, 1 / 3);
             var r = this.minVelocity[2] + (this.maxVelocity[2] - this.minVelocity[2]) * u2;
             particle.velocity.x = Math.cos(o) * Math.sqrt(1 - (u * u));
@@ -558,10 +574,10 @@ function CreateParticleSystem(nodeID, childID, childName) {
                 particle.velocity.applyMatrix4(mat);
              */
         //accelerations are always world space, just min and max on each axis
-        particle.acceleration.x = this.minAcceleration[0] + (this.maxAcceleration[0] - this.minAcceleration[0]) * Math.SecureRandom();
-        particle.acceleration.y = this.minAcceleration[1] + (this.maxAcceleration[1] - this.minAcceleration[1]) * Math.SecureRandom();
-        particle.acceleration.z = this.minAcceleration[2] + (this.maxAcceleration[2] - this.minAcceleration[2]) * Math.SecureRandom();
-        particle.setLifespan(this.minLifeTime + (this.maxLifeTime - this.minLifeTime) * Math.SecureRandom());
+        particle.acceleration.x = this.minAcceleration[0] + (this.maxAcceleration[0] - this.minAcceleration[0]) * Math.random();
+        particle.acceleration.y = this.minAcceleration[1] + (this.maxAcceleration[1] - this.minAcceleration[1]) * Math.random();
+        particle.acceleration.z = this.minAcceleration[2] + (this.maxAcceleration[2] - this.minAcceleration[2]) * Math.random();
+        particle.setLifespan(this.minLifeTime + (this.maxLifeTime - this.minLifeTime) * Math.random());
 
         //color is start color
         particle.color.x = this.startColor[0];
@@ -579,7 +595,7 @@ function CreateParticleSystem(nodeID, childID, childName) {
         shaderMaterial_analytic.attributes.acceleration.needsUpdate = true;
         shaderMaterial_analytic.attributes.velocity.needsUpdate = true;
         shaderMaterial_analytic.attributes.lifespan.needsUpdate = true;
-        this.geometry.verticesNeedUpdate = true;
+        this.threeParticleSystem.geometry.verticesNeedUpdate = true;
         //randomly move the particle up to one step in time
         particle.prevworld.x = particle.x;
         particle.prevworld.y = particle.y;
@@ -588,27 +604,27 @@ function CreateParticleSystem(nodeID, childID, childName) {
     }
 
     //when updating in AnalyticShader mode, is very simple, just inform the shader of new time.
-    particleSystem.updateAnalyticShader = function(time) {
-        particleSystem.material.uniforms.time.value += time / 3333.0;
+    this.updateAnalyticShader = function(time) {
+        this.threeParticleSystem.material.uniforms.time.value += time / 3333.0;
 
     }
 
     //In Analytic mode, run the equation for the position
-    particleSystem.updateAnalytic = function(time) {
-        particleSystem.material.uniforms.time.value += time / 3333.0;
+    this.updateAnalytic = function(time) {
+        this.threeParticleSystem.material.uniforms.time.value += time / 3333.0;
 
         var time_in_ticks = time / 33.333;
 
-        var inv = this.matrix.clone();
+        var inv = this.threeParticleSystem.matrix.clone();
         inv = inv.getInverse(inv);
 
-        var particles = this.geometry;
+        var particles = this.threeParticleSystem.geometry;
 
         //update each particle
-        var pCount = this.geometry.vertices.length;
+        var pCount = this.threeParticleSystem.geometry.vertices.length;
         while (pCount--) {
             var particle = particles.vertices[pCount];
-            this.updateParticleAnalytic(particle, this.matrix, inv, time_in_ticks);
+            this.updateParticleAnalytic(particle, this.threeParticleSystem.matrix, inv, time_in_ticks);
         }
 
         //examples developed with faster tick - maxrate *33 is scale to make work 
@@ -621,30 +637,30 @@ function CreateParticleSystem(nodeID, childID, childName) {
         var len = Math.min(this.regenParticles.length, this.maxRate * 15 * time_in_ticks);
         for (var i = 0; i < len; i++) {
 
-            //setup with new random values, and move randomly forward in time one step	
+            //setup with new random values, and move randomly forward in time one step    
             var particle = this.regenParticles.shift();
-            this.setupParticle(particle, this.matrix, inv);
+            this.setupParticle(particle, this.threeParticleSystem.matrix, inv);
             if(this.maxRate < this.particleCount)
-                this.updateParticleAnalytic(particle, this.matrix, inv, Math.SecureRandom() * 3.33);
+                this.updateParticleAnalytic(particle, this.threeParticleSystem.matrix, inv, Math.random() * 3.33);
             particle.waitForRegen = false;
         }
 
 
         //only these things change, other properties are in the shader as they are linear WRT time	
-        this.geometry.verticesNeedUpdate = true;
-        this.geometry.colorsNeedUpdate = true;
-        this.material.attributes.vertexColor.needsUpdate = true;
-        this.material.attributes.size.needsUpdate = true;
+        this.threeParticleSystem.geometry.verticesNeedUpdate = true;
+        this.threeParticleSystem.geometry.colorsNeedUpdate = true;
+        this.threeParticleSystem.material.attributes.vertexColor.needsUpdate = true;
+        this.threeParticleSystem.material.attributes.size.needsUpdate = true;
     }
 
-    particleSystem.counter = 0;
-    particleSystem.testtime = 0;
-    particleSystem.totaltime = 0;
+    this.counter = 0;
+    this.testtime = 0;
+    this.totaltime = 0;
     //timesliced Euler integrator
     //todo: switch to RK4 
     //This can do more complex sim, maybe even a cloth sim or such. It ticks 10 times a second, and blends tick with previous via a shader
-    particleSystem.updateEuler = function(time) {
-        particleSystem.material.uniforms.time.value += time / 3333.0;
+    this.updateEuler = function(time) {
+        this.threeParticleSystem.material.uniforms.time.value += time / 3333.0;
         //var timer = performance.now();
         var time_in_ticks = time / 100.0;
 
@@ -652,21 +668,22 @@ function CreateParticleSystem(nodeID, childID, childName) {
 
         this.lastTime += time_in_ticks; //ticks - Math.floor(ticks);
 
-        var inv = this.matrix.clone();
+        var inv = this.threeParticleSystem.matrix.clone();
         inv = inv.getInverse(inv);
 
-        var particles = this.geometry;
+        var particles = this.threeParticleSystem.geometry;
 
-        //timesliced tick give up after 5 steps - just cant go fast enough		
+        //timesliced tick give up after 5 steps - just cant go fast enough        
         if (Math.floor(this.lastTime) > 5)
             this.lastTime = 1;
+
         for (var i = 0; i < Math.floor(this.lastTime); i++) {
             this.lastTime--;
 
-            var pCount = this.geometry.vertices.length;
+            var pCount = this.threeParticleSystem.geometry.vertices.length;
             while (pCount--) {
                 var particle = particles.vertices[pCount];
-                this.updateParticleEuler(particle, this.matrix, inv, 3.333);
+                this.updateParticleEuler(particle, this.threeParticleSystem.matrix, inv, 3.333);
             }
 
             //examples developed with faster tick - maxRate *33 is scale to make work 
@@ -682,27 +699,29 @@ function CreateParticleSystem(nodeID, childID, childName) {
 
                 particle.waitForRegen = false;
                 var particle = this.regenParticles.shift();
-                this.setupParticle(particle, this.matrix, inv);
-                this.updateParticleEuler(particle, this.matrix, inv, Math.SecureRandom() * 3.33);
+                this.setupParticle(particle, this.threeParticleSystem.matrix, inv);
+                this.updateParticleEuler(particle, this.threeParticleSystem.matrix, inv, Math.random() * 3.33);
                 particle.age = 0;
-                this.material.attributes.lifespan.needsUpdate = true;
+              
             }
 
             //only need to send up the age, position, and previous position. other props handled in the shader
-            this.geometry.verticesNeedUpdate = true;
-            this.material.attributes.previousPosition.needsUpdate = true;
-
-            this.material.attributes.age.needsUpdate = true;
+      
 
         }
 
+            this.threeParticleSystem.material.attributes.lifespan.needsUpdate = true;
+            this.threeParticleSystem.geometry.verticesNeedUpdate = true;
+            this.threeParticleSystem.material.attributes.previousPosition.needsUpdate = true;
+            this.threeParticleSystem.material.attributes.age.needsUpdate = true;
+
         //even if this is not a sim tick, we need to send the fractional time up to the shader for the interpolation
-        this.material.uniforms.fractime.value = this.lastTime;
+        this.threeParticleSystem.material.uniforms.fractime.value = this.lastTime;
 
     }
 
     //Update a particle from the Analytic solver
-    particleSystem.updateParticleAnalytic = function(particle, mat, inv, delta_time) {
+    this.updateParticleAnalytic = function(particle, mat, inv, delta_time) {
         particle.age += delta_time;
 
         //Make the particle dead. Hide it until it can be reused
@@ -716,9 +735,10 @@ function CreateParticleSystem(nodeID, childID, childName) {
         } else {
             //Run the formula to get position.
             var percent = particle.age / particle.lifespan;
-            particle.world.x = particle.initialx + (particle.velocity.x * particle.age) + 0.5 * (particle.acceleration.x * particle.age * particle.age)
-            particle.world.y = particle.initialy + (particle.velocity.y * particle.age) + 0.5 * (particle.acceleration.y * particle.age * particle.age)
-            particle.world.z = particle.initialz + (particle.velocity.z * particle.age) + 0.5 * (particle.acceleration.z * particle.age * particle.age)
+            var pa2 = particle.age * particle.age;
+            particle.world.x = particle.initialx + (particle.velocity.x * particle.age) + 0.5 * (particle.acceleration.x * pa2)
+            particle.world.y = particle.initialy + (particle.velocity.y * particle.age) + 0.5 * (particle.acceleration.y * pa2)
+            particle.world.z = particle.initialz + (particle.velocity.z * particle.age) + 0.5 * (particle.acceleration.z * pa2)
 
             this.temp.x = particle.world.x;
             this.temp.y = particle.world.y;
@@ -741,7 +761,7 @@ function CreateParticleSystem(nodeID, childID, childName) {
     }
 
     //updtae a partilce with the Euler solver
-    particleSystem.updateParticleEuler = function(particle, mat, inv, step_dist) {
+    this.updateParticleEuler = function(particle, mat, inv, step_dist) {
         particle.prevage = particle.age;
         particle.age += step_dist;
         particle.setAge(particle.age + step_dist);
@@ -810,47 +830,48 @@ function CreateParticleSystem(nodeID, childID, childName) {
             particle.prevworld.applyMatrix4(inv);
         }
     }
-    particleSystem._emitterPosition = new THREE.Vector3(0,0,0);
-    particleSystem.update = function(time) {
+    this._emitterPosition = new THREE.Vector3(0,0,0);
+    this.update = function(time) {
 
+        if(this.threeParticleSystem.visible == false) return;
         this.updateInner(time);
-        this.material.uniforms.screenSize.value = parseFloat($('#index-vwf').attr('height') / 1200);
+        this.threeParticleSystem.material.uniforms.screenSize.value = parseFloat($('#index-vwf').attr('width'));
     }
     //Change the solver type for the system
-    particleSystem.setSolverType = function(type) {
+    this.setSolverType = function(type) {
         this.solver = type;
         if (type == 'Euler') {
-            particleSystem.updateInner = particleSystem.updateEuler;
-            particleSystem.material = particleSystem.shaderMaterial_interpolate;
-            particleSystem.rebuildParticles();
+            this.updateInner = this.updateEuler;
+            this.threeParticleSystem.material = this.shaderMaterial_interpolate;
+            this.rebuildParticles();
         }
         if (type == 'Analytic') {
-            particleSystem.updateInner = particleSystem.updateAnalytic;
-            particleSystem.material = particleSystem.shaderMaterial_default;
-            particleSystem.rebuildParticles();
+            this.updateInner = this.updateAnalytic;
+            this.threeParticleSystem.material = this.shaderMaterial_default;
+            this.rebuildParticles();
         }
         if (type == 'AnalyticShader') {
-            particleSystem.updateInner = particleSystem.updateAnalyticShader;
-            particleSystem.material = particleSystem.shaderMaterial_analytic;
-            particleSystem.rebuildParticles();
+            this.updateInner = this.updateAnalyticShader;
+            this.threeParticleSystem.material = this.shaderMaterial_analytic;
+            this.rebuildParticles();
         }
 
     }
 
     //If you move a system, all the particles need to be recomputed to look like they stick in world space
     //not that we pointedly dont do this for the AnalyticShader. We could, but that solver is ment to  be very high performance, do we dont
-    particleSystem.updateTransform = function(newtransform) {
+    this.updateTransform = function(newtransform) {
 
         //Get he current transform, and invert new one
         var inv = new THREE.Matrix4();
         var newt = new THREE.Matrix4();
         inv.elements = matCpy(newtransform);
-        newt = newt.copy(this.matrix);
+        newt = newt.copy(this.threeParticleSystem.matrix);
         inv = inv.getInverse(inv);
 
 
         //don't adjust for the high performance shader
-        if (particleSystem.solver == 'AnalyticShader') {
+        if (this.solver == 'AnalyticShader') {
             return;
         }
 
@@ -860,49 +881,47 @@ function CreateParticleSystem(nodeID, childID, childName) {
         //note that it would actually be more efficient to leave the matrix as identity, and change the position of the 
         //emitters for this...... Could probably handle it in the model setter actually... would be much more efficient, but linking 
         //a system to a moving object would break.
-        for (var i = 0; i < this.geometry.vertices.length; i++) {
-            this.geometry.vertices[i].applyMatrix4(inv);
+        for (var i = 0; i < this.threeParticleSystem.geometry.vertices.length; i++) {
+            this.threeParticleSystem.geometry.vertices[i].applyMatrix4(inv);
             this.shaderMaterial_interpolate.attributes.previousPosition.value[i].applyMatrix4(inv);
-            this.geometry.vertices[i].applyMatrix4(newt);
+            this.threeParticleSystem.geometry.vertices[i].applyMatrix4(newt);
             this.shaderMaterial_interpolate.attributes.previousPosition.value[i].applyMatrix4(newt);
         }
-        this.geometry.verticesNeedUpdate = true;
+        this.threeParticleSystem.geometry.verticesNeedUpdate = true;
         this.shaderMaterial_interpolate.attributes.previousPosition.needsUpdate = true;
-        this.material.attributes.vertexColor.needsUpdate = true;
-        this.material.attributes.size.needsUpdate = true;
-        this.material.attributes.lifespan.needsUpdate = true;
-        this.material.attributes.age.needsUpdate = true;
+        this.threeParticleSystem.material.attributes.vertexColor.needsUpdate = true;
+        this.threeParticleSystem.material.attributes.size.needsUpdate = true;
+        this.threeParticleSystem.material.attributes.lifespan.needsUpdate = true;
+        this.threeParticleSystem.material.attributes.age.needsUpdate = true;
 
     }
     //Change the system count. Note that this must be set before the first frame renders, cant be changed at runtime.
-    particleSystem.setParticleCount = function(newcount) {
-        var inv = this.matrix.clone();
+    this.setParticleCount = function(newcount) {
+        var inv = this.threeParticleSystem.matrix.clone();
         inv = inv.getInverse(inv);
 
-        var particles = this.geometry;
-        while (this.geometry.vertices.length > newcount) {
-            this.geometry.vertices.pop();
+        var particles = this.threeParticleSystem.geometry;
+        while (this.threeParticleSystem.geometry.vertices.length > newcount) {
+            this.threeParticleSystem.geometry.vertices.pop();
         }
-        while (this.geometry.vertices.length < newcount) {
-            var particle = particleSystem.createParticle(this.geometry.vertices.length);
-            particleSystem.setupParticle(particle, particleSystem.matrix, inv);
+        while (this.threeParticleSystem.geometry.vertices.length < newcount) {
+            var particle = this.createParticle(this.threeParticleSystem.geometry.vertices.length);
+            this.setupParticle(particle, this.threeParticleSystem.matrix, inv);
             particle.age = Infinity;
             this.regenParticles.push(particle);
             particle.waitForRegen = true;
         }
-        this.geometry.verticesNeedUpdate = true;
-        this.geometry.colorsNeedUpdate = true;
+        this.threeParticleSystem.geometry.verticesNeedUpdate = true;
+        this.threeParticleSystem.geometry.colorsNeedUpdate = true;
         this.shaderMaterial_default.attributes.vertexColor.needsUpdate = true;
         this.particleCount = newcount;
     }
 
     //Setup some defaults
-    particleSystem.setParticleCount(1000);
-    particleSystem.setSolverType('AnalyticShader');
-    particleSystem.update(1);
+    this.setParticleCount(1000);
+    this.setSolverType('AnalyticShader');
+    this.update(1);
 
-
-    return particleSystem
 
 
 }
@@ -910,195 +929,224 @@ function CreateParticleSystem(nodeID, childID, childName) {
 (function() {
     function particleSystem(childID, childSource, childName) {
 
-    	var ps = CreateParticleSystem();
+        
+    	this.ps = new CreateParticleSystem();
 
         this.inherits = ['vwf/model/threejs/transformable.js', 'vwf/model/threejs/visible.js'];
         //the node constructor
         this.settingProperty = function(propertyName, propertyValue) {
 
 
-            var particles = ps.geometry;
+            var particles = this.ps.threeParticleSystem.geometry;
             if (propertyName == 'quaternion') return;
             if (propertyName == 'rotation') return;
             
-
-            if(propertyName == "particleCount" && propertyValue != ps[propertyName])
+            
+            if(propertyName == "particleCount" && propertyValue != this.ps[propertyName])
             {
             	
             	var propbackup = vwf.getProperties(this.ID);
             	delete propbackup.particleCount;
-            	ps.geometry.dispose();
-            	var oldparent = ps.parent;
-            	ps.parent.remove(ps)
-            	ps = CreateParticleSystem();
-            	ps.particleCount = propertyValue;
-            	ps.setParticleCount(propertyValue);
-            	oldparent.add(ps);
+                var oldSolver = propbackup.solver;
+                delete propbackup.solver;
+            	this.ps.threeParticleSystem.geometry.dispose();
+            	var oldparent = this.ps.threeParticleSystem.parent;
+            	this.ps.threeParticleSystem.parent.remove(this.ps.threeParticleSystem)
+            	this.ps = new CreateParticleSystem();
+            	this.ps.particleCount = propertyValue;
+            	this.ps.setParticleCount(propertyValue);
+                this.ps.setSolverType(oldSolver);
+            	oldparent.add(this.ps.threeParticleSystem);
+                oldparent.updateMatrixWorld(true);
             	for(var i in propbackup)
             	{
             		this.settingProperty(i,propbackup[i]);
             	}
             }
+            if(propertyName == "solver" && propertyValue != this.ps[propertyName])
+            {
+                
+                var propbackup = vwf.getProperties(this.ID);
+                delete propbackup.solver;
+                var oldCount = propbackup.particleCount;
+                
+                delete propbackup.particleCount;
+                this.ps.threeParticleSystem.geometry.dispose();
+                var oldparent = this.ps.threeParticleSystem.parent;
+                this.ps.threeParticleSystem.parent.remove(this.ps.threeParticleSystem)
+                this.ps = new CreateParticleSystem();
+                this.ps.setParticleCount(oldCount);
+                this.ps.setSolverType(propertyValue);
+                
+                oldparent.add(this.ps.threeParticleSystem);
+                oldparent.updateMatrixWorld(true);
+                for(var i in propbackup)
+                {
+                    this.settingProperty(i,propbackup[i]);
+                }
 
-            ps[propertyName] = propertyValue;
+            }
+            this.ps[propertyName] = propertyValue;
+
+            
 
 
 
 
 
             if (propertyName == 'size') {
-                //ps.material.size = propertyValue;
+                //this.ps.material.size = propertyValue;
 
-                for (var i = 0; i < ps.material.attributes.size.value.length; i++) {
-                    ps.material.attributes.size.value[i] = propertyValue;
+                for (var i = 0; i < this.ps.material.attributes.size.value.length; i++) {
+                    this.ps.threeParticleSystem.material.attributes.size.value[i] = propertyValue;
                 }
-                ps.material.attributes.size.needsUpdate = true;
+                this.ps.threeParticleSystem.material.attributes.size.needsUpdate = true;
             }
             if (propertyName == 'particleCount') {
-                ps.setParticleCount(propertyValue);
+                this.ps.setParticleCount(propertyValue);
             }
             if(propertyName == 'emitterPosition')
             {
-                ps._emitterPosition.x = propertyValue[0];
-                ps._emitterPosition.y = propertyValue[1];
-                ps._emitterPosition.z = propertyValue[2];
+                this.ps._emitterPosition.x = propertyValue[0];
+                this.ps._emitterPosition.y = propertyValue[1];
+                this.ps._emitterPosition.z = propertyValue[2];
             }
             if (propertyName == 'startSize') {
-                ps.shaderMaterial_analytic.uniforms.startSize.value = propertyValue;
+                this.ps.shaderMaterial_analytic.uniforms.startSize.value = propertyValue;
             }
             if (propertyName == 'endSize') {
-                ps.shaderMaterial_analytic.uniforms.endSize.value = propertyValue;
+                this.ps.shaderMaterial_analytic.uniforms.endSize.value = propertyValue;
             }
             if (propertyName == 'sizeRange') {
-                ps.shaderMaterial_analytic.uniforms.sizeRange.value = propertyValue;
+                this.ps.shaderMaterial_analytic.uniforms.sizeRange.value = propertyValue;
             }
             if (propertyName == 'maxRate') {
-                ps.shaderMaterial_analytic.uniforms.maxRate.value = propertyValue;
+                this.ps.shaderMaterial_analytic.uniforms.maxRate.value = propertyValue;
             }
             if (propertyName == 'particleCount') {
-                ps.shaderMaterial_analytic.uniforms.pCount.value = propertyValue;
+                this.ps.shaderMaterial_analytic.uniforms.pCount.value = propertyValue;
             }
             if (propertyName == 'maxSpin') {
-                ps.shaderMaterial_analytic.uniforms.maxSpin.value = propertyValue;
+                this.ps.shaderMaterial_analytic.uniforms.maxSpin.value = propertyValue;
             }
             if (propertyName == 'textureTiles') {
-                ps.shaderMaterial_analytic.uniforms.textureTiles.value = propertyValue;
+                this.ps.shaderMaterial_analytic.uniforms.textureTiles.value = propertyValue;
             }
             if (propertyName == 'minSpin') {
-                ps.shaderMaterial_analytic.uniforms.minSpin.value = propertyValue;
+                this.ps.shaderMaterial_analytic.uniforms.minSpin.value = propertyValue;
             }
             if (propertyName == 'maxOrientation') {
-                ps.shaderMaterial_analytic.uniforms.maxOrientation.value = propertyValue;
+                this.ps.shaderMaterial_analytic.uniforms.maxOrientation.value = propertyValue;
             }
             if (propertyName == 'minOrientation') {
-                ps.shaderMaterial_analytic.uniforms.minOrientation.value = propertyValue;
+                this.ps.shaderMaterial_analytic.uniforms.minOrientation.value = propertyValue;
             }
             if (propertyName == 'alphaTest') {
-                ps.shaderMaterial_analytic.uniforms.alphaTest.value = propertyValue;
+                this.ps.shaderMaterial_analytic.uniforms.alphaTest.value = propertyValue;
             }
 
 
             if (propertyName == 'colorRange') {
-                ps.shaderMaterial_analytic.uniforms.colorRange.value.x = propertyValue[0];
-                ps.shaderMaterial_analytic.uniforms.colorRange.value.y = propertyValue[1];
-                ps.shaderMaterial_analytic.uniforms.colorRange.value.z = propertyValue[2];
-                ps.shaderMaterial_analytic.uniforms.colorRange.value.w = propertyValue[3];
+                this.ps.shaderMaterial_analytic.uniforms.colorRange.value.x = propertyValue[0];
+                this.ps.shaderMaterial_analytic.uniforms.colorRange.value.y = propertyValue[1];
+                this.ps.shaderMaterial_analytic.uniforms.colorRange.value.z = propertyValue[2];
+                this.ps.shaderMaterial_analytic.uniforms.colorRange.value.w = propertyValue[3];
             }
 
 
             if (propertyName == 'startColor') {
-                ps.shaderMaterial_analytic.uniforms.startColor.value.x = propertyValue[0];
-                ps.shaderMaterial_analytic.uniforms.startColor.value.y = propertyValue[1];
-                ps.shaderMaterial_analytic.uniforms.startColor.value.z = propertyValue[2];
-                ps.shaderMaterial_analytic.uniforms.startColor.value.w = propertyValue[3];
+                this.ps.shaderMaterial_analytic.uniforms.startColor.value.x = propertyValue[0];
+                this.ps.shaderMaterial_analytic.uniforms.startColor.value.y = propertyValue[1];
+                this.ps.shaderMaterial_analytic.uniforms.startColor.value.z = propertyValue[2];
+                this.ps.shaderMaterial_analytic.uniforms.startColor.value.w = propertyValue[3];
             }
             if (propertyName == 'endColor') {
-                ps.shaderMaterial_analytic.uniforms.endColor.value.x = propertyValue[0];
-                ps.shaderMaterial_analytic.uniforms.endColor.value.y = propertyValue[1];
-                ps.shaderMaterial_analytic.uniforms.endColor.value.z = propertyValue[2];
-                ps.shaderMaterial_analytic.uniforms.endColor.value.w = propertyValue[3];
+                this.ps.shaderMaterial_analytic.uniforms.endColor.value.x = propertyValue[0];
+                this.ps.shaderMaterial_analytic.uniforms.endColor.value.y = propertyValue[1];
+                this.ps.shaderMaterial_analytic.uniforms.endColor.value.z = propertyValue[2];
+                this.ps.shaderMaterial_analytic.uniforms.endColor.value.w = propertyValue[3];
             }
 
 
             if (propertyName == 'solver') {
 
-                ps.setSolverType(propertyValue)
+               // this.ps.setSolverType(propertyValue)
             }
             if (propertyName == 'image') {
-                ps.shaderMaterial_default.uniforms.texture.value = THREE.ImageUtils.loadTexture(propertyValue);
-                ps.shaderMaterial_default.uniforms.useTexture.value = 1.0;
-                ps.shaderMaterial_analytic.uniforms.texture.value = THREE.ImageUtils.loadTexture(propertyValue);
-                ps.shaderMaterial_analytic.uniforms.useTexture.value = 1.0;
+                this.ps.shaderMaterial_default.uniforms.texture.value = _SceneManager.getTexture(propertyValue);
+                this.ps.shaderMaterial_default.uniforms.useTexture.value = 1.0;
+                this.ps.shaderMaterial_analytic.uniforms.texture.value = _SceneManager.getTexture(propertyValue);
+                this.ps.shaderMaterial_analytic.uniforms.useTexture.value = 1.0;
 
             }
             if (propertyName == 'additive') {
                 if (propertyValue) {
-                    ps.shaderMaterial_default.blending = THREE.AdditiveBlending;
-                    ps.shaderMaterial_default.transparent = true;
-                    ps.shaderMaterial_analytic.blending = THREE.AdditiveBlending;
-                    ps.shaderMaterial_analytic.transparent = true;
-                    ps.shaderMaterial_interpolate.blending = THREE.AdditiveBlending;
-                    ps.shaderMaterial_interpolate.transparent = true;
-                     ps.shaderMaterial_interpolate.fog = false;
-                     ps.shaderMaterial_analytic.fog = false;
-                     ps.shaderMaterial_default.fog = false;
+                    this.ps.shaderMaterial_default.blending = THREE.AdditiveBlending;
+                    this.ps.shaderMaterial_default.transparent = true;
+                    this.ps.shaderMaterial_analytic.blending = THREE.AdditiveBlending;
+                    this.ps.shaderMaterial_analytic.transparent = true;
+                    this.ps.shaderMaterial_interpolate.blending = THREE.AdditiveBlending;
+                    this.ps.shaderMaterial_interpolate.transparent = true;
+                     this.ps.shaderMaterial_interpolate.fog = false;
+                     this.ps.shaderMaterial_analytic.fog = false;
+                     this.ps.shaderMaterial_default.fog = false;
                    
                 } else {
-                    ps.shaderMaterial_default.blending = THREE.NormalBlending;
-                    ps.shaderMaterial_default.transparent = true;
-                    ps.shaderMaterial_analytic.blending = THREE.NormalBlending;
-                    ps.shaderMaterial_analytic.transparent = true;
-                    ps.shaderMaterial_interpolate.blending = THREE.NormalBlending;
-                    ps.shaderMaterial_interpolate.transparent = true;
-                     ps.shaderMaterial_interpolate.fog = true;
-                     ps.shaderMaterial_analytic.fog = true;
-                     ps.shaderMaterial_default.fog = true;
+                    this.ps.shaderMaterial_default.blending = THREE.NormalBlending;
+                    this.ps.shaderMaterial_default.transparent = true;
+                    this.ps.shaderMaterial_analytic.blending = THREE.NormalBlending;
+                    this.ps.shaderMaterial_analytic.transparent = true;
+                    this.ps.shaderMaterial_interpolate.blending = THREE.NormalBlending;
+                    this.ps.shaderMaterial_interpolate.transparent = true;
+                     this.ps.shaderMaterial_interpolate.fog = true;
+                     this.ps.shaderMaterial_analytic.fog = true;
+                     this.ps.shaderMaterial_default.fog = true;
                 
                 }
 
-                ps.shaderMaterial_default.needsUpdate = true;
-                ps.shaderMaterial_analytic.needsUpdate = true;
-                ps.shaderMaterial_interpolate.needsUpdate = true;
+                this.ps.shaderMaterial_default.needsUpdate = true;
+                this.ps.shaderMaterial_analytic.needsUpdate = true;
+                this.ps.shaderMaterial_interpolate.needsUpdate = true;
             }
             if (propertyName == 'depthTest') {
-                ps.shaderMaterial_default.depthTest = true;
-                ps.shaderMaterial_default.depthWrite = propertyValue;
-                ps.shaderMaterial_analytic.depthTest = true;
-                ps.shaderMaterial_analytic.depthWrite = propertyValue;
-                ps.shaderMaterial_interpolate.depthTest = true;
-                ps.shaderMaterial_interpolate.depthWrite = propertyValue;
+                this.ps.shaderMaterial_default.depthTest = true;
+                this.ps.shaderMaterial_default.depthWrite = propertyValue;
+                this.ps.shaderMaterial_analytic.depthTest = true;
+                this.ps.shaderMaterial_analytic.depthWrite = propertyValue;
+                this.ps.shaderMaterial_interpolate.depthTest = true;
+                this.ps.shaderMaterial_interpolate.depthWrite = propertyValue;
 
-                ps.shaderMaterial_default.needsUpdate = true;
-                ps.shaderMaterial_analytic.needsUpdate = true;
-                ps.shaderMaterial_interpolate.needsUpdate = true;
+                this.ps.shaderMaterial_default.needsUpdate = true;
+                this.ps.shaderMaterial_analytic.needsUpdate = true;
+                this.ps.shaderMaterial_interpolate.needsUpdate = true;
             }
             if (propertyName == "minAcceleration" || propertyName == "maxAcceleration") {
-                if (!ps.minAcceleration) ps.minAcceleration = [0, 0, 0];
-                if (!ps.maxAcceleration) ps.maxAcceleration = [0, 0, 0];
+                if (!this.ps.minAcceleration) this.ps.minAcceleration = [0, 0, 0];
+                if (!this.ps.maxAcceleration) this.ps.maxAcceleration = [0, 0, 0];
 
                 for (var i = 0; i < particles.vertices.length; i++) {
-                    particles.vertices[i].acceleration.x = ps.minAcceleration[0] + (ps.maxAcceleration[0] - ps.minAcceleration[0]) * Math.SecureRandom();
-                    particles.vertices[i].acceleration.y = ps.minAcceleration[1] + (ps.maxAcceleration[1] - ps.minAcceleration[1]) * Math.SecureRandom();
-                    particles.vertices[i].acceleration.z = ps.minAcceleration[2] + (ps.maxAcceleration[2] - ps.minAcceleration[2]) * Math.SecureRandom();
+                    particles.vertices[i].acceleration.x = this.ps.minAcceleration[0] + (this.ps.maxAcceleration[0] - this.ps.minAcceleration[0]) * Math.random();
+                    particles.vertices[i].acceleration.y = this.ps.minAcceleration[1] + (this.ps.maxAcceleration[1] - this.ps.minAcceleration[1]) * Math.random();
+                    particles.vertices[i].acceleration.z = this.ps.minAcceleration[2] + (this.ps.maxAcceleration[2] - this.ps.minAcceleration[2]) * Math.random();
                 }
             }
             if (propertyName == "minVelocity" || propertyName == "maxVelocity") {
-                if (!ps.minVelocity) ps.minVelocity = [0, 0, 0];
-                if (!ps.maxVelocity) ps.maxVelocity = [0, 0, 0];
+                if (!this.ps.minVelocity) this.ps.minVelocity = [0, 0, 0];
+                if (!this.ps.maxVelocity) this.ps.maxVelocity = [0, 0, 0];
 
                 for (var i = 0; i < particles.vertices.length; i++) {
 
-                    particles.vertices[i].velocity.x = ps.minVelocity[0] + (ps.maxVelocity[0] - ps.minVelocity[0]) * Math.SecureRandom();
-                    particles.vertices[i].velocity.y = ps.minVelocity[1] + (ps.maxVelocity[1] - ps.minVelocity[1]) * Math.SecureRandom();
-                    particles.vertices[i].velocity.z = ps.minVelocity[2] + (ps.maxVelocity[2] - ps.minVelocity[2]) * Math.SecureRandom();
+                    particles.vertices[i].velocity.x = this.ps.minVelocity[0] + (this.ps.maxVelocity[0] - this.ps.minVelocity[0]) * Math.random();
+                    particles.vertices[i].velocity.y = this.ps.minVelocity[1] + (this.ps.maxVelocity[1] - this.ps.minVelocity[1]) * Math.random();
+                    particles.vertices[i].velocity.z = this.ps.minVelocity[2] + (this.ps.maxVelocity[2] - this.ps.minVelocity[2]) * Math.random();
                 }
             }
             if (propertyName == "minLifeTime" || propertyName == "maxLifeTime") {
-                if (ps.minLifeTime === undefined) ps.minLifeTime = 0;
-                if (ps.maxLifeTime === undefined) ps.maxLifeTime = 1;
+                if (this.ps.minLifeTime === undefined) this.ps.minLifeTime = 0;
+                if (this.ps.maxLifeTime === undefined) this.ps.maxLifeTime = 1;
 
                 for (var i = 0; i < particles.vertices.length; i++) {
-                    particles.vertices[i].lifespan = ps.minLifeTime + (ps.maxLifeTime - ps.minLifeTime) * Math.SecureRandom();
+                    particles.vertices[i].lifespan = this.ps.minLifeTime + (this.ps.maxLifeTime - this.ps.minLifeTime) * Math.random();
                 }
             }
 
@@ -1107,8 +1155,8 @@ function CreateParticleSystem(nodeID, childID, childName) {
                 propertyName == 'maxAcceleration' ||
                 propertyName == 'minAcceleration' ||
                 propertyName == 'emitterType' ||
-                (propertyName == 'emitterSize' && ps.solver == 'AnalyticShader') ||  
-                (propertyName == 'emitterPosition' && ps.solver == 'AnalyticShader') ||  
+                (propertyName == 'emitterSize' && this.ps.solver == 'AnalyticShader') ||  
+                (propertyName == 'emitterPosition' && this.ps.solver == 'AnalyticShader') ||  
                 propertyName == 'maxLifeTime' ||
                 propertyName == 'minLifeTime' ||
                 propertyName == 'velocityMode' ||
@@ -1116,7 +1164,7 @@ function CreateParticleSystem(nodeID, childID, childName) {
 
             ) {
 
-                ps.rebuildParticles();
+                this.ps.rebuildParticles();
 
             }
 
@@ -1126,17 +1174,17 @@ function CreateParticleSystem(nodeID, childID, childName) {
 
         }
         this.gettingProperty = function(propertyName) {
-            if (ps.hasOwnProperty(propertyName))
-                return ps[propertyName];
+            if (this.ps.hasOwnProperty(propertyName))
+                return this.ps[propertyName];
         }
         this.callingMethod = function(name,args)
         {
             if(name == 'reset')
             {
-                if(ps.solver == 'AnalyticShader')
-                     ps.shaderMaterial_analytic.uniforms.time.value = 0;
+                if(this.ps.solver == 'AnalyticShader')
+                     this.ps.shaderMaterial_analytic.uniforms.time.value = 0;
                 else
-                    ps.rebuildParticles(); 
+                    this.ps.rebuildParticles(); 
             }
         }
         //must be defined by the object
@@ -1144,7 +1192,7 @@ function CreateParticleSystem(nodeID, childID, childName) {
             return this.rootnode;
         }
         this.rootnode = new THREE.Object3D();
-        this.rootnode.add(ps);
+        this.rootnode.add(this.ps.threeParticleSystem);
         //this.Build();
     }
     //default factory code

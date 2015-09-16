@@ -62,7 +62,7 @@ function MaterialCache() {
             //even though we have not ref counted it. So, we can't dispose materials that have a refcount of undefined, since we have
             //no idea if they are used elsewhere. Only dispose when refcount === 0
             //if(oldmat && oldmat.refCount === undefined)
-            //	oldmat.refCount = 1;
+            //  oldmat.refCount = 1;
             if (oldmat && oldmat.refCount)
                 oldmat.refCount--;
             if (oldmat.refCount === 0) {
@@ -83,15 +83,15 @@ function MaterialCache() {
             //make sure that we update the material to have enough submats for all the requested IDs
             if(newmat instanceof THREE.MeshFaceMaterial && mesh.geometry && mesh.geometry.faces)
             {
-            	
-            	var maxIndex = 0;
-            	for (var j = 0; j < mesh.geometry.faces.length; j++)
-            	{
-            		maxIndex = Math.max(maxIndex,mesh.geometry.faces[j].materialIndex);
-            	}
-            	for(var j = 0; j < maxIndex +1; j++)
-            		if(!newmat.materials[j])
-            			newmat.materials[j] = newmat.materials[0];
+                
+                var maxIndex = 0;
+                for (var j = 0; j < mesh.geometry.faces.length; j++)
+                {
+                    maxIndex = Math.max(maxIndex,mesh.geometry.faces[j].materialIndex);
+                }
+                for(var j = 0; j < maxIndex +1; j++)
+                    if(!newmat.materials[j])
+                        newmat.materials[j] = newmat.materials[0];
                 mesh.geometry.groupsNeedUpdate = true
             }
             mesh.material = newmat;
@@ -130,15 +130,15 @@ function MaterialCache() {
             else if (value.type == 'fresnel')
                 return this.fresnelShader(currentmat, value);
             else if (value instanceof Array)
-            	return this.setMaterialDefMultiFace(currentmat,value)
+                return this.setMaterialDefMultiFace(currentmat,value)
         }
 
         this.setMaterialDefMultiFace = function(currentmat,value)
         {
-        	
-        	if (currentmat && !(currentmat instanceof THREE.MeshFaceMaterial)) {
+            
+            if (currentmat && !(currentmat instanceof THREE.MeshFaceMaterial)) {
                  if (currentmat && currentmat.dispose)
-                		currentmat.dispose();
+                        currentmat.dispose();
                  currentmat = null;
             }
             if(!currentmat) {
@@ -146,7 +146,7 @@ function MaterialCache() {
             }
             for(var i = 0; i < value.length; i++)
             {
-            	currentmat.materials[i] = this.setMaterialByDef(currentmat.materials[i],value[i])
+                currentmat.materials[i] = this.setMaterialByDef(currentmat.materials[i],value[i])
             }
             return currentmat;
         }
@@ -450,10 +450,10 @@ function MaterialCache() {
             currentmat.morphTargets = value.morphTargets || false;
             currentmat.skinning = value.skinning || false;
 
-			if(value.specularLevel > 1)
-				value.specularLevel /= Math.pow(10, Math.ceil(Math.log10(value.specularLevel)));
-			else if(value.specularLevel < 0)
-				value.specularLevel = 0;
+            if(value.specularLevel > 1)
+                value.specularLevel /= Math.pow(10, Math.ceil(Math.log10(value.specularLevel)));
+            else if(value.specularLevel < 0)
+                value.specularLevel = 0;
 
             currentmat.specular.r = value.specularColor.r * value.specularLevel;
             currentmat.specular.g = value.specularColor.g * value.specularLevel;
@@ -463,9 +463,19 @@ function MaterialCache() {
             if (window.isIE() && currentmat.side == 2) currentmat.side = 0;
             currentmat.opacity = value.alpha;
             //if the alpha value less than 1, and the blendmode is defined but not noblending
-            if (value.alpha < 1 || (value.blendMode !== undefined && value.blendMode !== THREE.NoBlending)) {
-                if (currentmat.transparent == false) currentmat.needsUpdate = true;
-                currentmat.transparent = true;
+            if (value.blendMode !== THREE.NoBlending) {
+
+                if (value.alpha < 1)
+                {
+                    if (currentmat.transparent == false) currentmat.needsUpdate = true;
+                    currentmat.transparent = true;
+                }
+                else
+                {
+                    if (currentmat.transparent == true) currentmat.needsUpdate = true;
+                    currentmat.transparent = false;
+                }
+
             } else {
 
                 if (currentmat.transparent == true) currentmat.needsUpdate = true;
@@ -480,27 +490,37 @@ function MaterialCache() {
                 if (currentmat.fog != value.fog) currentmat.needsUpdate = true;
                 currentmat.fog = value.fog;
             }
+            
+            value.wireframe = value.wireframe || false;
+            value.metal = value.metal || false;
+            value.combine = value.combine || 0;
 
-            currentmat.wireframe = value.wireframe || false;
-            currentmat.metal = value.metal || false;
-            currentmat.combine = value.combine || 0;
+            
 
             if (currentmat.wireframe != value.wireframe) currentmat.needsUpdate = true;
             if (currentmat.metal != value.metal) currentmat.needsUpdate = true;
             if (currentmat.combine != value.combine) currentmat.needsUpdate = true;
 
+            currentmat.wireframe = value.wireframe;
+            currentmat.metal = value.metal;
+            currentmat.combine = value.combine;
+
             //in most recent chrome and threejs , add .0001 because 0 causes error in shader
             currentmat.shininess = (value.shininess * 5) + .0001;
 
-            if (currentmat.depthtest != value.depthtest) currentmat.needsUpdate = true;
-            if (value.depthtest === true || value.depthtest === undefined) {
+            if(value.depthtest == undefined)
+                    value.depthtest = true; 
+            if (currentmat.depthTest != value.depthtest) currentmat.needsUpdate = true;
+            if (value.depthtest === true) {
                 currentmat.depthTest = true;
             } else {
                 currentmat.depthTest = false;
             }
 
-            if (currentmat.depthwrite != value.depthwrite) currentmat.needsUpdate = true;
-            if (value.depthwrite === true || value.depthwrite === undefined) {
+            if(value.depthwrite == undefined) value.depthwrite = true;
+            
+            if (currentmat.depthWrite != value.depthwrite) currentmat.needsUpdate = true;
+            if (value.depthwrite === true ) {
                 currentmat.depthWrite = true;
             } else {
                 currentmat.depthWrite = false;
@@ -522,10 +542,10 @@ function MaterialCache() {
 
             }
 
-			if(value.reflect > 1)
-				value.reflect /= Math.pow(10, Math.ceil(Math.log10(value.reflect)));
-			else if(value.reflect < 0)
-				value.reflect = 0;
+            if(value.reflect > 1)
+                value.reflect /= Math.pow(10, Math.ceil(Math.log10(value.reflect)));
+            else if(value.reflect < 0)
+                value.reflect = 0;
 
             currentmat.reflectivity = value.reflect;
 
@@ -609,7 +629,7 @@ function MaterialCache() {
                         currentmat.map.offset.x = value.layers[0].offsetx;
                         currentmat.map.offset.y = value.layers[0].offsety;
                     }
-                } else {
+                } else if(mapnames[i] != 'envMap') {
                     if (currentmat[mapnames[i]] != null) {
                         currentmat[mapnames[i]] = null;
                         currentmat.needsUpdate = true;
@@ -821,10 +841,10 @@ function MaterialCache() {
 
 
 
-			if(value.reflect > 1)
-				value.reflect /= Math.pow(10, Math.ceil(Math.log10(value.reflect)));
-			else if(value.reflect < 0)
-				value.reflect = 0;
+            if(value.reflect > 1)
+                value.reflect /= Math.pow(10, Math.ceil(Math.log10(value.reflect)));
+            else if(value.reflect < 0)
+                value.reflect = 0;
 
 
 
@@ -959,43 +979,43 @@ function MaterialCache() {
                 var mix_fragment = [
                     "#ifdef USE_MAP",
 
-                    "	float alphaTotal = 0.0;",
-                    "	vec4 texColors[MAX_DIFFUSE];",
-                    "	vec4 texelColor = vec4(0.0,0.0,0.0,1.0);",
-                    "	if( opacity < 1.0 ) texelColor.w = 0.0;",
+                    "   float alphaTotal = 0.0;",
+                    "   vec4 texColors[MAX_DIFFUSE];",
+                    "   vec4 texelColor = vec4(0.0,0.0,0.0,1.0);",
+                    "   if( opacity < 1.0 ) texelColor.w = 0.0;",
 
                     // transform UV to account for offset/scale
                     // also total up alpha contributions
-                    "	for( int i=0; i<MAX_DIFFUSE; ++i ){",
-                    "		if( i < dtex_count ) {",
-                    "			mat3 transform = mat3(tex_xfrm[3*i],tex_xfrm[3*i+1],tex_xfrm[3*i+2]);",
-                    "			vec3 temp = transform * vec3(vUv,1.0);",
-                    "			vec2 tc = vec2(temp.x,temp.y);",
-                    "			texColors[i] = texture2D(diffuse_tex[i], tc);",
+                    "   for( int i=0; i<MAX_DIFFUSE; ++i ){",
+                    "       if( i < dtex_count ) {",
+                    "           mat3 transform = mat3(tex_xfrm[3*i],tex_xfrm[3*i+1],tex_xfrm[3*i+2]);",
+                    "           vec3 temp = transform * vec3(vUv,1.0);",
+                    "           vec2 tc = vec2(temp.x,temp.y);",
+                    "           texColors[i] = texture2D(diffuse_tex[i], tc);",
 
-                    "			alphaTotal += alpha[i] * texColors[i].a;",
-                    "		}",
-                    "	}",
+                    "           alphaTotal += alpha[i] * texColors[i].a;",
+                    "       }",
+                    "   }",
 
                     // calculate contributions of each layer towards final color
-                    "	for( int i=0; i<MAX_DIFFUSE; ++i ){",
-                    "		if( i < dtex_count ) {",
-                    "			float aMix = (alpha[i]*texColors[i].a)/alphaTotal;",
-                    //"			texelColor += aMix * texColors[i];",
-                    "			texelColor.rgb += aMix * texColors[i].rgb;",
-                    "			texelColor.a = max(texelColor.a, texColors[i].a);",
-                    "		}",
-                    "	}",
+                    "   for( int i=0; i<MAX_DIFFUSE; ++i ){",
+                    "       if( i < dtex_count ) {",
+                    "           float aMix = (alpha[i]*texColors[i].a)/alphaTotal;",
+                    //"         texelColor += aMix * texColors[i];",
+                    "           texelColor.rgb += aMix * texColors[i].rgb;",
+                    "           texelColor.a = max(texelColor.a, texColors[i].a);",
+                    "       }",
+                    "   }",
 
                     // brighten up under-saturated colors
-                    "	if( alphaTotal < 1.0 )",
-                    "		texelColor.rgb = 1.0/alphaTotal * texelColor.rgb;",
+                    "   if( alphaTotal < 1.0 )",
+                    "       texelColor.rgb = 1.0/alphaTotal * texelColor.rgb;",
                     "",
-                    "	#ifdef GAMMA_INPUT",
-                    "		texelColor.xyz *= texelColor.xyz;",
-                    "	#endif",
+                    "   #ifdef GAMMA_INPUT",
+                    "       texelColor.xyz *= texelColor.xyz;",
+                    "   #endif",
 
-                    "	gl_FragColor = gl_FragColor * texelColor;",
+                    "   gl_FragColor = gl_FragColor * texelColor;",
                     "#endif"
                 ].join('\n');
 
@@ -1105,15 +1125,15 @@ function MaterialCache() {
                 value: transform
             };
 
-			if(value.specularLevel > 1)
-				value.specularLevel /= Math.pow(10, Math.ceil(Math.log10(value.specularLevel)));
-			else if(value.specularLevel < 0)
-				value.specularLevel = 0;
+            if(value.specularLevel > 1)
+                value.specularLevel /= Math.pow(10, Math.ceil(Math.log10(value.specularLevel)));
+            else if(value.specularLevel < 0)
+                value.specularLevel = 0;
 
-			if(value.reflect > 1)
-				value.reflect /= Math.pow(10, Math.ceil(Math.log10(value.reflect)));
-			else if(value.reflect < 0)
-				value.reflect = 0;
+            if(value.reflect > 1)
+                value.reflect /= Math.pow(10, Math.ceil(Math.log10(value.reflect)));
+            else if(value.reflect < 0)
+                value.reflect = 0;
 
 
             // assign other random uniforms/flags
@@ -1188,27 +1208,27 @@ function MaterialCache() {
 
                 if(currentmat.ambient)
                 {
-                	value.ambient.r =parseFloat( currentmat.ambient.r.toFixed(3));
-                	value.ambient.g = parseFloat(currentmat.ambient.g.toFixed(3));
-                	value.ambient.b = parseFloat(currentmat.ambient.b.toFixed(3));
-            	}
+                    value.ambient.r =parseFloat( currentmat.ambient.r.toFixed(3));
+                    value.ambient.g = parseFloat(currentmat.ambient.g.toFixed(3));
+                    value.ambient.b = parseFloat(currentmat.ambient.b.toFixed(3));
+                }
                 value.emit = {r:0,g:0,b:0};
                 if(currentmat instanceof THREE.MeshBasicMaterial)
                     value.emit = {r:1,g:1,b:1};
                 if(currentmat.emissive)
                 {
-	                value.emit.r = parseFloat(currentmat.emissive.r.toFixed(3));
-	                value.emit.g = parseFloat(currentmat.emissive.g.toFixed(3));
-	                value.emit.b = parseFloat(currentmat.emissive.b.toFixed(3));
-            	}
+                    value.emit.r = parseFloat(currentmat.emissive.r.toFixed(3));
+                    value.emit.g = parseFloat(currentmat.emissive.g.toFixed(3));
+                    value.emit.b = parseFloat(currentmat.emissive.b.toFixed(3));
+                }
 
                 value.specularColor = {r:0,g:0,b:0};
                 if(currentmat.specular)
                 {
-	                value.specularColor.r = parseFloat(currentmat.specular.r.toFixed(3));
-	                value.specularColor.g = parseFloat(currentmat.specular.g.toFixed(3));
-	                value.specularColor.b = parseFloat(currentmat.specular.b.toFixed(3))
-            	}
+                    value.specularColor.r = parseFloat(currentmat.specular.r.toFixed(3));
+                    value.specularColor.g = parseFloat(currentmat.specular.g.toFixed(3));
+                    value.specularColor.b = parseFloat(currentmat.specular.b.toFixed(3))
+                }
                 value.specularLevel = 1;
                 value.alpha = currentmat.opacity;
                 value.shininess = (currentmat.shininess || 0) / 50;

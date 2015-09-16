@@ -769,7 +769,7 @@
         {
 
 
-            var loadBalancerAddress = {{loadBalancerAddress}};
+            var loadBalancerAddress = 'undefined';
         var instance = window.location.pathname;
 
         var instanceHost = $.ajax({
@@ -791,7 +791,7 @@
             var space = window.location.pathname.slice( 1,
                 window.location.pathname.lastIndexOf("/") );
             var protocol = window.location.protocol;
-            var host = {{host}};
+            var host = window.location.protocol +'//'+ window.location.host;
         
             var socketProxy = require('vwf/socket')
             if ( window.location.protocol === "https:" )
@@ -1923,7 +1923,8 @@ this.getNode = function( nodeID, full, normalize ) {  // TODO: options to includ
     // Start the descriptor.
 
     var nodeComponent = {};
-    nodeComponent.continues = node.continues;
+    if( node.continues)
+        nodeComponent.continues = node.continues;
 
     
 
@@ -5484,8 +5485,15 @@ function objectDiff (obj1, obj2) {
 
    if(typeof obj1 !== typeof obj2)
    return obj1;
+   if(obj2 == null && obj1)
+        return obj1
+
+   if(obj1 == null && obj2)
+        return obj1;     
+   if(obj2 == null && obj1 == null)
+        return obj1;     
    if(obj1.constructor != obj2.constructor)
-   return obj1;
+        return obj1;
    if(obj1.constructor == String)
    {
       if($.trim(obj1) == $.trim(obj2))

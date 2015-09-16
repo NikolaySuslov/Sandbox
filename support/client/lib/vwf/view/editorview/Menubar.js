@@ -12,7 +12,12 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				return nodeInherits( vwf.prototype(node), ancestor );
 		}
 
-		$scope.$watchGroup(['fields.selectedNode.id','fields.worldIsReady'], function(newvals)
+		$scope.$watchGroup([
+			'fields.worldIsReady',
+			'fields.selectedNode.id',
+			'fields.selectedNode.properties.sourceAssetId',
+			'fields.selectedNode.properties.materialDef.sourceAssetId'
+		], function(newvals)
 		{
 			//console.log('Updating menu state');
 			var node = _Editor.GetSelectedVWFNode();
@@ -33,7 +38,6 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			$scope.worldIsNotLaunchable = !($scope.worldIsPersistent && $scope.userIsOwner) || $scope.worldIsSinglePlayer || $scope.isExample;
 			$scope.worldHasTerrain = !!window._dTerrain;
 			
-
 			//console.log('UserIsOwner:', $scope.userIsOwner);
 		});
 

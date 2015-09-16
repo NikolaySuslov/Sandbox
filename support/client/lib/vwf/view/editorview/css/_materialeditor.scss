@@ -1,5 +1,16 @@
 @import 'polyfill';
 
+.htmlPalette
+{
+	&.extrawide {
+		width: 230px;
+	}
+	&.toplevel {
+		z-index: 5;
+	}
+}
+
+
 #materialEditor
 {
 	slider
@@ -42,7 +53,7 @@
 		}
 	}
 
-	.colorPickerIcon
+	.colorPickerIcon, html-palette
 	{
 		width: 25px;
 		height: 25px;

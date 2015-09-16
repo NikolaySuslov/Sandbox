@@ -36,12 +36,14 @@ mixin menus_body
 		li
 			a#MenuEdit Edit
 			ul
-				li: a#MenuUndo(ng-click='lookUpHandler($event)')
-					.glyphicon.glyphicon-share-alt(style='transform: rotateY(180deg);')
-					| Undo (ctrl-z)
-				li: a#MenuRedo(ng-click='lookUpHandler($event)')
-					.glyphicon.glyphicon-share-alt
-					| Redo (ctrl-y)
+				li(ng-class='{disabled: !fields.undoAction}')
+					a#MenuUndo(ng-click='lookUpHandler($event)')
+						.glyphicon.glyphicon-share-alt(style='transform: rotateY(180deg);')
+						| Undo {{fields.undoAction}} (ctrl-z)
+				li(ng-class='{disabled: !fields.redoAction}')
+					a#MenuRedo(ng-click='lookUpHandler($event)')
+						.glyphicon.glyphicon-share-alt
+						| Redo {{fields.redoAction}} (ctrl-y)
 				li.divider
 
 				li(ng-class='{"disabled": !selection}')
@@ -301,7 +303,7 @@ mixin menus_body
 						li: a#MenuAssetsSaveAsFile(title="Creates a new reusable asset via file upload", ng-click='lookUpHandler($event)')
 							.glyphicon.glyphicon-hdd
 							| From File
-				li(ng-class='{"disabled": !isEntityAsset || !isMaterialAsset}')
+				li(ng-class='{"disabled": !isEntityAsset && !isMaterialAsset}')
 					a#MenuAssetsSave
 						.glyphicon.glyphicon-floppy-save
 						| Refresh Asset

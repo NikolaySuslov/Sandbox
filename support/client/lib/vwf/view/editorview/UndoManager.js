@@ -185,10 +185,13 @@ define(function ()
 
 	}
 	function initialize()
-	{
+	{	
 		this.stack = [];
 		this.head = -1;
+		this.modCb = null;
+
 		this.SetPropertyEvent = SetPropertyEvent;
+		this.SelectionEvent = SelectionEvent;
 		this.DeleteNodeEvent = DeleteNodeEvent;
 		this.CreateNodeEvent = CreateNodeEvent;
 		this.CompoundEvent = CompoundEvent;
@@ -198,6 +201,9 @@ define(function ()
 			if(this.head == 0) return;
 			this.stack[this.head-1].undo();
 			this.head--;
+
+			if(this.modCb)
+				this.modCb(this.stack[this.head-1], this.stack[this.head]);
 		}
 		this.redo = function()
 		{
@@ -205,6 +211,9 @@ define(function ()
 
 			this.head++;
 			this.stack[this.head-1].redo();
+
+			if(this.modCb)
+				this.modCb(this.stack[this.head-1], this.stack[this.head]);
 		}
 		this.pushEvent = function(newevent)
 		{
@@ -227,6 +236,9 @@ define(function ()
 			console.log(newevent);
 			this.stack.push(newevent);
 			this.head = this.stack.length;
+
+			if(this.modCb)
+				this.modCb(this.stack[this.head-1], this.stack[this.head]);
 		}
 		this.recordDelete = function(id)
 		{

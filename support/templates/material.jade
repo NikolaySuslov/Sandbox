@@ -22,39 +22,41 @@ block content
 					//option camera
 
 			div(ng-show='materialDef.type === "phong" || materialDef.type === "mix" || !materialDef')
-				label Alpha:
-					br
-					slider(min=0, max=1, step=0.01, value='materialDef.alpha', disabled='!materialDef', sliding='suppressUndo')
-				label Specular level:
-					br
-					slider(min=0, max=1, step=0.01, value='materialDef.specularLevel', disabled='!materialDef', sliding='suppressUndo')
-				label Reflectiveness:
-					br
-					slider(min=0, max=1, step=0.01, value='materialDef.reflect', disabled='!materialDef', sliding='suppressUndo')
+
+				label.inline Base color:
+					html-palette(rgb-color='materialDef.color', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', use-alpha=true, css='extrawide toplevel')
+
+				.inline Ambient color:
+					.verticalLayout(style='align-items: flex-end;')
+						label Linked to base
+							input(type='checkbox', ng-model='ambientLinked', ng-disabled='!materialDef')
+						//color-picker(color-obj='materialDef.ambient', disabled='!materialDef', ng-hide='ambientLinked', sliding='suppressUndo')
+						html-palette(ng-hide='ambientLinked', rgb-color='materialDef.ambient', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', css='toplevel')
+
 				label Shininess:
 					br
 					slider(min=0, max=10, step=0.1, use-exponent='true', value='materialDef.shininess', disabled='!materialDef', sliding='suppressUndo')
+
+				label.inline Specular color:
+					//color-picker(color-obj='materialDef.specularColor', disabled='!materialDef', sliding='suppressUndo')
+					html-palette(rgb-color='materialDef.specularColor', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', use-alpha=true, css='extrawide toplevel')
+
+				//label Specular intensity:
+					br
+					slider(min=0, max=1, step=0.01, value='materialDef.specularLevel', disabled='!materialDef', sliding='suppressUndo')
+
+				label.inline Emissive color:
+					color-picker(color-obj='materialDef.emit', disabled='!materialDef', sliding='suppressUndo')
+
+				label Skybox factor:
+					br
+					slider(min=0, max=1, step=0.01, value='materialDef.reflect', disabled='!materialDef', sliding='suppressUndo')
 
 				label.inline Culling:
 					select(ng-model='materialDef.side', convert-to-number, ng-disabled='!materialDef')
 						option(value=0, label='Back') Back
 						option(value=1, label='Front') Front
 						option(value=2, label='None') None
-
-				label.inline Diffuse color:
-					color-picker(color-obj='materialDef.color', disabled='!materialDef', sliding='suppressUndo')
-
-				.inline Ambient color:
-					.verticalLayout(style='align-items: flex-end;')
-						label Linked
-							input(type='checkbox', ng-model='ambientLinked', ng-disabled='!materialDef')
-						color-picker(color-obj='materialDef.ambient', disabled='!materialDef', ng-hide='ambientLinked', sliding='suppressUndo')
-
-				label.inline Emissive color:
-					color-picker(color-obj='materialDef.emit', disabled='!materialDef', sliding='suppressUndo')
-
-				label.inline Specular color:
-					color-picker(color-obj='materialDef.specularColor', disabled='!materialDef', sliding='suppressUndo')
 
 				label.inline Blending:
 					select(ng-model='materialDef.blendMode', convert-to-number, ng-disabled='!materialDef')

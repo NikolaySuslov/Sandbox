@@ -291,13 +291,12 @@ SceneManager.prototype.CPUPick = function(o, d, opts) {
 SceneManager.prototype.FrustrumCast = function(f, opts) {
 
     //let's lazy update only on demand;
-    
-    var hitlist = this.root.FrustrumCast(f, opts || this.defaultPickOptions);
-    hitlist = hitlist.concat(this.staticRoot.FrustrumCast(f, opts || this.defaultPickOptions));
+    opts = this.buildCPUPickOptions(opts);
+    var hitlist = [];
+    this.root.FrustrumCast(f, opts || this.defaultPickOptions,hitlist);
+    this.staticRoot.FrustrumCast(f, opts || this.defaultPickOptions,hitlist);
     for (var i = 0; i < this.specialCaseObjects.length; i++) {
-        var childhits = this.specialCaseObjects[i].FrustrumCast(f, opts || this.defaultPickOptions);
-        if (childhits)
-            hitlist = hitlist.concat(childhits);
+        this.specialCaseObjects[i].FrustrumCast(f, opts || this.defaultPickOptions,hitlist);
     }
 
 
@@ -531,8 +530,10 @@ SceneManager.prototype.loadTexture = function(url, mapping, onLoad, onError) {
                     texture.magFilter = THREE.NearestFilter;
                 }
                 texture.needsUpdate = true;
-                if (onLoad) onLoad(texture);
-
+                img.onload = function()
+                {
+                    if (onLoad) onLoad(texture);    
+                }
             }
         }
         xhr.send();
@@ -717,7 +718,7 @@ SceneManager.prototype.getTexture = function(src, noclone) {
         var tex = this.textureList[src];
 
         var onload = function(texture) {
-
+            tex.needsUpdate = true;
             if (tex.clones) {
               
                 for (var i = 0; i < tex.clones.length; i++) {
@@ -731,7 +732,6 @@ SceneManager.prototype.getTexture = function(src, noclone) {
                     tex.clones[i].isActuallyCompressed = texture.isActuallyCompressed;
 
                 }   
-
 
             }
         }.bind(this);
@@ -1467,16 +1467,17 @@ SceneManagerRegion.prototype.CPUPick = function(o, d, opts, hits) {
 }
 
 //Test a ray against an octree region
-SceneManagerRegion.prototype.FrustrumCast = function(frustrum, opts) {
+SceneManagerRegion.prototype.FrustrumCast = function(frustrum, opts,hits) {
 
-    var hits = [];
+    if(!hits)
+        hits = [];
 
     //if no faces, can be no hits. 
     //remember, faces is all faces in this node AND its children
     if (this.getChildCount() == 0)
         return hits;
 
-    //reject this node if the ray does not intersect it's bounding box
+    //reject this node if the ray does not intersect its bounding box
     if (this.testBoundsFrustrum(frustrum).length == 0)
         return hits;
 
@@ -1490,21 +1491,10 @@ SceneManagerRegion.prototype.FrustrumCast = function(frustrum, opts) {
     //check either this nodes faces, or the not distributed faces. for a leaf, this will just loop all faces,
     //for a non leaf, this will iterate over the faces that for some reason are not in children, which SHOULD be none
     for (var i = 0; i < this.childRegions.length; i++) {
-        var childhits = this.childRegions[i].FrustrumCast(frustrum, opts);
-        if (childhits) {
-            for (var j = 0; j < childhits.length; j++)
-                hits.push(childhits[j]);
-
-
-        }
+        this.childRegions[i].FrustrumCast(frustrum, opts,hits);
     }
     for (var i = 0; i < this.childObjects.length; i++) {
-        var childhits = this.childObjects[i].FrustrumCast(frustrum, opts);
-        if (childhits) {
-            for (var j = 0; j < childhits.length; j++)
-                hits.push(childhits[j]);
-
-        }
+        this.childObjects[i].FrustrumCast(frustrum, opts,hits);
     }
     return hits;
 }

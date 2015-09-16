@@ -241,7 +241,7 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
                                 }
                             }else
                             {
-                                    jsDriverSelf.calledMethod(targetNode.id,signal,[data],thisid);
+                                    jsDriverSelf.callingMethod(targetNode.id,signal,[data],thisid);
                             }
                         }
                     
@@ -268,7 +268,7 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
                                 }
                             }else
                             {
-                                    jsDriverSelf.calledMethod(targetNode.id,signal,[data],thisid);
+                                    jsDriverSelf.callingMethod(targetNode.id,signal,[data],thisid);
                             }
                         }
                 },

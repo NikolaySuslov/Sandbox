@@ -72,7 +72,14 @@ define([
             window._EditorView = this;
             if (!window._EditorInitialized) {
 
-
+				$(document).keydown(function(e){
+					var elem = e.target.nodeName.toLowerCase();
+					var exceptions = ['input','textarea','select'];
+					if(e.keyCode === 8 && exceptions.indexOf(elem) === -1){
+						console.log('Block backspace navigation');
+						e.preventDefault();
+					}
+				});
 
 
                 window._DataManager = require("vwf/view/editorview/DataManager").getSingleton();;

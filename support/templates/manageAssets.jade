@@ -48,7 +48,7 @@ mixin manageAssets_body
 
 			hr
 
-			p#url.fixed-height {{getAssetUrl(selectedAsset)}}
+			p#assetUrl.fixed-height(onselectstart='event.stopImmediatePropagation()') {{getAssetUrl(selectedAsset)}}
 			label#name.verticalLayout Name
 				br
 				input(type='text', placeholder='Name', ng-model='selected.name', ng-change='selected._basicDirty = true', ng-disabled='!selectedAsset')

@@ -36,7 +36,7 @@ define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], fu
 		 */
 
 		// check for upstream materialDef changes when this value updates
-		$scope.$watch('fields.selectedNode.properties.materialDef', refresh);
+		$scope.$watchGroup(['fields.selectedNode.id','fields.selectedNode.properties.materialDef'], refresh);
 
 		// repoint materialDef when it's an array and the active material changes
 		$scope.$watch('activeMaterial', function(newval){
@@ -55,11 +55,28 @@ define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], fu
 			}
 		});
 
+		$scope.$watch('materialDef.color.a', function(newval){
+			if(newval !== undefined){
+				$scope.materialDef.alpha = newval;
+			}
+		});
+		$scope.$watch('materialDef.specularColor.a', function(newval){
+			if(newval !== undefined){
+				$scope.materialDef.specularLevel = newval;
+			}
+		});
+
 		// recursively watch materialDef, and setProperty if changes were made by the material editor
+		var handle = null;
 		$scope.$watch('materialArray || materialDef', function(newval)
 		{
 			if(newval && newval === oldMaterialDef){
+				$scope.suppressUndo = true;
 				applyDef(newval);
+				if(handle) $timeout.cancel(handle);
+				handle = $timeout(function(){
+					$scope.suppressUndo = false;
+				}, 500);
 			}
 
 			if( $scope.materialDef )
@@ -135,7 +152,10 @@ define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], fu
 				}
 
 				if( !$scope.suppressUndo ){
-					_UndoManager.pushEvent(undoEvent);
+					if($scope.fields.selectedNodeIds.length === 1)
+						_UndoManager.pushEvent(undoEvent.list[0]);
+					else
+						_UndoManager.pushEvent(undoEvent);
 					lastUndo = angular.copy(def);
 				}
 			}
@@ -145,7 +165,7 @@ define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], fu
 		function refresh()
 		{
 			// try to get a materialDef from property, or failing that, from the driver
-			var mat = $scope.fields.selectedNode && ($scope.fields.selectedNode.properties.materialDef || vwf_view.kernel.getProperty($scope.fields.selectedNode.id));
+			var mat = $scope.fields.selectedNode &&  vwf.getProperty($scope.fields.selectedNode.id, 'materialDef');
 
 			if( mat && !$scope.suppressUndo && !angular.equals($scope.materialArray||$scope.materialDef, mat))
 			{
@@ -173,6 +193,7 @@ define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], fu
 				$scope.materialDef = null;
 				$scope.ambientLinked = true;
 				lastUndo = null;
+				$('#materialEditor html-palette').css('background', '#aaaaaa');
 				//_SidePanel.hideTab('materialEditor');
 			}
 		}

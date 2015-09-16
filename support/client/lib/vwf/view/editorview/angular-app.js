@@ -1,6 +1,6 @@
-define(['vwf/view/editorview/lib/angular'], function(angular)
+define(['vwf/view/editorview/lib/angular', './UndoManager', './lib/html-palette.min'], function(angular, UndoManager)
 {
-	var app = angular.module('SandboxEditor', []);
+	var app = angular.module('SandboxEditor', ['html-palette']);
 	var playing = false;
 
 	app.run(['$timeout', '$rootScope', function($timeout, $rootScope)
@@ -13,7 +13,8 @@ define(['vwf/view/editorview/lib/angular'], function(angular)
 			nodes: {},
 			cameras: [],
 
-			materialUpdateFromModel: false
+			undoAction: '',
+			redoAction: ''
 		};
 
 		$(document).on('selectionChanged', function(e,node)
@@ -46,6 +47,38 @@ define(['vwf/view/editorview/lib/angular'], function(angular)
 		if(!playing) app.root.$apply();
 	},200);
 	
+	UndoManager = UndoManager.getSingleton();
+	UndoManager.modCb = function(undoFrame, redoFrame)
+	{
+		if(!undoFrame)
+			app.root.fields.undoAction = '';
+		else if(undoFrame instanceof UndoManager.CreateNodeEvent)
+			app.root.fields.undoAction = 'create '+undoFrame.proto.properties.DisplayName;
+		else if(undoFrame instanceof UndoManager.DeleteNodeEvent)
+			app.root.fields.undoAction = 'delete '+undoFrame.proto.properties.DisplayName;
+		else if(undoFrame instanceof UndoManager.SelectionEvent)
+			app.root.fields.undoAction = 'selection';
+		else if(undoFrame instanceof UndoManager.SetPropertyEvent)
+			app.root.fields.undoAction = 'change '+undoFrame.property;
+		else if(undoFrame instanceof UndoManager.CompoundEvent)
+			app.root.fields.undoAction = undoFrame.list.length+' changes';
+
+		if(!redoFrame)
+			app.root.fields.redoAction = '';
+		else if(redoFrame instanceof UndoManager.CreateNodeEvent)
+			app.root.fields.redoAction = 'create '+redoFrame.proto.properties.DisplayName;
+		else if(redoFrame instanceof UndoManager.DeleteNodeEvent)
+			app.root.fields.redoAction = 'delete '+redoFrame.proto.properties.DisplayName;
+		else if(redoFrame instanceof UndoManager.SelectionEvent)
+			app.root.fields.redoAction = 'selection';
+		else if(redoFrame instanceof UndoManager.SetPropertyEvent)
+			app.root.fields.redoAction = 'change '+redoFrame.property;
+		else if(redoFrame instanceof UndoManager.CompoundEvent)
+			app.root.fields.redoAction = redoFrame.list.length+' changes';
+
+		app.apply();
+	}
+
 	function sortChildren(nodeId)
 	{
 		var parent = app.root.fields.nodes[nodeId];
