@@ -1,5 +1,5 @@
 properties:
-    xAPI:
+    ___xAPI:
         get: |
             function genCaller(fn){
                 return function (){

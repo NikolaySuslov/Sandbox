@@ -18,8 +18,8 @@ properties:
   rotZ: 0
   oldRotZ: 0         
   test:  
-  motionStack: []
-  activeCycle: []
+  motionStack: 
+  activeCycle: 
   standingOnID: 
   standingOnOffset: 
   ___physics_activation_state: 4
@@ -31,16 +31,18 @@ properties:
   ___physics_enabled: true
   ___physics_mass: 158.5
   animationPaused: false
+  jumpcounter: 0
 methods:
   tick:
   attached:
   satProperty:
   deletingNode:
-  setPosition:  
+  setPosition: 
   keyUp:
   keyDown:
   ready: 
   lookat: 
+  simulation: 
   addControllingClient: 
 events:
   pointerOver:
@@ -76,10 +78,13 @@ scripts:
 
 
         if (this.id == 'character-vwf') return;
-
+        if(!this.motionStack)
+          this.motionStack = [];
+        if(!this.activeCycle)  
+          this.activeCycle = [];
         this.DownKeys = [];
         // this.motionStack= [];
-        this.jumpcounter = 0;
+        //this.jumpcounter = 0;
 
 
 
@@ -138,7 +143,7 @@ scripts:
           }
           this.skin.isAvatar = true;
         }
-        this.jumpcounter = 0.0;
+        //this.jumpcounter = 0.0;
         //this.stand();
 
         this.createNameTag(PlayerNumber);
@@ -405,7 +410,7 @@ scripts:
         if (this.standingOnID) {
           var world = vwf.getProperty(this.standingOnID, 'worldTransform');
           if(!world) {this.standingOnID = null; return;}
-          var offset = Mat4.multMat(world, this.standingOnOffset.internal_val, []);
+          var offset = Mat4.multMat(world, this.standingOnOffset, []);
           this.transform = offset;
           //this.originalvelocity = [0,0,0];
         }
@@ -416,9 +421,34 @@ scripts:
           if(!world) {this.standingOnID = null; return;}
           var iWorld = [];
           Mat4.invert(world, iWorld);
-          var offset = Mat4.multMat(iWorld, this.transform.internal_val, []);
+          var offset = Mat4.multMat(iWorld, this.transform, []);
           this.standingOnOffset = offset;
         }
+      }
+      // used for user simulation testing
+      this.simulation = function(motion) {
+
+        if (motion == "walk")
+          this.walk();
+
+        if (motion == "walkback")
+          this.walkback();
+
+        if (motion == "jump")
+          this.jump();
+
+        if (motion == "run")
+          this.run();
+
+        if (motion == "idle")
+          this.stand();
+
+        if(motion == 'turn')
+        {
+           
+            this.lookat([Math.random(),Math.random(),0]);
+        }  
+
       }
       this.update = function(moniker) {
 
@@ -442,7 +472,7 @@ scripts:
         var _cycles = this.activeCycle;
         if(! _cycles)
         {
-          //debugger;
+          
           _cycles = this.activeCycle;
         }
         var _length = _cycles.length;

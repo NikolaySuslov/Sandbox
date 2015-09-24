@@ -1,4 +1,6 @@
-define(['vwf/view/editorview/lib/angular', './UndoManager', './lib/html-palette.min'], function(angular, UndoManager)
+
+
+define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview/lib/html-palette.min'], function(angular, UndoManager)
 {
 	var app = angular.module('SandboxEditor', ['html-palette']);
 	var playing = false;
@@ -178,6 +180,7 @@ define(['vwf/view/editorview/lib/angular', './UndoManager', './lib/html-palette.
 		var node = app.root.fields.nodes[newId] = {};
 		node.id = newId;
 		node.prototype = newExtends;
+		node.continues = vwf.getNode(newId).continues;
 		node.subtype = newType;
 		node.name = newId;
 		node.children = [];
@@ -206,6 +209,7 @@ define(['vwf/view/editorview/lib/angular', './UndoManager', './lib/html-palette.
 	app.deletedNode = function(nodeId)
 	{
 		var node = app.root.fields.nodes[nodeId];
+		if(!node) return;
 		var parent = app.root.fields.nodes[node.parent];
 
 		for(var i=0; i<parent.children.length; i++){

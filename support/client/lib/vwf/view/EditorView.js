@@ -1,124 +1,112 @@
 "use strict";
-
-jQuery.extend({
-    parseQuerystring: function() {
+jQuery.extend(
+{
+    parseQuerystring: function()
+    {
         var nvpair = {};
         var qs = window.location.search.replace('?', '');
         var pairs = qs.split('&');
-        $.each(pairs, function(i, v) {
+        $.each(pairs, function(i, v)
+        {
             var pair = v.split('=');
             nvpair[pair[0]] = pair[1];
         });
         return nvpair;
     }
 });
-
 define([
-	"module", "version", "vwf/view",
 
-	// dependencies
-	"vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify",
-	"vwf/view/editorview/angular-app", 
-	"vwf/view/editorview/Menubar", 
-
-	// other things that need to be loaded first
-	"touch.js",
-	"vwf/view/editorview/ObjectPools", 
-	"vwf/view/editorview/LocationTools", 
-	"vwf/view/editorview/WindowResize", 
-	"vwf/view/editorview/_PermissionsManager", 
-	"vwf/view/editorview/InputSetup", 
-	"vwf/view/editorview/SaveLoadTimer", 
-	"vwf/view/editorview/TouchHandler", 
-	"vwf/view/editorview/SidePanel", 
-	"vwf/view/editorview/Toolbar", 
-	"vwf/view/editorview/ChatSystemGUI", 
-	"vwf/view/editorview/PrimitiveEditor", 
-	"vwf/view/editorview/MaterialEditor", 
-	"vwf/view/editorview/Notifier", 
-	"vwf/view/editorview/ScriptEditor", 
-	"vwf/view/editorview/Editor", 
-	"vwf/view/editorview/_3DRIntegration", 
-	"vwf/view/editorview/HierarchyManager", 
-	"vwf/view/editorview/DataManager", 
-	"vwf/view/editorview/UserManager", 
-	"vwf/view/editorview/help", 
-	"vwf/view/editorview/wireeditor", 
-	"vwf/view/editorview/UndoManager", 
-	"vwf/view/editorview/Publisher", 
-	"vwf/view/editorview/EntityLibrary", 
-	"vwf/view/editorview/PhysicsEditor",
-	"vwf/view/editorview/PerformanceManager",
-	"vwf/view/editorview/JSONPrompt",
+    "module", "version", "vwf/view",
+    // dependencies
+    "vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify",
+    "vwf/view/editorview/angular-app",
+    "vwf/view/editorview/Menubar",
+    // other things that need to be loaded first
+    "touch.js",
+    "vwf/view/editorview/ObjectPools",
+    "vwf/view/editorview/LocationTools",
+    "vwf/view/editorview/WindowResize",
+    "vwf/view/editorview/_PermissionsManager",
+    "vwf/view/editorview/InputSetup",
+    "vwf/view/editorview/SaveLoadTimer",
+    "vwf/view/editorview/TouchHandler",
+    "vwf/view/editorview/SidePanel",
+    "vwf/view/editorview/Toolbar",
+    "vwf/view/editorview/ChatSystemGUI",
+    "vwf/view/editorview/PrimitiveEditor",
+    "vwf/view/editorview/MaterialEditor",
+    "vwf/view/editorview/Notifier",
+    "vwf/view/editorview/ScriptEditor",
+    "vwf/view/editorview/Editor",
+    "vwf/view/editorview/_3DRIntegration",
+    "vwf/view/editorview/HierarchyManager",
+    "vwf/view/editorview/DataManager",
+    "vwf/view/editorview/UserManager",
+    "vwf/view/editorview/help",
+    "vwf/view/editorview/wireeditor",
+    "vwf/view/editorview/UndoManager",
+    "vwf/view/editorview/Publisher",
+    "vwf/view/editorview/EntityLibrary",
+    "vwf/view/editorview/PhysicsEditor",
+    "vwf/view/editorview/PerformanceManager",
+    "vwf/view/editorview/JSONPrompt",
     "vwf/view/localization/translate"
-	//"vwf/view/editorview/panelEditor",
-], function(module, version, view, alertify, angular_app, Menubar) {
-
-    return view.load(module, {
+    //"vwf/view/editorview/panelEditor",
+], function(module, version, view, alertify, angular_app, Menubar)
+{
+    return view.load(module,
+    {
         // == Module Definition ====================================================================
-
-        needTools : function() {
-
-            var instanceData = _DataManager.getInstanceData() || {};
+        needTools: function()
+        {
+            var instanceData = _DataManager.getInstanceData() ||
+            {};
             var needTools = instanceData && instanceData.publishSettings ? instanceData.publishSettings.allowTools : true;
             if ($.parseQuerystring().notools) needTools = false;
             return needTools;
         },
-        initialize: function() {
-
-
-
-
+        initialize: function()
+        {
             window._EditorView = this;
-            if (!window._EditorInitialized) {
-
-				$(document).keydown(function(e){
-					var elem = e.target.nodeName.toLowerCase();
-					var exceptions = ['input','textarea','select'];
-					if(e.keyCode === 8 && exceptions.indexOf(elem) === -1){
-						console.log('Block backspace navigation');
-						e.preventDefault();
-					}
-				});
-
-
+            if (!window._EditorInitialized)
+            {
+                $(document).keydown(function(e)
+                {
+                    var elem = e.target.nodeName.toLowerCase();
+                    var exceptions = ['input', 'textarea', 'select'];
+                    if (e.keyCode === 8 && exceptions.indexOf(elem) === -1)
+                    {
+                        console.log('Block backspace navigation');
+                        e.preventDefault();
+                    }
+                });
                 window._DataManager = require("vwf/view/editorview/DataManager").getSingleton();;
-
-
-
                 //set the title of the window to the title of the world.
                 //if(_DataManager.getInstanceData())
                 //	document.title = _DataManager.getInstanceData().title;
-
                 window._Editor = require("vwf/view/editorview/Editor").getSingleton();
-                if (this.needTools()) {
-
+                if (this.needTools())
+                {
                     /*var data = $.ajax('vwf/view/editorview/menus.html', {
                         async: false,
                         dataType: 'html'
                     }).responseText;
                     $(document.body).append(data);*/
-					//$('#smoothmenu1').show();
+                    //$('#smoothmenu1').show();
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/lib/ddsmoothmenu.js"></script>');
-
                     //initialize the primitive editor
-
                     //initialize the primitive editor
-
                     window._PrimitiveEditor = require("vwf/view/editorview/PrimitiveEditor").getSingleton();
-                    
                     window._PhysicsEditor = require("vwf/view/editorview/PhysicsEditor").getSingleton();
                     window._Notifier = require("vwf/view/editorview/Notifier").getSingleton();
-					require('vwf/view/editorview/ScriptEditor').initialize();
+                    require('vwf/view/editorview/ScriptEditor').initialize();
                     window._ModelLibrary = require("vwf/view/editorview/_3DRIntegration").getSingleton();
                     window._Publisher = require("vwf/view/editorview/Publisher").getSingleton();
-                   
                     window._PermissionsManager = require("vwf/view/editorview/_PermissionsManager").getSingleton();
                     window._WireEditor = require("vwf/view/editorview/wireeditor").getSingleton();
                     window._UndoManager = require("vwf/view/editorview/UndoManager").getSingleton();
                     require("vwf/view/editorview/EntityLibrary").initialize();
                     require("vwf/view/editorview/JSONPrompt").initialize();
-
 
                     //this.addManager(_ScriptEditor);
 
@@ -136,60 +124,57 @@ define([
                 window._UserManager = require("vwf/view/editorview/UserManager").getSingleton();
                 window._PerformanceManager = require("vwf/view/editorview/PerformanceManager").getSingleton();
                 this.addManager(_PerformanceManager);
-
-                if (this.needTools()) {
+                if (this.needTools())
+                {
                     require("vwf/view/editorview/help").getSingleton();
-
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/PainterTool.js"></script>');
-
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/AlignTool.js"></script>');
-
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/SplineTool.js"></script>');
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/TerrainTool.js"></script>');
-
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/lib/jquery.qtip-1.0.0-rc3.min.js"></script>');
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/lib/beautify.module.js"></script>');
                 }
-
                 $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/sha256.js"></script>');
                 $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/lib/jquery.ui.touch-punch.min.js"></script>');
-
                 require("vwf/view/editorview/WindowResize").initialize();
-                $('input[type="text"]').keypress(function(e) {
+                $('input[type="text"]').keypress(function(e)
+                {
                     e.stopImmediatePropagation();
                 });
-
-
                 this.addManager(_UserManager);
                 this.addManager(_DataManager);
                 this.addManager(_Editor);
-
-				angular_app.initialize();
-				this.addManager(angular_app);
+                angular_app.initialize();
+                this.addManager(angular_app);
             }
         },
         managers: [], //list of objects that need notification of events
-        addManager: function(manager) {
+        addManager: function(manager)
+        {
             this.managers.push(manager);
             manager.sendMessage = this.sendMessage;
-            manager.getParent = function() {
+            manager.getParent = function()
+            {
                 return this;
             }.bind(this);
-
         },
         //actual sending of messages. Stops and returns when a manager returns a value
-        _sendMessage: function(message, data, sender) {
-
-            for (var i = 0; i < this.managers.length; i++) {
+        _sendMessage: function(message, data, sender)
+        {
+            for (var i = 0; i < this.managers.length; i++)
+            {
                 var manager = this.managers[i];
-                if (manager[message] && (typeof manager[message] == "function")) {
+                if (manager[message] && (typeof manager[message] == "function"))
+                {
                     var tret = null;
                     if (data && data.constructor == Array)
                         tret = manager[message].apply(manager, data);
                     else
                         tret = manager[message].apply(manager, [data]);
                     return tret;
-                } else if (manager.receiveMessage) {
+                }
+                else if (manager.receiveMessage)
+                {
                     var tret = manager.receiveMessage(message, data, sender);
                     if (tret)
                         return tret;
@@ -199,96 +184,123 @@ define([
         },
         //handle that is applied to each registered manager, allowing them to send messages over the bus
         /* message,data */
-        sendMessage: function( /* message,data */ ) {
+        sendMessage: function( /* message,data */ )
+        {
             var args = []
-            for (var i = 0; i < arguments.length; i++) {
+            for (var i = 0; i < arguments.length; i++)
+            {
                 args.push(arguments[i]);
             }
-
             var message = args.shift();
             return this.getParent()._sendMessage(message, args, this);
         },
         // send the VWF events down to all registered objects
-        viewAPINotify: function(functionName, data) {
-            for (var i = 0; i < this.managers.length; i++) {
-                var manager = this.managers[i];
-                if (manager[functionName]) {
-                    manager[functionName].apply(manager, data)
+        viewAPINotify: function(functionName, data)
+        {
+            //only pass messages to the editor components if the world is stopped, or if the messages are necessary to handle the play pause logic
+            if (vwf.models.object.gettingProperty(vwf.application(), 'playMode') !== 'play'||
+                data[1] =='playMode' ||data[1] =='playBackup' || data[1] == 'restoreState' || data[1] == 'postWorldRestore' || data[1] == 'preWorldPlay' 
+                )
+            {
+                for (var i = 0; i < this.managers.length; i++)
+                {
+                    var manager = this.managers[i];
+                    if (manager[functionName])
+                    {
+                        manager[functionName].apply(manager, data)
+                    }
                 }
             }
         },
-        createdNode: function(nodeID, childID, childExtendsID, childImplementsIDs, childSource, childType, childURI, childName, callback /* ( ready ) */ ) {
-
+        createdNode: function(nodeID, childID, childExtendsID, childImplementsIDs, childSource, childType, childURI, childName, callback /* ( ready ) */ )
+        {
             this.viewAPINotify('createdNode', arguments);
         },
-
-        initializedNode: function(nodeID, childID) {
-            this.viewAPINotify('initializedNode', arguments);
-            if (childID == 'index-vwf') {
-                if (window._Editor) {
+        initializedNode: function(nodeID, childID)
+        {
+            this.viewAPINotify('initializedNode', [nodeID, childID]);
+            if (childID == 'index-vwf')
+            {
+                if (window._Editor)
+                {
                     _Editor.initialize();
                     InitializeEditor();
                     //disable text selection on the entire page, except for input elements and draggables
                     $('body *').not(':has(input)').not('[draggable]').not('input').disableSelection();
                     //enable selection on the ancestors of all draggables, to make drag work in FF
                     $('[draggable]').parentsUntil().enableSelection();
-                  
                 }
-
             }
-            if (window._Editor && childID != 'index-vwf') {
-                if (window._Editor.createNodeCallback != null) {
+            if (window._Editor && childID != 'index-vwf')
+            {
+                if (window._Editor.createNodeCallback != null)
+                {
                     window._Editor.CallCreateNodeCallback(childID, nodeID, vwf.name(childID));
                 }
             }
         },
-        createdProperty: function(nodeID, propertyName, propertyValue) {
-            this.viewAPINotify('createdProperty', arguments);
+        createdProperty: function(nodeID, propertyName, propertyValue)
+        {
+            this.viewAPINotify('createdProperty', [nodeID, propertyName, propertyValue]);
         },
-        initializedProperty: function(nodeID, propertyName, propertyValue) {
-            this.viewAPINotify('initializedProperty', arguments);
+        initializedProperty: function(nodeID, propertyName, propertyValue)
+        {
+            this.viewAPINotify('initializedProperty', [nodeID, propertyName, propertyValue]);
         },
-        deletedNode: function(nodeID) {
-            this.viewAPINotify('deletedNode', arguments);
-            if (window._Editor && _Editor.SelectedVWFID == nodeID) {
+        deletedNode: function(nodeID)
+        {
+            this.viewAPINotify('deletedNode', [nodeID]);
+            if (window._Editor && _Editor.SelectedVWFID == nodeID)
+            {
                 _Editor.SelectObject(null);
             }
         },
-        satProperty: function(nodeID, propertyName, propertyValue) {
+        satProperty: function(nodeID, propertyName, propertyValue)
+        {
             this.viewAPINotify('satProperty', [nodeID, propertyName, propertyValue]);
         },
-        createdMethod: function(nodeID, methodName, methodParameters, methodBody) {
-            this.viewAPINotify('createdMethod', arguments);
-        },
-        calledMethod: function(nodeID, methodName, methodParameters) {
-            this.viewAPINotify('calledMethod', arguments);
-        },
-        deletedMethod: function(nodeID, methodName, methodParameters, body){
-            this.viewAPINotify('deletedMethod', arguments);
-        },
-        createdEvent: function(nodeID, eventName, eventParameters) {
-            this.viewAPINotify('createdEvent', arguments);
-        },
-        firedEvent: function(nodeID, eventName, eventParameters) {
-            this.viewAPINotify('firedEvent', arguments);
-        },
-        deletedEvent: function(nodeID, eventName, eventParams){
-            this.viewAPINotify('deletedEvent', arguments);
-        },
-        executed: function(nodeID, scriptText, scriptType) {
-            this.viewAPINotify('executed', arguments);
-        },
-        ticked:function()
+        createdMethod: function(nodeID, methodName, methodParameters, methodBody)
         {
-            this.viewAPINotify('ticked', arguments);
+            this.viewAPINotify('createdMethod', [nodeID, methodName, methodParameters, methodBody]);
+        },
+        calledMethod: function(nodeID, methodName, methodParameters)
+        {
+            this.viewAPINotify('calledMethod', [nodeID, methodName, methodParameters]);
+        },
+        deletedMethod: function(nodeID, methodName, methodParameters, body)
+        {
+            this.viewAPINotify('deletedMethod', [nodeID, methodName, methodParameters, body]);
+        },
+        createdEvent: function(nodeID, eventName, eventParameters)
+        {
+            this.viewAPINotify('createdEvent', [nodeID, eventName, eventParameters]);
+        },
+        firedEvent: function(nodeID, eventName, eventParameters)
+        {
+            this.viewAPINotify('firedEvent', [nodeID, eventName, eventParameters]);
+        },
+        deletedEvent: function(nodeID, eventName, eventParams)
+        {
+            this.viewAPINotify('deletedEvent', [nodeID, eventName, eventParams]);
+        },
+        executed: function(nodeID, scriptText, scriptType)
+        {
+            this.viewAPINotify('executed', [nodeID, scriptText, scriptType]);
+        },
+        ticked: function()
+        {
+
+            this.viewAPINotify('ticked', []);
+
         }
     });
 });
 
-function InitializeEditor() {
 
-    var instanceData = _DataManager.getInstanceData() || {};
-
+function InitializeEditor()
+{
+    var instanceData = _DataManager.getInstanceData() ||
+    {};
 
     document._UserManager = _UserManager;
     $('#vwf-root').css('overflow', 'hidden');
@@ -297,57 +309,55 @@ function InitializeEditor() {
     $('#AvatarChoice').buttonset();
     $('#vwf-root').attr('tabindex', '0');
     vwf.logger.level = 6;
-    if (document.Players) {
-        for (var i = 0; i < document.Players.length; i++) {
+    if (document.Players)
+    {
+        for (var i = 0; i < document.Players.length; i++)
+        {
             _UserManager.PlayerCreated(document.Players[i]);
         }
     }
-
     require("vwf/view/editorview/InputSetup").initialize();
 
     require("vwf/view/editorview/ChatSystemGUI").initialize();
 
+    if (_EditorView.needTools())
+    {
 
-    if (_EditorView.needTools()) {
         //$('#sidepanel').css('height', $(window).height() - ($('#statusbar').height() + $('#toolbar').height() + $('#smoothmenu1').height()) + 'px')
         //$('#sidepanel').jScrollPane();
         require("vwf/view/editorview/Toolbar").initialize();
-
         require("vwf/view/editorview/Menubar").initialize();
 
-
+        //_EditorView.addManager(require("vwf/view/editorview/Menubar"));
+        //require("vwf/view/editorview/SideTabs").initialize();
         $('#toolbarLevel').show();
-
         require("vwf/view/localization/translate").initialize();
         //$(document.head).append('<script type="text/javascript" src="vwf/view/localization/translate.js"></script>');
         window.translateMenu();
 
-
         //default to select mode
         _Editor.SetSelectMode('Pick');
-    }else
+    }
+    else
     {
-        $('#index-vwf').css('border','none');
+        $('#index-vwf').css('border', 'none');
     }
     require("vwf/view/editorview/SaveLoadTimer").initialize();
-
     require("vwf/view/editorview/TouchHandler").initialize();
-
     $(document.body).css('overflow', 'hidden');
     $(window).resize();
-
     //	$('body *').not(':has(input)').not('input').disableSelection();
     //	$('#vwf-root').enableSelection();
     //	$('#vwf-root').parent().enableSelection();
     //	$('#vwf-root').parent().parent().enableSelection();
     //	$('#index-vwf').enableSelection();
     //	$('* :not(input)').disableSelection();
-
     //localization
-
-
 }
 
-function PlayerDeleted(e) {
+function PlayerDeleted(e)
+{
     $("#" + e + "label").remove();
+
 }
+

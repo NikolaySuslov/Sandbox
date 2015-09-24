@@ -521,7 +521,7 @@ SceneManager.prototype.loadTexture = function(url, mapping, onLoad, onError) {
                 var blob = new Blob([xhr.response]);
                 img.src = window.URL.createObjectURL(blob);
                 texture.image = img;
-                texture.format = THREE.RGBFormat;
+                texture.format = THREE.RGBAFormat;
                 if (_SettingsManager.getKey('filtering')) {
                     texture.minFilter = THREE.LinearMipMapLinearFilter;
                     texture.magFilter = THREE.LinearFilter;

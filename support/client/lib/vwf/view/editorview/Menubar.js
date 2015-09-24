@@ -37,7 +37,8 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			$scope.worldIsSinglePlayer = instanceData.publishSettings.SinglePlayer;
 			$scope.worldIsNotLaunchable = !($scope.worldIsPersistent && $scope.userIsOwner) || $scope.worldIsSinglePlayer || $scope.isExample;
 			$scope.worldHasTerrain = !!window._dTerrain;
-			
+			$scope.hasContinuesFlag = /[?&]allowContinues/.test(window.location.search);
+
 			//console.log('UserIsOwner:', $scope.userIsOwner);
 		});
 
@@ -408,8 +409,6 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				_Editor.CreateBehavior('methodtrigger', _UserManager.GetCurrentUserName());
 			},
 	
-	
-	
 			MenuHelpBrowse: function(e) {
 				window.open('http://sandboxdocs.readthedocs.org/en/latest/', '_blank');
 			},
@@ -737,6 +736,14 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 	
 				}, ["Collada", "3DR JSON (http://3dr.adlnet.gov)", "glTF (v0.6) JSON", 'Three.js Native JSON'])
 	
+			},
+	
+			MenuCreateContinuesNode: function(e){
+				alertify.prompt('Input a URL to an entity JSON body.', function(ok, val){
+					if(ok && val){
+						vwf.createChild('index-vwf', GUID(), {continues: val});
+					}
+				});
 			},
 	
 	

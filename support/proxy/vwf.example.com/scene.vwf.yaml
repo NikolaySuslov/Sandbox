@@ -45,7 +45,7 @@ properties:
     set: |
       this.ambientColor = value;
     value: [ .5, .5, .5 ]
-  traceAPI:
+  ___traceAPI:
     get: |
       if(!this._traceAPI)
       {
@@ -113,7 +113,7 @@ properties:
             }
       }
       return this._traceAPI;
-  audioAPI:
+  ___audioAPI:
     get: |
           if(!this._audioAPI)
           {
@@ -142,7 +142,7 @@ properties:
             }
            }
            return this._audioAPI;
-  createAPI:
+  ___createAPI:
     get: |
           if(!this._createAPI)
           {

@@ -123,7 +123,8 @@ function startVWF() {
                     logger.info('Configuration read.')
                 } catch (e) {
                     configSettings = {};
-                    logger.error('Could not read config file. Loading defaults.')
+                    logger.error(e.message);
+                    logger.error('Could not read config file. Loading defaults.');
                 }
                 //save configuration into global scope so other modules can use.
                 global.configuration = configSettings;

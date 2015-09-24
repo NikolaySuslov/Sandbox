@@ -117,6 +117,7 @@ define(function() {
                 needlogin = false;
 
             if (needlogin) {
+                this.installSessionHoldTimer();
                 $.ajax('/vwfDataManager.svc/logindata', {
                     cache: false,
                     async: false,
@@ -195,6 +196,21 @@ define(function() {
 
         }.bind(this));
         this.SelectedProfile = null;
+        this.installSessionHoldTimer = function()
+        {
+            //keep a ping to the server on a loop to keep the session alive.
+            window.setTimeout(function()
+            {
+                $.ajax('/vwfDataManager.svc/logindata', {
+                        cache: false,
+                        async: false,
+                        success: function(data, status, xhr) {
+                        },
+                        error: function(xhr, status, err) {
+                        }
+                });
+            },1000*6*3)   //every 3 minutes
+        }
         this.showProfile = function(clientID) {
 
             var clients = vwf.getProperty(vwf.application(), 'clients');

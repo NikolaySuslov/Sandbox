@@ -91,7 +91,7 @@ function CreateParticleSystem(nodeID, childID, childName) {
         },
         texture: {
             type: "t",
-            value: _SceneManager.getTexture("textures/sprites/ball.png")
+            value: _SceneManager.getTexture("./checker.jpg")
         },
         pCount:{
             type:'f',

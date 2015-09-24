@@ -1,0 +1,142 @@
+{
+    "extends": "CharacterTest.vwf",
+    "methods": {
+        "tick": {
+            "body": "\n  if (this.id == 'CharacterTest-vwf') return;\n      //try {\n\n      this.update();\n      if (this.random() > .2) this.walk();\n      else if (this.random() > .4) this.walkback();\n      else if (this.random() > .6) this.stand();\n      if (this.random() > .9) this.lookat([this.random(), this.random(), 0]);\n      // } catch (e) {}\n",
+            "parameters": []
+        }
+    },
+    "properties": {
+        "PlayerNumber": "1",
+        "___physics_activation_state": 4,
+        "___physics_angular_velocity": [0, 0, 0],
+        "___physics_deactivation_time": 0,
+        "___physics_enabled": true,
+        "___physics_factor_angular": [0, 0, 0],
+        "___physics_factor_linear": [0, 0, 0],
+        "___physics_linear_velocity": [0, 0, 0],
+        "___physics_mass": 100,
+        "___physics_velocity_angular": [0, 0, 0],
+        "___physics_velocity_linear": [0, 0, 0],
+        "activeCycle": [],
+        "animationEnd": 240,
+        "animationFrame": 7.47,
+        "animationStart": 0,
+        "castShadows": true,
+        "cycles": {
+            "jump": {
+                "current": 0,
+                "length": 36,
+                "loop": false,
+                "speed": 1.25,
+                "start": 70
+            },
+            "run": {
+                "current": 0,
+                "length": 36,
+                "loop": true,
+                "speed": 1.25,
+                "start": 70
+            },
+            "runningjump": {
+                "current": 0,
+                "length": 48,
+                "loop": false,
+                "speed": 1.25,
+                "start": 109
+            },
+            "stand": {
+                "current": 0,
+                "length": 0,
+                "loop": true,
+                "speed": 1.25,
+                "start": 1
+            },
+            "strafeleft": {
+                "current": 0,
+                "length": 16,
+                "loop": true,
+                "speed": -1.5,
+                "start": 124
+            },
+            "straferight": {
+                "current": 0,
+                "length": 16,
+                "loop": true,
+                "speed": 1.5,
+                "start": 108
+            },
+            "walk": {
+                "current": 0,
+                "length": 27,
+                "loop": true,
+                "speed": 1,
+                "start": 6
+            },
+            "walkback": {
+                "current": 0,
+                "length": 30,
+                "loop": true,
+                "speed": -1.25,
+                "start": 0
+            }
+        },
+        "isDynamic": true,
+        "materialDef": {
+            "alpha": 1,
+            "ambient": {
+                "b": 1,
+                "g": 1,
+                "r": 1
+            },
+            "color": {
+                "b": 1,
+                "g": 1,
+                "r": 1
+            },
+            "emit": {
+                "b": 0.901960784313726,
+                "g": 0.901960784313726,
+                "r": 0.901960784313726
+            },
+            "layers": [{
+                    "alpha": 1,
+                    "mapInput": 0,
+                    "mapTo": 1,
+                    "offsetx": 0,
+                    "offsety": 0,
+                    "scalex": 1,
+                    "scaley": 1,
+                    "src": "./avatars/VWS_AA_Business_Male1-2.jpg"
+                }
+            ],
+            "reflect": 0.1,
+            "shininess": 0.16,
+            "side": 0,
+            "specularColor": {
+                "b": 0.067,
+                "g": 0.067,
+                "r": 0.067
+            },
+            "specularLevel": 1,
+            "type": "phong"
+        },
+        "motionStack": ["stand"],
+        "oldRotZ": 0,
+        "owner": "Rob",
+        "receiveShadows": true,
+        "standing": 0,
+        "standingOnID": null,
+        "standingOnOffset": null,
+        "transform": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.25, 0, 1]
+    },
+    "random": {
+        "c": 1541508,
+        "s0": 0.0509981086943299,
+        "s1": 0.669758018571883,
+        "s2": 0.669291044818237
+    },
+    "sequence": 0,
+    "source": "./avatars/VWS_AA_Business_Male1.DAE",
+    "type": "subDriver/threejs/asset/vnd.collada+xml"
+}

@@ -33,7 +33,7 @@ block content
 
 		span(ng-class='getIcon()', ng-click='toggleCollapse()')
 		span.name(ng-click='vwfNode.threeId !== node.id ? select(node, $event) : null', ng-dblclick='focusNode(node.node)'
-			ng-class='{"nonselectable": vwfNode.threeId === node.id, "selected": fields.selectedNodeIds.indexOf(node.id) > -1 || selectedThreeNode === node}'
+			ng-class='{"nonselectable": vwfNode.threeId === node.id, "selected": fields.selectedNodeIds.indexOf(node.id) > -1 || selectedThreeNode === node, "continues": node.continues}'
 			adl-scroll-to='node.id === fields.selectedNode.id || node.id === selectedThreeNode.id'
 		)
 			{{label || node.name || node.id}}

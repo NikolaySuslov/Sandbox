@@ -26,36 +26,37 @@ properties:
       displayname: "Render Depth"
       min: 0
       max: 100
-  audioAPI:
+  ___audioAPI:
     get: |
           if(!this._audioAPI)
           {
             Object.defineProperty(this,"_audioAPI",{enumerable:false,writable:true});
             this._audioAPI = {};
             this._audioAPI.___self = this;
+            var self = this;
             this._audioAPI.playSound=function(soundURL /* the url of the sound */, loop /* loop or not */, volume)
             {
-                vwf.callMethod(this.id,'playSound',[soundURL,loop,volume])
+                vwf.callMethod(self.id,'playSound',[soundURL,loop,volume])
                 
             }
             this._audioAPI.stopSound=function(soundURL /* the url of the sound */)
             {
-                vwf.callMethod(this.id,'stopSound',[soundURL])
+                vwf.callMethod(self.id,'stopSound',[soundURL])
                
             }
            this._audioAPI.pauseSound=function(soundURL /* the url of the sound */)
             {
-                vwf.callMethod(this.id,'pauseSound',[soundURL])
+                vwf.callMethod(self.id,'pauseSound',[soundURL])
                
             }
             this._audioAPI.deleteSound=function(soundURL /* the url of the sound */)
             {
-                vwf.callMethod(this.id,'deleteSound',[soundURL])
+                vwf.callMethod(self.id,'deleteSound',[soundURL])
                 
             }
            }
            return this._audioAPI;
-  transformAPI:
+  ___transformAPI:
     get: |
         if(!this._tapi)
         {
@@ -100,12 +101,12 @@ properties:
                 },
                 getPosition: function()
                 {
-                    var transform = self.transform.internal_val;
+                    var transform = self.transform;
                     return [transform[12],transform[13],transform[14]];
                 },
                 getWorldPosition: function()
                 {
-                    var transform = self.worldTransform.internal_val;
+                    var transform = self.worldTransform;
                     return [transform[12],transform[13],transform[14]];
                 },
                 localToGlobal: function(x,y,z)
@@ -117,7 +118,7 @@ properties:
                         x = x[0];
                     }
                     var vec = [x,y,z];
-                    var targetTransform = self.worldTransform.internal_val;
+                    var targetTransform = self.worldTransform;
                    
                     vec = Mat4.multVec3(targetTransform,vec,[]);
                     return vec;
@@ -131,7 +132,7 @@ properties:
                         x = x[0];
                     }
                     var vec = [x,y,z];
-                    var targetTransform = self.worldTransform.internal_val;
+                    var targetTransform = self.worldTransform;
                    
                     vec = Mat4.multVec3NoTranslate(targetTransform,vec,[]);
                     return vec;
@@ -146,7 +147,7 @@ properties:
                         x = x[0];
                     }
                     var vec = [x,y,z];
-                    var targetTransform = self.worldTransform.internal_val;
+                    var targetTransform = self.worldTransform;
                     
                     var invTransform = Mat4.create();
                     Mat4.invert(targetTransform,invTransform);
@@ -162,7 +163,7 @@ properties:
                         x = x[0];
                     }
                     var vec = [x,y,z];
-                    var targetTransform = self.worldTransform.internal_val;
+                    var targetTransform = self.worldTransform;
                     
                     var invTransform = Mat4.create();
                     Mat4.invert(targetTransform,invTransform);
@@ -184,7 +185,7 @@ properties:
                     vec[1] /= 57.2957795;
                     vec[2] /= 57.2957795;
 
-                    var targetTransform = self.worldTransform.internal_val;
+                    var targetTransform = self.worldTransform;
                     var mat = Mat4.makeEulerZXZ([],x,y,z);
 
                     var invTransform = Mat4.create();
@@ -206,7 +207,8 @@ properties:
                         z = x[2];
                         x = x[0];
                     }
-                    var transform = self.transform.internal_val;
+                   
+                    var transform = self.transform;
                     transform[12] = x;
                     transform[13] = y;
                     transform[14] = z;
@@ -252,7 +254,7 @@ properties:
                     var rotmat = Mat4.makeRotate([],angle,axis[0],axis[1],axis[2]);
                     var position = self.transformAPI.getPosition();
                     var scale = self.transformAPI.getScale();
-                    var transform = self.transform.internal_val;
+                    var transform = self.transform;
                     transform[12] = 0;
                     transform[13] = 0;
                     transform[14] = 0;
@@ -265,7 +267,7 @@ properties:
                 },
                 getRotation: function()
                 {
-                    var m = self.transform.internal_val;
+                    var m = self.transform;
                     var x = Math.atan2(m[9], m[10]);
                     var y = Math.atan2(-m[8], Math.sqrt(m[9] * m[9] + m[10] * m[10]));
                     var z = Math.atan2(m[4], m[0]);
@@ -349,7 +351,7 @@ properties:
                 },
                 getScale:function()
                 {
-                    var mat = self.transform.internal_val;
+                    var mat = self.transform;
                     var x = Vec3.magnitude([mat[0],mat[1],mat[2]]);
                     var y = Vec3.magnitude([mat[4],mat[5],mat[6]]);
                     var z = Vec3.magnitude([mat[8],mat[9],mat[10]]);
@@ -365,7 +367,7 @@ properties:
                         x = x[0];
                     }
                     
-                    var mat = self.transform.internal_val;
+                    var mat = self.transform;
                     var xVec = Vec3.normalize([mat[0],mat[1],mat[2]],[]);
                     var yVec = Vec3.normalize([mat[4],mat[5],mat[6]],[]);
                     var zVec = Vec3.normalize([mat[8],mat[9],mat[10]],[]);
@@ -409,7 +411,7 @@ properties:
                 {
                     
                     var target;
-                    target = t.internal_val||t;
+                    target = t||t;
                     if(!fromOffset) fromOffset = [0,0,0];
                     if(!axis) axis = 'Y';
                     if(up == 'X') up = [1,0,0];
@@ -495,7 +497,7 @@ methods:
       - translation
       - duration
     body: |
-      var startTranslation = this.translation.internal_val || goog.vec.Vec3.create();
+      var startTranslation = this.translation || goog.vec.Vec3.create();
       var deltaTranslation = this.translationFromValue( translation );
       var stopTranslation = goog.vec.Vec3.add(
         startTranslation,
@@ -514,7 +516,7 @@ methods:
       - translation
       - duration
     body: |
-      var startTranslation = this.translation.internal_val || goog.vec.Vec3.create();
+      var startTranslation = this.translation || goog.vec.Vec3.create();
       var stopTranslation = this.translationFromValue( translation );
       this.translationWorker(
         startTranslation,
@@ -575,7 +577,7 @@ methods:
       - quaternion
       - duration
     body: |
-      var startQuaternion = this.quaternion.internal_val || goog.vec.Quaternion.createFromValues( 0, 0, 0, 1 );
+      var startQuaternion = this.quaternion || goog.vec.Quaternion.createFromValues( 0, 0, 0, 1 );
       var deltaQuaternion = this.quaternionFromValue( quaternion );
       var stopQuaternion = goog.vec.Quaternion.concat(
         deltaQuaternion,
@@ -594,7 +596,7 @@ methods:
       - quaternion
       - duration
     body: |
-      var startQuaternion = this.quaternion.internal_val || goog.vec.Quaternion.createFromValues( 0, 0, 0, 1 );
+      var startQuaternion = this.quaternion || goog.vec.Quaternion.createFromValues( 0, 0, 0, 1 );
       var stopQuaternion = this.quaternionFromValue( quaternion );
       this.quaternionWorker(
         startQuaternion,
@@ -629,7 +631,7 @@ methods:
       - scale
       - duration
     body: |
-      var startScale = this.scale.internal_val || goog.vec.Vec3.createFromValues( 1, 1, 1 );
+      var startScale = this.scale || goog.vec.Vec3.createFromValues( 1, 1, 1 );
       var deltaScale = this.scaleFromValue( scale );
       var stopScale = goog.vec.Vec3.createFromValues(
         startScale[0] * deltaScale[0],
@@ -648,7 +650,7 @@ methods:
       - scale
       - duration
     body: |
-      var startScale = this.scale.internal_val || goog.vec.Vec3.createFromValues( 1, 1, 1 );
+      var startScale = this.scale || goog.vec.Vec3.createFromValues( 1, 1, 1 );
       var stopScale = this.scaleFromValue( scale );
       this.scaleWorker(
         startScale,
@@ -760,11 +762,11 @@ scripts:
     return scale;
   };
   this.state = function( test ) {
-    vwf.logger.info( test, "x", Array.prototype.slice.apply( this.transform.internal_val || goog.vec.Mat4.createIdentity() ) );
-    vwf.logger.info( test, "t", Array.prototype.slice.apply( this.translation.internal_val || goog.vec.Vec3.create() ) );
-    vwf.logger.info( test, "o", Array.prototype.slice.apply( this.rotation.internal_val || goog.vec.Vec4.createFromValues( 1, 0, 0, 0 ) ) );
-    vwf.logger.info( test, "s", Array.prototype.slice.apply( this.scale.internal_val || goog.vec.Vec3.createFromValues( 1, 1, 1 ) ) );
-    vwf.logger.info( test, "q", Array.prototype.slice.apply( this.quaternion.internal_val || goog.vec.Quaternion.createFromValues( 0, 0, 0, 1 ) ) );
+    vwf.logger.info( test, "x", Array.prototype.slice.apply( this.transform || goog.vec.Mat4.createIdentity() ) );
+    vwf.logger.info( test, "t", Array.prototype.slice.apply( this.translation || goog.vec.Vec3.create() ) );
+    vwf.logger.info( test, "o", Array.prototype.slice.apply( this.rotation || goog.vec.Vec4.createFromValues( 1, 0, 0, 0 ) ) );
+    vwf.logger.info( test, "s", Array.prototype.slice.apply( this.scale || goog.vec.Vec3.createFromValues( 1, 1, 1 ) ) );
+    vwf.logger.info( test, "q", Array.prototype.slice.apply( this.quaternion || goog.vec.Quaternion.createFromValues( 0, 0, 0, 1 ) ) );
   };
   this.test1 = function() {
     this.transform = [];

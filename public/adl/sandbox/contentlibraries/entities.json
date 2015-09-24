@@ -158,5 +158,11 @@
         "url": "./contentlibraries/entities/vwf/grass.vwf.json",
         "preview": "./contentlibraries/entities/thumbs/grass.jpg",
         "type": "asset"
+    },
+    {
+        "name": "TestCharacter",
+        "url": "./contentlibraries/entities/vwf/TestCharacter.vwf.json",
+        "preview": "./contentlibraries/entities/thumbs/fire.jpg",
+        "type": "asset"
     }
 ]

@@ -13,6 +13,105 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 var jsDriverSelf = this;
+
+
+
+function defaultContext()
+{
+    this.setProperty = function(id,name,val)
+    {
+
+        
+       
+        
+        
+        
+            vwf.setProperty(id,name,val);
+       
+
+     
+    }
+    this.getProperty = function(id, name)
+    {
+        var val = vwf.getProperty(id, name);
+       
+        
+        return val;
+    }
+    this.postUpdates = function()
+    {
+        throw new Error('Should never get here!')
+    }
+    this.callMethod = function(id,methodname,params)
+    {
+        //node that this forces sync!
+        
+            return vwf.callMethod(id,methodname,params);
+       
+    }
+    this.fireEvent = function(id,eventName,params)
+    {
+       
+            vwf_view.kernel.fireEvent(id,eventName,params);
+       
+    }
+    //this is also where we should be notifiying the refelector of new methods, events, properties and nodes
+}
+//when a function is called, a context is created to observe changes. When the funtion return, we post changes to VWF.
+function executionContext(parentContext)
+{
+    this.touchedProperties = {};
+    this.parent = parentContext;
+    this.setProperty = function(id,name,val)
+    {
+        if(!this.touchedProperties[id+name])
+            this.touchedProperties[id+name] = {id:id,name:name,val:null,originalVal:null}
+        this.touchedProperties[id+name].val = val;
+    }
+    this.getProperty = function(id,name)
+    {
+        if(this.touchedProperties[id+name])
+            return this.touchedProperties[id+name].val;
+        else
+        {
+            if(this.parent && this.parent instanceof executionContext &&  this.parent.getProperty(id,name))
+            {
+                return this.parent.getProperty(id,name);
+            }
+
+            var val = vwf.getProperty(id,name);
+            if(!(typeof(val) == "number" || typeof(val) == "boolean" || val == null || val == undefined))
+            {
+            this.touchedProperties[id+name] = {id:id,name:name,val:null,originalVal:null}
+            this.touchedProperties[id+name].originalVal = $.extend(true,{},this.touchedProperties[id+name].val);
+            this.touchedProperties[id+name].val = val;
+            }
+
+            
+            return val;
+        }
+
+    }
+    this.postUpdates = function()
+    {
+        //debugger;
+        for(var i in this.touchedProperties)
+        {
+            if(!(Object.deepEquals(this.touchedProperties[i].val,this.touchedProperties[i].originalVal)))
+                this.parent.setProperty(this.touchedProperties[i].id,this.touchedProperties[i].name,this.touchedProperties[i].val);
+        }
+    }
+    this.callMethod = function(id,methodname,params)
+    {
+        return this.parent.callMethod(id,methodname,params);
+    }
+    this.fireEvent = function(id,eventName,params)
+    {
+        this.parent.fireEvent(id,eventName,params);
+    }
+}
+
+
 define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) {
 
     // vwf/model/javascript.js is a placeholder for the JavaScript object interface to the
@@ -51,7 +150,22 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
         // == Model API ============================================================================
 
         // -- creatingNode -------------------------------------------------------------------------
-
+        getTopContext : function()
+        {
+            return this.contextStack[0];
+        },
+        enterNewContext: function(log)
+        {
+            
+            this.contextStack.unshift(new executionContext(this.contextStack[0]))
+        },
+        exitContext:function(log)
+        {
+            
+            var topContext = this.contextStack.shift();
+            topContext.postUpdates();
+        },
+        contextStack :[new defaultContext()],
         creatingNode: function(nodeID, childID, childExtendsID, childImplementsIDs,
             childSource, childType, childURI, childName, callback /* ( ready ) */ ) {
 
@@ -275,8 +389,9 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
                enumerable: false,
                configurable: false
             });
+
             Object.defineProperty(node, "signal", { // same as "in"  // TODO: only define on shared "node" prototype?
-                function(id,signal,data)
+                value:function(id,signal,data)
                 {
                     var self = this;
                     var thisid = self.id;
@@ -465,6 +580,70 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
 
 
         },
+        //hook up the system API. They are defined in properties, and we dont' want to cause the context to think it needs to set them
+        //so the user should not really call the APIs directly, but instead use these getters
+        hookUpAPIs : function(node)
+        {
+            
+            if(node.hasOwnProperty("___transformAPI"))
+            {
+                Object.defineProperty(node, "transformAPI", { // TODO: only define on shared "node" prototype?
+                    get: function() {
+                        return vwf.getProperty(this.id,"___transformAPI");
+                    },
+                    enumerable: true,
+                });
+            }
+           if(node.hasOwnProperty("___audioAPI"))
+            {
+                Object.defineProperty(node, "audioAPI", { // TODO: only define on shared "node" prototype?
+                    get: function() {
+                        return vwf.getProperty(this.id,"___audioAPI");
+                    },
+                    enumerable: true,
+                });
+            }
+            if(node.hasOwnProperty("___physicsAPI"))
+            {
+                Object.defineProperty(node, "physicsAPI", { // TODO: only define on shared "node" prototype?
+                    get: function() {
+                        return vwf.getProperty(this.id,"___physicsAPI")},
+                    enumerable: true,
+                });
+            }
+            if(node.hasOwnProperty("___clientAPI"))
+            {
+                Object.defineProperty(node, "clientAPI", { // TODO: only define on shared "node" prototype?
+                    get: function() {
+                        return vwf.getProperty(this.id,"___clientAPI")},
+                    enumerable: true,
+                });
+            }
+            if(node.hasOwnProperty("___commsAPI"))
+            {
+                Object.defineProperty(node, "commsAPI", { // TODO: only define on shared "node" prototype?
+                    get: function() {
+                        return vwf.getProperty(this.id,"___commsAPI")},
+                    enumerable: true,
+                });
+            }
+            if(node.hasOwnProperty("___xAPI"))
+            {
+                Object.defineProperty(node, "xAPI", { // TODO: only define on shared "node" prototype?
+                    get: function() {
+                        return vwf.getProperty(this.id,"___xAPI")},
+                    enumerable: true,
+                });
+            }
+            if(node.hasOwnProperty("___traceAPI"))
+            {
+                Object.defineProperty(node, "traceAPI", { // TODO: only define on shared "node" prototype?
+                    get: function() {
+                        return vwf.getProperty(this.id,"___traceAPI")},
+                    enumerable: true,
+                });
+            }
+        },
 
         // -- initializingNode ---------------------------------------------------------------------
 
@@ -479,7 +658,7 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
 
 
             }
-
+            this.hookUpAPIs(child);
             var scriptText = "this.initialize && this.initialize()";
 
             try {
@@ -544,14 +723,7 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
             }
 
             delete this.nodes[nodeID];
-            //be sure to clear the watchable cache of entries 
-            for (var i in jsDriverSelf.__WatchableCache)
-            {
-                if( i.indexOf(nodeID) === 0)
-                {
-                    delete jsDriverSelf.__WatchableCache[i];
-                }
-            }
+           
 
         },
 
@@ -680,362 +852,33 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
 
             return this.initializingProperty(nodeID, propertyName, propertyValue);
         },
-        //A watchable property will call the VWF set property kernel code when it's values are changed
-        _Watchable: function() {
-            Object.defineProperty(this, 'internal_val', {
-                configurable: true,
-                enumerable: false,
-                writable: true
-            });
-            Object.defineProperty(this, 'propertyname', {
-                configurable: true,
-                enumerable: false,
-                writable: true
-            });
-            Object.defineProperty(this, 'id', {
-                configurable: true,
-                enumerable: false,
-                writable: true
-            });
-            Object.defineProperty(this, 'masterval', {
-                configurable: true,
-                enumerable: false,
-                writable: true
-            });
-            Object.defineProperty(this, 'dotNotation', {
-                configurable: true,
-                enumerable: false,
-                writable: true
-            });
-
-        },
-        //Set up a watchable to mirror an object (including named properties)
-        // note - we currently can't detect assignment of new properties to an object
-        //should probably create a function to accomplish that
-        setupWatchableObject: function(watchable, val, propertyname, id, masterval, dotNotation) {
-            if (masterval === undefined)
-                masterval = val;
-
-            watchable.internal_val = val;
-            watchable.propertyname = propertyname;
-            watchable.id = id;
-            watchable.masterval = masterval;
-            var keys = Object.keys(val);
-            for (var i = 0; i < keys.length; i++) {
-                (function() {
-
-                    var _i = keys[i];
-
-                    Object.defineProperty(watchable, _i, {
-                        set: function(value) {
-                            this.internal_val[_i] = value;
-
-                            jsDriverSelf.setWatchableValue(this.id, this.propertyname, this.internal_val, this.dotNotation);
-                        },
-                        get: function() {
-                            var ret = this.internal_val[_i];
-                            //This recursively builds new watchables, such that you can do things like
-                            //this.materialDef.layers[0].alpha -= .1;
-                            ret = jsDriverSelf.createWatchable(ret, this.propertyname, this.id, this.masterval, this.dotNotation + '.' + _i);
-                            return ret;
-                        },
-                        configurable: true,
-                        enumerable: true
-                    });
-                })();
-            }
-            //so, this interface cannot watch for new keys on objects. You must use the define property method to register new keys
-            Object.defineProperty(watchable, 'defineProperty', {
-                value: function(name, newvalue) {
-                    Object.defineProperty(this, name, {
-                        set: function(value) {
-                            this.internal_val[name] = value;
-
-                            jsDriverSelf.setWatchableValue(this.id, this.propertyname, this.internal_val, this.dotNotation);
-                        },
-                        get: function() {
-                            var ret = this.internal_val[name];
-                            //This recursively builds new watchables, such that you can do things like
-                            //this.materialDef.layers[0].alpha -= .1;
-                            ret = jsDriverSelf.createWatchable(ret, this.propertyname, this.id, this.masterval, this.dotNotation + '.' + name);
-                            return ret;
-                        },
-                        configurable: true,
-                        enumerable: true
-                    });
-                    this[name] = newvalue;
-
-
-                },
-                configurable: true,
-                enumerable: false
-            });
-
-
-
-        },
-        //Setup a watchable to behave like an array. This creates accessor functions for the numbered integer properties.
-
-        setupWatchableArray: function(watchable, val, propertyname, id, masterval, dotNotation) {
-            if (masterval === undefined)
-                masterval = val;
-
-
-            watchable.internal_val = val;
-            watchable.propertyname = propertyname;
-            watchable.id = id;
-            watchable.masterval = masterval;
-            for (var i = 0; i < val.length; i++) {
-                (function() {
-
-                    var _i = i;
-
-
-                    Object.defineProperty(watchable, _i, {
-                        set: function(value) {
-                            this.internal_val[_i] = value;
-
-                            jsDriverSelf.setWatchableValue(this.id, this.propertyname, this.internal_val, this.dotNotation);
-                        },
-                        get: function() {
-                            var ret = this.internal_val[_i];
-                            //This recursively builds new watchables, such that you can do things like
-                            //this.materialDef.layers[0].alpha -= .1;
-                            ret = jsDriverSelf.createWatchable(ret, this.propertyname, this.id, this.masterval, this.dotNotation + '[' + _i + ']');
-                            return ret;
-                        },
-                        configurable: true,
-                        enumerable: true
-                    });
-                })();
-            }
-
-            //Hookup some typical Array functions.
-            watchable.push = function(newval) {
-                var internal = this.internal_val;
-                internal.push(newval);
-                jsDriverSelf.setWatchableValue(this.id, this.propertyname, this.internal_val, this.dotNotation);
-                jsDriverSelf.setupWatchableArray(this, internal, this.propertyname, this.id, this.masterval, this.dotNotation);
-            }
-            watchable.indexOf = function(val) {
-                return this.internal_val.indexOf(val);
-            }
-            for (var i = 0; i < 7; i++) {
-                var func = ['pop', 'shift', 'slice', 'sort', 'splice', 'unshift', 'shift'][i];
-
-                (function setupWatchableArrayVal(funcname) {
-                    watchable[funcname] = function() {
-                        var internal = this.internal_val;
-
-                        Array.prototype[funcname].apply(internal, arguments)
-                        jsDriverSelf.setWatchableValue(this.id, this.propertyname, this.internal_val, this.dotNotation);
-                        jsDriverSelf.setupWatchableArray(this, internal, this.propertyname, this.id, this.masterval, this.dotNotation);
-                    }
-                })(func);
-            }
-
-            Object.defineProperty(watchable, 'length', {
-                get: function() {
-                    return watchable.internal_val.length;
-                },
-                configurable: true,
-                enumerable: true
-            });
-
-
-        },
-        __WatchableCache: {},
-        setValueByDotNotation: function(root, dot, val) {
-            dot = dot.replace(/\[/g, ".");
-            dot = dot.replace(/\]/g, ".");
-            var names = dot.split('.');
-            while (names.indexOf('') != -1)
-                names.splice(names.indexOf(''), 1);
-
-            for (var i = 0; i < names.length - 1; i++) {
-                root = root[names[i]];
-
-            }
-            root[names[names.length - 1]] = val;
-        },
-        getValueByDotNotation: function(root, dot) {
-            dot = dot.replace(/\[/g, ".");
-            dot = dot.replace(/\]/g, ".");
-            var names = dot.split('.');
-            while (names.indexOf('') != -1)
-                names.splice(names.indexOf(''), 1);
-
-            for (var i = 0; i < names.length - 1; i++) {
-                root = root[names[i]];
-
-            }
-            return root[names[names.length - 1]];
-        },
-        setWatchableValue: function(id, propertyName, value, dotNotation) {
-            //when we set the value of a watchable, we need to update the cache. 
-            // this is all moved into setproperty anyway, no?
-            
-            
-            var masteriddot = dotNotation.substring(0, dotNotation.indexOf('.'))
-            var masteridbrac = dotNotation.substring(0, dotNotation.indexOf('['))
-            var masterid = masteriddot;
-            if(masterid.length ==0  || masteridbrac.length < masteriddot.length && masteridbrac.length > 0)
-                masterid = masteridbrac;
-
-          
-            
-            masterid = masterid || dotNotation;
-            if (this.__WatchableCache[masterid]) {
-
-                //the watchablesetting guard value prevents updating the values in the watchable cache.... can this be right?
-                this.setValueByDotNotation(this.__WatchableCache[masterid], "masterval." + dotNotation.substr(masterid.length), value);
-                this.setValueByDotNotation(this.__WatchableCache[masterid], "internal_val." + dotNotation.substr(masterid.length), value);
-
-
-                jsDriverSelf.kernel.setProperty(id, propertyName, this.__WatchableCache[masterid].masterval);
-
-
-
-            } else {
-
-
-                jsDriverSelf.kernel.setProperty(id, propertyName, value);
-
-
-            }
-
-
-        },
-        __WatchableSetting: 0,
-        // -- initializingProperty -----------------------------------------------------------------
-        //create a new watchable for a given value. Val is the object itjsDriverSelf, and masterval is the root property of the node
-        createWatchable: function(val, propertyname, id, masterval, dotNotation) {
-
-
-
-            if (!val) return val;
-
-            if (val instanceof jsDriverSelf._Watchable) {
-                return jsDriverSelf.createWatchable(val.internal_val, propertyname, id, undefined, dotNotation)
-
-            }
-
-            if (masterval === undefined)
-                masterval = val;
-
-            if (val.constructor == Array || val instanceof Float32Array) {
-                if (this.__WatchableCache[dotNotation]) {
-                    this.__WatchableCache[dotNotation].internal_val = val;
-                    return this.__WatchableCache[dotNotation];
-                }
-
-                var watchable = new jsDriverSelf._Watchable();
-               // console.log('new watchable', dotNotation);
-                watchable.dotNotation = dotNotation;
-                jsDriverSelf.setupWatchableArray(watchable, val, propertyname, id, masterval, dotNotation);
-                this.__WatchableCache[dotNotation] = watchable;
-                return watchable;
-            } else if (val.constructor == Object) {
-                if (this.__WatchableCache[dotNotation]) {
-                    this.__WatchableCache[dotNotation].internal_val = val;
-                    return this.__WatchableCache[dotNotation];
-                }
-
-                var watchable = new jsDriverSelf._Watchable();
-              //  console.log('new watchable', dotNotation);
-                watchable.dotNotation = dotNotation;
-                jsDriverSelf.setupWatchableObject(watchable, val, propertyname, id, masterval, dotNotation);
-                this.__WatchableCache[dotNotation] = watchable;
-                return watchable;
-
-            } else {
-                //if the object is a primitive type, then we catch modifications to it
-                //when it is set. 
-
-                //We may have to handle strings here.....
-                return val;
-            }
-
-
-        },
-        //If you execute this.transform = this.transform, then the setter will get a watchable. Need to strip that before sending it back into the kernel.
-        watchableToObject: function(watchable) {
-
-            if (!watchable) return watchable;
-
-            if (watchable instanceof jsDriverSelf._Watchable) {
-
-                return watchable.internal_val;
-            } else {
-
-                return watchable;
-            }
-
-        },
+        
+        
         initializingProperty: function(nodeID, propertyName, propertyValue) {
 
             var node = this.nodes[nodeID];
 
-            //the getter on nodes.properties. create watchable proxy
+           
             Object.defineProperty(node.properties, propertyName, { // "this" is node.properties in get/set
                 get: function() {
-
-                    //return a watchable from the cache if it exists. This is way way way too slow. 
-                    //trying to be very careful to keep the cache working properly;
-                    if (jsDriverSelf.__WatchableCache[this.node.id + "-" + propertyName]) {
-                        //because other drivers might change the value, we have to update the cache on every get.
-                        //this is  too bad, because it's a lot of work, but we shoudl be able to keep the watchable strucures
-                        //even if we have to update the underlying cache.
-
-                        //do we have to do this on set property? Lets not, that should be faster
-                        //  this.updateWatchableCache(this.node.id,propertyName,jsDriverSelf.kernel.getProperty(this.node.id, propertyName));
-                        return jsDriverSelf.__WatchableCache[this.node.id + "-" + propertyName];
-                    } else
-                        return jsDriverSelf.createWatchable(jsDriverSelf.kernel.getProperty(this.node.id, propertyName), propertyName, this.node.id, undefined, this.node.id + "-" + propertyName)
-
+                    return vwf.getProperty(this.id,propertyName)
                 },
                 set: function(value) {
-                    jsDriverSelf.setWatchableValue(this.node.id, propertyName, jsDriverSelf.watchableToObject(value), this.node.id + "-" + propertyName)
+                    return vwf.setProperty(this.id,propertyName,value)
                 },
                 enumerable: true
             });
 
-            //the getter on node, create watchable proxy
-            if (!node.hasOwnProperty(propertyName)) // TODO: recalculate as properties, methods, events and children are created and deleted; properties take precedence over methods over events over children, for example
+            var APIs = ["transformAPI","traceAPI","commsAPI","clientAPI","physicsAPI","audioAPI","xAPI"];
+            if (!node.hasOwnProperty(propertyName) && APIs.indexOf(propertyName) == -1) // TODO: recalculate as properties, methods, events and children are created and deleted; properties take precedence over methods over events over children, for example
             {
                 Object.defineProperty(node, propertyName, { // "this" is node in get/set
                     get: function() {
 
-                        //return a watchable from the cache if it exists. This is way way way too slow. 
-                        //trying to be very careful to keep the cache working properly;
-                        if (jsDriverSelf.__WatchableCache[this.id + "-" + propertyName]) {
-                            //because other drivers might change the value, we have to update the cache on every get.
-                            //this is  too bad, because it's a lot of work, but we shoudl be able to keep the watchable strucures
-                            //even if we have to update the underlying cache.
-
-                            //do we have to do this on set property? Lets not, that should be faster
-
-                            //this is a godawful mess, but it profiles well....
-
-                            var currentval = jsDriverSelf.kernel.getProperty(this.id, propertyName);
-                            if (!currentval) return currentval;
-                            //it's possible to fail to compare on circular json
-                            
-                               // if (JSON.stringify(currentval) != JSON.stringify(jsDriverSelf.__WatchableCache[this.id + "-" + propertyName].internal_val)) {
-                                if(!Object.deepEquals(currentval,jsDriverSelf.__WatchableCache[this.id + "-" + propertyName].internal_val)){
-                                    //it really seems like we should be reusing the objects in the cache, but it causes god awful problems that I 
-                                    //cannot make any sense of. 
-                                    // return jsDriverSelf.createWatchable(currentval, propertyName, this.id, undefined, this.id + "-" + propertyName)
-                                    jsDriverSelf.updateWatchableCache(this.id, propertyName, currentval)
-                                }
-                                return jsDriverSelf.__WatchableCache[this.id + "-" + propertyName];
-                            
-                        } else
-                            return jsDriverSelf.createWatchable(jsDriverSelf.kernel.getProperty(this.id, propertyName), propertyName, this.id, undefined, this.id + "-" + propertyName)
-
+                       return jsDriverSelf.getTopContext().getProperty(this.id,propertyName)
                     },
                     set: function(value) {
-                        jsDriverSelf.setWatchableValue(this.id, propertyName, jsDriverSelf.watchableToObject(value), this.id + "-" + propertyName)
+                         return jsDriverSelf.getTopContext().setProperty(this.id,propertyName,value)
                     },
                     enumerable: true
                 });
@@ -1050,13 +893,14 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
 
         // -- settingProperty ----------------------------------------------------------------------
         callSetter: function(setter, node, propertyValue, propertyName) {
-
+        //    this.enterNewContext()
             try {
                 return setter.call(node, propertyValue);
             } catch (e) {
                 this.logger.warn("settingProperty", node.ID, propertyName, propertyValue,
                     "exception in setter:", utility.exceptionMessage(e));
             }
+        //    this.exitContext();
         },
         settingProperty: function(nodeID, propertyName, propertyValue) {
 
@@ -1082,70 +926,24 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
             }
 
 
-            //we do this on getproperty now.....
-            //this.updateWatchableCache(nodeID,propertyName,propertyValue);
+           
 
             return undefined;
         },
-        updateWatchableCache: function(nodeID, propertyName, propertyValue) {
-
-            //we are not setting our own watchable. in that case, the internal value is already cached
-            if (this.__WatchableSetting === 0) {
-                //constructing watchables is expensive. We need to update them in place, rather then delete and recreate on demand.
-                var keys = Object.keys(this.__WatchableCache);
-                var dels = []
-                for (var i = 0; i < keys.length; i++) {
-                    //be verycareful here. transform and transformAPI both start with the same dotnotation key, be sure that you check
-                    //properly.
-                    if (keys[i].indexOf(nodeID + '-' + propertyName + '.') == 0 || keys[i] === nodeID + '-' + propertyName) {
-                        var watchable = this.__WatchableCache[keys[i]]
-
-                        var new_prop_for_this_watchable;
-
-                        //setting the root of the watchable;
-                        if (watchable.dotNotation === nodeID + '-' + propertyName)
-                            new_prop_for_this_watchable = propertyValue;
-                        else //setting some sub watchable       
-                        {
-                            //the dot notation includes the name of the root prop - but propertyValue is already this. Remove 
-                            //from the dot.
-                            var dot = watchable.dotNotation.substr(watchable.dotNotation.indexOf('.') + 1);
-                            new_prop_for_this_watchable = this.getValueByDotNotation(propertyValue, dot);
-                        }
-                        var old_prop = watchable.internal_val;
-                        if (!new_prop_for_this_watchable) {
-                            //if the new prop is null, just remove the cached watchable. No point in having a watchable interface for a null.
-                            dels.push(keys[i]);
-                        } else if (Object.keys(new_prop_for_this_watchable).join('') !== Object.keys(old_prop).join('')) {
-                            //the structure of the value for this watchable has changed, so we need to recreate.
-                            //instead of recreating the watchable now (when it may never be needed)
-                            //just delete it an build a new one on demand
-                            dels.push(keys[i]);
-                        } else {
-                            //ok, we can save the watchable and just swap in the new underlying value
-                            watchable.internal_val = new_prop_for_this_watchable;
-                            watchable.masterval = propertyValue;
-                        }
-                    }
-                }
-                for (var i = 0; i < dels.length; i++)
-                    delete this.__WatchableCache[dels[i]];
-            }
-
-
-        },
         // -- gettingProperty ----------------------------------------------------------------------
         tryGetter : function(node, getter) {
+           // this.enterNewContext()
             try {
-                //unwrap watchables
+                
                 var ret = getter.call(node);
-                if (ret && ret.internal_val) return ret.internal_val;
+                
                 return ret;
             } catch (e) {
-                this.logger.warn("gettingProperty", nodeID, propertyName, propertyValue,
+                this.logger.warn("gettingProperty", node.id,
                     "exception in getter:", utility.exceptionMessage(e));
                 return undefined;
             }
+           // this.exitContext();
         },
         gettingProperty: function(nodeID, propertyName, propertyValue) {
             if (this.disabled) return;
@@ -1341,7 +1139,7 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
         {
              try {
                     var ret = body.apply(node, methodParameters);
-                    if (ret && ret.internal_val) return ret.internal_val;
+                    
                     return ret;
                 } catch (e) {
                     console.warn(e.toString() + " Node:'" + (node.properties.DisplayName || node.id) + "' during: '" + methodName + "' with '" + JSON.stringify(methodParameters) + "'");
@@ -1432,7 +1230,24 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
             var body = node.private.bodies && node.private.bodies[methodName];
 
             if (body) {
-               return this.tryCallMethod(node,body,methodName,methodParameters);
+                var inContext = this.contextStack.length > 1;
+                if(!inContext)
+                    this.enterNewContext(["enter" , nodeID, methodName]);
+                try {
+                    var ret = this.tryExec(node,body,methodParameters);//body.apply(node, methodParameters);
+                 
+                    
+                        if(!inContext)
+                            this.exitContext(["exit",nodeID, methodName]);
+                        return ret;
+                    
+                } catch (e) {
+                    console.warn(e.toString() + " Node:'" + (node.properties.DisplayName || nodeID) + "' during: '" + methodName + "' with '" + JSON.stringify(methodParameters) + "'");
+                    //            this.logger.warn( "callingMethod", nodeID, methodName, methodParameters, // TODO: limit methodParameters for log
+                    //              "exception:", utility.exceptionMessage( e ) );
+                }
+                if(!inContext)
+                    this.exitContext(["exit",nodeID, methodName]);
             }
 
             //call the method on the child behaviors
@@ -1581,21 +1396,35 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
             }
 
         },
-        callMethodTraverse: function(node, method, args) {
-
-            if (!node) return;
-
-
-            var body = node.private.bodies && node.private.bodies[method];
-
-            if (body) {
-                body.apply(node, args);
+        tryExec:function(node,body,args)
+        {
+            if(node && body)
+            {
+                try{
+                    return body.apply(node,args);
+                }catch(e){
+                    return undefined;
+                }
             }
-
+        },
+        callMethodTraverse: function(node, method, args)
+        {
+            if (!node) return;
+            var body = node.private.bodies && node.private.bodies[method];
+            var inContext = this.contextStack.length > 1;
+            if (!inContext)
+                this.enterNewContext();
+            if (body)
+            {
+                this.tryExec(node, body, args);
+            }
             if (node.children)
-                for (var i = 0; i < node.children.length; i++) {
+                for (var i = 0; i < node.children.length; i++)
+                {
                     this.callMethodTraverse(node.children[i], method, args);
                 }
+            if (!inContext)
+                this.exitContext();
         },
         ticking: function() {
             this.callMethodTraverse(this.nodes['index-vwf'], 'tick', []);
@@ -1629,8 +1458,8 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
                 // phase.
                 if (!phase || listener.phases && listener.phases.indexOf(phase) >= 0) {
 
-                    var result = listener.handler.apply(listener.context || jsDriverSelf.nodes[0], eventParameters); // default context is the global root  // TODO: this presumes this.creatingNode( undefined, 0 ) is retained above
-
+                    //var result = listener.handler.apply(listener.context || jsDriverSelf.nodes[0], eventParameters); // default context is the global root  // TODO: this presumes this.creatingNode( undefined, 0 ) is retained above
+                    var result = jsDriverSelf.tryExec(listener.context || jsDriverSelf.nodes[0],listener.handler,eventParameters)
                     return handled || result === true || result === undefined; // interpret no return as "return true"
                 }
                 return handled;
@@ -2064,7 +1893,7 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility) 
 
     function bodyScript(parameters, body) {
         var parameterString = (parameters.length ? " " + parameters.join(", ") + " " : "");
-        return accessorScript("( function(" + parameterString + ") {", body, "} )");
+        return accessorScript("( function(" + parameterString + ") {\n", body, "\n} )");
         // return accessorScript( "( function(" + ( parameters.length ? " " + parameters.join( ", " ) + " " : ""  ) + ") {", body, "} )" );
     }
 

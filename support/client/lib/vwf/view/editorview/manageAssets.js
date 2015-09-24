@@ -225,6 +225,7 @@ define(['vwf/view/editorview/angular-app','vwf/view/editorview/strToBytes', 'vwf
 		// build resonable defaults for new uploads
 		$scope.resetNew = function(){
 			$scope.new = {
+				id: 'new',
 				name: '<new asset>',
 				type: '???',
 				license: 'CC-BY',
@@ -412,7 +413,7 @@ define(['vwf/view/editorview/angular-app','vwf/view/editorview/strToBytes', 'vwf
 			{
 				$scope.resetNew();
 				$scope.selectedAsset = 'new';
-				fileData['new'] = strToBytes( JSON.stringify(cleanObj) );
+				fileData['new'] = strToBytes( JSON.stringify(cleanObj, null, '\t') );
 				$scope.new.filename = name;
 				$scope.new.type = type;
 				$scope.new._added = true;
@@ -424,7 +425,7 @@ define(['vwf/view/editorview/angular-app','vwf/view/editorview/strToBytes', 'vwf
 				walk(cleanObj); //undo the random rename 
 
 				$scope.selectedAsset = existingId;
-				fileData[existingId] = strToBytes( JSON.stringify(cleanObj) );
+				fileData[existingId] = strToBytes( JSON.stringify(cleanObj, null, '\t') );
 				$scope.assets[existingId].filename = name;
 				$scope.assets[existingId].type = type;
 				$scope.assets[existingId]._dirty = true;

@@ -1069,6 +1069,10 @@ define(['vwf/view/editorview/panelEditor'], function(baseclass) {
             {
             	_PrimitiveEditor.SelectionChanged(null, _Editor.GetSelectedVWFNode());
             }
+            if(_Editor.GetSelectedVWFID() == nodeID && propName == "transform")
+            {
+                this.SelectionTransformed(null,{id:nodeID});
+            }
         }
         this.addPropertyEditorDialog = function(nodeid, propname, element, type) {
             this.propertyEditorDialogs.push({
@@ -1083,11 +1087,13 @@ define(['vwf/view/editorview/panelEditor'], function(baseclass) {
             this.propertyEditorDialogs = [];
         }
         this.SelectionTransformed = function(e, node) {
-            try {
+            
                 //dont update the spinners when the user is typing in them, but when they drag the gizmo do. 
                 if (node && (vwf.client() !== vwf.moniker()) || $("#index-vwf:focus").length ==1) {
 
-                    var mat = vwf.getProperty(node.id, 'transform');
+                    //this is a much faster form of get property, because it queries only the last value set in the engine,
+                    //and does not give all the various parts of the engine a chance to respond
+                    var mat = vwf.models.object.gettingProperty(node.id, 'transform');
                     var angles = this.rotationMatrix_2_XYZ(mat);
                     var pos = [mat[12],mat[13],mat[14]];
 
@@ -1109,14 +1115,12 @@ define(['vwf/view/editorview/panelEditor'], function(baseclass) {
                     $('#ScaleY').val((Math.floor(MATH.lengthVec3([mat[4],mat[5],mat[6]]) * 1000)) / 1000);
                     $('#ScaleZ').val((Math.floor(MATH.lengthVec3([mat[8],mat[9],mat[10]]) * 1000)) / 1000);
 
-                }
-            } catch (e) {
-                //console.log(e);
-            }
+                
+            } 
         }
         
         $(document).bind('modifierCreated', this.SelectionChanged.bind(this));
-        $(document).bind('selectionTransformedLocal', this.SelectionTransformed.bind(this));
+        
        
         $('#PositionX').on( "spinchange",this.positionChanged.bind(this));
         $('#PositionY').on( "spinchange",this.positionChanged.bind(this));

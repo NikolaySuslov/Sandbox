@@ -407,23 +407,25 @@ define(['./angular-app'], function(app)
         //hide or show the function top based on the inputs
         this.methodEditor.on('change', function(e)
         {
-            console.log('Editor changed');
             self.autoComplete(self.methodEditor);
             self.triggerFunctionTip(self.methodEditor);
+
+			if(e.data) e = e.data;
+
             //hide if removing an open paren
-            if (e.data.action == "removeText")
+            if (e.action == "removeText")
             {
-                if (e.data.text.indexOf('(') != -1)
+                if (e.text.indexOf('(') != -1)
                     $('#FunctionTip').hide();
-                if (/[\.\[]/.exec(e.data.text))
+                if (/[\.\[]/.exec(e.text))
                     $('#AutoComplete').hide();
             }
             //hide if inserting a close paren
-            if (e.data.action == "insertText")
+            if (e.action == "insertText")
             {
-                if (e.data.text.indexOf(')') != -1)
+                if (e.text.indexOf(')') != -1)
                     $('#FunctionTip').hide();
-                if (/[^a-zA-Z0-9_\.\[$]/.exec(e.data.text))
+                if (/[^a-zA-Z0-9_\.\[$]/.exec(e.text))
                     $('#AutoComplete').hide();
             }
             var cur = self.methodEditor.getCursorPosition();

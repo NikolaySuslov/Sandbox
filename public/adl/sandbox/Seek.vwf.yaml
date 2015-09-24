@@ -36,17 +36,17 @@ methods:
         
         
         
-        var _offset = this.Offset.internal_val;
+        var _offset = this.Offset;
         var targetTransform = vwf.getProperty(this.Target,'worldTransform');
         if(!targetTransform) return;
         var targetTrandformI =[];
        
         _offset = Mat4.multVec3(targetTransform,_offset,[]);
-        var worldpos = this.transformAPI.getWorldPosition();
+        var worldpos = this.parent.transformAPI.getWorldPosition();
         _offset = Vec3.subtract(_offset,worldpos,[]);
         _offset = Vec3.scale(_offset,this.strength,[]);
         _offset = Vec3.add(worldpos,_offset,[]);
-        this.transformAPI.setPosition(_offset);
+        this.parent.transformAPI.setPosition(_offset);
         
         
         

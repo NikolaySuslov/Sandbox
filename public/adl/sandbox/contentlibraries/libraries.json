@@ -5,26 +5,26 @@
     },
 	{
 		"name": "Demo Entities",
-		"url": "./contentlibraries/entities.json"
-	},
+        "url": "./contentlibraries/entities.json"
+    },
 	{
 		"name": "Materials",
-		"url": "./contentlibraries/materials.json"
-	},
+        "url": "./contentlibraries/materials.json"
+    },
 	{
 		"name": "Environments",
-		"url": "./contentlibraries/environments.json"
-	},
+        "url": "./contentlibraries/environments.json"
+    },
 	{
 		"name": "Behaviors",
-		"url": "./contentlibraries/behaviors.json"
-	},
+        "url": "./contentlibraries/behaviors.json"
+    },
 	{
 		"name": "Primitives",
-		"url": "./contentlibraries/primitives.json"
-	},
+        "url": "./contentlibraries/primitives.json"
+    },
 	{
 		"name": "Cameras",
-		"url": "./contentlibraries/cameras.json"
-	}
+        "url": "./contentlibraries/cameras.json"
+    }
 ]

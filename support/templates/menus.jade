@@ -328,6 +328,10 @@ mixin menus_body
 				li: a#MenuCreateLoadMeshURL(title="Import a mesh hosted on a remote server", ng-click='lookUpHandler($event)')
 					.glyphicon.glyphicon-cloud-download
 					| Load Mesh By URL
+				li(ng-show='hasContinuesFlag')
+					a#MenuCreateContinuesNode(title="Create node from a JSON document", ng-click='lookUpHandler($event)')
+						.glyphicon.glyphicon-cloud-download
+						| Load Entity By URL
 				li
 					a#MenuAssets3DR 3DR
 					ul

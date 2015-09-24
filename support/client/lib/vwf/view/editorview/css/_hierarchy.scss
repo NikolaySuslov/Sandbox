@@ -115,6 +115,15 @@
 				background-color: #82b8ff;
 				color: black;
 			}
+
+			&.continues {
+				&:before {
+					content: "(";
+				}
+				&:after {
+					content: ")";
+				}
+			}
 		}
 
 		.three

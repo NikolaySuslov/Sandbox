@@ -207,6 +207,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         },
         updateGlyphs: function(e, viewprojection, wh, ww) {
 
+            if(vwf.getProperty(vwf.application(),'playMode') == 'play') return;
             for (var i = 0; i < this.glyphs.length; i++) {
                 if (vwf.getProperty(this.glyphs[i], 'showGlyph') == false) continue;
                 var div = $('#glyph' + ToSafeID(this.glyphs[i]))[0];
@@ -454,23 +455,9 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 }
             }
         },
-        setInterpolatedTransforms: function(deltaTime) {
-
-
-            //deltaTime = Math.min(deltaTime,this.realTickDif)
-            this.tickTime += deltaTime || 0;
-
-
-            var hit = 0;
-            while (this.tickTime > 50) {
-                hit++;
-                this.tickTime -= 50;
-            }
-            var step = (this.tickTime) / (50);
-            if (hit === 1) {
-
-
-                if (_Editor.GetMoveGizmo().getGizmoHead().matrix) {
+        resetInterpolation: function()
+        {
+            if (_Editor.GetMoveGizmo().getGizmoHead().matrix) {
                     this.gizmoLastTickTransform = this.gizmoThisTickTransform;
                     this.gizmoThisTickTransform = _Editor.GetMoveGizmo().getGizmoHead().matrix.clone();
                 }
@@ -510,17 +497,15 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 }
 
 
-            }
+        },
+        interpolatOneNode:function(i,lerpStep,step)
+        {
 
-            var lerpStep = Math.min(1, .2 * (deltaTime / 16.6)); //the slower the frames ,the more we have to move per frame. Should feel the same at 60 0r 20
-            var keys = Object.keys(this.nodes);
-            var interp = null;
-            for (var j = 0; j < keys.length; j++) {
-                var i = keys[j];
 
-                //don't do interpolation for static objects
-                if (this.nodes[i].isStatic) continue;
+             //don't do interpolation for static objects
+                if (this.nodes[i].isStatic) return;
 
+                var interp = null;
                 var last = this.nodes[i].lastTickTransform;
                 var now = this.nodes[i].thisTickTransform;
                 if (last && now) {
@@ -565,6 +550,36 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 } else if (this.state.nodes[i]) {
                     this.state.nodes[i].lastAnimationInterp = null;
                 }
+
+        },
+        setInterpolatedTransforms: function(deltaTime) {
+
+
+            //deltaTime = Math.min(deltaTime,this.realTickDif)
+            this.tickTime += deltaTime || 0;
+
+
+            var hit = 0;
+            while (this.tickTime > 50) {
+                hit++;
+                this.tickTime -= 50;
+            }
+            var step = (this.tickTime) / (50);
+            if (hit === 1) {
+
+
+                this.resetInterpolation();
+
+
+            }
+
+            var lerpStep = Math.min(1, .2 * (deltaTime / 16.6)); //the slower the frames ,the more we have to move per frame. Should feel the same at 60 0r 20
+            var keys = Object.keys(this.nodes);
+            
+            for (var j = 0; j < keys.length; j++) {
+                var i = keys[j];
+
+                this.interpolatOneNode(i,lerpStep,step);
 
 
             }

@@ -821,12 +821,10 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 }
                 if (_Editor.waitingForSet.length == 0 || vwf.client() != vwf.moniker()) {
                     _Editor.updateGizmoLocation();
-                    _Editor.updateGizmoSize();
+                   // _Editor.updateGizmoSize();
                     _Editor.updateGizmoOrientation(false);
                 }
-                $(document).trigger('selectionTransformedLocal', [{
-                    id: id
-                }]);
+                
             }
             if (window._Editor && propname == 'DisplayName' && _Editor.isSelected(id)) {
                 $('#StatusSelectedName').html((val).escape());

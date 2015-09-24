@@ -389,8 +389,12 @@ var transformTool = function()
         dist = -tgizpos2[2] / 65;
         var oldscale = [this.getGizmoBody().matrix.elements[0], this.getGizmoBody().matrix.elements[5], this.getGizmoBody().matrix.elements[10]];
         this.getGizmoBody().matrix.scale(new THREE.Vector3(1 / oldscale[0], 1 / oldscale[1], 1 / oldscale[2]));
-        var windowXadj = 1600.0 / $(window).width();
-        var windowYadj = 1200.0 / $(window).height();
+
+        var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+        var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+
+        var windowXadj = 1600.0 / w;
+        var windowYadj = 1200.0 / h;
         var winadj = Math.max(windowXadj, windowYadj);
         this.getGizmoBody().matrix.scale(new THREE.Vector3(dist * winadj * fovadj, dist * winadj * fovadj, dist * winadj * fovadj));
         tempcammatinverse.getInverse(this.getGizmoHead().matrixWorld);

@@ -40,12 +40,12 @@ properties:
   ___physics_factor_linear: [ 1, 1, 1]
   ___physics_constant_force: null
   ___physics_constant_torque: null
-  physicsAPI:
+  ___physicsAPI:
     get: |
-        if(!this.___physicsAPI)
+        if(!this.____physicsAPI)
         {
-            this.___physicsAPI = {};
-            this.___physicsAPI.addForceAtCenter = function(x,y,z,coords)
+            this.____physicsAPI = {};
+            this.____physicsAPI.addForceAtCenter = function(x,y,z,coords)
             {
                if(!coords)
                   coords = 0;
@@ -58,11 +58,11 @@ properties:
                var force = [x,y,z];
                this.___physics_addForce(force);
             }.bind(this);
-            this.___physicsAPI.wake = function()
+            this.____physicsAPI.wake = function()
             {
             	this.___physics_activation_state = 1;
             }
-             this.___physicsAPI.addTorque = function(x,y,z,coords)
+             this.____physicsAPI.addTorque = function(x,y,z,coords)
             {
                if(!coords)
                   coords = 0;
@@ -75,7 +75,7 @@ properties:
                var force = [x,y,z];
                this.___physics_addTorque(force);
             }.bind(this);
-            this.___physicsAPI.addForceImpulse = function(x,y,z,coords)
+            this.____physicsAPI.addForceImpulse = function(x,y,z,coords)
             {
                if(!coords)
                   coords = 0;
@@ -88,7 +88,7 @@ properties:
                var force = [x,y,z];
                this.___physics_addForceImpulse(force);
             }.bind(this);
-            this.___physicsAPI.addTorqueImpulse = function(x,y,z,coords)
+            this.____physicsAPI.addTorqueImpulse = function(x,y,z,coords)
             {
                if(!coords)
                   coords = 0;
@@ -101,7 +101,7 @@ properties:
                var force = [x,y,z];
                this.___physics_addTorqueImpulse(force);
             }.bind(this);
-            this.___physicsAPI.addForceOffset = function(x,y,z,x1,y1,z1,coords)
+            this.____physicsAPI.addForceOffset = function(x,y,z,x1,y1,z1,coords)
             {
                if(!coords)
                   coords = 0;
@@ -120,7 +120,7 @@ properties:
                
                this.___physics_addForceOffset(force,pos);
             }.bind(this);
-            this.___physicsAPI.setLinearVelocity = function(x,y,z,coords)
+            this.____physicsAPI.setLinearVelocity = function(x,y,z,coords)
             {
                if(!coords)
                   coords = 0;
@@ -134,7 +134,7 @@ properties:
                
                this.___physics_velocity_linear = force;
             }.bind(this);
-            this.___physicsAPI.setAngularVelocity = function(x,y,z,coords)
+            this.____physicsAPI.setAngularVelocity = function(x,y,z,coords)
             {
                if(!coords)
                   coords = 0;
@@ -148,17 +148,17 @@ properties:
                
                this.___physics_velocity_angular = force;
             }.bind(this);
-            this.___physicsAPI.getLinearVelocity = function()
+            this.____physicsAPI.getLinearVelocity = function()
             {
-               return this.___physics_velocity_linear.internal_val;
+               return this.___physics_velocity_linear;
             }.bind(this);
-            this.___physicsAPI.getAngularVelocity = function()
+            this.____physicsAPI.getAngularVelocity = function()
             {
-               return this.___physics_velocity_angular.internal_val;
+               return this.___physics_velocity_angular;
             }.bind(this);
-            this.___physicsAPI.getMass = function()
+            this.____physicsAPI.getMass = function()
             {
               return this.___physics_mass;
             }.bind(this);
         }
-        return this.___physicsAPI;
+        return this.____physicsAPI;
