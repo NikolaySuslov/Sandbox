@@ -1,0 +1,18 @@
+#primitiveEditor
+{
+    $dark-gray: #909090;
+
+    label{
+        width: 100%;
+    }
+
+    button{
+        float: right;
+        background: black;
+        color: white;
+        border: 1px solid $dark-gray;
+        padding: 2px;
+        width: 30%;
+        border-radius: 5px;
+    }
+}

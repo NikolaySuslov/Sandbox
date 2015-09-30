@@ -57,6 +57,7 @@
 
 	.editorPanel
 	{
+		$dark-gray: #909090;
 		width: 100%;
 		//max-height: 400px;
 		//overflow: hidden;
@@ -68,13 +69,135 @@
 			font-weight: bold;
 			@include flex-shrink(0);
 		}
-		
+
 		.content
 		{
 			@include flex-grow(1);
 			color: white;
 			background: url(vwf/view/editorview/css/images/ui-bg_hexagon_5_111111_12x10.png) 50% 50% repeat rgb(36, 32, 32);
 		}
+
+		.ui-accordion .ui-accordion-content {
+			padding: 10px;
+		}
+
+		.horizontalLayout.centered {
+			@include justify-content(center);
+		}
+
+		.inline
+		{
+			@include display-flex();
+			@include align-items(center);
+			@include justify-content(space-between);
+
+			margin: 10px 0;
+			cursor: default;
+		}
+
+		.vMargin {
+			margin: 15px 0;
+		}
+
+		.vector-input{
+			float:right;
+			width: 100%;
+			clear: both;
+			margin-top: 2px;
+			text-align: right;
+
+			input{
+				width: 15%;
+				padding: 3px;
+				text-align: center;
+				margin-right: 5px;
+				border: 1px solid $dark-gray;
+			}
+		}
+
+		#Translation, #Rotation, #Scale{
+			margin-top: 3px;
+			text-align: left;
+		}
+
+		.vwf-image-picker{
+			display: block;
+		    text-align: left;
+		    width: 95%;
+		    overflow: hidden;
+		}
+
+		input {
+			background: black;
+			color: white;
+			border: 1px solid $dark-gray;
+			padding: 2px;
+		}
+	}
+
+	label
+	{
+		display: block;
+		margin: 0;
+
+		input[type=checkbox] {
+			margin: 0;
+		}
+	}
+
+	input:not([type=button]) {
+		color: white;
+		background: rgba(0,0,0,0);
+	}
+
+	slider
+	{
+		.mantissa {
+			@include display-flex();
+			@include align-items(center);
+		}
+
+		.exponent {
+			@extend .mantissa;
+			@include justify-content(flex-end);
+
+			input {
+				margin-left: 5px;
+			}
+		}
+
+		.ui-slider
+		{
+			@include flex-grow(1);
+			margin: 0 10px 0 5px;
+			font-size: 11px;
+
+			background-color: #87b7d8 !important;
+			border-color: grey;
+
+			.ui-slider-handle
+			{
+				color: lightgrey !important;
+			}
+		}
+
+		input
+		{
+			@include flex-shrink(0);
+			width: 50px;
+			color: initial;
+			padding: initial;
+		}
+	}
+
+	.colorPickerIcon
+	{
+		width: 25px;
+		height: 25px;
+		border: 2px solid lightgray;
+
+		background-color: #aaaaaa;
+		background-image: url(../images/select3.png);
+		background-position: center;
 	}
 }
-

@@ -118,6 +118,9 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuCreateGUIImage: function(e) {
 				_GUIView.createImage();
 			},
+			MenuCreateGUIHtml: function(e) {
+				_GUIView.createHtml();
+			},
 	
 	
 			MenuEn: function(e) {

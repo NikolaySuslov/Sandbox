@@ -8,6 +8,7 @@
 @import 'scripteditor';
 @import 'sidepanel';
 @import 'hierarchy';
+@import 'primitive';
 @import 'materialeditor';
 
 @-webkit-keyframes pulsing {
@@ -97,7 +98,7 @@ input[type=button]
 	&:hover {
 		color: #82b8ff;
 	}
-			
+
 	&:disabled, &:disabled:hover {
 		color: grey;
 	}
@@ -1195,9 +1196,7 @@ div#Translation .ui-spinner, div#Rotation .ui-spinner, div#Scale .ui-spinner {
 }
 
 div#otherprops input[type=text] {
-	color: black;
 	/* border-radius: 5px; */
-	padding: 0px;
 	margin: 2px;
 }
 
@@ -1293,7 +1292,7 @@ ul li a .glyphicon {
 	color: #5e5e5e !important;
 	cursor: not-allowed;
 	pointer-events: none;
-	opacity: 0.85;
+	opacity: 0.45;
 }
 
 .sidetab-editor-title {

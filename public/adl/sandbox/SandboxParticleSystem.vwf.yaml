@@ -1,11 +1,11 @@
 # Copyright 2012 United States Government, as represented by the Secretary of Defense, Under
 # Secretary of Defense (Personnel & Readiness).
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 # in compliance with the License. You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software distributed under the License
 # is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 # or implied. See the License for the specific language governing permissions and limitations under
@@ -15,8 +15,8 @@ extends: http://vwf.example.com/particlesystem.vwf
 methods:
 properties:
   type: "ParticleSystem"
-  glyphURL: '../vwf/view/editorview/images/icons/ParticleIcon.png'  
-  showGlyph: true  
+  glyphURL: '../vwf/view/editorview/images/icons/ParticleIcon.png'
+  showGlyph: true
   startColor_noAplha:
     value: [1 ,1 ,1]
     set: |
@@ -29,7 +29,7 @@ properties:
             if(!value) return;
             this.colorRange = [value[0],value[1],value[2],this.alphaRange]
     get: |
-            return [this.colorRange[0],this.colorRange[1],this.colorRange[2]]          
+            return [this.colorRange[0],this.colorRange[1],this.colorRange[2]]
   endColor_noAplha:
     value: [1 ,1 ,1]
     set: |
@@ -44,7 +44,7 @@ properties:
     set: |
             this.endColor = [this.endColor[0],this.endColor[1],this.endColor[2],value]
     get: |
-            return this.endColor[3];   
+            return this.endColor[3];
   startAlpha:
     value: 1
     set: |
@@ -60,7 +60,7 @@ properties:
             this.colorRange = [this.colorRange[0],this.colorRange[1],this.colorRange[2],value]
     get: |
             if(!this.colorRange) this.colorRange = [0,0,0,0];
-            return this.colorRange[3];                       
+            return this.colorRange[3];
   EditorData:
     AAParticleCount:
       displayname: "Particle Count"
@@ -72,7 +72,7 @@ properties:
     showGlyph:
       displayname: Show glyph
       property: showGlyph
-      type: check  
+      type: check
     ABstartAlpha:
       displayname: "Alpha: start"
       property: startAlpha
@@ -93,7 +93,7 @@ properties:
       type: slider
       min: 0
       max: 1
-      step: .01  
+      step: .01
     AALifeTime:
       displayname: "Lifetime: (min - max)"
       property: [minLifeTime, minLifeTime, maxLifeTime]
@@ -114,14 +114,14 @@ properties:
       type: slider
       min: 0
       max: 4
-      step: .01 
+      step: .01
     AABBBDamping:
       displayname: "Damping (Euler)"
       property: damping
       type: slider
       min: 0
       max: 1
-      step: .01     
+      step: .01
     AAOrientation:
       displayname: "Orientation: (min - max)"
       property: [minOrientation, minOrientation, maxOrientation]
@@ -131,11 +131,11 @@ properties:
       step: .1
     AASpin:
       displayname: "Spin: (min - max)"
-      property: [minSpin, minSpin, mamSpin]
+      property: [minSpin, minSpin, maxSpin]
       type: rangeslider
       min: -20
       max: 20
-      step: .1       
+      step: .1
     AStartSize:
       displayname: "Size: start"
       property: startSize
@@ -156,7 +156,7 @@ properties:
       type: slider
       min: 0
       max: 1
-      step: .01  
+      step: .01
     ABCMatx:
       displayname: "Max Rate "
       property: maxRate
@@ -170,7 +170,7 @@ properties:
       type: slider
       min: 0
       max: 1
-      step: .001        
+      step: .001
     CStartVelocity:
       displayname: Velocity
       property: [minVelocity, maxVelocity]
@@ -184,7 +184,7 @@ properties:
     CGravityPoint:
       displayname: "Gravity Center"
       property: gravityCenter
-      type: vector  
+      type: vector
     ZZImage:
       displayname: "Choose Image"
       property: image
@@ -200,12 +200,12 @@ properties:
     YVariationColor:
       displayname: Color Variation
       property: colorRange_noAplha
-      type: color  
+      type: color
     solver:
       displayname: "Simulation Solver"
       property: solver
       type: choice
-      labels: 
+      labels:
         - Euler
         - Analytic
         - AnalyticShader
@@ -217,7 +217,7 @@ properties:
       displayname: "Emitter Type"
       property: emitterType
       type: choice
-      labels: 
+      labels:
         - Box
         - Sphere
         - Point
@@ -237,12 +237,12 @@ properties:
       displayname: "Velocity Mode"
       property: velocityMode
       type: choice
-      labels: 
+      labels:
         - Cartesian
         - Spherical
       values:
         - cartesian
-        - spherical       
+        - spherical
     DetphTest:
       displayname: "Depth Test"
       property: depthTest
@@ -250,4 +250,4 @@ properties:
     Additive:
       displayname: "Additive Blending"
       property: additive
-      type: check        
+      type: check

@@ -24,7 +24,7 @@ define(function ()
 			for(var i in node.children)
 			{
 				var name1 = findid(node.children[i],name);
-				if(name1) return name1;	
+				if(name1) return name1;
 			}
 		}
 		return null;
@@ -62,7 +62,7 @@ define(function ()
 				return false;
 			for(var i = 0; i < this.selection.length; i++)
 				if(this.selection[i] != event.selection[i])
-					return false;	
+					return false;
 			return true;
 		}
 
@@ -76,7 +76,7 @@ define(function ()
 		this.uri = uri;
 		this.undo = function()
 		{
-			
+
 			var id = findid(_Editor.getNode('index-vwf'),this.name);
 			vwf_view.kernel.deleteNode(id);
 		}
@@ -130,16 +130,19 @@ define(function ()
 	function SetPropertyEvent(id,property,val,oldval)
 	{
 		this.property = property;
-		this.val = JSON.parse(JSON.stringify(val || null));
+		if(val === undefined) val = null;
+		if(oldval === undefined) oldval = vwf.getProperty(id,property) || null;
+
+		this.val = JSON.parse(JSON.stringify(val));
 		this.id = id;
-		this.oldval = JSON.parse(JSON.stringify(oldval || vwf.getProperty(id,property) || null));
+		this.oldval = JSON.parse(JSON.stringify(oldval));
 		this.undo = function()
 		{
 			vwf_view.kernel.setProperty(this.id,this.property,this.oldval);
 		}
 		this.redo = function()
 		{
-			vwf_view.kernel.setProperty(this.id,this.property,this.val);	
+			vwf_view.kernel.setProperty(this.id,this.property,this.val);
 		}
 		this.compare = function(event)
 		{
@@ -180,12 +183,12 @@ define(function ()
 			for(var i = 0; i < this.list.length; i++)
 				if(!this.list[i].compare(event.list[i]))
 					return false;
-			return true;	
+			return true;
 		}
 
 	}
 	function initialize()
-	{	
+	{
 		this.stack = [];
 		this.head = -1;
 		this.modCb = null;
@@ -225,11 +228,11 @@ define(function ()
 				return;
 			}
 
-			
+
 			this.stack = this.stack.slice(0,this.head);
 
 			if(this.stack.length > 30) this.stack.shift();
-			
+
 			//don't add events that don't change anything
 			if(this.stack[this.stack.length-1] && this.stack[this.stack.length-1].compare(newevent))
 				return;
@@ -243,15 +246,15 @@ define(function ()
 		this.recordDelete = function(id)
 		{
 
-			
+
 			this.pushEvent(new DeleteNodeEvent(id));
-			
+
 		}
 		this.recordCreate = function(parent,name,proto,uri)
 		{
-			
+
 			this.pushEvent(new CreateNodeEvent(parent,name,proto,uri));
-			
+
 		}
 		this.recordSetProperty = function(id,prop,val)
 		{
@@ -283,7 +286,7 @@ define(function ()
 
 			if(newevent && !newevent.parent && newevent.list.length > 0)
 			this.pushEvent(newevent);
-			
+
 		}
 	}
 });

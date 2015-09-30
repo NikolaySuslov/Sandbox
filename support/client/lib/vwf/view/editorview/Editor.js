@@ -2460,7 +2460,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
 
             if (_Editor.GUIdragging) {
 
-                var val = goog.vec.Mat4.createIdentity();
+                var val = vwf.getProperty(_Editor.GetSelectedVWFID(), 'transform');
                 val[12] = e.clientX - 5;
                 val[13] = e.clientY - 5;
 

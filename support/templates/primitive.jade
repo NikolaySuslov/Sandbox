@@ -1,0 +1,115 @@
+extends ./paneleditor
+
+block vars
+	- var settings = { name: 'primitiveEditor', controller: 'PrimitiveController', title: 'Properties', icon: 'properties', requiresSelection: true };
+
+block content
+	#primitive-accordion(vws-accordion='refreshAccordion', ng-class="fields.selectedNode?'':'editorPanelDisable'")
+		h3 
+			a(href="#") Flags
+		#otherprops.accordian-flags		
+			div(ng-repeat="flag in ::flags")
+				label.inline(for="{{::flag}}") {{::flag}}
+					input(type="text" ng-show="$index == 0" ng-model="node.properties[flagProps[0]]" ng-model-options="{updateOn: 'blur'}")
+					input(type="checkbox" ng-hide="$index == 0" name="{{::flag}}" ng-model="node.properties[flagProps[$index]]")
+				
+		h3
+			a(href="#") Transforms
+		.accordian-transforms
+			.EditorLabel Translation
+			#Translation.vector-input.vMargin
+				input(type="number", ng-change="onChangeTransform()", ng-model="transform.translation[$index]", ng-repeat="pos in transform.translation track by $index", ng-model-options="{updateOn: 'blur click'}")
+			.EditorLabel Rotation
+			#Rotation.vector-input.vMargin
+				input(type="number", ng-model="transform.rotation[$index]", ng-repeat="rot in transform.rotation track by $index", ng-model-options="{updateOn: 'blur click'}")
+			.EditorLabel Scale
+			#Scale.vector-input.vMargin
+				input(type="number", ng-model="transform.scale[$index]", min=".0001", step=".05", ng-repeat="scale in transform.scale track by $index", ng-model-options="{updateOn: 'blur click'}")
+				
+		h3(ng-repeat-start="data in allEditorData") 
+			a(href="#") {{data.type}}: {{data.name}}
+		.accordion-properties(ng-repeat-end)
+			div(ng-repeat="(key, value) in data.editorProps")
+				vwf-editor-property(vwf-prop="value", vwf-key="{{key}}", vwf-node="node")
+				
+		h3(ng-show="animationEditorData")
+			a(href="#") Animation
+		.accordian-animation(ng-show="animationEditorData")
+			div(ng-repeat="(key, value) in animationEditorData")
+				vwf-editor-property(vwf-prop="value", vwf-key="{{key}}", vwf-node="node")
+			label.inline(style="margin-top:10px;") Play animation during simulation: 
+				input(type='checkbox', ng-model="animationPlayState", ng-change='playAnimation()')
+				
+		h3(ng-repeat-start="data in childrenEditorData") 
+			a(href="#") {{data.type}}: {{data.name}}
+		.accordion-properties(ng-repeat-end)
+			div(ng-repeat="(key, value) in data.editorProps")
+				vwf-editor-property(vwf-prop="value", vwf-key="key", vwf-node="data.node")
+			
+			
+	
+	#vwf-template-slider(ng-non-bindable, style='display: none;') 
+		label.vMargin {{displayname}}: 
+			slider(min="min", max="max", step="step || 1", value='vwfNode.properties[vwfProp.property]', sliding='isUpdating', change='onChange()', softlimit="true")
+	
+	#vwf-template-color(ng-non-bindable, style='display: none;')
+		label.inline {{displayname}}: 
+			color-picker(color-arr='vwfNode.properties[vwfProp.property]', color-obj='{r:0,g:0,b:0}', sliding='isUpdating')
+		
+	#vwf-template-check(ng-non-bindable, style='display: none;')
+		label.inline {{displayname}}: 
+			input(type='checkbox', ng-model='vwfNode.properties[vwfProp.property]', ng-change='onChange()')
+		
+	#vwf-template-button(ng-non-bindable, style='display: none;')
+		button(ng-click='callMethod(vwfNode, vwfProp)') {{vwfProp.label || vwfProp.method || 'Call Method'}}
+		
+	#vwf-template-rangeslider(ng-non-bindable, style='display: none;')
+		label.vMargin {{displayname}}: 
+			slider(min="min", max="max", step="step || 1", value='vwfNode.properties[vwfProp.property[0]]', upper-value='vwfNode.properties[vwfProp.property[1]]', range="true", sliding='isUpdating')
+		
+	#vwf-template-vector(ng-non-bindable, style='display: none;')
+		label {{displayname}}: 
+		div.vector-input.vMargin
+			input(type='number', step='{{step || 1}}', ng-change='onChange()', ng-model='vwfNode.properties[vwfProp.property][$index]', ng-model-options='{updateOn: "click blur"}', ng-repeat='component in vwfNode.properties[vwfProp.property] track by $index')
+	
+	#vwf-template-rangevector(ng-non-bindable, style='display: none;')
+		label.vMargin 
+			div {{displayname}}
+			.vector-input.vMargin min:
+				input(type='number', step='{{step || 1}}', ng-change='onChange(0)', ng-repeat='min in vwfNode.properties[vwfProp.property[0]] track by $index', ng-model='vwfNode.properties[vwfProp.property[0]][$index]', ng-model-options="{updateOn: 'blur'}")
+			.vector-input.vMargin max:
+				input(type='number', step='{{step || 1}}', ng-change='onChange(1)', ng-repeat='max in vwfNode.properties[vwfProp.property[1]] track by $index', ng-model='vwfNode.properties[vwfProp.property[1]][$index]', ng-model-options="{updateOn: 'blur'}")
+	
+	#vwf-template-text(ng-non-bindable, style='display: none;')
+		label.inline {{displayname}}: 
+			input(ng-model='vwfNode.properties[vwfProp.property]', type='text', placeholder='{{displayname}}', ng-change='onChange()')
+				
+	#vwf-template-choice(ng-non-bindable, style='display: none;')
+		label.inline {{displayname}}:
+			select(ng-model='vwfNode.properties[vwfProp.property]', ng-change='onChange()')
+				option(ng-repeat='value in vwfProp.values' ng-selected='vwfNode.properties[vwfProp.property] == value' value='{{value}}') {{labels[$index]}}
+
+	#vwf-template-map(ng-non-bindable, style='display: none;')
+		label.vMargin
+			vwf-image-picker(label='displayname', value='vwfNode.properties[vwfProp.property]', change='onChange()')
+			
+	#vwf-template-nodeid(ng-non-bindable, style='display: none;')
+		label.vMargin {{displayname}}: 
+			br
+			input(ng-model='vwfNode.properties[vwfProp.property]', type='text', placeholder='{{displayname}}')
+			button(ng-click='pickNode(vwfNode, vwfProp)') Choose Node
+		
+	#vwf-template-sectionTitle(ng-non-bindable, style='display: none;')
+		.EditorDataSectionTitle {{displayname}}: 
+		
+	#vwf-template-label(ng-non-bindable, style='display: none;')
+		span {{displayname}}: 
+	
+	#vwf-template-prompt(ng-non-bindable, style='display: none;')
+		label.vMargin {{displayname}}:
+			button(ng-click='showPrompt(vwfNode, vwfProp, vwfNode.properties[vwfProp.property])') {{vwfNode.properties[vwfProp.property] || 'Set Value'}}
+			
+			
+			
+			
+			

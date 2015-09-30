@@ -94,7 +94,8 @@ define(["module", "vwf/view"], function(module, view)
                     transform: this.getScreenCenter(),
                     owner: _UserManager.GetCurrentUserName(),
                     DisplayName: _Editor.GetUniqueName('Label'),
-                    visible: true
+                    visible: true,
+					font_color: [0,0,0]
                 }
             });
         },
@@ -158,6 +159,30 @@ define(["module", "vwf/view"], function(module, view)
                 }
             });
         },
+        createHtml: function()
+        {
+            alertify.prompt('Input a URL to the document. Please note: this must serve from a CORS capable host!', function(ok, val) {
+                if(ok){
+                    var parent = this.getCreateParentNode();
+                    vwf_view.kernel.createChild(parent, GUID(),
+                    {
+                        extends: "http://vwf.example.com/html.vwf",
+                        source: val,
+                        properties: {
+                            width: 100,
+                            height: 100,
+                            background_color: [1, 0, 0],
+                            background_visible: true,
+                            border_color: [1, 1, 1],
+                            transform: this.getScreenCenter(),
+                            owner: _UserManager.GetCurrentUserName(),
+                            DisplayName: _Editor.GetUniqueName('Html'),
+                            visible: true
+                        }
+                    });
+                }
+            }.bind(this), 'http://');
+        },
         getScreenCenter: function()
         {
             if (this.isGUINode(vwf.prototype(this.getCreateParentNode())))
@@ -220,6 +245,12 @@ define(["module", "vwf/view"], function(module, view)
             if (childExtendsID == 'http-vwf-example-com-image-vwf') return true;
             return this.isImage(vwf.prototype(childExtendsID));
         },
+        isHtml: function (childExtendsID)
+        {
+            if (childExtendsID == 'http-vwf-example-com-html-vwf') return true;
+            else if (!childExtendsID) return false;
+            else return this.isHtml(vwf.prototype(childExtendsID));
+        },
         createdNode: function(nodeID, childID, childExtendsID, childImplementsIDs, childSource, childType, childURI, childName, callback /* ( ready ) */ )
         {
             if (this.isGUINode(childExtendsID) && nodeID !== 0)
@@ -234,7 +265,7 @@ define(["module", "vwf/view"], function(module, view)
                 //don't need to do anything for the root node
                 if (!node.parentid) return
                     //because it only makes sense to make children on dialogs, panels, or the root
-                if ((!node.parentnode) || ((!this.isDialog(node.parentnode.type)) && (!this.isPanel(node.parentnode.type))))
+                if ( !node.parentnode || (!this.isDialog(node.parentnode.type) && !(this.isPanel(node.parentnode.type) && !this.isHtml(node.parentnode.type))) )
                     node.parentdiv = $('#guioverlay_' + 'index-vwf')[0];
                 if (this.isDialog(node.type))
                 {
@@ -318,7 +349,7 @@ define(["module", "vwf/view"], function(module, view)
                 {
                     $(node.parentdiv).append('<div id="guioverlay_' + node.id + '"/>')
                     node.div = $('#guioverlay_' + node.id)[0];
-                    $(node.div).html(('').escape());
+                    //$(node.div).html(('').escape());
                     $(node.div).css('position', 'absolute');
                 }
                 if (this.isImage(node.type))
@@ -585,6 +616,10 @@ define(["module", "vwf/view"], function(module, view)
                 {
                     $(node.div).css('border-color', toCSSColor(propertyValue));
                 }
+                else if( propertyName == '__innerHTML' && this.isHtml(node.type))
+                {
+                    $(node.div).html(propertyValue);
+                }
             }
         },
         updateVisiblity: function()
@@ -613,8 +648,11 @@ define(["module", "vwf/view"], function(module, view)
     function toCSSColor(array)
     {
         if (!array)
-            array = [0, 0, 0];
-        array = [Math.floor(array[0] * 255), Math.floor(array[1] * 255), Math.floor(array[2] * 255)];
-        return 'rgb(' + (array.join(',') + ')');
+            array = [0, 0, 0, 0];
+        else if(array[3] === undefined)
+            array = array.concat([1,1,1,1]).slice(0,4);
+
+        array = [Math.round(array[0] * 255), Math.round(array[1] * 255), Math.round(array[2] * 255), array[3]];
+        return 'rgba(' + array.join(',') + ')';
     }
 });

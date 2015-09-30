@@ -26,6 +26,7 @@
 
 			input {
 				margin-left: 5px;
+				border-top: none;
 			}
 		}
 
@@ -69,34 +70,12 @@
 	}
 
 	input:not([type=button]) {
-		color: black;
+		color: white;
 	}
 
 	.horizontalLayout.centered {
-		@include justify-content(center);
-
 		input[type=button] {
 			width: 80%;
-		}
-	}
-
-	.inline
-	{
-		@include display-flex();
-		@include align-items(center);
-		@include justify-content(space-between);
-
-		margin: 10px 0;
-		cursor: default;
-	}
-
-	label
-	{
-		display: block;
-		margin: 0;
-
-		input[type=checkbox] {
-			margin: 0;
 		}
 	}
 

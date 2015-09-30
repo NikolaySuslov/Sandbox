@@ -39,7 +39,7 @@ mixin manageAssets_body
 			#dragarea.verticalLayout
 				span.fixed-height {{!selectedAsset ? '' : selectedAsset==='new' ? 'Create Asset' : 'Replace Asset'}}
 				p#filename.fixed-height(ng-show='selectedAsset') {{selected.filename || 'Drag/drop or click to upload'}}
-				#typeInput.horizontalLayout(ng-show='selectedAsset && selected.filedata')
+				#typeInput.horizontalLayout(ng-show='selectedAsset && selected.filename')
 					input(type='text', placeholder='application/octet-stream', ng-model='selected.type')
 					select(ng-model='selected.type', ng-options='prettifyType(v) for v in knownTypes')
 						option(value='') */*

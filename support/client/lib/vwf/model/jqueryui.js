@@ -17,6 +17,15 @@ define( [ "module", "vwf/model" ], function( module, model ) {
 
     // vwf/model/object.js is a backstop property store.
 
+    function isHtmlNode(childExtendsID)
+    {
+        if (childExtendsID == 'http-vwf-example-com-html-vwf') return true;
+        else if (!childExtendsID) return false;
+        else return isHtmlNode(vwf.prototype(childExtendsID));
+    }
+
+    var sourceCache = {};
+
     return model.load( module, {
 
         // == Module Definition ====================================================================
@@ -32,7 +41,32 @@ define( [ "module", "vwf/model" ], function( module, model ) {
 
         creatingNode: function( nodeID, childID, childExtendsID, childImplementsIDs,childSource, childType, childURI, childName, callback /* ( ready ) */ ) {
 
-           
+            if( isHtmlNode(childExtendsID) )
+            {
+                // get absolute url
+                var a = document.createElement('a');
+                a.href = childSource;
+
+                if(sourceCache[a.href]){
+                    vwf.setProperty(childID, '__innerHTML', sourceCache[a.href]);
+                }
+                else
+                {
+                    callback(false);
+
+                    // fetch data
+                    $.get(childSource)
+                    .done(function(data, textStatus, xhr){
+                        callback(true);
+                        sourceCache[a.href] = xhr.responseText;
+                        vwf.setProperty(childID, '__innerHTML', xhr.responseText);
+                    })
+                    .fail(function(xhr, textStatus){
+                        callback(true);
+                        alertify.alert('Failed to fetch ' + childSource + ': ' + textStatus);
+                    });
+                }
+            }
         },
 
         // -- initializingNode ---------------------------------------------------------------------
@@ -52,7 +86,7 @@ define( [ "module", "vwf/model" ], function( module, model ) {
         // -- prototyping --------------------------------------------------------------------------
 
         prototyping: function( nodeID ) {  // TODO: not for global anchor node 0
-           	
+               
         },
 
         // -- behavioring --------------------------------------------------------------------------

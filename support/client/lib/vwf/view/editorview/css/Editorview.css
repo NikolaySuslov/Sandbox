@@ -1,36 +1,1311 @@
+/* line 2, _menubar.scss */
+.ddsmoothmenu {
+  font: 12px 'Open Sans';
+  background: #424242;
+  /*background of menu bar (default state)*/
+  height: 26px;
+  border-bottom: 1px solid #666666;
+  /* ######### CSS classes applied to down and right arrow images  ######### */
+  /* ######### CSS for shadow added to sub menus  ######### */ }
+  /* line 9, _menubar.scss */
+  .ddsmoothmenu ul {
+    z-index: 100;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    /*Top level list items*/ }
+    /* line 17, _menubar.scss */
+    .ddsmoothmenu ul li {
+      position: relative;
+      display: inline;
+      float: left;
+      /* font-size: 1.1em; */
+      /*Top level menu link items style*/
+      /*1st sub level menu*/ }
+      /* line 24, _menubar.scss */
+      .ddsmoothmenu ul li.divider {
+        width: 175px;
+        border-bottom: 3px solid grey; }
+      /* line 30, _menubar.scss */
+      .ddsmoothmenu ul li.disabled {
+        pointer-events: none; }
+        /* line 34, _menubar.scss */
+        .ddsmoothmenu ul li.disabled a {
+          color: grey; }
+      /* line 40, _menubar.scss */
+      .ddsmoothmenu ul li a {
+        display: block;
+        background: #424242;
+        /*background of menu items (default state)*/
+        color: white;
+        padding: 8px 10px;
+        /* border-right: 1px solid #778; */
+        cursor: pointer;
+        text-decoration: none;
+        padding-bottom: 3px;
+        padding-top: 3px;
+        /* text-shadow: 2px 2px 2px black; */ }
+        /* line 53, _menubar.scss */
+        .ddsmoothmenu ul li a:link, .ddsmoothmenu ul li a:visited {
+          color: white; }
+        /* line 57, _menubar.scss */
+        .ddsmoothmenu ul li a.selected {
+          /*CSS class that's dynamically added to the currently active menu items' LI A element*/
+          background: #719ddd;
+          color: white; }
+        /* line 63, _menubar.scss */
+        .ddsmoothmenu ul li a:hover {
+          background: #719ddd;
+          /*background of menu items during onmouseover (hover state)*/
+          color: white; }
+        /* line 68, _menubar.scss */
+        .ddsmoothmenu ul li a:active {
+          background-color: #7B7B7B;
+          /*background of menu items during active (mouse down state)*/ }
+      /* line 74, _menubar.scss */
+      .ddsmoothmenu ul li ul {
+        position: absolute;
+        left: 0;
+        display: none;
+        /*collapse all sub menus to begin with*/
+        visibility: hidden;
+        /*Sub level menu list items (undo style from Top level List Items)*/ }
+        /* line 82, _menubar.scss */
+        .ddsmoothmenu ul li ul li {
+          display: list-item;
+          box-shadow: 3px 3px 5px;
+          /* Sub level menu links style */
+          /*All subsequent sub menu levels vertical offset after 1st level sub menu */ }
+          /* line 89, _menubar.scss */
+          .ddsmoothmenu ul li ul li a {
+            font: normal 13px 'Open Sans';
+            width: 160px;
+            /*width of sub menus*/
+            padding: 5px 6px 2px 9px;
+            margin: 0;
+            border-top-width: 0;
+            /* border-bottom: 1px solid rgb(66, 66, 66); */
+            background-color: #303030; }
+          /* line 101, _menubar.scss */
+          .ddsmoothmenu ul li ul li ul {
+            top: 0; }
+  /* line 110, _menubar.scss */
+  .ddsmoothmenu .downarrowclass {
+    position: absolute;
+    top: 6px;
+    right: 7px; }
+  /* line 116, _menubar.scss */
+  .ddsmoothmenu .rightarrowclass {
+    position: absolute;
+    top: 6px;
+    right: 5px; }
+  /* line 124, _menubar.scss */
+  .ddsmoothmenu .ddshadow {
+    /*shadow for NON CSS3 capable browsers*/
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    background: silver; }
+  /* line 133, _menubar.scss */
+  .ddsmoothmenu .toplevelshadow {
+    /*shadow opacity for NON CSS3 capable browsers. Doesn't work in IE*/
+    opacity: 0.8; }
 
+/* line 138, _menubar.scss */
+* html .ddsmoothmenu ul li a {
+  /*IE6 hack to get sub menu links to behave correctly*/
+  display: inline-block; }
+
+/* Holly Hack for IE \*/
+/* line 146, _menubar.scss */
+* html .ddsmoothmenu {
+  height: 1%; }
+
+/*Holly Hack for IE7 and below*/
+/* line 3, _assets.scss */
+#manageAssetsDialog {
+  display: -webkit-box;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  padding: 0; }
+  /* line 8, _assets.scss */
+  #manageAssetsDialog > * {
+    width: 50%;
+    margin-top: 2px; }
+  /* line 14, _assets.scss */
+  #manageAssetsDialog label {
+    font-size: 11px; }
+  /* line 18, _assets.scss */
+  #manageAssetsDialog #assetBrowser {
+    border-right: solid grey 1px;
+    margin-right: 2px;
+    padding-right: 2px; }
+    /* line 24, _assets.scss */
+    #manageAssetsDialog #assetBrowser #controls {
+      -webkit-box-pack: justify;
+      -moz-justify-content: space-between;
+      -ms-flex-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -moz-flex-shrink: 0;
+      -ms-flex-shrink: 0;
+      -webkit-flex-shrink: 0;
+      flex-shrink: 0;
+      margin-bottom: 5px; }
+      /* line 31, _assets.scss */
+      #manageAssetsDialog #assetBrowser #controls label#hideThumbs {
+        -webkit-box-align: center;
+        -moz-align-items: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center; }
+      /* line 35, _assets.scss */
+      #manageAssetsDialog #assetBrowser #controls input[type=search] {
+        color: black; }
+    /* line 40, _assets.scss */
+    #manageAssetsDialog #assetBrowser #assetList {
+      overflow-y: auto;
+      -moz-flex-grow: 1;
+      -ms-flex: 1 1;
+      -webkit-flex-grow: 1;
+      flex-grow: 1;
+      position: relative; }
+    /* line 46, _assets.scss */
+    #manageAssetsDialog #assetBrowser .asset, #manageAssetsDialog #assetBrowser .newAsset {
+      padding: 3px;
+      margin-bottom: 2px;
+      border-radius: 3px; }
+      /* line 52, _assets.scss */
+      #manageAssetsDialog #assetBrowser .asset .info, #manageAssetsDialog #assetBrowser .newAsset .info {
+        -moz-flex-grow: 1;
+        -ms-flex: 1 1;
+        -webkit-flex-grow: 1;
+        flex-grow: 1; }
+        /* line 56, _assets.scss */
+        #manageAssetsDialog #assetBrowser .asset .info .name, #manageAssetsDialog #assetBrowser .newAsset .info .name {
+          margin: 2px 0;
+          font-size: 16px;
+          overflow-wrap: break-word; }
+        /* line 61, _assets.scss */
+        #manageAssetsDialog #assetBrowser .asset .info .meta, #manageAssetsDialog #assetBrowser .newAsset .info .meta {
+          margin: 2px 0;
+          font-size: 12px; }
+      /* line 68, _assets.scss */
+      #manageAssetsDialog #assetBrowser .asset.selected-asset, #manageAssetsDialog #assetBrowser .newAsset.selected-asset {
+        background-color: rgba(62, 134, 215, 0.8) !important; }
+    /* line 75, _assets.scss */
+    #manageAssetsDialog #assetBrowser .asset:nth-child(even) {
+      background-color: rgba(48, 48, 48, 0.8); }
+    /* line 78, _assets.scss */
+    #manageAssetsDialog #assetBrowser .asset:nth-child(odd) {
+      background-color: rgba(60, 60, 60, 0.8); }
+    /* line 82, _assets.scss */
+    #manageAssetsDialog #assetBrowser .asset .nonbs-thumbnail {
+      width: 45px;
+      height: 45px;
+      background-color: whitesmoke;
+      border: solid grey 1px;
+      border-radius: 3px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center; }
+    /* line 95, _assets.scss */
+    #manageAssetsDialog #assetBrowser .newAsset {
+      background-color: rgba(40, 67, 79, 0.8); }
+      /* line 99, _assets.scss */
+      #manageAssetsDialog #assetBrowser .newAsset.sticky {
+        position: relative;
+        background-color: #20363f; }
+    /* line 105, _assets.scss */
+    #manageAssetsDialog #assetBrowser #newAssetButton {
+      -moz-flex-shrink: 0;
+      -ms-flex-shrink: 0;
+      -webkit-flex-shrink: 0;
+      flex-shrink: 0;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+      background-color: rgba(40, 67, 79, 0.8);
+      border: none;
+      border-radius: 3px; }
+  /* line 118, _assets.scss */
+  #manageAssetsDialog #propertyBrowser {
+    margin-left: 2px;
+    overflow: auto; }
+    /* line 123, _assets.scss */
+    #manageAssetsDialog #propertyBrowser > * {
+      margin: 2px 0; }
+    /* line 129, _assets.scss */
+    #manageAssetsDialog #propertyBrowser input[type=text]:not([disabled]), #manageAssetsDialog #propertyBrowser textarea:not([disabled]) {
+      color: black; }
+    /* line 132, _assets.scss */
+    #manageAssetsDialog #propertyBrowser input[type=text]:disabled, #manageAssetsDialog #propertyBrowser textarea:disabled {
+      background-color: #ccc; }
+    /* line 139, _assets.scss */
+    #manageAssetsDialog #propertyBrowser p.fixed-height, #manageAssetsDialog #propertyBrowser span.fixed-height, #manageAssetsDialog #propertyBrowser label.fixed-height {
+      min-height: 1.2em; }
+    /* line 145, _assets.scss */
+    #manageAssetsDialog #propertyBrowser label#thumbnail {
+      margin-top: 3px;
+      -webkit-box-pack: justify;
+      -moz-justify-content: space-between;
+      -ms-flex-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -moz-align-items: center;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center; }
+    /* line 152, _assets.scss */
+    #manageAssetsDialog #propertyBrowser #dragarea {
+      border: dashed whitesmoke 2px;
+      border-radius: 5px;
+      background-color: grey;
+      position: relative;
+      height: 175px;
+      -webkit-box-pack: center;
+      -moz-justify-content: center;
+      -ms-flex-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -moz-align-items: center;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center; }
+      /* line 163, _assets.scss */
+      #manageAssetsDialog #propertyBrowser #dragarea p#filename {
+        font-size: 16px; }
+      /* line 168, _assets.scss */
+      #manageAssetsDialog #propertyBrowser #dragarea input#fileInput {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        cursor: pointer; }
+      /* line 181, _assets.scss */
+      #manageAssetsDialog #propertyBrowser #dragarea #typeInput {
+        z-index: 1; }
+        /* line 185, _assets.scss */
+        #manageAssetsDialog #propertyBrowser #dragarea #typeInput input, #manageAssetsDialog #propertyBrowser #dragarea #typeInput select {
+          direction: rtl; }
+        /* line 189, _assets.scss */
+        #manageAssetsDialog #propertyBrowser #dragarea #typeInput select {
+          width: 20px; }
+      /* line 194, _assets.scss */
+      #manageAssetsDialog #propertyBrowser #dragarea span {
+        margin: 20px;
+        font-size: 18px;
+        text-decoration: underline; }
+    /* line 202, _assets.scss */
+    #manageAssetsDialog #propertyBrowser p#assetUrl {
+      text-align: center;
+      font-size: 18px;
+      word-wrap: break-word; }
+    /* line 208, _assets.scss */
+    #manageAssetsDialog #propertyBrowser #permissions {
+      -webkit-box-align: center;
+      -moz-align-items: center;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-pack: justify;
+      -moz-justify-content: space-between;
+      -ms-flex-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between; }
+      /* line 212, _assets.scss */
+      #manageAssetsDialog #propertyBrowser #permissions table {
+        width: 100px; }
+        /* line 214, _assets.scss */
+        #manageAssetsDialog #propertyBrowser #permissions table td {
+          text-align: center; }
+        /* line 217, _assets.scss */
+        #manageAssetsDialog #propertyBrowser #permissions table td:first-child {
+          text-align: right; }
+    /* line 223, _assets.scss */
+    #manageAssetsDialog #propertyBrowser #buttons {
+      -webkit-box-lines: multiple;
+      -moz-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+      -webkit-flex-wrap: wrap;
+      flex-wrap: wrap;
+      -webkit-box-pack: distribute;
+      -moz-justify-content: space-around;
+      -ms-flex-pack: distribute;
+      -webkit-justify-content: space-around;
+      justify-content: space-around;
+      -webkit-box-align: center;
+      -moz-align-items: center;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center; }
+      /* line 229, _assets.scss */
+      #manageAssetsDialog #propertyBrowser #buttons input {
+        -moz-flex-grow: 1;
+        -ms-flex: 1 1;
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+        margin: 3px;
+        min-width: 80px;
+        max-width: 50%; }
+
+/* line 3, _toolbar.scss */
+#toolbar {
+  background-color: #424242;
+  /* background: #4c4c4c; */
+  /* Old browsers */
+  overflow: hidden;
+  white-space: nowrap;
+  border-bottom: 3px solid #454545;
+  display: -webkit-box;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: distribute;
+  -moz-justify-content: space-around;
+  -ms-flex-pack: distribute;
+  -webkit-justify-content: space-around;
+  justify-content: space-around;
+  -webkit-box-align: center;
+  -moz-align-items: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center; }
+  /* line 18, _toolbar.scss */
+  #toolbar > * {
+    zoom: 1.15; }
+    @media only screen and (max-width: 1100px) {
+      /* line 18, _toolbar.scss */
+      #toolbar > * {
+        zoom: 1.0; } }
+    @media only screen and (max-width: 1024px) {
+      /* line 18, _toolbar.scss */
+      #toolbar > * {
+        zoom: 0.8; } }
+  /* line 31, _toolbar.scss */
+  #toolbar .icon {
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+    margin: 3px;
+    cursor: pointer;
+    display: inline-block;
+    -moz-flex-shrink: 0;
+    -ms-flex-shrink: 0;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0; }
+    /* line 45, _toolbar.scss */
+    #toolbar .icon:hover {
+      /*margin-top: 1px;
+      margin-left: 1px;
+      margin-right: 2px;
+      margin-bottom: 2px;*/
+      background-color: lightblue; }
+    /* line 54, _toolbar.scss */
+    #toolbar .icon:active {
+      background-color: #7B7B7B; }
+    /* line 58, _toolbar.scss */
+    #toolbar .icon.iconselected {
+      background-color: #3a8fff;
+      padding: 2px; }
+    /* line 63, _toolbar.scss */
+    #toolbar .icon.icondisabled {
+      opacity: .1;
+      pointer-events: none; }
+  /* line 69, _toolbar.scss */
+  #toolbar .separator {
+    vertical-align: middle;
+    border-left: 3px outset #adadad;
+    display: inline;
+    border-left-style: groove;
+    height: 30px; }
+
+/* line 1, _statusbar.scss */
+.statusbar {
+  height: 25px;
+  z-index: 201;
+  background: #444;
+  white-space: nowrap; }
+
+/* line 10, _statusbar.scss */
+#statusbarinner {
+  display: inline-block;
+  width: 100%;
+  background: #414141;
+  /* Old browsers */ }
+
+/* line 17, _statusbar.scss */
+.statusbarElement {
+  display: inline;
+  height: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+  line-height: 25px;
+  border-radius: 0px;
+  color: gray;
+  margin-left: 3px;
+  margin-right: 3px;
+  font-family: 'Open Sans',sans-serif;
+  font-size: 1.3em;
+  /* text-shadow: 1px 1px 3px black; */
+  border-left: 1px solid; }
+
+/* line 34, _statusbar.scss */
+.timeControlActive {
+  background-color: blue; }
+
+/* line 38, _statusbar.scss */
+#TimeControl {
+  height: 59px;
+  display: inline-block;
+  margin-top: -45px;
+  background: #444;
+  border-radius: 5px;
+  border: 1px solid #555555;
+  padding: 4px 4px 4px 4px; }
+
+/* line 50, _statusbar.scss */
+#playButton {
+  background-image: url(getImgPath()/images/icons/sprites.svg) !important;
+  background-origin: content-box !important;
+  background-position: -212px -56px;
+  background-size: 646px; }
+
+/* line 57, _statusbar.scss */
+#pauseButton {
+  background-image: url(getImgPath()/images/icons/sprites.svg) !important;
+  background-origin: content-box !important;
+  background-position: -262px -56px;
+  background-size: 645px; }
+
+/* line 64, _statusbar.scss */
+#stopButton {
+  background-image: url(getImgPath()/images/icons/sprites.svg) !important;
+  background-origin: content-box !important;
+  background-position: -349px -65px;
+  background-size: 718px; }
+
+/* line 71, _statusbar.scss */
+.timeControl {
+  text-indent: 0px;
+  display: inline-block;
+  color: #777777;
+  font-family: 'Open Sans',Arial;
+  font-size: 27px;
+  font-weight: bold;
+  font-style: normal;
+  height: 45px;
+  line-height: 45px;
+  width: 50px;
+  text-decoration: none;
+  text-align: center;
+  text-shadow: 1px 1px 0px white;
+  vertical-align: bottom;
+  margin-bottom: -3px;
+  cursor: pointer;
+  margin-right: 2px;
+  margin-bottom: -4px;
+  /* border-radius: 6px; */ }
+
+/* line 93, _statusbar.scss */
+.timeControl:hover {
+  background-color: #dfdfdf; }
+
+/* line 97, _statusbar.scss */
+.timeControl:active {
+  background-color: #dfdfff; }
+
+/* line 3, _EntityLibrary.scss */
+#EntityLibrary {
+  position: relative;
+  width: 250px;
+  -moz-flex-shrink: 0;
+  -ms-flex-shrink: 0;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  background: #515151 url(../../../../images/ui-bg_diagonals-thick_8_333333_40x40.png) 0% 0% repeat;
+  background-size: 5%; }
+  /* line 12, _EntityLibrary.scss */
+  #EntityLibrary.hidden {
+    display: block !important;
+    visibility: visible !important;
+    width: 0; }
+  /* line 20, _EntityLibrary.scss */
+  #EntityLibrary #EntityLibrarySideTab {
+    z-index: 30;
+    position: absolute;
+    right: -50px;
+    width: 73px;
+    top: 5%;
+    height: 21px;
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+    font-size: 12px;
+    font-family: 'Open Sans',sans-serif;
+    text-align: center;
+    border: 2px solid #82b8ff;
+    border-bottom: none;
+    color: white;
+    text-shadow: 1px 1px 3px black;
+    cursor: pointer;
+    background: #4c4c4c;
+    padding-left: 0px; }
+    /* line 44, _EntityLibrary.scss */
+    #EntityLibrary #EntityLibrarySideTab:hover {
+      color: #82b8ff; }
+  /* line 50, _EntityLibrary.scss */
+  #EntityLibrary #entitylibrarytitle {
+    -moz-flex-shrink: 0;
+    -ms-flex-shrink: 0;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0; }
+  /* line 54, _EntityLibrary.scss */
+  #EntityLibrary #EntityLibraryMain {
+    margin-top: 1px;
+    padding-right: 1px;
+    position: absolute;
+    right: 0px;
+    min-width: 248px;
+    max-height: 100%; }
+  /* line 67, _EntityLibrary.scss */
+  #EntityLibrary #EntityLibraryAccordion {
+    overflow-y: auto; }
+    /* line 71, _EntityLibrary.scss */
+    #EntityLibrary #EntityLibraryAccordion > h3:not(.ui-accordion-header-active):last-of-type, #EntityLibrary #EntityLibraryAccordion > div:last-of-type {
+      margin-bottom: 28px; }
+  /* line 76, _EntityLibrary.scss */
+  #EntityLibrary .libraryAsset {
+    text-align: center;
+    display: inline-block;
+    margin-right: 1.5em;
+    width: 73px;
+    height: 75px;
+    margin-bottom: 9px; }
+    /* line 85, _EntityLibrary.scss */
+    #EntityLibrary .libraryAsset div {
+      color: whitesmoke;
+      text-shadow: 1px 1px 5px black;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.5);
+      position: relative;
+      /* border-radius: 10px; */
+      pointer-events: none; }
+    /* line 96, _EntityLibrary.scss */
+    #EntityLibrary .libraryAsset img {
+      width: 75px;
+      height: 75px;
+      box-sizing: border-box;
+      margin-bottom: -19px;
+      border-radius: 3px;
+      /* box-shadow: 2px 2px 5px gray; */
+      -webkit-transition: opactiy 2s;
+      /* For Safari 3.1 to 6.0 */
+      -blink-transition: opactiy 2s;
+      /* For Safari 3.1 to 6.0 */
+      transition: opactiy 2s; }
+
+/* line 3, _scripteditor.scss */
+#ScriptEditor {
+  height: 400px;
+  overflow: hidden;
+  padding: 0px 0px 0px 0px;
+  background: #111 url(images/ui-bg_hexagon_5_111111_12x10.png) 50% 50% repeat;
+  -moz-flex-shrink: 0;
+  -ms-flex-shrink: 0;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0; }
+  /* line 5, _scripteditor.scss */
+  #ScriptEditor.maximized {
+    -moz-flex-grow: 1;
+    -ms-flex: 1 1;
+    -webkit-flex-grow: 1;
+    flex-grow: 1; }
+  /* line 8, _scripteditor.scss */
+  #ScriptEditor.minimized {
+    height: 0; }
+  /* line 18, _scripteditor.scss */
+  #ScriptEditor #scripteditortitle {
+    padding: 3px 4px;
+    font: 1.5em sans-serif;
+    font-weight: bold;
+    -moz-flex-shrink: 0;
+    -ms-flex-shrink: 0;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0; }
+    /* line 25, _scripteditor.scss */
+    #ScriptEditor #scripteditortitle .icon {
+      float: right;
+      text-align: center;
+      line-height: 20px;
+      margin-left: 3px;
+      padding: 3px;
+      cursor: pointer; }
+      /* line 34, _scripteditor.scss */
+      #ScriptEditor #scripteditortitle .icon:hover {
+        background-color: lightblue; }
+  /* line 40, _scripteditor.scss */
+  #ScriptEditor #ScriptEditorTabs {
+    -moz-flex-grow: 1;
+    -ms-flex: 1 1;
+    -webkit-flex-grow: 1;
+    flex-grow: 1; }
+  /* line 45, _scripteditor.scss */
+  #ScriptEditor .tabs-nav {
+    -moz-flex-shrink: 0;
+    -ms-flex-shrink: 0;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    border-bottom: solid #333 1px;
+    background-color: black; }
+    /* line 51, _scripteditor.scss */
+    #ScriptEditor .tabs-nav label {
+      font-size: 11px;
+      font-weight: bold;
+      color: #eeeeee;
+      font-family: 'Open Sans', Verdana, Arial, sans-serif;
+      border: solid 1px #444444;
+      border-bottom: none;
+      border-radius: 3px 3px 0 0;
+      background-color: #222222;
+      margin: 3px 0 0 0;
+      padding: 5.5px 11px; }
+      /* line 66, _scripteditor.scss */
+      #ScriptEditor .tabs-nav label.selected {
+        background-color: #aeaeae;
+        color: black; }
+      /* line 71, _scripteditor.scss */
+      #ScriptEditor .tabs-nav label:first-child {
+        margin-left: 5px; }
+    /* line 76, _scripteditor.scss */
+    #ScriptEditor .tabs-nav input {
+      display: none; }
+  /* line 81, _scripteditor.scss */
+  #ScriptEditor .tabs-panel {
+    -moz-flex-grow: 1;
+    -ms-flex: 1 1;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    padding: 4px 0 0 0; }
+  /* line 87, _scripteditor.scss */
+  #ScriptEditor .list {
+    width: 190px;
+    margin-right: 5px;
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    -moz-flex-shrink: 0;
+    -ms-flex-shrink: 0;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0; }
+    /* line 98, _scripteditor.scss */
+    #ScriptEditor .list .listContainer {
+      width: 100%;
+      position: absolute; }
+    /* line 104, _scripteditor.scss */
+    #ScriptEditor .list .listitem {
+      display: block;
+      cursor: pointer;
+      overflow: hidden;
+      background-color: #222;
+      font-size: 16.5px;
+      font-weight: normal;
+      text-overflow: ellipsis;
+      color: white;
+      font-family: "Open Sans", Verdana, Arial, sans-serif;
+      padding: 1px;
+      border: 1px solid gray;
+      border-radius: 2px;
+      margin: 2px; }
+      /* line 122, _scripteditor.scss */
+      #ScriptEditor .list .listitem input {
+        display: none; }
+      /* line 126, _scripteditor.scss */
+      #ScriptEditor .list .listitem:hover {
+        color: #82b8ff; }
+      /* line 130, _scripteditor.scss */
+      #ScriptEditor .list .listitem.selected {
+        background-color: #2c425e; }
+      /* line 134, _scripteditor.scss */
+      #ScriptEditor .list .listitem.suggestion {
+        color: #B6B6B6; }
+      /* line 138, _scripteditor.scss */
+      #ScriptEditor .list .listitem.dirty {
+        border-color: red; }
+      /* line 142, _scripteditor.scss */
+      #ScriptEditor .list .listitem:last-child {
+        margin-bottom: 28px; }
+  /* line 148, _scripteditor.scss */
+  #ScriptEditor .textinner {
+    width: 100%;
+    position: relative; }
+    /* line 153, _scripteditor.scss */
+    #ScriptEditor .textinner .font-size-selector {
+      position: absolute;
+      top: 6px;
+      right: 18px;
+      padding: 5px;
+      z-index: 2;
+      cursor: default;
+      font-size: 16px; }
+      /* line 165, _scripteditor.scss */
+      #ScriptEditor .textinner .font-size-selector:hover {
+        color: whitesmoke;
+        background-color: #383838;
+        border-radius: 3px; }
+      /* line 172, _scripteditor.scss */
+      #ScriptEditor .textinner .font-size-selector *:hover {
+        color: #82b8ff; }
+    /* line 178, _scripteditor.scss */
+    #ScriptEditor .textinner .content {
+      position: relative;
+      background: url(vwf/view/editorview/images/ui-bg_diagonals-thick_8_cccccc_40x40.png) 50% 50% repeat;
+      border: solid black 1px;
+      -moz-flex-grow: 1;
+      -ms-flex: 1 1;
+      -webkit-flex-grow: 1;
+      flex-grow: 1; }
+      /* line 185, _scripteditor.scss */
+      #ScriptEditor .textinner .content.dirty {
+        border-color: red; }
+    /* line 191, _scripteditor.scss */
+    #ScriptEditor .textinner pre {
+      padding: 0;
+      margin: 0;
+      border: none;
+      border-radius: 0;
+      background-color: inherit;
+      font-size: 12px;
+      width: 100%;
+      height: 100%;
+      position: absolute; }
+    /* line 205, _scripteditor.scss */
+    #ScriptEditor .textinner .buttonPanel {
+      -webkit-box-align: center;
+      -moz-align-items: center;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      font-size: 11px;
+      font-weight: bold;
+      font-family: 'Open Sans', Verdana, Arial, sans-serif;
+      color: #eee; }
+  /* line 216, _scripteditor.scss */
+  #ScriptEditor #options.tabs-panel {
+    -webkit-box-align: flex-start;
+    -moz-align-items: flex-start;
+    -ms-flex-align: flex-start;
+    -webkit-align-items: flex-start;
+    align-items: flex-start; }
+  /* line 220, _scripteditor.scss */
+  #ScriptEditor label.toggleButton {
+    font-size: 11px;
+    font-weight: bold;
+    color: #eeeeee;
+    font-family: 'Open Sans', Verdana, Arial, sans-serif;
+    border: solid 1px #444444;
+    border-radius: 3px;
+    background-color: #222222;
+    margin: 5px;
+    padding: 5.5px 11px; }
+    /* line 234, _scripteditor.scss */
+    #ScriptEditor label.toggleButton:hover {
+      color: #82b8ff; }
+    /* line 238, _scripteditor.scss */
+    #ScriptEditor label.toggleButton.checked {
+      background-color: #aeaeae;
+      color: black; }
+    /* line 243, _scripteditor.scss */
+    #ScriptEditor label.toggleButton input {
+      display: none; }
+
+/* line 3, _sidepanel.scss */
+#sidepanel {
+  width: 320px;
+  -moz-flex-shrink: 0;
+  -ms-flex-shrink: 0;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  background: #515151 url(../../../../images/ui-bg_diagonals-thick_8_333333_40x40.png) 0% 0% repeat;
+  background-size: 5%;
+  outline: none;
+  position: relative; }
+  /* line 13, _sidepanel.scss */
+  #sidepanel.hidden {
+    display: block !important;
+    visibility: visible !important;
+    width: 0; }
+  /* line 20, _sidepanel.scss */
+  #sidepanel #sidetab {
+    position: absolute;
+    left: -49px;
+    top: 5%;
+    padding: 3px 15px;
+    border: 2px solid #82b8ff;
+    border-bottom: none;
+    -webkit-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    font-size: 12px;
+    font-family: 'Open Sans',sans-serif;
+    color: white;
+    text-shadow: 1px 1px 3px black;
+    background: #4c4c4c;
+    text-align: center;
+    vertical-align: middle;
+    /* border-radius: 7px; */
+    cursor: pointer; }
+    /* line 42, _sidepanel.scss */
+    #sidepanel #sidetab:hover {
+      color: #82b8ff; }
+  /* line 47, _sidepanel.scss */
+  #sidepanel .main {
+    position: absolute;
+    left: 1px;
+    min-width: 318px;
+    width: 318px;
+    height: 100%;
+    overflow-y: auto; }
+  /* line 58, _sidepanel.scss */
+  #sidepanel .editorPanel {
+    width: 100%; }
+    /* line 65, _sidepanel.scss */
+    #sidepanel .editorPanel .title {
+      padding: 3px 4px;
+      font: 1.5em sans-serif;
+      font-weight: bold;
+      -moz-flex-shrink: 0;
+      -ms-flex-shrink: 0;
+      -webkit-flex-shrink: 0;
+      flex-shrink: 0; }
+    /* line 73, _sidepanel.scss */
+    #sidepanel .editorPanel .content {
+      -moz-flex-grow: 1;
+      -ms-flex: 1 1;
+      -webkit-flex-grow: 1;
+      flex-grow: 1;
+      color: white;
+      background: url(vwf/view/editorview/css/images/ui-bg_hexagon_5_111111_12x10.png) 50% 50% repeat #242020; }
+    /* line 80, _sidepanel.scss */
+    #sidepanel .editorPanel .ui-accordion .ui-accordion-content {
+      padding: 10px; }
+    /* line 84, _sidepanel.scss */
+    #sidepanel .editorPanel .horizontalLayout.centered {
+      -webkit-box-pack: center;
+      -moz-justify-content: center;
+      -ms-flex-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center; }
+    /* line 88, _sidepanel.scss */
+    #sidepanel .editorPanel .inline {
+      display: -webkit-box;
+      display: -moz-flex;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-align: center;
+      -moz-align-items: center;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-pack: justify;
+      -moz-justify-content: space-between;
+      -ms-flex-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      margin: 10px 0;
+      cursor: default; }
+    /* line 98, _sidepanel.scss */
+    #sidepanel .editorPanel .vMargin {
+      margin: 15px 0; }
+    /* line 102, _sidepanel.scss */
+    #sidepanel .editorPanel .vector-input {
+      float: right;
+      width: 100%;
+      clear: both;
+      margin-top: 2px;
+      text-align: right; }
+      /* line 109, _sidepanel.scss */
+      #sidepanel .editorPanel .vector-input input {
+        width: 15%;
+        padding: 3px;
+        text-align: center;
+        margin-right: 5px;
+        border: 1px solid #909090; }
+    /* line 118, _sidepanel.scss */
+    #sidepanel .editorPanel #Translation, #sidepanel .editorPanel #Rotation, #sidepanel .editorPanel #Scale {
+      margin-top: 3px;
+      text-align: left; }
+    /* line 123, _sidepanel.scss */
+    #sidepanel .editorPanel .vwf-image-picker {
+      display: block;
+      text-align: left;
+      width: 95%;
+      overflow: hidden; }
+    /* line 130, _sidepanel.scss */
+    #sidepanel .editorPanel input {
+      background: black;
+      color: white;
+      border: 1px solid #909090;
+      padding: 2px; }
+  /* line 138, _sidepanel.scss */
+  #sidepanel label {
+    display: block;
+    margin: 0; }
+    /* line 143, _sidepanel.scss */
+    #sidepanel label input[type=checkbox] {
+      margin: 0; }
+  /* line 148, _sidepanel.scss */
+  #sidepanel input:not([type=button]) {
+    color: white;
+    background: transparent; }
+  /* line 155, _sidepanel.scss */
+  #sidepanel slider .mantissa, #sidepanel slider .exponent {
+    display: -webkit-box;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -moz-align-items: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center; }
+  /* line 160, _sidepanel.scss */
+  #sidepanel slider .exponent {
+    -webkit-box-pack: end;
+    -moz-justify-content: flex-end;
+    -ms-flex-pack: end;
+    -webkit-justify-content: flex-end;
+    justify-content: flex-end; }
+    /* line 164, _sidepanel.scss */
+    #sidepanel slider .exponent input {
+      margin-left: 5px; }
+  /* line 169, _sidepanel.scss */
+  #sidepanel slider .ui-slider {
+    -moz-flex-grow: 1;
+    -ms-flex: 1 1;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    margin: 0 10px 0 5px;
+    font-size: 11px;
+    background-color: #87b7d8 !important;
+    border-color: grey; }
+    /* line 178, _sidepanel.scss */
+    #sidepanel slider .ui-slider .ui-slider-handle {
+      color: lightgrey !important; }
+  /* line 184, _sidepanel.scss */
+  #sidepanel slider input {
+    -moz-flex-shrink: 0;
+    -ms-flex-shrink: 0;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    width: 50px;
+    color: initial;
+    padding: initial; }
+  /* line 193, _sidepanel.scss */
+  #sidepanel .colorPickerIcon {
+    width: 25px;
+    height: 25px;
+    border: 2px solid lightgray;
+    background-color: #aaaaaa;
+    background-image: url(../images/select3.png);
+    background-position: center; }
+
+/* line 2, _hierarchy.scss */
+#hierarchyManager {
+  max-height: 400px; }
+  /* line 6, _hierarchy.scss */
+  #hierarchyManager .content {
+    display: -webkit-box;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -moz-flex-direction: column;
+    -ms-flex-direction: column;
+    -webkit-flex-direction: column;
+    flex-direction: column; }
+  /* line 12, _hierarchy.scss */
+  #hierarchyManager input#filter {
+    margin: 2px;
+    border: solid grey 1px;
+    padding: 2px;
+    font-size: 12px;
+    color: black;
+    -moz-flex-shrink: 0;
+    -ms-flex-shrink: 0;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    -moz-flex-grow: 1;
+    -ms-flex: 1 1;
+    -webkit-flex-grow: 1;
+    flex-grow: 1; }
+  /* line 24, _hierarchy.scss */
+  #hierarchyManager custom-select {
+    position: relative;
+    margin: 2px; }
+    /* line 29, _hierarchy.scss */
+    #hierarchyManager custom-select .selectedOption {
+      border: solid grey 1px; }
+    /* line 33, _hierarchy.scss */
+    #hierarchyManager custom-select .menu {
+      position: absolute;
+      top: 0px;
+      z-index: 1;
+      background-color: #313131;
+      border: solid grey 1px; }
+      /* line 43, _hierarchy.scss */
+      #hierarchyManager custom-select .menu > *:hover {
+        background-color: #82b8ff; }
+      /* line 47, _hierarchy.scss */
+      #hierarchyManager custom-select .menu > *.selected {
+        background-color: #41547c;
+        order: 0; }
+      /* line 52, _hierarchy.scss */
+      #hierarchyManager custom-select .menu > *:not(.selected) {
+        order: 1; }
+    /* line 58, _hierarchy.scss */
+    #hierarchyManager custom-select:not(.expanded) .menu {
+      display: none; }
+  /* line 64, _hierarchy.scss */
+  #hierarchyManager input#makeNode {
+    opacity: 0.5;
+    line-height: 1.3;
+    background-color: #3d3d3d; }
+    /* line 70, _hierarchy.scss */
+    #hierarchyManager input#makeNode:hover {
+      opacity: 1;
+      color: white; }
+  /* line 76, _hierarchy.scss */
+  #hierarchyManager #hierarchyDisplay {
+    padding: 0 2px;
+    border: 1px grey solid;
+    margin: 3px;
+    position: relative;
+    -moz-flex-grow: 1;
+    -ms-flex: 1 1;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    max-height: 320px;
+    font-size: 1.5em;
+    line-height: 1.0;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: auto; }
+    /* line 93, _hierarchy.scss */
+    #hierarchyManager #hierarchyDisplay .hidden, #hierarchyManager #hierarchyDisplay .collapsed ul {
+      display: none; }
+    /* line 97, _hierarchy.scss */
+    #hierarchyManager #hierarchyDisplay span.name {
+      cursor: pointer; }
+      /* line 101, _hierarchy.scss */
+      #hierarchyManager #hierarchyDisplay span.name:not(.nonselectable):hover {
+        text-decoration: underline; }
+        /* line 103, _hierarchy.scss */
+        #hierarchyManager #hierarchyDisplay span.name:not(.nonselectable):hover:not(.selected) {
+          color: #82b8ff; }
+      /* line 110, _hierarchy.scss */
+      #hierarchyManager #hierarchyDisplay span.name.nonselectable {
+        cursor: default; }
+      /* line 114, _hierarchy.scss */
+      #hierarchyManager #hierarchyDisplay span.name.selected {
+        background-color: #82b8ff;
+        color: black; }
+      /* line 120, _hierarchy.scss */
+      #hierarchyManager #hierarchyDisplay span.name.continues:before {
+        content: "("; }
+      /* line 123, _hierarchy.scss */
+      #hierarchyManager #hierarchyDisplay span.name.continues:after {
+        content: ")"; }
+    /* line 131, _hierarchy.scss */
+    #hierarchyManager #hierarchyDisplay .three span.name {
+      font-style: italic;
+      color: #fcff90; }
+      /* line 136, _hierarchy.scss */
+      #hierarchyManager #hierarchyDisplay .three span.name.selected {
+        color: black;
+        background-color: #fcff90; }
+    /* line 144, _hierarchy.scss */
+    #hierarchyManager #hierarchyDisplay > ul {
+      border-left: none !important;
+      padding-left: 5px !important; }
+    /* line 151, _hierarchy.scss */
+    #hierarchyManager #hierarchyDisplay ul {
+      padding: 0;
+      list-style: none;
+      border-left: solid grey 1px;
+      padding-left: 10px; }
+    /* line 161, _hierarchy.scss */
+    #hierarchyManager #hierarchyDisplay li {
+      margin: 4px 0px 4px 12px;
+      text-indent: -8px; }
+    /* line 167, _hierarchy.scss */
+    #hierarchyManager #hierarchyDisplay .hierarchyicon {
+      font-size: 10px;
+      margin-right: 5px;
+      color: #82b8ff; }
+      /* line 173, _hierarchy.scss */
+      #hierarchyManager #hierarchyDisplay .hierarchyicon.glyphicon-ban-circle {
+        color: #444; }
+
+/* line 5, _primitive.scss */
+#primitiveEditor label {
+  width: 100%; }
+/* line 9, _primitive.scss */
+#primitiveEditor button {
+  float: right;
+  background: black;
+  color: white;
+  border: 1px solid #909090;
+  padding: 2px;
+  width: 30%;
+  border-radius: 5px; }
+
+/* line 5, _materialeditor.scss */
+.htmlPalette.extrawide {
+  width: 230px; }
+/* line 8, _materialeditor.scss */
+.htmlPalette.toplevel {
+  z-index: 5; }
+
+/* line 18, _materialeditor.scss */
+#materialEditor slider .mantissa, #materialEditor slider .exponent {
+  display: -webkit-box;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -moz-align-items: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center; }
+/* line 23, _materialeditor.scss */
+#materialEditor slider .exponent {
+  -webkit-box-pack: end;
+  -moz-justify-content: flex-end;
+  -ms-flex-pack: end;
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end; }
+  /* line 27, _materialeditor.scss */
+  #materialEditor slider .exponent input {
+    margin-left: 5px;
+    border-top: none; }
+/* line 33, _materialeditor.scss */
+#materialEditor slider .ui-slider {
+  -moz-flex-grow: 1;
+  -ms-flex: 1 1;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+  margin: 0 10px 0 5px;
+  font-size: 11px;
+  background-color: #87b7d8 !important;
+  border-color: grey; }
+  /* line 42, _materialeditor.scss */
+  #materialEditor slider .ui-slider .ui-slider-handle {
+    color: lightgrey !important; }
+/* line 48, _materialeditor.scss */
+#materialEditor slider input {
+  -moz-flex-shrink: 0;
+  -ms-flex-shrink: 0;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  width: 50px;
+  color: initial;
+  padding: initial; }
+/* line 57, _materialeditor.scss */
+#materialEditor .colorPickerIcon, #materialEditor html-palette {
+  width: 25px;
+  height: 25px;
+  border: 2px solid lightgray;
+  background-color: #aaaaaa;
+  background-image: url(../images/select3.png);
+  background-position: center; }
+/* line 68, _materialeditor.scss */
+#materialEditor .ui-accordion .ui-accordion-content {
+  padding: 10px; }
+/* line 72, _materialeditor.scss */
+#materialEditor input:not([type=button]) {
+  color: white; }
+/* line 77, _materialeditor.scss */
+#materialEditor .horizontalLayout.centered input[type=button] {
+  width: 80%; }
+/* line 84, _materialeditor.scss */
+#materialEditor #MaterialBasicSettings label#materialIndex {
+  display: -webkit-box;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -moz-justify-content: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -moz-align-items: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  font-size: 15px; }
+  /* line 91, _materialeditor.scss */
+  #materialEditor #MaterialBasicSettings label#materialIndex input {
+    padding: 0;
+    margin: 0 5px;
+    width: 30px; }
+/* line 99, _materialeditor.scss */
+#materialEditor #MaterialFlags {
+  -webkit-box-pack: center;
+  -moz-justify-content: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center; }
+  /* line 103, _materialeditor.scss */
+  #materialEditor #MaterialFlags label {
+    margin: 10px 0; }
+/* line 111, _materialeditor.scss */
+#materialEditor .textureLayer .texPreview {
+  -webkit-box-align: center;
+  -moz-align-items: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center; }
+  /* line 115, _materialeditor.scss */
+  #materialEditor .textureLayer .texPreview img {
+    margin: 5px;
+    height: 128px;
+    border: solid grey 1px;
+    cursor: pointer; }
 
 @-webkit-keyframes pulsing {
   0% {
-    background-color:rgb(32, 85, 155);;
-  }
+    background-color: #20559b; }
   50% {
-
-    background-color:rgb(102, 155, 225);;
-  }
+    background-color: #669be1; }
   100% {
-
-    background-color:rgb(132, 185, 255);;
-  }
-}
-
+    background-color: #84b9ff; } }
 @keyframes pulsing {
   0% {
-    background-color:rgb(32, 85, 155);;
-  }
+    background-color: #20559b; }
   50% {
-
-    background-color:rgb(102, 155, 225);;
-  }
+    background-color: #669be1; }
   100% {
-
-    background-color:rgb(132, 185, 255);;
-  }
-}
-
+    background-color: #84b9ff; } }
+/* line 42, Editorview.scss */
 .pulsing {
-
-  background-color: rgb(58, 143, 255);;
+  background-color: #3a8fff;
   /*
   maybe the animation is just not worth the repaint on the status bar
   animation-name: pulsing;
@@ -43,989 +1318,599 @@
   -webkit-animation-iteration-count: infinite;
   -webkit-animation-direction: alternate;
   -webkit-animation-timing-function: linear;
-  -webkit-animation-play-state: running;*/
-}
+  -webkit-animation-play-state: running;*/ }
 
-	#InventoryControls
-	{
-		margin-left: 3px;
-		vertical-align: middle;
-	}
-	#InventoryTypeChoice
-	{
-		display: inline;
-		width: 50%;
-	}
-	#InventoryFilter, #AddPermissionName, #HeirarchyFilter
-	{
-		display: inline;
-		width: 50%;
-		padding: 0px;
-		margin-bottom: 0px;
-		margin-top: 4px;
-		/* border-radius: 6px; */
-		border-color: lightgray;
-		border-width: 1px;
-	}
-	#GlobalProgressBar
-	{
-		vertical-align: middle;
-		display: inline-block;
-		margin: 0px 0px 0px 10px;
-		padding: 0px;
-		line-height: 100%;
-		position: relative;
-		top: -2px;
-		width:200px;
-		overflow:hidden;
-	}
-	#GlobalProgressBarInner
-	{
-background: rgb(130, 184, 255);
-display: block;
-position: relative;
-top: -9px;
-box-shadow: 0px 0px 3px inset;
-border-radius: 8px;
-font-size: 13px;
-font-family: 'Open Sans',sans-serif;
-font-weight: bold;
-height: 15px;
-padding-left: 5px;
-white-space: nowrap;
-line-height: initial;
-background-image: url('../images/ajax-loader.gif');
-background-size: 300px;
-background-position-y: -56px;
-background-position-x: -11px;
-background-blend-mode: multiply;
-background-origin: inherit;
-max-width: 190px;
-}
+/* line 59, Editorview.scss */
+.verticalLayout {
+  display: -webkit-box;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -moz-flex-direction: column;
+  -ms-flex-direction: column;
+  -webkit-flex-direction: column;
+  flex-direction: column; }
+  /* line 63, Editorview.scss */
+  .verticalLayout#toolbarLevel, .verticalLayout#editorLevel {
+    width: 100%; }
+  /* line 67, Editorview.scss */
+  .verticalLayout#toolbarLevel {
+    height: 100%; }
 
-.timeControlActive
-{
-	background-color:blue;
-}
-#TimeControl
-{
-height: 59px;
-display: inline-block;
-margin-top: -45px;
-background: #444;
-border-radius: 2px;
-border: 1px solid #555;
-padding: 4px 4px 4px 4px;
-}
-#playButton
-{
+/* line 71, Editorview.scss */
+.horizontalLayout {
+  display: -webkit-box;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -moz-flex-direction: row;
+  -ms-flex-direction: row;
+  -webkit-flex-direction: row;
+  flex-direction: row; }
+  /* line 75, Editorview.scss */
+  .horizontalLayout#panelLevel {
+    height: 100%; }
 
-	background-image: url(../images/icons/sprites.svg) !important;
-background-origin: content-box !important;
-background-position: -212px -56px;
-background-size: 646px;
-}
-#pauseButton
-{
+/* line 80, Editorview.scss */
+.spacer {
+  -moz-flex-grow: 1;
+  -ms-flex: 1 1;
+  -webkit-flex-grow: 1;
+  flex-grow: 1; }
 
-	background-image: url(../images/icons/sprites.svg) !important;
-background-origin: content-box !important;
+/* line 85, Editorview.scss */
+input[type=button] {
+  background: #222 50% 50% repeat-x;
+  border: 1px solid #444;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: bold;
+  font-family: 'Open Sans', Verdana, Arial, sans-serif;
+  color: #eee;
+  margin: 4px; }
+  /* line 98, Editorview.scss */
+  input[type=button]:hover {
+    color: #82b8ff; }
+  /* line 102, Editorview.scss */
+  input[type=button]:disabled, input[type=button]:disabled:hover {
+    color: grey; }
 
+/* line 107, Editorview.scss */
+[scroll-fixed] {
+  position: absolute; }
 
-	background-position: -262px -56px;
-background-size: 645px;
-}
-#stopButton
-{
+/* line 111, Editorview.scss */
+#GlobalProgressBar {
+  vertical-align: middle;
+  display: inline-block;
+  margin: 0px 0px 0px 10px;
+  padding: 0px;
+  line-height: 100%;
+  position: relative;
+  top: -2px;
+  width: 200px;
+  overflow: hidden; }
 
-	background-image: url(../images/icons/sprites.svg) !important;
-background-origin: content-box !important;
+/* line 123, Editorview.scss */
+#GlobalProgressBarInner {
+  background: #82b8ff;
+  display: block;
+  position: relative;
+  top: -9px;
+  box-shadow: 0px 0px 3px inset;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'Open Sans',sans-serif;
+  font-weight: bold;
+  height: 15px;
+  padding-left: 5px;
+  white-space: nowrap;
+  line-height: initial;
+  background-image: url("../images/ajax-loader.gif");
+  background-size: 300px;
+  background-position-y: -56px;
+  background-position-x: -11px;
+  background-blend-mode: multiply;
+  background-origin: inherit;
+  max-width: 190px; }
 
-
-	background-position: -349px  -65px;
-
-
-	background-size: 718px;
-}
-.timeControl {
-
-
-text-indent: 0px;
-display: inline-block;
-color: #777777;
-font-family: 'Open Sans',Arial;
-font-size: 27px;
-font-weight: bold;
-font-style: normal;
-height: 45px;
-line-height: 45px;
-width: 50px;
-text-decoration: none;
-text-align: center;
-text-shadow: 1px 1px 0px #ffffff;
-vertical-align: bottom;
-margin-bottom: -3px;
-cursor: pointer;
-margin-right: 2px;
-margin-bottom: -4px;
-
-
-
-/* border-radius: 6px; */
-}
-.timeControl:hover {
-
-	background-color:#dfdfdf;
-}.timeControl:active {
-	background-color:#dfdfff;
-
-}
 /* This button was generated using CSSButtonGenerator.com */
+/* line 147, Editorview.scss */
+#GlobalProgressBarBack {
+  width: 200px;
+  background: gray;
+  position: relative;
+  top: 6px;
+  box-shadow: 0px 0px 3px inset;
+  border-radius: 5px;
+  font-size: 13px;
+  font-family: 'Open Sans',sans-serif;
+  font-weight: bold;
+  height: 15px; }
 
-	#GlobalProgressBarBack
-	{
-		width: 200px;
-		background: gray;
-		position: relative;
-		top: 6px;
-		box-shadow: 0px 0px 3px inset;
-		border-radius: 5px;
-		font-size: 13px;
-		font-family: 'Open Sans',sans-serif;
-		font-weight: bold;
-		height: 15px;
-	}
-	#FunctionTip
-	{
+/* line 160, Editorview.scss */
+#FunctionTip {
+  top: 804.1875px;
+  left: 295px;
+  position: absolute;
+  z-index: 10000;
+  font-size: 1.5em;
+  font-family: 'Open Sans',sans-serif;
+  background: black;
+  border: 1px solid gray;
+  /* box-shadow: 2px 2px 2px gray; */
+  font-style: italic;
+  color: white;
+  margin: 0px; }
 
-		top: 804.1875px;
-		left: 295px;
-		position: absolute;
-		z-index: 10000;
-		font-size: 1.5em;
-		font-family: 'Open Sans',sans-serif;
-		background: black;
-		border: 1px solid gray;
-		/* box-shadow: 2px 2px 2px gray; */
-		font-style: italic;
-		color:white;
-		margin: 0px;
-}
+/* line 175, Editorview.scss */
+.AutoCompleteOption {
+  font-size: 1.5em;
+  font-family: Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace;
+  padding: 0px 50px 0px 5px;
+  color: #FFF;
+  border-bottom: 1px dashed #ededed; }
 
-	.AutoCompleteOption
-	{
-		font-size: 1.5em;
-		font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
-		padding: 0px 50px 0px 5px;
-		color: #FFF;
-		border-bottom: 1px dashed #EDEDED;
-	}
-	.AutoCompleteOption:hover
-	{
+/* line 183, Editorview.scss */
+.AutoCompleteOption:hover {
+  color: #5ab4e6; }
 
-		color: rgb(90, 180, 230);
+/* line 187, Editorview.scss */
+.AutoCompleteOptionFunction {
+  font-style: italic;
+  color: orange; }
 
-	}
-	.AutoCompleteOptionFunction
-	{
-		font-style:italic;
-		color:orange;
-	}
-	#AutoComplete
-	{
+/* line 192, Editorview.scss */
+#AutoComplete {
+  position: absolute;
+  z-index: 10000000;
+  background: black;
+  border: 1px solid #888888;
+  /* box-shadow: 5px 5px 10px #888; */
+  /* border-radius: 5px; */
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  margin: 0px; }
 
-		position: absolute;
-		z-index: 10000000;
-		background: black;
-		border: 1px solid #888;
-		/* box-shadow: 5px 5px 10px #888; */
-		/* border-radius: 5px; */
-		overflow-y: auto !important;
-		overflow-x: hidden !important;
+/* line 204, Editorview.scss */
+input[type="text"]:focus, input[type="password"]:focus {
+  box-shadow: 0px 0px 5px #82b8ff; }
 
+/* line 208, Editorview.scss */
+#alertify {
+  font-size: 1.7em;
+  top: 38%; }
 
-		margin: 0px;
-}
-	input[type="text"]:focus, input[type="password"]:focus
-	{
-		box-shadow: 0px 0px 5px rgba(130, 184, 255,1);
-	}
+/* line 213, Editorview.scss */
+#alertify-logs {
+  font-size: 2em; }
 
-	#alertify
-	{
-		/* font-size: 1.7em; */
-		top: 38%;
-	}
-	#alertify-logs
-	{
-		font-size: 2em;
-
-	}
-	canvas:focus
-	{
-		border: 4px ridge  rgb(130, 184, 255);
-		box-sizing: border-box;
-
-	}
-	.playerlabel
-	{
-		cursor: pointer;
+/* line 217, Editorview.scss */
+.playerlabel {
+  cursor: pointer;
   font-size: 1.3em;
   margin: 1px 5px;
   padding: 3px;
-
-		/* border-radius: 7px; */
-
-		/* border: 1px solid #444; */
-
-		/* background: #222 url(images/ui-bg_glass_15_222222_1x400.png) 50% 50% repeat-x; */
+  /* border-radius: 7px; */
+  /* border: 1px solid #444; */
+  /* background: #222 url(images/ui-bg_glass_15_222222_1x400.png) 50% 50% repeat-x; */
   font-weight: 700;
   color: #eee;
-  font-family: 'Open Sans';
-	}
+  font-family: 'Open Sans'; }
 
-	.loadchoice
-	{
-		background-color: #DDD;
-		border-radius: 3px;
-		padding: 2px;
-		box-shadow: 3px 3px 7px grey;
-		margin-bottom: 5px;
-	}
-	.SidePanelWindowTitle
-	{
-		padding:3px 4px 3px 4px;
-		font:1.5em sans-serif;
+/* line 230, Editorview.scss */
+.loadchoice {
+  background-color: #DDD;
+  border-radius: 3px;
+  padding: 2px;
+  box-shadow: 3px 3px 7px grey;
+  margin-bottom: 5px; }
 
-	}
-	.SidePanelWindowBottomBorder
-	{
-		border-bottom:5px solid #444444;
-		border-left:2px solid #444444;
-	}
-	.InventoryRename
-	{
-		display: inline-block;top: 22.0px;position: absolute;padding: 0px;font: 1.0em sans-serif;border: 1px solid black;margin: 0px;width: 80%;
-	}
-	.InventoryPanel
-	{
-		font:1.5em sans-serif;
-		padding-bottom:5px;
-		/* background:#FFFFF8; */
-		border: 1px black solid;
-		margin: 3px 3px 3px 3px;
-		height:auto;
-		color: #444;
-}
+/* line 238, Editorview.scss */
+.SidePanelWindowTitle {
+  padding: 3px 4px 3px 4px;
+  font: 1.5em sans-serif; }
 
-	.inventoryItem
-	{
-		text-overflow: ellipsis;
-		/* background:#FFFFF8; */padding-left: 10px;
-		color: #DFDFDF;
-	}
-	.loadchoice:hover
-	{
-		background-color: #DDF;
-		border-radius: 3px;
-		padding: 2px;
-		box-shadow: 3px 3px 7px grey;
-		margin-bottom: 5px;
-	}
-	.BigTextureThumb
-	{
-		margin-left: auto;
-		margin-right: auto;
-		display: block;
-		border: 1px solid black;
-		width:128px;
-		height:128px;
-		margin-bottom: 10px;
-		cursor:pointer;
-	}
-	.BigTextureThumbSrc
-	{
-		margin-left: auto;
-		margin-right: auto;
-		display: block;
-		border: 1px solid black;
+/* line 243, Editorview.scss */
+.SidePanelWindowBottomBorder {
+  border-bottom: 5px solid #444444;
+  border-left: 2px solid #444444; }
 
-		margin-bottom: 10px;
-		cursor:pointer;
-		word-break: break-all;
-	}
-	#ContextMenu
-	{
-		position: fixed;
-		z-index: 10000000;
-		top: 142px;
-		left: 114px;
-		min-width: 144px;
-		max-width: 244px;
-		display: block;
-		background: #404040;
-		font-size: 1.5em;
-		color: white;
-		font-family: 'Open Sans',sans-serif;
+/* line 248, Editorview.scss */
+.loadchoice:hover {
+  background-color: #DDF;
+  border-radius: 3px;
+  padding: 2px;
+  box-shadow: 3px 3px 7px grey;
+  margin-bottom: 5px; }
 
-		box-shadow: 2px 2px 5px black;
-		border: 1px solid gray;
-		cursor:default;
-	}
-	#ContextMenuName
-	{
-		border-bottom: 1px solid gray;
-		height: 1em;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		padding-bottom: 2px;
-		padding-left: 6px;
-		color: lightblue;
-	}
-	.ContextMenuAction
-	{
-		background: #404040;
-		padding-left:5px;
-		color: lightgreen;
-	}
-	.ContextMenuAction:hover
-	{
-	background: rgb(130,184,255);
-	}
-	.ContextMenuItem
-	{
-		background: #404040;
-		padding-left:5px;
-	}
-	.ContextMenuItem:hover
-	{
-		background: #4040A0;
-	}
-	.textureChoice
-	{
-		width: 50px;
-		cursor: pointer;
-		height: 50px;
-		text-align: center;
-		vertical-align: middle;
-		line-height: 50px;
-		font-size: 0.85em;
+/* line 256, Editorview.scss */
+.BigTextureThumb {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  border: 1px solid black;
+  width: 128px;
+  height: 128px;
+  margin-bottom: 10px;
+  cursor: pointer; }
 
-		display: inline-block;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		color: black;
-		text-shadow: 1px 1px 3px white;
-	}
-	.editorCheck
-	{
-		margin: 0px 2px 0px 0px;
-		text-align: center;
-		vertical-align: middle;
-		zoom: 1.5;
-	}
-	.editorSliderLabel
-	{
-		display: inline-block;
-		margin-bottom: 3px;
-		margin-top: 3px;
-		font-size: 1.2em;
-		text-shadow: 1px 1px 3px #AAA;
-	}
-	.nametagname {
-border-left: 2px ridge #66F;
-height: 100%;
-border-right: 2px ridge #66F;
-padding-left: 10px;
-padding-right: 10px;
-cursor: pointer;
-	}
-	.nametag {
-/* pointer-events: none; */
+/* line 267, Editorview.scss */
+.BigTextureThumbSrc {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  border: 1px solid black;
+  margin-bottom: 10px;
+  cursor: pointer;
+  word-break: break-all; }
 
-position: fixed;
-left: 612.7792636991876px;
-top: 350.056008871367px;
-color: white;
-text-shadow: 1px 1px 2px black;
+/* line 277, Editorview.scss */
+#ContextMenu {
+  position: fixed;
+  z-index: 10000000;
+  top: 142px;
+  left: 114px;
+  min-width: 144px;
+  max-width: 244px;
+  display: block;
+  background: #404040;
+  font-size: 1.5em;
+  color: white;
+  font-family: 'Open Sans',sans-serif;
+  box-shadow: 2px 2px 5px black;
+  border: 1px solid gray;
+  cursor: default; }
 
-padding: 0px 18px 0px 18px;
-box-sizing: border-box;
-border-radius: 13px;
+/* line 294, Editorview.scss */
+#ContextMenuName {
+  border-bottom: 1px solid gray;
+  height: 1em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-bottom: 2px;
+  padding-left: 6px;
+  color: lightblue; }
 
-font-size: 1.5em;
-font-family: 'Open Sans',sans-serif;
-opacity: .8;
-transition: background 1s, opacity 1s;
-}
-.nametag:hover
-{
-	opacity: 1;
-	background: rgb(130, 184, 255);
-	box-shadow: 3px 3px 3px rgba(52,52,52,.9) , -3px -3px 3px #77C inset;
-}
-	.glyph
-	{
-		position:absolute;
-		left: 0px;
-		right: 0px;
-	}
-	.textureChoice:hover
-	{
-		background: #4040A0;
-		border: 1px inset blue;
-		width: 48px;
-		height: 48px;
-	}
-	.TransformEditorInput
-	{
-		width: 4em;
+/* line 305, Editorview.scss */
+.ContextMenuAction {
+  background: #404040;
+  padding-left: 5px;
+  color: lightgreen; }
 
-	}
-	.EditorLabel
-	{
+/* line 311, Editorview.scss */
+.ContextMenuAction:hover {
+  background: #82b8ff; }
 
-	}
-	.statusbar
-	{
-		position: fixed;
-		width: 100%;
-		height: 25px;
-		z-index: 201;
-		background: #444;
-		white-space: nowrap;
-	}
-	#statusbarinner
-	{
-		display: inline-block;
-		width: 100%;
+/* line 315, Editorview.scss */
+.ContextMenuItem {
+  background: #404040;
+  padding-left: 5px; }
 
-		background: #414141; /* Old browsers */
+/* line 320, Editorview.scss */
+.ContextMenuItem:hover {
+  background: #4040A0; }
 
+/* line 324, Editorview.scss */
+.textureChoice {
+  width: 50px;
+  cursor: pointer;
+  height: 50px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 50px;
+  font-size: 0.85em;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: black;
+  text-shadow: 1px 1px 3px white; }
 
-	}
-	.usertable
-	{
-		width:100%;
-		margin-bottom: 5px;
-		margin-left: 5px;
-	}
-	.headericon
-	{
-		vertical-align: middle;
-		width: 25px;
-		height: 25px;
-		display:inline-block;
-		zoom:1.2;
-		padding-right: 5px;
-	}
-	.icon
-	{
-		width:25px;
-		height:25px;
-		vertical-align: middle;
-		margin-top: 3px;
-		/* border: 4px inset #444; */
-		margin-left: 3px;
-		/* border-radius: 2px; */
+/* line 339, Editorview.scss */
+.editorCheck {
+  margin: 0px 2px 0px 0px;
+  text-align: center;
+  vertical-align: middle;
+  zoom: 1.5; }
 
-		/* background-color:white; */
-		padding: 1px;
-		cursor:pointer;
-		display:inline-block;
+/* line 346, Editorview.scss */
+.editorSliderLabel {
+  display: inline-block;
+  margin-bottom: 3px;
+  margin-top: 3px;
+  font-size: 1.2em;
+  text-shadow: 1px 1px 3px #aaaaaa; }
 
+/* line 354, Editorview.scss */
+.nametagname {
+  border-left: 2px ridge #6666ff;
+  height: 100%;
+  border-right: 2px ridge #6666ff;
+  padding-left: 10px;
+  padding-right: 10px;
+  cursor: pointer; }
 
-	;
-		zoom: 1.15;
-}
-	.icon:hover
-	{
-		
-		margin-top: 1px;
-		margin-left: 1px;
-		margin-right: 2px;
-		margin-bottom: 2px;
-		background-color:lightblue;
-	}
-	.icon:active {
-		background-color: #7B7B7B;
-	}
-	.iconselected
-	{
-		background-color: rgb(58, 143, 255);
-		padding: 2px;
-		
+/* line 363, Editorview.scss */
+.nametag {
+  /* pointer-events: none; */
+  position: absolute;
+  /*left: 612.7792636991876px;
+  top: 350.056008871367px;*/
+  color: white;
+  text-shadow: 1px 1px 2px black;
+  padding: 0px 18px 0px 18px;
+  box-sizing: border-box;
+  border-radius: 13px;
+  font-size: 1.5em;
+  font-family: 'Open Sans',sans-serif;
+  opacity: .8;
+  transition: background 1s, opacity 1s; }
 
-	}
-	.icondisabled
-	{
-		  opacity: .1;
-  pointer-events: none;
-	}
+/* line 379, Editorview.scss */
+.nametag:hover {
+  opacity: 1;
+  background: #82b8ff;
+  box-shadow: 3px 3px 3px rgba(52, 52, 52, 0.9), -3px -3px 3px #7777cc inset; }
 
-	.seperator
-	{
-		width:25px;
-		height:25px;
-		vertical-align: middle;
-		margin-top: 3px;
-		border-left: 3px outset #ADADAD;
-		margin-left: 19px;
-		margin-right: -26px;
-		padding: 19px;
-		display:inline;
+/* line 385, Editorview.scss */
+.glyph {
+  position: absolute;
+  left: 0px;
+  right: 0px; }
 
-		border-left-style: groove;
-}
-	.usertable tr td
-	{
+/* line 391, Editorview.scss */
+.textureChoice:hover {
+  background: #4040A0;
+  border: 1px inset blue;
+  width: 48px;
+  height: 48px; }
 
-		font: 8pt 'Open Sans' ;
-	}
-	.usertable tr
-	{
+/* line 398, Editorview.scss */
+.TransformEditorInput {
+  width: 4em; }
 
-		display: block;
-		border-radius: 5px;
-		width: 100%;
-		padding-bottom: 1px;
-	}
+/* line 402, Editorview.scss */
+.usertable {
+  width: 100%;
+  margin-bottom: 5px;
+  margin-left: 5px; }
 
-	.statusbarElement{
-display: inline;
-height: 100%;
-padding-left: 5px;
-padding-right: 5px;
-line-height: 25px;
-border-radius: 0px;
-color: gray;
-margin-left: 3px;
-margin-right: 3px;
-font-family: 'Open Sans',sans-serif;
-font-size: 1.3em;
-/* text-shadow: 1px 1px 3px black; */
-border-left: 1px solid;
+/* line 408, Editorview.scss */
+.headericon {
+  vertical-align: middle;
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+  zoom: 1.2;
+  padding-right: 5px; }
 
-	}
-	#sidepanel
-	{
-		z-index: 100;
-		position: fixed;
-		width: 320px;
-		background-color: #414141;
-		outline:none;
-	}
-	.EditorDataSectionTitle
-	{
-		text-align: center;
+/* line 416, Editorview.scss */
+.usertable tr td {
+  font: 8pt "Open Sans"; }
 
-		margin: 3em 0px 0px 0px;
-		border-bottom: 1px solid #444444;
-		font-size: 1.3em;
-		text-shadow: 1px 1px 5px #888;
-	}
-	.EditorDataSectionTitle:first-child
-	{
-		margin: 1em 0px 0px 0px;
-	}
-	#ScriptEditor
-	{
-		overflow: hidden;
-		padding: 0px 0px 0px 0px;
-		display: block;
-		position: fixed;
+/* line 420, Editorview.scss */
+.usertable tr {
+  display: block;
+  border-radius: 5px;
+  width: 100%;
+  padding-bottom: 1px; }
 
+/* line 427, Editorview.scss */
+.EditorDataSectionTitle {
+  text-align: center;
+  margin: 3em 0px 0px 0px;
+  border-bottom: 1px solid #444444;
+  font-size: 1.3em;
+  text-shadow: 1px 1px 5px #888888; }
 
-		width: 100%;
-		left: 0px;
+/* line 435, Editorview.scss */
+.EditorDataSectionTitle:first-child {
+  margin: 1em 0px 0px 0px; }
 
-	}
-	#hidescripteditor{
-		text-align: center;
-		line-height: 20px;
-		margin-left: 3px; /* Adding this here because .icon:hover will change it to 2px */
-		
-	}
-	#maximizescripteditor{
-		text-align: center;
-		line-height: 19px;
-		margin-left: 3px; /* Adding this here because .icon:hover will change it to 2px */
-	}
-	#toolbar
-	{
-		z-index: 100;
-		position: fixed;
-		width: 100%;
-		background-color: #424242;
-		/* background: #4c4c4c; */ /* Old browsers */
- 
-overflow: hidden;
-white-space: nowrap;
+/* line 441, Editorview.scss */
+.GLGEStat {
+  z-index: 999999;
+  background-color: black;
+  position: absolute;
+  border: 1px solid white;
+  border-radius: 10px;
+  opacity: .8; }
 
+/* line 450, Editorview.scss */
+.GLGEStat table tbody tr td {
+  color: white; }
 
+/* line 454, Editorview.scss */
+.vectorinputfront {
+  display: inline;
+  padding: 0;
+  width: 50px;
+  border-radius: 6px 0px 0px 6px;
+  background: transparent;
+  text-align: center;
+  border-width: 1px;
+  color: grey;
+  height: 16px;
+  margin: 1px 0px 1px -2px; }
 
-		border-bottom: 3px solid rgb(69, 69, 69);
-}
+/* line 467, Editorview.scss */
+.vectorinput {
+  display: inline;
+  padding: 0;
+  width: 50px;
+  border-radius: 0px 0px 0px 0px;
+  background: transparent;
+  text-align: center;
+  border-width: 1px;
+  color: grey;
+  height: 16px;
+  margin: 1px 0px 1px -2px; }
 
-	.GLGEStat
-	{
-		z-index: 999999;
-		background-color: black;
-		position: absolute;
-		border: 1px solid white;
-		border-radius: 10px;
-		opacity: .8;
+/* line 480, Editorview.scss */
+.primeditorinputbox {
+  display: inline;
+  float: right;
+  padding: 0;
+  width: 50px;
+  border-radius: 6px;
+  background: transparent;
+  text-align: center;
+  border-width: 1px;
+  color: white;
+  height: 16px; }
 
-	}
-	.GLGEStat table tbody tr td
-	{
-		color: white;
-	}
-	.vectorinputfront
-	{
-		display: inline;
-
-		padding: 0;
-		width: 50px;
-		border-radius: 6px 0px 0px 6px;
-		background: transparent;
-		text-align: center;
-		border-width: 1px;
-		color: grey;
-		height: 16px;
-		margin: 1px 0px 1px -2px;
-	}
-	.vectorinput
-	{
-		display: inline;
-
-		padding: 0;
-		width: 50px;
-		border-radius: 0px 0px 0px 0px;
-		background: transparent;
-		text-align: center;
-		border-width: 1px;
-		color: grey;
-		height: 16px;
-		margin: 1px 0px 1px -2px;
-	}
-	.primeditorinputbox
-	{
-		display: inline;
-		float: right;
-		padding: 0;
-		width: 50px;
-		border-radius: 6px;
-		background: transparent;
-		text-align: center;
-		border-width: 1px;
-		color:white;
-		height:16px;
-
-	}
-	@media only screen and (max-height:1200px)
-	{
-		#ScriptEditor
-		{
-			top: 683px;
-			height: 405px;
-		}
-	}
-	@media only screen and (max-height:1024px)
-	{
-		#ScriptEditor
-		{
-			top: 683px;
-			height: 405px;
-		}
-	}
-	@media only screen and (max-width:1280px)
-	{
-
-		.seperator
-		{
-			margin-left: 5px;
-			margin-right: 0px;
-			padding: 0px;
-
-		}
-		.icon
-		{
-			margin-left: 0px;
-			
-		}
-		#sidepanel
-		{
-			width: 220px;
-		}
-	}
-	@media only screen and (max-height:768px)
-	{
-		#ScriptEditor
-		{
-			top: 531px;
-			height: 405px;
-		}
-	}
-	@media only screen and (max-width:1024px)
-	{
-		#sidepanel
-		{
-			width: 250px;
-		}
-		.seperator
-		{
-			margin-left: 5px;
-			margin-right: 0px;
-			padding: 0px;
-
-		}
-		.icon
-		{
-			zoom:80%;
-		}
-	}
-	@media only screen and (max-width:800px)
-	{
-		#toolbar
-		{
-
-		}
-		#ScriptEditor
-		{
-			top: 531px;
-			height: 380px;
-		}
-		#sidepanel
-		{
-			width: 200px;
-		}
-		.seperator
-		{
-			margin-left: 0px;
-			margin-right: 0px;
-		}
-		.primeditorinputbox
-		{
-			display: block;
-			float: none;
-			margin-top: 0px;
-			margin-left: 0px;
-		}
-	}
-
+@media only screen and (max-width: 800px) {
+  /* line 495, Editorview.scss */
+  .primeditorinputbox {
+    display: block;
+    float: none;
+    margin-top: 0px;
+    margin-left: 0px; } }
 	/*
  * CSS Styles that are needed by jScrollPane for it to operate correctly.
  *
  * Include this stylesheet in your site or copy and paste the styles below into your stylesheet - jScrollPane
  * may not operate correctly without them.
  */
+/* line 508, Editorview.scss */
+.jspContainer {
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  z-index: 5;
+  background: #515151 url(../../../../images/ui-bg_diagonals-thick_8_333333_40x40.png) 0% 0% repeat;
+  background-size: 5%;
+  margin-top: 3px; }
 
-.jspContainer
-{
-	overflow: hidden;
-	position: relative;
-	height:100%;
-	z-index: 5;
-	background: #515151 url(../../../../images/ui-bg_diagonals-thick_8_333333_40x40.png) 0% 0% repeat;
-	background-size: 5%;
-	margin-top: 3px;
-}
+/* line 518, Editorview.scss */
+.jspPane {
+  position: absolute;
+  left: 0px !important; }
 
-.jspPane
-{
-	position: absolute;
-	left: 0px !important;
-}
+/* line 523, Editorview.scss */
+.jspVerticalBar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 100%;
+  background: #424242; }
 
-.jspVerticalBar
-{
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 8px;
-	height: 100%;
-	background: #424242;
-}
+/* line 532, Editorview.scss */
+.jspHorizontalBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 16px;
+  background: red;
+  display: none; }
 
-.jspHorizontalBar
-{
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	height: 16px;
-	background: red;
-	display:none;
-}
+/* line 542, Editorview.scss */
+.jspVerticalBar * {
+  margin: 0;
+  padding: 0; }
 
-.jspVerticalBar *
-{
-	margin: 0;
-	padding: 0;
-}
+/* line 547, Editorview.scss */
+.jspHorizontalBar * {
+  margin: 0;
+  padding: 0;
+  display: none; }
 
-.jspHorizontalBar *
-{
-	margin: 0;
-	padding: 0;
-	display:none;
-}
+/* line 553, Editorview.scss */
+.jspCap {
+  display: none; }
 
-.jspCap
-{
-	display: none;
-}
+/* line 557, Editorview.scss */
+.jspHorizontalBar .jspCap {
+  float: left; }
 
-.jspHorizontalBar .jspCap
-{
-	float: left;
-}
+/* line 561, Editorview.scss */
+.jspTrack {
+  background: transparent;
+  position: relative; }
 
-.jspTrack
-{
-	background: rgba(0,0,0,0);
-	position: relative;
-}
+/* line 566, Editorview.scss */
+.jspDrag {
+  box-shadow: 1px 1px 3px inset black;
+  background: #3a8fff;
+  position: relative;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  /* box-shadow: 0px 0px 3px black inset; */
+  /* border-radius: 5px; */
+  border-left: 1px solid black; }
 
-.jspDrag
-{
-box-shadow: 1px 1px 3px inset black;
-background: rgba(58, 143, 255, 1);
-position: relative;
-top: 0;
-left: 0;
-cursor: pointer;
-/* box-shadow: 0px 0px 3px black inset; */
-/* border-radius: 5px; */
-border-left: 1px solid black;
-}
-
+/* line 578, Editorview.scss */
 .jspHorizontalBar .jspTrack,
-.jspHorizontalBar .jspDrag
-{
-	float: left;
-	height: 100%;
-}
+.jspHorizontalBar .jspDrag {
+  float: left;
+  height: 100%; }
 
-.jspArrow
-{
-	background: #50506d;
-	text-indent: -20000px;
-	display: block;
-	cursor: pointer;
-}
+/* line 584, Editorview.scss */
+.jspArrow {
+  background: #50506d;
+  text-indent: -20000px;
+  display: block;
+  cursor: pointer; }
 
-.jspArrow.jspDisabled
-{
-	cursor: default;
-	background: #80808d;
-}
+/* line 591, Editorview.scss */
+.jspArrow.jspDisabled {
+  cursor: default;
+  background: #80808d; }
 
-.jspVerticalBar .jspArrow
-{
-	height: 16px;
-}
+/* line 596, Editorview.scss */
+.jspVerticalBar .jspArrow {
+  height: 16px; }
 
-.jspHorizontalBar .jspArrow
-{
-	width: 16px;
-	float: left;
-	height: 100%;
-}
+/* line 600, Editorview.scss */
+.jspHorizontalBar .jspArrow {
+  width: 16px;
+  float: left;
+  height: 100%; }
 
-.jspVerticalBar .jspArrow:focus
-{
-	outline: none;
-}
+/* line 606, Editorview.scss */
+.jspVerticalBar .jspArrow:focus {
+  outline: none; }
 
-.jspCorner
-{
-	background: #eeeef4;
-	float: left;
-	height: 100%;
-}
+/* line 610, Editorview.scss */
+.jspCorner {
+  background: #eeeef4;
+  float: left;
+  height: 100%; }
 
 /* Yuk! CSS Hack for IE6 3 pixel bug :( */
-* html .jspCorner
-{
-	margin: 0 -3px 0 0;
-}
+/* line 617, Editorview.scss */
+* html .jspCorner {
+  margin: 0 -3px 0 0; }
 
-#sidetabs
-{
-position: absolute;
+/* line 621, Editorview.scss */
+.PrivateMessageWindow {
+  background-image: -webkit-linear-gradient(top, white 0%, #d9eeef 100%);
+  width: 99%;
+  top: 0%;
+  height: 80%;
+  padding: 0px;
+  margin: 0px;
+  position: absolute;
+  overflow-y: auto; }
 
-left: -40px;
-top: 23px;
-}
+/* line 632, Editorview.scss */
+.PrivateMessageTable {
+  width: 100%;
+  background-color: transparent;
+  overflow-y: hidden;
+  overflow-x: hidden; }
 
-.sidetab:hover
-{
-	color: rgb(130, 184, 255);
-}
-.sidetab
-{
-
--webkit-transform: rotate(-90deg);
--moz-transform: rotate(90deg);
-
-
-transform: rotate(-90deg);
-
-
-height: auto;
-
-
-margin: 0px 44px 24px 3px;
-font-size: 12px;
-font-family: 'Open Sans',sans-serif;
-background: #414149;
-
-
-padding: 3px 7px 7px 8px;
-text-align: center;
-vertical-align: middle;
-
-
-/* border-radius: 7px; */
-
-
-border: 2px solid rgb(130, 184, 255);
-color: white;
-
-
-/* text-shadow: 1px 1px 3px black; */
-cursor: pointer;
-
-
-}
-
-
-.PrivateMessageWindow
-{
-	background-image: -webkit-linear-gradient(top, white 0%, #D9EEEF 100%);
-	width: 99%;
-	top: 0%;
-	height:80%;
-	padding:0px;
-	margin:0px;
-	position: absolute;
-	overflow-y:auto
-}
-
-.PrivateMessageTable
-{
-width: 100%;
-background-color: transparent;
-overflow-y: hidden;
-overflow-x: hidden;
-}
-
-.PrivateMessageWindowText
-{
-margin: 0px;
+/* line 639, Editorview.scss */
+.PrivateMessageWindowText {
+  margin: 0px;
   padding: 0px;
   overflow: hidden;
   border: none;
@@ -1033,32 +1918,28 @@ margin: 0px;
   left: 1%;
   position: absolute;
   width: 98%;
-  top: 0%;
+  top: 0%; }
 
+/* line 651, Editorview.scss */
+.PrivateMessageWindow input {
+  right: 1%;
+  position: absolute;
+  padding: 5px 0 5px 10px;
+  font-size: 1.5em;
+  bottom: 0px;
+  left: 1%;
+  box-shadow: 3px 2px 10px lightgrey inset;
+  width: calc(98% - 1em); }
 
-}
-.PrivateMessageWindow input
-{
-right: 1%;
-position: absolute;
-padding: 5px 0 5px 10px;
-font-size: 1.5em;
-bottom: 0px;
-left: 1%;
-box-shadow: 3px 2px 10px lightgray inset;
-  width: calc(98% - 1em);
-}
+/* line 662, Editorview.scss */
+.PrivateMessageWindow input:focus {
+  border: 1px solid #82b8ff;
+  box-shadow: 3px 2px 10px lightgrey inset; }
 
-.PrivateMessageWindow input:focus
-{
-border:1px solid rgb(130, 184, 255);
-box-shadow: 3px 2px 10px lightgray inset;
-}
-
-.ChatFromOtherLabel
-{
+/* line 667, Editorview.scss */
+.ChatFromOtherLabel {
   vertical-align: middle;
-  color: rgb(81, 120, 144);
+  color: #517890;
   /* text-align: right; */
   /* right: -3%; */
   margin-right: 10px;
@@ -1066,11 +1947,10 @@ box-shadow: 3px 2px 10px lightgray inset;
   display: inline-block;
   font-size: 1.5em;
   font-style: italic;
-    width: 100px;
-}
+  width: 100px; }
 
-.ChatFromOtherText
-{
+/* line 680, Editorview.scss */
+.ChatFromOtherText {
   color: white;
   /* text-align: right; */
   font-size: 1.5em;
@@ -1080,20 +1960,18 @@ box-shadow: 3px 2px 10px lightgray inset;
   /* width: 50%; */
   /* margin-left: auto; */
   /* background: rgb(143,233,167); */
-
   /* border: 1px solid lightgray; */
   /* border-bottom-right-radius: 0px; */
   /* border-top-right-radius: 25px; */
   /* border-bottom-color: #AAA; */
   display: inline-block;
   vertical-align: middle;
-  clear: both;
-}
+  clear: both; }
 
-.ChatFromMeLabel
-{
-vertical-align: middle;
-  color: rgb(110, 161, 192);
+/* line 699, Editorview.scss */
+.ChatFromMeLabel {
+  vertical-align: middle;
+  color: #6ea1c0;
   /* text-align: right; */
   /* right: -3%; */
   margin-right: 10px;
@@ -1101,11 +1979,10 @@ vertical-align: middle;
   display: inline-block;
   font-size: 1.5em;
   font-style: italic;
-    width: 100px;
-}
+  width: 100px; }
 
-.ChatFromMeText
-{
+/* line 712, Editorview.scss */
+.ChatFromMeText {
   color: white;
   /* text-align: right; */
   font-size: 1.5em;
@@ -1120,921 +1997,595 @@ vertical-align: middle;
   /* border-bottom-color: #AAA; */
   display: inline-block;
   vertical-align: middle;
-  clear: both;
-}
+  clear: both; }
 
-.GlobalChatLabel
-{
-	vertical-align: top;
-	width: 25%;
-	min-width: 25%;
-	margin-right: 1em;
-	color:darkred;
-	display: table-cell;
-}
-.GlobalChatText
-{
-	color:darkred;
-	width: 75%;
-	max-width: 75%;
-}
-#ChatInput
-{
-bottom: 0px;
-position: absolute;
-padding: 5px 0px 5px 10px;
-font-size: 1.5em;
-left: 1%;
-/* box-shadow: 3px 2px 10px lightgray inset; */
-width: 97%;
-box-sizing: border-box;
-}
-#ChatInput:focus
-{
+/* line 730, Editorview.scss */
+.GlobalChatLabel {
+  vertical-align: top;
+  width: 25%;
+  min-width: 25%;
+  margin-right: 1em;
+  color: darkred;
+  display: table-cell; }
 
-	border:1px solid rgb(130, 184, 255);
-box-shadow: 3px 2px 10px lightgray inset;
-}
-#ChatLog
-{
-	width:100%;
-	background-color: transparent;
-}
-#ChatBodyInner
-{
+/* line 739, Editorview.scss */
+.GlobalChatText {
+  color: darkred;
+  width: 75%;
+  max-width: 75%; }
 
+/* line 745, Editorview.scss */
+#ChatInput {
+  bottom: 0px;
+  position: absolute;
+  padding: 5px 0px 5px 10px;
+  font-size: 1.5em;
+  left: 1%;
+  /* box-shadow: 3px 2px 10px lightgray inset; */
+  width: 97%;
+  box-sizing: border-box; }
 
+/* line 756, Editorview.scss */
+#ChatInput:focus {
+  border: 1px solid #82b8ff;
+  box-shadow: 3px 2px 10px lightgrey inset; }
 
+/* line 761, Editorview.scss */
+#ChatLog {
+  width: 100%;
+  background-color: transparent; }
 
-width: 99%;
-top: 0%;
+/* line 766, Editorview.scss */
+#ChatBodyInner {
+  width: 99%;
+  top: 0%;
+  padding: 0px;
+  margin: 0px;
+  position: absolute;
+  overflow-y: hidden;
+  bottom: 38px;
+  border: none; }
 
-padding: 0px;
-margin: 0px;
-position: absolute;
-overflow-y: hidden;
-bottom: 38px;
-border: none;
+/* line 777, Editorview.scss */
+#ChatWindow {
+  width: 100%;
+  margin: 0px;
+  padding: 0px; }
 
-}
-#ChatWindow
-{
-	width: 100%;
-	margin:0px;
-	padding:0px
-}
+/* line 783, Editorview.scss */
+.ChatFromOther {
+  margin: 5px; }
 
-.ChatFromOther
-{
-margin: 5px;
+/* line 787, Editorview.scss */
+.ChatFromMe {
+  width: 95%;
+  border-radius: 10px;
+  margin: 5px 5px 9px 5px;
+  right: 1%; }
 
-
-}
-.ChatFromMe
-{
-width: 95%;
-border-radius: 10px;
-margin: 5px 5px 9px 5px;
-right: 1%;
-}
-
+/* line 794, Editorview.scss */
 .ChatFromMeText a {
-word-break: break-all;
-}
+  word-break: break-all; }
+
+/* line 798, Editorview.scss */
 .ChatFromOtherText a {
-word-break: break-all;
-}
-
-.targetpropchoice
-{
-padding-left: 1em;
-cursor:pointer;
-color:gray;
-border-bottom: 1px solid #EEE;
-}
-
-.sourcepropchoice
-{
-padding-left: 1em;
-cursor:pointer;
-border-bottom: 1px solid #EEE;
-}
-
-.wirepropselected
-{
-font-weight: bold;
-text-shadow: 1px 1px 1px #AAA;
-color:blue;
-background: #DDF;
-}
-
-#WireEditorSelectedName
-{
-height: 1em;
-background: #EFEFEF;
-padding: .5em 0em .5em 1em;
-margin: 1em 1em 1em 1em;
-border-radius: 15px;
-border: 1px outset #AAA;
-box-shadow: 3px 3px 3px #CCC,-3px -3px 3px #CCC inset;
-white-space: nowrap;
-overflow: hidden;
-cursor:pointer;
-}
-
-#WireEditorSourceName
-{
-height: 1em;
-background: #EFEFEF;
-padding: .5em 0em .5em 1em;
-margin: 1em 1em 1em 1em;
-border-radius: 15px;
-border: 1px outset #AAA;
-box-shadow: 3px 3px 3px #CCC,-3px -3px 3px #CCC inset;
-white-space: nowrap;
-overflow: hidden;
-cursor:pointer;
-}
-
-#WireEditorSelectedProps
-{
-
-margin-left: 1em;
-overflow: auto;
-bottom: 18px;
-position: absolute;
-top: 5em;
-width: 94%
-}
-
-#WireEditorSourceProps
-{
-margin-left: 1em;
-overflow: auto;
-bottom: 18px;
-position: absolute;
-top: 5em;
-width: 94%
-
-}
-
-#WireEditor
-{
-padding: 0px;
-margin: 0px;
-font-size: 1.2em;
-}
-.wireeditorleft
-{
-position: absolute;
-top: 0%;
-width: 50%;
-background: #FFF;
-height: 80%;
-padding: 0em 0em 0em 0em;
-border-right: 1px solid #AAA;
-z-index: 1;
-border-radius: 6px;
-box-shadow: 0px 0px 10px #CCC inset;
-
-}
-.wireeditorright
-{
-position: absolute;
-width: 50%;
-left: 50%;
-background: #FFF;
-height: 80%;
-top: 0%;
-box-shadow: 0px 0px 10px #CCC inset;
-padding: 0em 0em 0em 0em;
-border-radius: 6px;
-
-}
-
-#wireeditorbuttons
-{
-position: absolute;
-top: 80%;
-width: 100%;
-text-align: center;
-}
-
-#wireeditorLink
-{
-
-height: 1em;
-background: #EFEFEF;
-padding: 1.5em 0em 1.5em 0em;
-margin: 1em 0em 1em 0em;
-border-radius: 15px;
-border: 1px outset #AAA;
-box-shadow: 3px 3px 3px #CCC,-3px -3px 3px #CCC inset;
-white-space: nowrap;
-overflow: hidden;
-margin-left: auto;
-margin-right: auto;
-width: 33%;
-text-align: center;
-cursor: pointer;
-display: inline-block;
-}
-.wiredisabled
-{
-	color:lightgray;
-}
-#wireeditordisable
-{
-position:absolute;
-top:0%;
-bottom:0%;
-left:0%;
-right:0;
-background: black;
-opacity: .05;
-}
-
-.wirepropwired
-{
-text-shadow: 1px 1px 1px gray;
-color: darkblue
-}
-
-#SubExp2
-{
-height: 1em;
-background: #EFEFEF;
-padding: 1.5em 0em 1.5em 0em;
-margin: 1em 0em 1em 0em;
-border-radius: 15px;
-border: 1px outset #AAA;
-box-shadow: 3px 3px 3px #CCC,-3px -3px 3px #CCC inset;
-white-space: nowrap;
-overflow: hidden;
-margin-left: auto;
-margin-right: auto;
-width: 33%;
-text-align: center;
-cursor: pointer;
-display: inline-block;
-
-}
-#SubExp1
-{
-height: 1em;
-background: #EFEFEF;
-padding: 1.5em 0em 1.5em 0em;
-margin: 1em 0em 1em 0em;
-border-radius: 15px;
-border: 1px outset #AAA;
-box-shadow: 3px 3px 3px #CCC,-3px -3px 3px #CCC inset;
-white-space: nowrap;
-overflow: hidden;
-margin-left: auto;
-margin-right: auto;
-width: 33%;
-text-align: center;
-cursor: pointer;
-display: inline-block;
-
-}
-.hierarchyItemSelected
-{
-	background: rgb(130, 184, 255) url(../../../images/ui-bg_glass_75_cfe4ef_1x400.png) repeat;
-background-size: 100% 100%;
-
-	/* border: 1px solid lightgray; */
-color:black;
-}
-
-.hierarchyicondisable
-{
-	color:#444;
-}
-
-.hierarchyicon
-{
-	color:rgb(130, 184, 255);
-}
-
-#hierarchyDisplay
-{
-	font: 1.5em sans-serif;
-	padding-bottom: 5px;
-	background: ##E9E9E9;
-	border: 1px black solid;
-	margin: 3px 3px 3px 3px;
-	height: auto;
-	background-size: 1% 100%;
-	font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
-
-	padding-left: 5px;
-}
-
-.hierarchyItem
-{
-	font-weight: normal;
-white-space: nowrap;
-text-overflow: ellipsis;
-height: 1.3em;
-overflow: hidden;
-padding-left: 0px;
-padding: .1em;
-  font-size: 0.9em;
-}
-
-.hierarchyentry
-{
-	margin-left:1em; overflow:hidden;
-	  border-left: 1px dotted #444;
-}
-
-.hierarchytoggle
-{
-  margin-right: .5em;
-  padding-left: 1.5em;
-  font-size: .6em;
-  display: inline;
-}
-
-.hierarchyItem:hover
-{
-background: lightblue url(../../../images/ui-bg_glass_75_cfe4ef_1x400.png) repeat;
-}
-
-.hierarchySpacer
-{
-padding-bottom: 5px;
-margin-right: 10px;
-margin-left: 0px;
-display: inline;
-height: 1.3em;
-white-space: nowrap;
-}
-
-#preloadGUI
-{
-
-position: absolute;
-width: 30%;
-height: 15%;
-background: white;
-border: 1px solid gray;
-border-radius: 6px;
-margin-left: auto;
-vertical-align: middle;
-text-align: center;
-left: 35%;
-top: 42.5%;
-overflow: hidden;
-box-shadow: 0 3px 7px rgba(0,0,0,.3);
-font-family: 'Open Sans',sans-serif;
-font-size: 17px;
-
-
-}
-
-#preloadGUI .preloadCenter
-{
-	height: 60%;
-	-webkit-margin-after: 0;
-	-webkit-margin-before: 0;
-}
-
-#preloadguiText
-{
-background: #F5F5F5;
-height: 40%;
-border-bottom-left-radius: 6px;
-border-bottom-right-radius: 6px;
-border-top-color: rgb(221, 221, 221);
-border-top-left-radius: 0px;
-border-top-right-radius: 0px;
-border-top-style: solid;
-border-top-width: 1px;
-box-shadow: rgb(255, 255, 255) 0px 1px 0px 0px inset;
-display: block;
-margin: -1px;
-position: absolute;
-width: 100%;
-color: #ccc;
-font-size: .7em;
-}
-
-#fullscreenlink
-{
-	cursor:pointer;
-}
-
-#fullscreenlink:hover
-{
-	color:blue;
-}
-
-#preloadprogress
-{
-	vertical-align: middle;
-margin-top: auto;
-margin-bottom: auto;
-position: absolute;
-height: 28%;
-width: 95%;
-top: 16%;
-left: 2.5%;
-}
-.progress-label {
-    position: absolute;
-font-weight: bold;
-text-shadow: 1px 1px 3px #fff;
-width: 100%;
-margin-left: auto;
-text-align: center;
-height: 100%;
-margin: 0px;
-  }
-
-  #preloadGUIBack
-  {
-position: absolute;
-width: 100%;
-height: 100%;
-left: 0%;
-top: 0%;
-background: white;
-z-index: 100000;
-box-shadow: 0px 0px 300px #666 inset;
-text-align: center;
-font-size: 1.5em;
-font-family: 'Open Sans',sans-serif;
-  }
-.guinode
-{
-   position:absolute;
-}
-
-.guipick:hover
-{
-	outline: 3px solid lightblue !important;
-
-}
-
-.guiselected
-{
-	outline: 3px solid blue !important;
-}
-.guiselected:hover
-{
-	outline: 3px solid blue !important;
-}
-
-#selectionEditorMenu
-{
-
-
-}
-#selectionEditorSelectNone
-{
-
-
-}
-#selectionEditorFilterLights
-{
-
-
-}
-#selectionEditorFilter3Dmodels
-{
-
-
-}
-#selectionEditorFilterBehaviors
-{
-
-
-}
-#selectionEditorFilterPrimitives
-{
-
-
-}
-#selectionEditorFilterModifiers
-{
-
-
-}
-
-#EntityLibrary
-{
-width: 250px;
-position: absolute;
-background: #444;
-height: 100%;
-left: -250px;
-top: 62px;
-}
-
-#EntityLibrarySideTab:hover
-{
-	color:rgb(130, 184, 255);
-}
-#EntityLibrarySideTab
-{
-	position: relative;
-left: 209px;
-width: 73px;
-top: 24px;
-height: 45px;
--webkit-transform: rotate(90deg);
--moz-transform: rotate(90deg);
-transform: rotate(90deg);
-font-size: 12px;
-font-family: 'Open Sans',sans-serif;
-text-align: center;
-
-	/* border-radius: 7px; */
-
-	border: 2px solid rgb(130, 184, 255);
-color: white;
-text-shadow: 1px 1px 3px black;
-cursor: pointer;
-
-	background: #4c4c4c;
-padding-left: 0px;
-z-index: 20;
-
-}
-
-#EntityLibraryMain
-{
-width: 247px;
-height: auto;
-position: absolute;
-top: 0px;
-z-index: 30;
-overflow: auto;
-background: #515151 url(../../../../images/ui-bg_diagonals-thick_8_333333_40x40.png) 0% 0% repeat;
-background-size: 5%;
-margin-top: 3px;
-padding-right: 3px;
-
-}
-
-.libraryAsset
-{
-text-align: center;
-display:inline-block;
-margin-right: 1.5em;
-width: 73px;
-height: 75px;
-  margin-bottom: 9px;
-}
-
-.libraryAsset div
-{
-  color: whitesmoke;
-  text-shadow: 1px 1px 5px black;
+  word-break: break-all; }
+
+/* line 802, Editorview.scss */
+.targetpropchoice {
+  padding-left: 1em;
+  cursor: pointer;
+  color: gray;
+  border-bottom: 1px solid #eeeeee; }
+
+/* line 809, Editorview.scss */
+.sourcepropchoice {
+  padding-left: 1em;
+  cursor: pointer;
+  border-bottom: 1px solid #eeeeee; }
+
+/* line 815, Editorview.scss */
+.wirepropselected {
+  font-weight: bold;
+  text-shadow: 1px 1px 1px #aaaaaa;
+  color: blue;
+  background: #DDF; }
+
+/* line 822, Editorview.scss */
+#WireEditorSelectedName {
+  height: 1em;
+  background: #EFEFEF;
+  padding: 0.5em 0em 0.5em 1em;
+  margin: 1em 1em 1em 1em;
+  border-radius: 15px;
+  border: 1px outset #aaaaaa;
+  box-shadow: 3px 3px 3px #cccccc, -3px -3px 3px #cccccc inset;
+  white-space: nowrap;
   overflow: hidden;
-  background: rgba(0,0,0,0.5);
-  z-index: 100;
-  position: relative;
-  /* border-radius: 10px; */
-  pointer-events: none;
-}
+  cursor: pointer; }
 
-.libraryAsset img
-{
+/* line 835, Editorview.scss */
+#WireEditorSourceName {
+  height: 1em;
+  background: #EFEFEF;
+  padding: 0.5em 0em 0.5em 1em;
+  margin: 1em 1em 1em 1em;
+  border-radius: 15px;
+  border: 1px outset #aaaaaa;
+  box-shadow: 3px 3px 3px #cccccc, -3px -3px 3px #cccccc inset;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer; }
 
-	width: 75px;
-height: 75px;
-box-sizing:border-box;
-margin-bottom: -19px;
+/* line 848, Editorview.scss */
+#WireEditorSelectedProps {
+  margin-left: 1em;
+  overflow: auto;
+  bottom: 18px;
+  position: absolute;
+  top: 5em;
+  width: 94%; }
 
-	border-radius: 3px;
+/* line 857, Editorview.scss */
+#WireEditorSourceProps {
+  margin-left: 1em;
+  overflow: auto;
+  bottom: 18px;
+  position: absolute;
+  top: 5em;
+  width: 94%; }
 
-	/* box-shadow: 2px 2px 5px gray; */
--webkit-transition: opactiy 2s; /* For Safari 3.1 to 6.0 */
--blink-transition: opactiy 2s; /* For Safari 3.1 to 6.0 */
- transition: opactiy 2s;
-}
+/* line 866, Editorview.scss */
+#WireEditor {
+  padding: 0px;
+  margin: 0px;
+  font-size: 1.2em; }
+
+/* line 872, Editorview.scss */
+.wireeditorleft {
+  position: absolute;
+  top: 0%;
+  width: 50%;
+  background: #FFF;
+  height: 80%;
+  padding: 0em 0em 0em 0em;
+  border-right: 1px solid #aaaaaa;
+  z-index: 1;
+  border-radius: 6px;
+  box-shadow: 0px 0px 10px #cccccc inset; }
+
+/* line 885, Editorview.scss */
+.wireeditorright {
+  position: absolute;
+  width: 50%;
+  left: 50%;
+  background: #FFF;
+  height: 80%;
+  top: 0%;
+  box-shadow: 0px 0px 10px #cccccc inset;
+  padding: 0em 0em 0em 0em;
+  border-radius: 6px; }
+
+/* line 897, Editorview.scss */
+#wireeditorbuttons {
+  position: absolute;
+  top: 80%;
+  width: 100%;
+  text-align: center; }
+
+/* line 904, Editorview.scss */
+#wireeditorLink {
+  height: 1em;
+  background: #EFEFEF;
+  padding: 1.5em 0em 1.5em 0em;
+  margin: 1em 0em 1em 0em;
+  border-radius: 15px;
+  border: 1px outset #aaaaaa;
+  box-shadow: 3px 3px 3px #cccccc, -3px -3px 3px #cccccc inset;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-left: auto;
+  margin-right: auto;
+  width: 33%;
+  text-align: center;
+  cursor: pointer;
+  display: inline-block; }
+
+/* line 922, Editorview.scss */
+.wiredisabled {
+  color: lightgray; }
+
+/* line 926, Editorview.scss */
+#wireeditordisable {
+  position: absolute;
+  top: 0%;
+  bottom: 0%;
+  left: 0%;
+  right: 0;
+  background: black;
+  opacity: .05; }
+
+/* line 936, Editorview.scss */
+.wirepropwired {
+  text-shadow: 1px 1px 1px gray;
+  color: darkblue; }
+
+/* line 941, Editorview.scss */
+#SubExp2 {
+  height: 1em;
+  background: #EFEFEF;
+  padding: 1.5em 0em 1.5em 0em;
+  margin: 1em 0em 1em 0em;
+  border-radius: 15px;
+  border: 1px outset #aaaaaa;
+  box-shadow: 3px 3px 3px #cccccc, -3px -3px 3px #cccccc inset;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-left: auto;
+  margin-right: auto;
+  width: 33%;
+  text-align: center;
+  cursor: pointer;
+  display: inline-block; }
+
+/* line 959, Editorview.scss */
+#SubExp1 {
+  height: 1em;
+  background: #EFEFEF;
+  padding: 1.5em 0em 1.5em 0em;
+  margin: 1em 0em 1em 0em;
+  border-radius: 15px;
+  border: 1px outset #aaaaaa;
+  box-shadow: 3px 3px 3px #cccccc, -3px -3px 3px #cccccc inset;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-left: auto;
+  margin-right: auto;
+  width: 33%;
+  text-align: center;
+  cursor: pointer;
+  display: inline-block; }
+
+/* line 977, Editorview.scss */
+#preloadGUI {
+  position: absolute;
+  width: 30%;
+  height: 15%;
+  background: white;
+  border: 1px solid gray;
+  border-radius: 6px;
+  margin-left: auto;
+  vertical-align: middle;
+  text-align: center;
+  left: 35%;
+  top: 42.5%;
+  overflow: hidden;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+  font-family: 'Open Sans',sans-serif;
+  font-size: 17px; }
+
+/* line 995, Editorview.scss */
+#preloadGUI .preloadCenter {
+  height: 60%;
+  -webkit-margin-after: 0;
+  -webkit-margin-before: 0; }
+
+/* line 1001, Editorview.scss */
+#preloadguiText {
+  background: #F5F5F5;
+  height: 40%;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border-top-color: #dddddd;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  box-shadow: white 0px 1px 0px 0px inset;
+  display: block;
+  margin: -1px;
+  position: absolute;
+  width: 100%;
+  color: #ccc;
+  font-size: .7em; }
+
+/* line 1020, Editorview.scss */
+#fullscreenlink {
+  cursor: pointer; }
+
+/* line 1024, Editorview.scss */
+#fullscreenlink:hover {
+  color: blue; }
+
+/* line 1028, Editorview.scss */
+#preloadprogress {
+  vertical-align: middle;
+  margin-top: auto;
+  margin-bottom: auto;
+  position: absolute;
+  height: 28%;
+  width: 95%;
+  top: 16%;
+  left: 2.5%; }
+
+/* line 1039, Editorview.scss */
+.progress-label {
+  position: absolute;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px white;
+  width: 100%;
+  margin-left: auto;
+  text-align: center;
+  height: 100%;
+  margin: 0px; }
+
+/* line 1050, Editorview.scss */
+#preloadGUIBack {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0%;
+  top: 0%;
+  background: white;
+  z-index: 100000;
+  box-shadow: 0px 0px 300px #666666 inset;
+  text-align: center;
+  font-size: 1.5em;
+  font-family: 'Open Sans',sans-serif; }
+
+/* line 1064, Editorview.scss */
+.guinode {
+  position: absolute; }
+
+/* line 1068, Editorview.scss */
+.guipick:hover {
+  outline: 3px solid lightblue !important; }
+
+/* line 1072, Editorview.scss */
+.guiselected {
+  outline: 3px solid blue !important; }
+
+/* line 1076, Editorview.scss */
+.guiselected:hover {
+  outline: 3px solid blue !important; }
 
 /* Let's get this party started */
+/* line 1080, Editorview.scss */
 ::-webkit-scrollbar {
-    width: 8px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-}
+  width: 8px;
+  height: 8px; }
 
 /* Handle */
+/* line 1086, Editorview.scss */
 ::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  background: #5284c7; }
+  /* line 1092, Editorview.scss */
+  ::-webkit-scrollbar-thumb:window-inactive {
+    background: #82b8ff; }
 
-    /* -webkit-border-radius: 5px; */
-    /* border-radius: 5px; */
-    background: rgba(82, 132, 199, 1);
-    /* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); */
-    width: 8px;
-}
-::-webkit-scrollbar-thumb:window-inactive {
-	background: rgba(130, 184, 255,1);
-}
+/* line 1097, Editorview.scss */
+::-webkit-scrollbar-corner {
+  background-color: inherit; }
 
+/* line 1101, Editorview.scss */
+.libraryAsset img:hover {
+  /* box-shadow: 2px 2px 10px rgb(130, 184, 255), 9px 9px 10px black inset; */
+  border: 3px solid #3a8fff; }
 
-.scriptchoice
-{
-cursor: pointer;
-font-size: 1.5em;
-border: 1px solid gray;
-/* border-radius: 5px; */
-/* box-shadow: 0px 0px 20px #555 inset; */
-margin: 2px;
-padding: 1px;
-text-overflow: ellipsis;
-overflow: hidden;
-color: #DDD;
-}
+/* line 1106, Editorview.scss */
+.BigTextureThumb:hover, .BigTextureThumbSrc:hover {
+  border: 3px solid #8cb9ff; }
 
-.scriptchoicesug
-{
-color:#B6B6B6;
-cursor: pointer;
-font-size: 1.5em;
-border: 1px solid gray;
-border-radius: 2px;
-/* box-shadow: 0px 0px 20px #555 inset; */
-margin: 2px;
-padding: 1px;
-text-overflow: ellipsis;
-overflow: hidden;
-}
+/* line 1110, Editorview.scss */
+#loadingSplash {
+  position: absolute;
+  align-content: center;
+  text-align: center;
+  width: 80%;
+  left: 10%;
+  top: 10%;
+  border: 1px solid grey;
+  box-shadow: 10px 10px 30px;
+  border-radius: 15px; }
 
-.scriptchoice:hover
-{
-color:rgb(130, 184, 255);
-}
+/* line 1122, Editorview.scss */
+#GuestLogin {
+  position: absolute;
+  left: 20px;
+  top: 20px; }
 
-.scriptchoicesug:hover
-{
-color:rgb(130, 184, 255);
-}
+/* line 1128, Editorview.scss */
+#JSONViewButtonBar {
+  height: 2.5em;
+  margin-left: -1em; }
 
-.libraryAsset img:hover
-{
+/* line 1133, Editorview.scss */
+#JSONViewButtonBarOk, #JSONViewButtonBarCancel, #JSONViewButtonBarLoad, #JSONViewButtonBarSave {
+  border: 1px solid #444444;
+  background: #222222 url(images/ui-bg_glass_15_222222_1x400.png) 50% 50% repeat-x;
+  font-weight: 700;
+  color: #eee;
+  margin: 1px;
+  padding: 3px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline; }
 
-/* box-shadow: 2px 2px 10px rgb(130, 184, 255), 9px 9px 10px black inset; */
+/* line 1145, Editorview.scss */
+#JSONViewButtonBarOk:hover, #JSONViewButtonBarCancel:hover, #JSONViewButtonBarLoad:hover, #JSONViewButtonBarSave:hover {
+  border: 1px solid #26b3f7;
+  background: #3a8fff url(images/ui-bg_glass_20_3a8fff_1x400.png) 50% 50% repeat-x;
+  font-weight: 700;
+  color: #fff;
+  display: inline; }
 
+/* line 1153, Editorview.scss */
+#JSONLoadInput {
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  clip: auto;
+  margin: 0px;
+  padding: 0px;
+  width: 5em; }
 
-border: 3px solid rgb(58, 143, 255);
-}
+/* line 1164, Editorview.scss */
+.playerlabelID {
+  font-size: .6em;
+  color: gray; }
 
-.BigTextureThumb:hover, .BigTextureThumbSrc:hover
-	{
-
-
-		border: 3px solid rgb(140,185,255);
-
-	}
-
-
-
-#eventtext,#methodtext,#propertytext
-{
-	background:url(vwf/view/editorview/images/ui-bg_diagonals-thick_8_cccccc_40x40.png) 50% 50% repeat;
-}
-
-#loadingSplash
-{
-
-position: absolute;
-align-content: center;
-text-align: center;
-width: 80%;
-left: 10%;
-top: 10%;
-border: 1px solid grey;
-box-shadow: 10px 10px 30px;
-border-radius: 15px;
-
-}
-
-#GuestLogin
-{
-	position: absolute;
-left: 20px;
-top: 20px;
-}
-
-#JSONViewButtonBar
-{
-height: 2.5em;
-margin-left: -1em;
-}
-
-#JSONViewButtonBarOk, #JSONViewButtonBarCancel, #JSONViewButtonBarLoad, #JSONViewButtonBarSave
-{
-	border: 1px solid #444;
-background: #222 url(images/ui-bg_glass_15_222222_1x400.png) 50% 50% repeat-x;
-font-weight: 700;
-color: #eee;
-margin: 1px;
-padding: 3px 10px;
-border-radius: 5px;
-cursor: pointer;
-display: inline;
-}
-
-#JSONViewButtonBarOk:hover, #JSONViewButtonBarCancel:hover, #JSONViewButtonBarLoad:hover, #JSONViewButtonBarSave:hover
-{
-border: 1px solid #26b3f7;
-background: #3a8fff url(images/ui-bg_glass_20_3a8fff_1x400.png) 50% 50% repeat-x;
-font-weight: 700;
-color: #fff;
-display: inline;
-}
-
-#JSONLoadInput
-{
-	position: absolute;
-opacity: 0;
-top: 0;
-left: 0;
-clip: auto;
-margin: 0px;
-padding: 0px;
-width: 5em;
-}
-
-.playerlabelID{
-	  font-size: .6em;
-  color: gray;
-}
-
-.playerlabel .glyphicon
-{
-	float: right;
+/* line 1169, Editorview.scss */
+.playerlabel .glyphicon {
+  float: right;
   margin: 0px;
   border: 0;
   padding: 2px;
   margin-left: 4px;
-    font-size: 1.5em;
-}
-.playerlabel .glyphicon:hover
-{
-	color:rgb(132, 185, 255);
-}
-.playerlabelname
-{
-	display: inline-block;
-}
-*
-{
-	box-sizing:content-box;
-}
-* select
-{
-		color: black;
-}
+  font-size: 1.5em; }
 
-div#Translation .ui-spinner, div#Rotation .ui-spinner, div#Scale .ui-spinner
-{
-	border-radius: 0px
-}
+/* line 1178, Editorview.scss */
+.playerlabel .glyphicon:hover {
+  color: #84b9ff; }
 
+/* line 1182, Editorview.scss */
+.playerlabelname {
+  display: inline-block; }
+
+/* line 1186, Editorview.scss */
+* {
+  box-sizing: content-box; }
+
+/* line 1190, Editorview.scss */
+* select {
+  color: black; }
+
+/* line 1194, Editorview.scss */
+div#Translation .ui-spinner, div#Rotation .ui-spinner, div#Scale .ui-spinner {
+  border-radius: 0px; }
+
+/* line 1198, Editorview.scss */
 div#otherprops input[type=text] {
-color: black;
-/* border-radius: 5px; */
-padding: 0px;
-margin: 2px;
-}
+  /* border-radius: 5px; */
+  margin: 2px; }
 
-.ui-selectmenu-button
-{
-	float:right;
-	margin-top: 2px;
-	clear:both;
-	border-radius: 3px;
-	width: 30px;
-}
-.ui-selectmenu-button span.ui-selectmenu-text
-{
-	padding:0px;
-}
+/* line 1203, Editorview.scss */
+.ui-selectmenu-button {
+  float: right;
+  margin-top: 2px;
+  clear: both;
+  border-radius: 3px;
+  width: 30px; }
 
-.ui-spinner
-{
-	border-radius: 3px;
-	  margin-top: 2px;
-}
+/* line 1211, Editorview.scss */
+.ui-selectmenu-button span.ui-selectmenu-text {
+  padding: 0px; }
 
-.ui-spinner-input
-{
-	margin:0px 10px 0px 0px;
-}
-.ui-button-text
-{
-	display:inline-block !important
-}
+/* line 1215, Editorview.scss */
+.ui-spinner {
+  border-radius: 3px;
+  margin-top: 2px; }
 
-.ui-button-text-only img
-{
-	width:50px;
-	height: 50px;
-	display:inline-block;
-}
+/* line 1220, Editorview.scss */
+.ui-spinner-input {
+  margin: 0px 10px 0px 0px; }
 
-.ui-dialog .ui-dialog-titlebar-close
-{
-	  margin: -12px 0 0
-}
+/* line 1224, Editorview.scss */
+.ui-button-text {
+  display: inline-block !important; }
 
-#ModelSearchTerm
-{
-	background: black;
-}
+/* line 1228, Editorview.scss */
+.ui-button-text-only img {
+  width: 50px;
+  height: 50px;
+  display: inline-block; }
 
-#InventoryRename
-{
-	color:black;
-}
+/* line 1234, Editorview.scss */
+.ui-dialog .ui-dialog-titlebar-close {
+  margin: -12px 0 0; }
 
+/* line 1238, Editorview.scss */
+#ModelSearchTerm {
+  background: black; }
+
+/* line 1242, Editorview.scss */
+#InventoryRename {
+  color: black; }
+
+/* line 1246, Editorview.scss */
 .jstree-default .jstree-wholerow-clicked {
-  background: #274857;
+  background: #274857; }
 
-}
-
+/* line 1250, Editorview.scss */
 .jstree-default .jstree-wholerow-hovered {
-  background: #5B89B6 ;
+  background: #5b89b6;
+  /* color: black !important; */ }
 
-  /* color: black !important; */
-}
+/* line 1255, Editorview.scss */
+#guioverlay_index-vwf {
+  outline: none !important; }
 
-#guioverlay_index-vwf
-{
-	outline: none !important;
-}
-
-#entitylibrarytray
-{
-	  margin-left: 1em;
+/* line 1259, Editorview.scss */
+#entitylibrarytray {
+  margin-left: 1em;
   font-size: 22.2px;
   vertical-align: middle;
   margin-bottom: 6px;
-  cursor: pointer;
-}
+  cursor: pointer; }
 
-#entitylibrarytray:hover
-{
-	color:rgb(132, 185, 255);
-}
+/* line 1267, Editorview.scss */
+#entitylibrarytray:hover {
+  color: #84b9ff; }
 
+/* line 1271, Editorview.scss */
 ul li a .glyphicon {
-  margin-right: 1em;
-}
+  margin-right: 1em; }
 
-.ui-slider
-{
-  clear:both;
-}
+/* line 1275, Editorview.scss */
+.ui-slider {
+  clear: both; }
 
-.editorPanelDisableOverlay
-{
-	position: absolute;top: 0;height: 100%;background-color: #333;width: 100%;z-index: 1000;opacity: .3;cursor: not-allowed;
-	display:none;
-}
-.editorPanelDisable
-{
-	  color: rgb(94, 94, 94) !important;
-  	  cursor: not-allowed;
-  	  pointer-events: none;
-  	  opacity: 0.85;
-}
+/* line 1279, Editorview.scss */
+.editorPanelDisableOverlay {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background-color: #333;
+  width: 100%;
+  z-index: 1000;
+  opacity: .3;
+  cursor: not-allowed;
+  display: none; }
 
-.sidetab-editor-title
-{
-	background: #3a8fff  50% 50% repeat-x;
-	cursor: pointer
+/* line 1291, Editorview.scss */
+.editorPanelDisable {
+  color: #5e5e5e !important;
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.45; }
 
-;
-	border-radius: 2px;
-}
+/* line 1298, Editorview.scss */
+.sidetab-editor-title {
+  background: #3a8fff 50% 50% repeat-x;
+  cursor: pointer;
+  border-radius: 2px; }
 
-.sidetab-editor-title:hover
-{
- text-decoration: underline;
-}
+/* line 1304, Editorview.scss */
+.sidetab-editor-title:hover {
+  text-decoration: underline; }
 
-.sidetab-editor-title-active
-{
-background: #3a8fff  50% 50% repeat-x;}
+/* line 1308, Editorview.scss */
+.sidetab-editor-title-active {
+  background: #3a8fff 50% 50% repeat-x; }
 
-.sidetab-editor-title-active:hover
-{
-text-decoration: underline;
-}
+/* line 1312, Editorview.scss */
+.sidetab-editor-title-active:hover {
+  text-decoration: underline; }
 
+/* line 1316, Editorview.scss */
 .downarrowclass {
-display:none;
-}
+  display: none; }
+
+/*# sourceMappingURL=Editorview.css.map */

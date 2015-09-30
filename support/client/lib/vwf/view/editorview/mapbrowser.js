@@ -181,6 +181,7 @@ define(function() {
 		}
 		this.hide = function() {
 			//if(this.isOpen())
+			_MapBrowser.setTexturePickedCallback($.noop);
 			$('#MapBrowser').dialog('close');
 		}
 		this.filter = [];
