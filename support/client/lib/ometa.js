@@ -171,7 +171,7 @@ define( [ "module", "vwf/model", "ometa-js/ometa-script-tag"], function( module,
                 var methodBody = ("'use strict'; var " + code + ";return " + lngName);
 
                 vwf.deleteMethod(nodeID, methodName);
-                vwf.createMethod(nodeID, methodName, undefined, methodBody);
+                vwf.createMethod(nodeID, methodName, [], methodBody);
 
                 //vwf.setProperty(nodeID,'ometaLng'+lngName,null);
             }

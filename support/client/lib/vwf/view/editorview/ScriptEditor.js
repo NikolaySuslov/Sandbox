@@ -536,7 +536,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 				for (var i = 0; i < s.length; i++) {
 					if (s[i].type == 'error') errors += "<br/> line: " + s[i].row + "-" + s[i].text;
 				}
-
+								
 				if (fieldName.includes('ometa') == true) {
 							return true;
 			}
