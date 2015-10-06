@@ -52,8 +52,8 @@
     "winston": "~0.8.3",
     "ws": "~0.4.25",
     "yamljs": "~0.1.4",
-    "sandbox-asset-server": "1.2.x",
-    "node-sass": "~3.2.0"
+    "sandbox-asset-server": "https://github.com/NikolaySuslov/SandboxAssetServer.git",
+    "node-sass": "~3.4.0-beta1"
   },
   "devDependencies": {},
   "scripts": {
