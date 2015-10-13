@@ -239,7 +239,7 @@ function MaterialCache() {
             currentmat.uniforms.mFresnelScale.value = value.FresnelScale;
 
             if (!value.fresnelsrc) {
-                currentmat.uniforms[ "tCube" ].value = vwf_view.kernel.kernel.callMethod(vwf.application(), 'getSkyMat')
+                currentmat.uniforms[ "tCube" ].value = vwf_view.kernel.kernel.callMethod(Engine.application(), 'getSkyMat')
             } else {
                 currentmat.uniforms[ "tCube" ].value = value.fresnelsrc;
             }
@@ -638,7 +638,7 @@ function MaterialCache() {
 
             }
             if (currentmat.reflectivity && window.vwf_view) {
-                var sky = vwf_view.kernel.kernel.callMethod(vwf.application(), 'getSkyMat')
+                var sky = vwf_view.kernel.kernel.callMethod(Engine.application(), 'getSkyMat')
                 if (sky) {
                     currentmat.envMap = sky.uniforms.texture.value;
                     currentmat.envMap.mapping = new THREE.CubeReflectionMapping();
@@ -771,7 +771,7 @@ function MaterialCache() {
 
             }
             if (currentmat.reflectivity && window.vwf_view) {
-                var sky = vwf_view.kernel.kernel.callMethod(vwf.application(), 'getSkyMat')
+                var sky = vwf_view.kernel.kernel.callMethod(Engine.application(), 'getSkyMat')
                 if (sky) {
                     currentmat.envMap = sky.uniforms.texture.value;
                     currentmat.envMap.mapping = new THREE.CubeReflectionMapping();
@@ -916,7 +916,7 @@ function MaterialCache() {
 
             }
             if (currentmat.reflectivity && window.vwf_view) {
-                var sky = vwf_view.kernel.kernel.callMethod(vwf.application(), 'getSkyMat')
+                var sky = vwf_view.kernel.kernel.callMethod(Engine.application(), 'getSkyMat')
                 if (sky) {
                     currentmat.envMap = sky.uniforms.texture.value;
                     currentmat.envMap.mapping = new THREE.CubeReflectionMapping();
@@ -1172,7 +1172,7 @@ function MaterialCache() {
             // configure reflectivity
             /*if(currentmat.uniforms.reflectivity.value)
              {
-             var sky = vwf_view.kernel.kernel.callMethod(vwf.application(),'getSkyMat');
+             var sky = vwf_view.kernel.kernel.callMethod(Engine.application(),'getSkyMat');
              if(sky)
              {
              //console.log('Skymap:', sky.uniforms.texture);

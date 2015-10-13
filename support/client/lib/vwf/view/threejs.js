@@ -61,14 +61,14 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         receiveSharedCamera: false,
         cameraShareLoop: function() {
             if (this.shareCamera) {
-                vwf_view.kernel.callMethod(vwf.application(), 'cameraShareInfo', [vwf.moniker(), this.getCamera().matrixWorld.elements])
+                vwf_view.kernel.callMethod(Engine.application(), 'cameraShareInfo', [Engine.moniker(), this.getCamera().matrixWorld.elements])
                 window.setTimeout(this.cameraShareLoop.bind(this), 33);
             }
         },
         shareCameraView: function() {
             this.shareCamera = true;
             this.receiveSharedCamera = false;
-            vwf_view.kernel.callMethod(vwf.application(), 'startCameraShare', [vwf.moniker()]);
+            vwf_view.kernel.callMethod(Engine.application(), 'startCameraShare', [Engine.moniker()]);
             this.cameraShareLoop();
         },
         receiveSharedCameraView: function() {
@@ -79,7 +79,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         stopShareCameraView: function() {
             this.shareCamera = false;
             this.receiveSharedCamera = true;
-            vwf_view.kernel.callMethod(vwf.application(), 'stopCameraShare', [vwf.moniker()]);
+            vwf_view.kernel.callMethod(Engine.application(), 'stopCameraShare', [Engine.moniker()]);
         },
         simulateContextLoss: function() {
             var cx = _dRenderer.context.getExtension('WEBGL_lose_context');
@@ -207,13 +207,13 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         },
         updateGlyphs: function(e, viewprojection, wh, ww) {
 
-            if(vwf.getProperty(vwf.application(),'playMode') == 'play') return;
+            if(Engine.getProperty(Engine.application(),'playMode') == 'play') return;
             for (var i = 0; i < this.glyphs.length; i++) {
-                if (vwf.getProperty(this.glyphs[i], 'showGlyph') == false) continue;
+                if (Engine.getProperty(this.glyphs[i], 'showGlyph') == false) continue;
                 var div = $('#glyph' + ToSafeID(this.glyphs[i]))[0];
                 if (!div) continue;
 
-                var trans = vwf.getProperty(this.glyphs[i], 'worldTransform');
+                var trans = Engine.getProperty(this.glyphs[i], 'worldTransform');
 
                 var pos = [trans[12], trans[13], trans[14], 1];
 
@@ -262,7 +262,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             });
             effect.setSize(parseInt($("#index-vwf").css('width')), parseInt($("#index-vwf").css('height')));
             this.addEffect(effect);
-            vwf.callMethod(vwf.application(), 'activteOculusBridge')
+            Engine.callMethod(Engine.application(), 'activteOculusBridge')
         },
         activateThermalCamEffect: function() {
             var effect = new THREE.ThermalCamEffect(_dRenderer, _dScene, this.getCamera());
@@ -468,7 +468,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     var i = keys[j];
                     //don't do interpolation for static objects
                     if (this.nodes[i].isStatic) continue;
-                    if (this.nodes[i].lastTransformStep + 1 < vwf.time()) {
+                    if (this.nodes[i].lastTransformStep + 1 < Engine.time()) {
                         this.nodes[i].lastTickTransform = null;
                         this.nodes[i].lastFrameInterp = null;
                         this.nodes[i].thisTickTransform = null;
@@ -477,7 +477,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                         this.nodes[i].thisTickTransform = matset(this.nodes[i].thisTickTransform, this.state.nodes[i].gettingProperty('transform'));
                     }
                     if (this.state.nodes[i] && this.state.nodes[i].gettingProperty) {
-                        if (this.nodes[i].lastAnimationStep + 1 < vwf.time()) {
+                        if (this.nodes[i].lastAnimationStep + 1 < Engine.time()) {
                             this.nodes[i].lastAnimationFrame = null;
                             this.nodes[i].thisAnimationFrame = null;
                         } else {
@@ -641,7 +641,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             this.renderMode = VRRENDER;
             hideTools();
             this.toggleFullScreen();
-            vwf.callMethod(vwf.application(), 'activteOculusBridge');
+            Engine.callMethod(Engine.application(), 'activteOculusBridge');
             //this.triggerWindowResize();
         },
         setRenderModeNormal: function() {
@@ -682,11 +682,11 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             //why must every driver deal with this crap? The design of this thing is ridiculous.
             //here, we must deal with the fact that we might never see a setproperty for a node based on one of the standard types
             //because the property for the glyphURL is defined on the prototype
-            var glyph = vwf.getProperty(childExtendsID, 'glyphURL');
+            var glyph = Engine.getProperty(childExtendsID, 'glyphURL');
             if (glyph) {
                 this.addGlyph(childID, glyph);
             }
-            var showGlyph = vwf.getProperty(childExtendsID, 'showGlyph');
+            var showGlyph = Engine.getProperty(childExtendsID, 'showGlyph');
             if (showGlyph) {
                 this.showGlyph(childID);
             } else
@@ -749,7 +749,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 var i = keys[j];
                 if (this.nodes[i].extends == 'SandboxCamera-vwf') {
                     idlist.push(i);
-                    namelist.push(vwf.getProperty(i, 'DisplayName'));
+                    namelist.push(Engine.getProperty(i, 'DisplayName'));
                 }
             }
             return [namelist, idlist];
@@ -764,7 +764,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 var i = keys[j];
                 if (this.nodes[i].extends == 'SandboxCamera-vwf') {
                     idlist.push(i);
-                    namelist.push(vwf.getProperty(i, 'DisplayName') + "   (" + namelist.length +')');
+                    namelist.push(Engine.getProperty(i, 'DisplayName') + "   (" + namelist.length +')');
                 }
             }
 
@@ -786,7 +786,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 this.cameraHelper.parent.remove(this.cameraHelper);
                 this.cameraHelper = null;
             }
-            if (this.selection && vwf.getProperty(this.selection.id, 'type') == 'Camera') {
+            if (this.selection && Engine.getProperty(this.selection.id, 'type') == 'Camera') {
                 var selnode = _Editor.findviewnode(this.selection.id);
                 if (selnode) {
                     var selcam = selnode.children[0];
@@ -799,7 +799,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
         },
         setCamera: function(camID) {
-            vwf_view.kernel.callMethod(vwf.application(), 'setClientCamera', [vwf.moniker(), camID]);
+            vwf_view.kernel.callMethod(Engine.application(), 'setClientCamera', [Engine.moniker(), camID]);
         },
         setCamera_internal: function(camID) {
             var defaultCameraID;
@@ -844,12 +844,12 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             this.setCamera();
         },
         calledMethod: function(id, method, args) {
-            if (id == vwf.application() && method == 'setClientCamera') {
-                if (vwf.moniker() == args[0]) {
+            if (id == Engine.application() && method == 'setClientCamera') {
+                if (Engine.moniker() == args[0]) {
                     this.setCamera_internal(args[1]);
                 }
             }
-            if (id == vwf.application() && method == 'cameraShareInfo') {
+            if (id == Engine.application() && method == 'cameraShareInfo') {
                 if (this.receiveSharedCamera) {
                     this.setCamera();
                     this.getCamera().matrixAutoUpdate = false;
@@ -858,8 +858,8 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
                 }
             }
-            if (id == vwf.application() && method == 'startCameraShare') {
-                if (!this.receiveSharedCamera && vwf.moniker() !== args[0]) {
+            if (id == Engine.application() && method == 'startCameraShare') {
+                if (!this.receiveSharedCamera && Engine.moniker() !== args[0]) {
                     var self = this;
                     alertify.confirm('A user would like to share their camera view. Accept?', function(ok) {
                         if (ok) {
@@ -868,7 +868,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     })
                 }
             }
-            if (id == vwf.application() && method == 'stopCameraShare') {
+            if (id == Engine.application() && method == 'stopCameraShare') {
                 this.receiveSharedCamera = false;
                 //   require("vwf/view/threejs/editorCameraController").getController('Orbit').orbitPoint(newintersectxy);
                 require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
@@ -896,9 +896,9 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 this.nodes[nodeID].properties[propertyName] = propertyValue;
 
             if (propertyName == 'transform')
-                this.nodes[nodeID].lastTransformStep = vwf.time();
+                this.nodes[nodeID].lastTransformStep = Engine.time();
             if (propertyName == 'animationFrame')
-                this.nodes[nodeID].lastAnimationStep = vwf.time();
+                this.nodes[nodeID].lastAnimationStep = Engine.time();
 
             node[propertyName] = propertyValue;
 
@@ -1313,7 +1313,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             }
             //so, here's what we'll do. Since the sim state cannot advance until tick, we will update on tick. 
             //but, ticks aren't fired when the scene in paused. In that case, we'll do it every frame.
-            var currentState = vwf.getProperty(vwf.application(), 'playMode');
+            var currentState = Engine.getProperty(Engine.application(), 'playMode');
             if (currentState === 'stop') _SceneManager.update();
 
 
@@ -1374,10 +1374,10 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
             self.trigger('prerender', vpargs);
             self.updateGlyphs(null, vp, wh, ww);
-            var keys = Object.keys(vwf.models[0].model.nodes);
+            var keys = Object.keys(Engine.models[0].model.nodes);
             for (var j = 0; j < keys.length; j++) {
                 var i = keys[j];
-                var node = vwf.models[0].model.nodes[i];
+                var node = Engine.models[0].model.nodes[i];
                 if (node.private.bodies.prerender)
                     node.private.bodies.prerender.call(node, [timepassed]);
             }
@@ -1558,7 +1558,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             }
 
 
-            if (self.selection && vwf.getProperty(self.selection.id, 'type') == 'Camera' && self.cameraID != self.selection.id) {
+            if (self.selection && Engine.getProperty(self.selection.id, 'type') == 'Camera' && self.cameraID != self.selection.id) {
                 var selnode = _Editor.findviewnode(self.selection.id);
                 if (selnode) {
                     selcam = selnode.children[0];
@@ -2254,7 +2254,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             if (validKey && sceneNode && !keyAlreadyDown /*&& Object.keys( sceneView.keyStates.keysDown ).length > 0*/ ) {
                 //var params = JSON.stringify( sceneView.keyStates );
 
-                sceneView.kernel.dispatchEvent(getClientFocusNode(vwf.moniker()), "keyDown", [sceneView.keyStates]);
+                sceneView.kernel.dispatchEvent(getClientFocusNode(Engine.moniker()), "keyDown", [sceneView.keyStates]);
             }
         };
         window.document.getElementById('index-vwf').onblur = function() {
@@ -2265,7 +2265,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 delete sceneView.keyStates.keysDown[i];
                 sceneView.keyStates.keysUp[key.key] = key;
                 sceneView.keyStates.key = key;
-                if (sceneNode) sceneView.kernel.dispatchEvent(getClientFocusNode(vwf.moniker()), "keyUp", [sceneView.keyStates]);
+                if (sceneNode) sceneView.kernel.dispatchEvent(getClientFocusNode(Engine.moniker()), "keyUp", [sceneView.keyStates]);
             }
             var sceneNode = sceneView.state.scenes[sceneView.state.sceneRootID];
             if (sceneNode) {
@@ -2306,8 +2306,8 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             var sceneNode = sceneView.state.scenes[sceneView.state.sceneRootID];
             if (validKey && sceneNode) {
                 //var params = JSON.stringify( sceneView.keyStates );
-                sceneView.kernel.dispatchEvent(getClientFocusNode(vwf.moniker()), "keyUp", [sceneView.keyStates]);
-                sceneView.kernel.dispatchEvent(getClientFocusNode(vwf.moniker()), "keyPress", [sceneView.keyStates]);
+                sceneView.kernel.dispatchEvent(getClientFocusNode(Engine.moniker()), "keyUp", [sceneView.keyStates]);
+                sceneView.kernel.dispatchEvent(getClientFocusNode(Engine.moniker()), "keyPress", [sceneView.keyStates]);
                 delete sceneView.keyStates.keysUp[key.key];
             }
 
@@ -2386,10 +2386,10 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
     };
 
     function getClientFocusNode(client) {
-        var clients = vwf.getProperty(vwf.application(), 'clients');
+        var clients = Engine.getProperty(Engine.application(), 'clients');
         if (clients && clients[client] && clients[client].focusID)
             return clients[client].focusID;
-        else return vwf.application();
+        else return Engine.application();
 
 
     }
@@ -2474,7 +2474,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         } else {
 
 
-            if (vwf.models[0].model.nodes['index-vwf'].cameramode == 'FirstPerson')
+            if (Engine.models[0].model.nodes['index-vwf'].cameramode == 'FirstPerson')
                 intersects = _SceneManager.CPUPick([pos.x, pos.y, pos.z], [this.directionVector.x, this.directionVector.y, this.directionVector.z], this.pickOptionsAvatar);
             else
                 intersects = _SceneManager.CPUPick([pos.x, pos.y, pos.z], [this.directionVector.x, this.directionVector.y, this.directionVector.z], this.pickOptions);

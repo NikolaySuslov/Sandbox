@@ -1,3 +1,4 @@
+"use strict";
 /*
  * WebRTC.js : Behaves as a wrapper for vwf/view/rtcObject
  * Maps simple 1:1 signal model to a broadcast model using target and sender ids
@@ -65,7 +66,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
     //note: the 3D driver must keep track of this
     SoundSource.prototype.updateSourcePosition = function()
     {
-        this.position = vwf.getProperty(this.id, 'worldPosition');
+        this.position = Engine.getProperty(this.id, 'worldPosition');
     }
     //use inverse falloff, adjust the range parameters of the falloff curve by the "volume"
     //since HTML cant actually play it louder, but we can make it 'carry' farther
@@ -151,7 +152,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
                 var soundid = id + url;
                 var Sound = this.soundSources[soundid];
                 var campos = [_dView.getCamera().matrixWorld.elements[12], _dView.getCamera().matrixWorld.elements[13], _dView.getCamera().matrixWorld.elements[14]];
-                var dist = MATH.distanceVec3(campos, vwf.getProperty(id, "worldPosition"));
+                var dist = MATH.distanceVec3(campos, Engine.getProperty(id, "worldPosition"));
                 if(loop) //no speed of sound sim for looping sounds
                     dist = 0;
               //  window.setTimeout(function()

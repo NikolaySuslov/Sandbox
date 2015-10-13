@@ -8,9 +8,9 @@
 
  function findviewnode(id)
  {
-     for (var i = 0; i < vwf.views.length; i++)
+     for (var i = 0; i < Engine.views.length; i++)
      {
-         if (vwf.views[i].state && vwf.views[i].state.nodes && vwf.views[i].state.nodes[id] && vwf.views[i].state.nodes[id].threeObject) return vwf.views[i].state.nodes[id].threeObject;
+         if (Engine.views[i].state && Engine.views[i].state.nodes && Engine.views[i].state.nodes[id] && Engine.views[i].state.nodes[id].threeObject) return Engine.views[i].state.nodes[id].threeObject;
      }
      return null;
  }
@@ -152,7 +152,7 @@
          }
          this.objectFollowed = value;
          //if(this.objectFollowed)
-         //this.oldRotZ = vwf.getProperty(this.objectFollowed.id,'rotZ');
+         //this.oldRotZ = Engine.getProperty(this.objectFollowed.id,'rotZ');
      }
      this.targetUpdated = function(obj)
      {
@@ -348,11 +348,11 @@
      {
          var campos = [this.camera.position.x, this.camera.position.y, this.camera.position.z];
          var ray = this.GetWorldPickRay(parms);
-         vwf.callMethod(vwf.application(), 'getGroundPlane', []).PickPriority = 0;
+         Engine.callMethod(Engine.application(), 'getGroundPlane', []).PickPriority = 0;
          var oldintersectxy = _Editor.ThreeJSPick(campos, ray, this.PickOptions);
          if (!oldintersectxy) return; //this is just better. 
          oldintersectxy = oldintersectxy ? oldintersectxy.point : [0, 0, 0];
-         vwf.callMethod(vwf.application(), 'getGroundPlane', []).PickPriority = -1;
+         Engine.callMethod(Engine.application(), 'getGroundPlane', []).PickPriority = -1;
          var dxy2 = this.intersectLinePlane(ray, campos, [0, 0, 0], [0, 0, 1]);
          var oldintersectxy2 = MATH.addVec3(campos, MATH.scaleVec3(ray, dxy2));
          if (oldintersectxy2[2] > oldintersectxy[2]) oldintersectxy = oldintersectxy2;

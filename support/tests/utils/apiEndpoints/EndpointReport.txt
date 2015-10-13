@@ -1,0 +1,8 @@
+Report of Testing SandboxAPI Endpoints on 2015-10-07 20:38:13.
+Requests which produce Server Errors or Crashes.
+
+
+copyinstance
+{"name":"copyinstance","method":"GET","qs":{},"url":"http://localhost:3000/sandbox/adl/vwfdatamanager.svc/copyinstance","jar":true}
+500 TypeError: Cannot read property &#39;length&#39; of undefined<br> &nbsp; &nbsp;at CopyInstance (c:\Users\creighta\workspace\sandbox\support\server\sandboxAPI.js:664:10)<br> &nbsp; &nbsp;at c:\Users\creighta\workspace\sandbox\support\server\sandboxAPI.js:1645:7<br> &nbsp; &nbsp;at Object.exports.GetSessionData (c:\Users\creighta\workspace\sandbox\support\server\sessions.js:24:9)<br> &nbsp; &nbsp;at Object.serve (c:\Users\creighta\workspace\sandbox\support\server\sandboxAPI.js:1490:11)<br> &nbsp; &nbsp;at routeToAPI (c:\Users\creighta\workspace\sandbox\support\server\appserver.js:333:20)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (c:\Users\creighta\workspace\sandbox\node_modules\express\lib\router\layer.js:82:5)<br> &nbsp; &nbsp;at trim_prefix (c:\Users\creighta\workspace\sandbox\node_modules\express\lib\router\index.js:302:13)<br> &nbsp; &nbsp;at c:\Users\creighta\workspace\sandbox\node_modules\express\lib\router\index.js:270:7<br> &nbsp; &nbsp;at Function.proto.process_params (c:\Users\creighta\workspace\sandbox\node_modules\express\lib\router\index.js:321:12)<br> &nbsp; &nbsp;at next (c:\Users\creighta\workspace\sandbox\node_modules\express\lib\router\index.js:261:10)
+

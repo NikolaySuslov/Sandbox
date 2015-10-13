@@ -75,7 +75,7 @@ function SplineTool() {
             return;
         }
 
-        if (!node || !(vwf.getProperty(node.id, 'type') == 'Line' || vwf.getProperty(node.id, 'type') == 'Spline')) {
+        if (!node || !(Engine.getProperty(node.id, 'type') == 'Line' || Engine.getProperty(node.id, 'type') == 'Spline')) {
             _Notifier.alert('The Spline tools can only be used on a line object. The object selected cannot be edited with this tool.');
             self.deactivate();
             return;
@@ -92,11 +92,11 @@ function SplineTool() {
                     _Editor.addTool('Spline', self);
                     _Editor.setActiveTool('Spline');
 
-                    var parent = vwf.parent(node.id);
+                    var parent = Engine.parent(node.id);
                     var name = node.name
                     var proto = _DataManager.getCleanNodePrototype(node);
                     proto.properties.owner = _UserManager.GetCurrentUserName();
-                    proto.properties.points = vwf.callMethod(_Editor.GetSelectedVWFID(), 'getPoints');
+                    proto.properties.points = Engine.callMethod(_Editor.GetSelectedVWFID(), 'getPoints');
                     proto.extends = 'line2.vwf';
                     proto.source = "vwf/model/threejs/line.js"
                     _Editor.DeleteSelection();
@@ -133,8 +133,8 @@ function SplineTool() {
         _Editor.getTranslationCallback = self.getTranslation;
         _Editor.getScaleCallback = self.getScale;
         self.selectedID = _Editor.GetSelectedVWFID();
-        self.points = vwf.getProperty(self.selectedID, 'points');
-        self.transform = vwf.getProperty(self.selectedID, 'transform');
+        self.points = Engine.getProperty(self.selectedID, 'points');
+        self.transform = Engine.getProperty(self.selectedID, 'transform');
         _Editor.SetSelectMode('None');
         _Editor.updateGizmoLocation();
         self.active = true;

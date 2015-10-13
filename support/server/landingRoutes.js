@@ -774,7 +774,7 @@ var self = exports;
 var cachedVWFCore = null;
 exports.getVWFCore = function() {
     if (!cachedVWFCore) {
-        cachedVWFCore = fs.readFileSync('./support/client/lib/vwf.js', 'utf8');
+        cachedVWFCore = fs.readFileSync('./support/client/lib/engine.js', 'utf8');
         if (global.configuration.host && global.configuration.loadBalancer) //if the config contains an address for a load balancer, have the client
         //look up what host to use
         {

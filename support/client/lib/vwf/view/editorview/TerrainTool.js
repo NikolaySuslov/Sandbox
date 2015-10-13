@@ -160,8 +160,8 @@ function TerrainTool() {
         _Editor.getTranslationCallback = self.getTranslation;
         _Editor.getScaleCallback = self.getScale;
         self.selectedID = _Editor.GetSelectedVWFID();
-        self.controlPoints = vwf.getProperty(self.selectedID, 'controlPoints');
-        self.transform = vwf.getProperty(self.selectedID, 'transform');
+        self.controlPoints = Engine.getProperty(self.selectedID, 'controlPoints');
+        self.transform = Engine.getProperty(self.selectedID, 'transform');
         _Editor.SetSelectMode('None');
         _Editor.updateGizmoLocation();
         _Editor.addTool('Spline', self);

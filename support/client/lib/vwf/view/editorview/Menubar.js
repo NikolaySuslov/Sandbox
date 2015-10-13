@@ -9,7 +9,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			else if(node == ancestor)
 				return true;
 			else
-				return nodeInherits( vwf.prototype(node), ancestor );
+				return nodeInherits( Engine.prototype(node), ancestor );
 		}
 
 		$scope.$watchGroup([
@@ -49,7 +49,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 	}]);
 
 	app.service('MenuHandlers', function(){
-		var handlers = 
+		var handlers =
 		{
 			// hook up assets menu
 			MenuManageAssets: function(e){
@@ -96,7 +96,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			SetThumbnail: function(e) {
 				window.setThumbnail(false);
 			},
-	
+
 			MenuCreateGUIDialog: function(e) {
 				_GUIView.createDialog();
 			},
@@ -121,24 +121,24 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuCreateGUIHtml: function(e) {
 				_GUIView.createHtml();
 			},
-	
-	
+
+
 			MenuEn: function(e) {
 				i18n.setLng('en', function(t) { /* loading done */ });
 				location.reload();
 			},
-	
+
 			MenuRu: function(e) {
 				i18n.setLng('ru', function(t) { /* loading done */ });
 				location.reload();
-	
+
 			},
 			MenuEs_ES: function(e) {
 				i18n.setLng('es_ES', function(t) { /* loading done */ });
 				location.reload();
 			},
-	
-	
+
+
 			//make the menu items disappear when you click one
 			//$(".ddsmoothmenu").find('li').click(function(){$(".ddsmoothmenu").find('li').trigger('mouseleave');});
 			MenuLogIn: function(e) {
@@ -148,12 +148,12 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuSaveNow: function(e) {
 				_DataManager.saveToServer();
 			},
-	
-	
-	
-	
+
+
+
+
 			MenuShareWorld: function(e) {
-	
+
 				var state = _DataManager.getCurrentSession();
 				state = state.replace(/\//g, '_');
 				var turl = "/vwfdatamanager.svc/statedata?SID=" + state;
@@ -163,21 +163,26 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 						placeholder = data.title;
 					alertify.prompt('Use the URL below to share this world with your friends! Just have them paste it into their browsers address bar.', function() {},
 						window.location.host + '/worlds/' + placeholder);
-	
+
 				});
-	
+
 			},
-	
+
 			MenuLogOut: function(e) {
 				if ($('#MenuLogOut').attr('disabled') == 'disabled') return;
-				window.location = window.location.pathname.replace('/sandbox/', '/sandbox/world/');
+
+				var path = window.location.pathname;
+
+				if(path.indexOf('example_blank') > 0) window.location = '/adl/sandbox/demos';
+				else if(path.indexOf('example_') > 0) window.location = '/adl/sandbox/examples';
+				else window.location = path.replace('/sandbox/', '/sandbox/world/');
 			},
 			MenuSelectPick: function(e) {
 				_Editor.SetSelectMode('Pick');
 			},
 			MenuSelectNone: function(e) {
 				_Editor.SelectObject(null);
-	
+
 			},
 			MenuMove: function(e) {
 				_Editor.SetGizmoMode(_Editor.Move);
@@ -254,7 +259,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				_Editor.SetSnaps(.001, .01 * 0.0174532925, .00005);
 			},
 			MenuMaterialEditor: function(e) {
-	
+
 				if (_MaterialEditor.isOpen())
 					_MaterialEditor.hide();
 				else
@@ -266,18 +271,18 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				else
 					_ScriptEditor.show();
 			},
-	
-	
+
+
 			MenuPhysicsEditor: function(e) {
-	
+
 				if (_PhysicsEditor.isOpen())
 					_PhysicsEditor.hide();
 				else
 					_PhysicsEditor.show();
 			},
-	
+
 			MenuObjectProperties: function(e) {
-	
+
 				if (_PrimitiveEditor.isOpen())
 					_PrimitiveEditor.hide();
 				else
@@ -294,12 +299,12 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuCopy: function(e) {
 				_Editor.Copy();
 			},
-	
-	
+
+
 			MenuSelectName: function(e) {
 				_SidePanel.showTab('hierarchyManager');
 			},
-	
+
 			MenuPaste: function(e) {
 				_Editor.Paste();
 			},
@@ -327,7 +332,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuCreateTwist: function(e) {
 				_Editor.CreateModifier('twist', _UserManager.GetCurrentUserName());
 			},
-	
+
 			MenuCreateUVMap: function(e) {
 				_Editor.CreateModifier('uvmap', _UserManager.GetCurrentUserName(), true);
 			},
@@ -346,16 +351,16 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuCreateStretch: function(e) {
 				_Editor.CreateModifier('stretch', _UserManager.GetCurrentUserName());
 			},
-	
+
 			MenuCreateBehaviorRotator: function(e) {
 				_Editor.CreateBehavior('rotator', _UserManager.GetCurrentUserName());
 			},
-	
+
 			MenuCreateBehaviorDialog: function(e) {
 				_Editor.CreateBehavior('DialogSystem', _UserManager.GetCurrentUserName());
 			},
-	
-	
+
+
 			MenuCreateBehaviorOrbit: function(e) {
 				_Editor.CreateBehavior('orbit', _UserManager.GetCurrentUserName());
 			},
@@ -380,7 +385,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuCreateBehaviorClampToGround: function(e) {
 				_Editor.CreateBehavior('clamptoground', _UserManager.GetCurrentUserName());
 			},
-	
+
 			MenuPhysicsPointConstraint: function(e) {
 				_Editor.CreatePhysicsConstraint('point', _UserManager.GetCurrentUserName());
 			},
@@ -393,25 +398,25 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuPhysicsFixedConstraint: function(e) {
 				_Editor.CreatePhysicsConstraint('fixed', _UserManager.GetCurrentUserName());
 			},
-	
-	
-			
-	
+
+
+
+
 			//trigger section
 			MenuCreateTriggerDistance: function(e) {
 				_Editor.CreateBehavior('distancetrigger', _UserManager.GetCurrentUserName());
 			},
-	
+
 			//trigger section
 			MenuCreateTriggerProperty: function(e) {
 				_Editor.CreateBehavior('propertytrigger', _UserManager.GetCurrentUserName());
 			},
-	
+
 			//trigger section
 			MenuCreateTriggerMethod: function(e) {
 				_Editor.CreateBehavior('methodtrigger', _UserManager.GetCurrentUserName());
 			},
-	
+
 			MenuHelpBrowse: function(e) {
 				window.open('http://sandboxdocs.readthedocs.org/en/latest/', '_blank');
 			},
@@ -432,7 +437,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			},
 			/*$('#ChatInput').keypress(function(e) {
 				e.stopPropagation();
-				
+
 			},
 			$('#ChatInput').keydown(function(e) {
 				e.stopPropagation();
@@ -449,8 +454,8 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 					_Notifier.notify('Glyphs displayed');
 				}
 			},
-	
-			
+
+
 			MenuViewOctree: function(e) {
 				_SceneManager.setShowRegions(!_SceneManager.getShowRegions());
 			},
@@ -499,9 +504,9 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			},
 			MenuSplineTools: function(e) {
 				_SplineTool.show();
-	
+
 			},
-	
+
 			MenuViewInterpolation: function(e) {
 				_dView.interpolateTransforms = !_dView.interpolateTransforms;
 				if (!_dView.interpolateTransforms)
@@ -510,7 +515,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 					alertify.log('Animation interpolation enabled');
 			},
 			MenuViewToggleWireframe: function(e) {
-	
+
 				if (_Editor.findscene().overrideMaterial) {
 					_Editor.findscene().overrideMaterial = null;
 				} else {
@@ -525,15 +530,15 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuViewTogglePhysics: function(e) {
 			   _PhysicsEditor.toggleWorldPreview()
 			},
-	
+
 			MenuViewToggleBones: function(e) {
 				if (_SceneManager.getBonesVisible())
 					_SceneManager.hideBones();
 				else
 					_SceneManager.showBones();
-	
+
 			},
-	
+
 			MenuViewToggleAO: function(e) {
 				if (_Editor.findscene().getFilter2d()) {
 					_Editor.findscene().setFilter2d();
@@ -542,7 +547,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 					_Editor.findscene().setFilter2d(ao)
 				}
 			},
-	
+
 			MenuActivateCamera: function(e) {
 				_dView.chooseCamera();
 			},
@@ -560,13 +565,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
 				require("vwf/view/threejs/editorCameraController").updateCamera();
 			},
-	
+
 			MenuCameraNavigate: function(e) {
 				_dView.setCameraDefault();
 				require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
 				require("vwf/view/threejs/editorCameraController").setCameraMode('Navigate');
 			},
-	
+
 			MenuCameraDeviceOrientation: function(e) {
 				_dView.setCameraDefault();
 				require("vwf/view/threejs/editorCameraController").setCameraMode('DeviceOrientation');
@@ -574,9 +579,9 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuViewHideTools: function(e) {
 				hideTools();
 			},
-	
-	
-	
+
+
+
 			MenuCameraReceive: function()
 			{
 				_dView.receiveSharedCameraView();
@@ -585,15 +590,15 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			{
 				$('#MenuCameraOrbit').click();
 			},
-	
-			
+
+
 			MenuCameraShare: function(e) {
 				if (!_UserManager.GetCurrentUserName()) {
 					alertify.confirm("Anonymous users may not share their camera view.", function(ok) {});
 				}
 				var broadcasting = _dView.shareCamera;
 				if (!broadcasting) {
-	
+
 					alertify.confirm("Are you sure you want to share your camera position? Other users will be able to see from your camera!", function(ok) {
 						if (ok) {
 							_dView.shareCameraView();
@@ -605,53 +610,53 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 						if (ok) {
 							_dView.stopShareCameraView();
 							$('#MenuCameraShare').html(('Share Camera View').escape());
-	
+
 						}
 					}.bind(this));
-	
+
 				}
 			},
-	
+
 			MenuCameraFly: function(e) {
 				_dView.setCameraDefault();
-				
+
 				$('#MenuCameraNavigateicon').addClass('iconselected');
 				require("vwf/view/threejs/editorCameraController").setCameraMode('Fly');
-	
+
 			},
-	
+
 			MenuCameraNone: function(e) {
 				_dView.setCameraDefault();
-				
+
 				require("vwf/view/threejs/editorCameraController").setCameraMode('None');
 			},
 			MenuCameraFree: function(e) {
 				_dView.setCameraDefault();
-				
+
 				$('#MenuCameraFreeicon').addClass('iconselected');
 				require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
 				require("vwf/view/threejs/editorCameraController").setCameraMode('Free');
 			},
-			
-	
-			
+
+
+
 			MenuViewFullscreen: function(e) {
 			   _dView.toggleFullScreen();
 			},
 			MenuCamera3RDPerson: function(e) {
-	
+
 				if (_UserManager.GetCurrentUserName()) {
 					_dView.setCameraDefault();
-					
+
 					$('#MenuCamera3RDPersonicon').addClass('iconselected');
-					require("vwf/view/threejs/editorCameraController").getController('Orbit').followObject(vwf.models[0].model.nodes[_UserManager.GetCurrentUserID()]);
+					require("vwf/view/threejs/editorCameraController").getController('Orbit').followObject(Engine.models[0].model.nodes[_UserManager.GetCurrentUserID()]);
 					require("vwf/view/threejs/editorCameraController").setCameraMode('3RDPerson');
 				} else {
 					_Notifier.alert('First person mode is not available when you are not logged in.');
 				}
 			},
-	
-	
+
+
 			MenuCreateCameraPerspective: function(e) {
 				_Editor.CreateCamera(_Editor.GetInsertPoint(), _UserManager.GetCurrentUserName());
 			},
@@ -704,22 +709,22 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 					alertify.alert('Only one terrain can be created at a time');
 				}
 			},
-	
+
 			MenuAssets3DRUpload: function(e) {
 				_ModelLibrary.showUpload();
 			},
-	
-	
+
+
 			MenuUndo: function(e) {
 				_UndoManager.undo();
 			},
 			MenuRedo: function(e) {
 				_UndoManager.redo();
 			},
-	
+
 			MenuCreateLoadMeshURL: function(e) {
 				alertify.choice("Choose the mesh format", function(ok, type) {
-	
+
 					if (ok) {
 						alertify.prompt('Input a URL to the mesh. Please note: this must serve from a CORS capable host!', function(ok, val) {
 							if (ok) {
@@ -736,27 +741,27 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 							}
 						}, 'http://');
 					}
-	
+
 				}, ["Collada", "3DR JSON (http://3dr.adlnet.gov)", "glTF (v0.6) JSON", 'Three.js Native JSON'])
-	
+
 			},
-	
+
 			MenuCreateContinuesNode: function(e){
 				alertify.prompt('Input a URL to an entity JSON body.', function(ok, val){
 					if(ok && val){
-						vwf.createChild('index-vwf', GUID(), {continues: val});
+						Engine.createChild('index-vwf', GUID(), {continues: val});
 					}
 				});
 			},
-	
-	
+
+
 			MenuCreateEmpty: function(e) {
 				_Editor.CreatePrim('node', _Editor.GetInsertPoint(), null, null, _UserManager.GetCurrentUserName(), '');
 			},
 			MenuCreateSphere: function(e) {
 				_Editor.CreatePrim('sphere', _Editor.GetInsertPoint(), [.5, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
 			},
-	
+
 			MenuCreateText: function(e) {
 				_Editor.CreatePrim('text', _Editor.GetInsertPoint(), [.5, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
 			},
@@ -775,22 +780,22 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuCreatePyramid: function(e) {
 				_Editor.CreatePrim('pyramid', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
 			},
-	
+
 			LocationGoToPosition: function(e) {
 				_LocationTools.GoToPosition();
 			},
-	
+
 			LocationGoToPlacemark: function(e) {
 				_LocationTools.GoToPlaceMark();
 			},
-	
+
 			LocationAddPlacemark: function(e) {
 				_LocationTools.AddPlacemark();
 			},
-	
+
 			ToolsShowID: function(e) {
 				if (_Editor.GetSelectedVWFID())
-					alertify.prompt(vwf.getProperty(_Editor.GetSelectedVWFID(), "DisplayName") || "No DisplayName", function() {}, _Editor.GetSelectedVWFID());
+					alertify.prompt(Engine.getProperty(_Editor.GetSelectedVWFID(), "DisplayName") || "No DisplayName", function() {}, _Editor.GetSelectedVWFID());
 				else
 					alertify.alert('No Selection');
 			},
@@ -808,7 +813,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				p = require("vwf/view/editorview/JSONPrompt");
 				var data = _DataManager.getSaveStateData();
 				p.prompt(data);
-				
+
 			},
 			MenuObjectCenters:function()
 			{
@@ -819,7 +824,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			LocationMoveToGround: function(e) {
 				_LocationTools.MoveToGround();
 			},
-	
+
 			MenuCreateTerrainGrass: function(e) {
 				try {
 					var parent = _dTerrain.ID;
@@ -835,13 +840,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				};
 				GrassProto.type = 'subDriver/threejs';
 				GrassProto.source = 'vwf/model/threejs/' + 'terrainDecorationManager' + '.js';
-	
+
 				GrassProto.properties.owner = _UserManager.GetCurrentUserName();
 				GrassProto.properties.DisplayName = _Editor.GetUniqueName('Grass');
 				_Editor.createChild(parent, GUID(), GrassProto, null, null);
-	
+
 			},
-	
+
 			MenuViewRenderNormal: function(e) {
 				_dView.setRenderModeNormal();
 				require("vwf/view/threejs/editorCameraController").getController('Orbit').orbitPoint(newintersectxy);
@@ -852,7 +857,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				_dView.setRenderModeStereo()
 			},
 			 MenuViewRenderVR: function(e) {
-				
+
 				if (navigator.getVRDevices) {
 						_dView.setRenderModeVR();
 						require("vwf/view/threejs/editorCameraController").setCameraMode('VR');
@@ -861,11 +866,11 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 					alertify.alert("WebVR is not supported on this browser.");
 				}
 			},
-	
+
 			TestSettings: function(e) {
 				_Publisher.show();
 			},
-	
+
 			TestLaunch: function(e) {
 				_Publisher.testPublish();
 			},
@@ -896,34 +901,34 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 
 
 				//lets try to grab a screenshot if it's not set already
-	
-				if (vwf.getProperty('index-vwf', 'owner') != _UserManager.GetCurrentUserName()) {
+
+				if (Engine.getProperty('index-vwf', 'owner') != _UserManager.GetCurrentUserName()) {
 					//don't bother if this is not the owner
 					return;
 				}
-	
+
 				window.setTimeout(function() {
-	
+
 					//only set the thumb automatically if the user has not specified one
 					if(!_DataManager.getInstanceData().userSetThumbnail)
 						window.setThumbnail(true);
-	
+
 				}, 10000)
-	
+
 				//let's warn people that they have to hit stop
 				 $('#stopButton').tooltip('open');
 				window.setTimeout(function() {
 					$('#stopButton').tooltip('close');
 				}, 2000)
-	
-	
+
+
 			});
-	
+
 			window.setThumbnail = function(auto) {
-	
+
 				if(!window._dRenderer)
 					return;
-				if (vwf.getProperty('index-vwf', 'owner') != _UserManager.GetCurrentUserName()) {
+				if (Engine.getProperty('index-vwf', 'owner') != _UserManager.GetCurrentUserName()) {
 					alertify.alert('Sorry, only the world owner can set the thumbnail');
 					return;
 				}
@@ -932,9 +937,9 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				var camera = _dView.getCamera();
 				camera.aspect = 2;
 				camera.updateProjectionMatrix();
-	
+
 				window.takeimage = function() {
-	
+
 					var img = $('#index-vwf')[0].toDataURL();
 
 					$('#index-vwf').css('width', '');
@@ -949,16 +954,16 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 					$('#index-vwf')[0].width = w / resolutionScale;
 					if(window._dRenderer)
 						_dRenderer.setViewport(0, 0, w / resolutionScale, h / resolutionScale)
-	
+
 					//note, this changes some renderer internals that need to be set, but also resizes the canvas which we don't want.
 					//much of the resize code is in WindowResize.js
 					if(window._dRenderer)
 						_dRenderer.setSize(w / resolutionScale, h / resolutionScale);
-	
+
 					$('#index-vwf').css('height', h);
 					$('#index-vwf').css('width', w);
 					*/
-	
+
 					jQuery.ajax({
 						type: 'POST',
 						url: './vwfDataManager.svc/thumbnail?SID=' + _DataManager.getCurrentSession().replace(/\//g, '_') +'&auto=' + auto,
@@ -967,11 +972,11 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 						}),
 						contentType: "application/json; charset=utf-8",
 						success: function(data, status, xhr) {
-	
+
 						},
 						error: function(xhr, status, err) {
-	
-	
+
+
 						},
 						dataType: "text"
 					});
@@ -979,9 +984,9 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 					//$(window).resize();
 				}
 				_dView.bind('postrender', takeimage);
-	
-	
-	
+
+
+
 			}
 
 			// load asset manager

@@ -21,7 +21,7 @@ define( [ "module", "vwf/model" ], function( module, model ) {
     {
         if (childExtendsID == 'http-vwf-example-com-html-vwf') return true;
         else if (!childExtendsID) return false;
-        else return isHtmlNode(vwf.prototype(childExtendsID));
+        else return isHtmlNode(Engine.prototype(childExtendsID));
     }
 
     var sourceCache = {};
@@ -48,7 +48,7 @@ define( [ "module", "vwf/model" ], function( module, model ) {
                 a.href = childSource;
 
                 if(sourceCache[a.href]){
-                    vwf.setProperty(childID, '__innerHTML', sourceCache[a.href]);
+                    Engine.setProperty(childID, '__innerHTML', sourceCache[a.href]);
                 }
                 else
                 {
@@ -59,7 +59,7 @@ define( [ "module", "vwf/model" ], function( module, model ) {
                     .done(function(data, textStatus, xhr){
                         callback(true);
                         sourceCache[a.href] = xhr.responseText;
-                        vwf.setProperty(childID, '__innerHTML', xhr.responseText);
+                        Engine.setProperty(childID, '__innerHTML', xhr.responseText);
                     })
                     .fail(function(xhr, textStatus){
                         callback(true);

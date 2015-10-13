@@ -35,7 +35,7 @@ var AvatarCameraController = function()
     {
        // if(e.keyCode !=87 && e.keyCode != 38 && this.keysDown[e.keyCode]) return;
         
-        var id = _UserManager.GetAvatarForClientID(vwf.moniker()).id;
+        var id = _UserManager.GetAvatarForClientID(Engine.moniker()).id;
         if (e.keyCode == 16)
             this.shiftDown = true;
         if (e.keyCode == 17)
@@ -105,12 +105,12 @@ var AvatarCameraController = function()
     {
         if (Object.keys(this.keysDown).length > 0)
         {
-            var transform = vwf.getProperty(_UserManager.GetAvatarForClientID(vwf.moniker()).id, 'transform');
+            var transform = Engine.getProperty(_UserManager.GetAvatarForClientID(Engine.moniker()).id, 'transform');
             var charspaceforward = Mat4.multVec3NoTranslate(transform, [0, 1, 0], []);
             this.offset.x = this.offset.x * .97 + charspaceforward[0] * .03;
             this.offset.y = this.offset.y * .97 + charspaceforward[1] * .03;
         }
-        var avatar = _UserManager.GetAvatarForClientID(vwf.moniker()).transformAPI.getPosition();
+        var avatar = _UserManager.GetAvatarForClientID(Engine.moniker()).transformAPI.getPosition();
         var center = new THREE.Vector3(avatar[0], avatar[1], avatar[2] + 1.5);
         var pos = center.clone().add(this.offset.setLength(this.zoom));
         pos.z += this.totalz / 200 * this.zoom;

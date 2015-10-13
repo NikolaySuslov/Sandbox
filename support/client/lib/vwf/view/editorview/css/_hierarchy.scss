@@ -16,7 +16,6 @@
 		padding: 2px;
 
 		font-size: 12px;
-		color: black;
 		@include flex-shrink(0);
 		@include flex-grow(1);
 	}
@@ -43,7 +42,7 @@
 				&:hover {
 					background-color: #82b8ff;
 				}
-				
+
 				&.selected {
 					background-color: #41547c;
 					order: 0;
@@ -178,4 +177,3 @@
 	}
 
 }
-

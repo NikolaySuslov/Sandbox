@@ -36,7 +36,7 @@ define( ["module", "vwf/view", "vwf/view/xapi/xapiwrapper.min"], function( modul
 				//console.log('XAPI:', id, fn, params);
 				var wrapper;
 
-				var clients = vwf.getProperty(vwf.application(),'clients')
+				var clients = Engine.getProperty(Engine.application(),'clients')
 				
 				
 				// no-op if no users are logged in
@@ -73,7 +73,7 @@ define( ["module", "vwf/view", "vwf/view/xapi/xapiwrapper.min"], function( modul
 				var method = fn.slice(5);
 
 				// fail request if they are trying to anonymously post
-				/*if( vwf.client() == null && /^send/.test(method) ){
+				/*if( Engine.client() == null && /^send/.test(method) ){
 					console.error(id, ': posting to an LRS is only allowed from within events');
 					return;
 				}*/
@@ -82,10 +82,10 @@ define( ["module", "vwf/view", "vwf/view/xapi/xapiwrapper.min"], function( modul
 				if(!clients) return;
 				
 				var firstId = clients[Object.keys(clients)[0]].cid;
-				var clientId = vwf.moniker();
+				var clientId = Engine.moniker();
 				if( /^send/.test(method) && !(
-					vwf.client() == vwf.moniker() ||
-					vwf.client() == null && clientId == firstId)
+					Engine.client() == Engine.moniker() ||
+					Engine.client() == null && clientId == firstId)
 				){
 					console.log('xAPI pass');
 					return;

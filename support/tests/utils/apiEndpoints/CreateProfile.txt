@@ -1,0 +1,8 @@
+Profiles before: ["___Global___","joe","N4151f242","N8343485f","Postman","Remy","Fluffy","Bumble","Fluffbutton","Yukon","Bubba","Rikki","Billi","Gimli","Fred"]
+
+500 text/plain
+user Fred already exists
+
+
+Profiles after: ["___Global___","joe","N4151f242","N8343485f","Postman","Remy","Fluffy","Bumble","Fluffbutton","Yukon","Bubba","Rikki","Billi","Gimli","Fred"]
+

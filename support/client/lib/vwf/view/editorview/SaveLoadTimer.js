@@ -21,7 +21,7 @@ define({
 		}
 		$(window).unload(function ()
 		{
-			vwf.close();
+			Engine.close();
 		});
 	}
 });

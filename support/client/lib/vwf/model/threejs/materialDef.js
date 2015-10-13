@@ -1,3 +1,4 @@
+"use strict";
 (function()
 {
     function materialDef(childID, childSource, childName)
@@ -92,6 +93,16 @@
                     propval.skinning = !!(list[i] instanceof THREE.SkinnedMesh);
                     propval.shadows = !!list[i].receiveShadow;
                     
+                    if (propval instanceof Array)
+                    {
+                        for(var k =0; k < propval.length; k++)
+                        {
+                            propval[k].morphTargets = propval.morphTargets;
+                            propval[k].skinning = propval.skinning;
+                            propval[k].shadows = propval.shadows;
+                        }
+                    }
+
                     if (!(propval instanceof Array))
                         _MaterialCache.setMaterial(list[i], propval);
                     else if (list.length == 1)
@@ -112,8 +123,9 @@
                     //if it's a prim, this.build will be true. Prims must be able to reset the material, and won't pass this check
                     if(!this.initialized && propname == 'materialDef')
                     {
-                        this.tempmaterialdef = propval
-                        return;
+
+                        this.tempmaterialdef = JSON.parse(JSON.stringify(propval));
+                       // return;
                     }
 
                     if (propname == 'materialDef' && propval)

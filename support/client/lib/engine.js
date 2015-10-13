@@ -18,7 +18,7 @@
 /// vwf.js is the main Virtual World Framework manager. It is constructed as a JavaScript module
 /// (http://www.yuiblog.com/blog/2007/06/12/module-pattern) to isolate it from the rest of the
 /// page's JavaScript environment. The vwf module self-creates its own instance when loaded and
-/// attaches to the global window object as window.vwf. Nothing else should affect the global
+/// attaches to the global window object as window.Engine. Nothing else should affect the global
 /// environment.
 
 
@@ -28,7 +28,7 @@
 
     
 
-    window.vwf = new function() {
+    window.vwf = window.Engine = new function() {
 
         window.console && console.debug && console.debug( "creating vwf" );
 
@@ -37,41 +37,41 @@
         /// The runtime environment (production, development, testing) and other configuration
         /// settings appear here.
         /// 
-        /// @name module:vwf.configuration
+        /// @name module:Engine.configuration
         /// 
         /// @private
 
-        this.configuration = undefined; // require( "vwf/configuration" ).active; // "active" updates in place and changes don't invalidate the reference  // TODO: assign here after converting vwf.js to a RequireJS module and listing "vwf/configuration" as a dependency
+        this.configuration = undefined; // require( "vwf/configuration" ).active; // "active" updates in place and changes don't invalidate the reference  // TODO: assign here after converting Engine.js to a RequireJS module and listing "vwf/configuration" as a dependency
 
         /// The kernel logger.
         /// 
-        /// @name module:vwf.logger
+        /// @name module:Engine.logger
         /// 
         /// @private
 
-        this.logger = undefined; // require( "logger" ).for( undefined, this );  // TODO: for( "vwf", ... ), and update existing calls  // TODO: assign here after converting vwf.js to a RequireJS module and listing "vwf/logger" as a dependency
+        this.logger = undefined; // require( "logger" ).for( undefined, this );  // TODO: for( "vwf", ... ), and update existing calls  // TODO: assign here after converting Engine.js to a RequireJS module and listing "vwf/logger" as a dependency
 
         /// Each model and view module loaded by the main page registers itself here.
         /// 
-        /// @name module:vwf.modules
+        /// @name module:Engine.modules
         /// 
         /// @private
 
         this.modules = [];
 
-        /// vwf.initialize() creates an instance of each model and view module configured on the main
+        /// Engine.initialize() creates an instance of each model and view module configured on the main
         /// page and attaches them here.
         /// 
-        /// @name module:vwf.models
+        /// @name module:Engine.models
         /// 
         /// @private
 
         this.models = [];
 
-        /// vwf.initialize() creates an instance of each model and view module configured on the main
+        /// Engine.initialize() creates an instance of each model and view module configured on the main
         /// page and attaches them here.
         /// 
-        /// @name module:vwf.views
+        /// @name module:Engine.views
         /// 
         /// @private
 
@@ -81,7 +81,7 @@
         /// `actual` property that evaluates to a list of references to the pipeline tails. This is
         /// a list of the actual drivers after any intermediate stages and is useful for debugging.
         /// 
-        /// @name module:vwf.models.actual
+        /// @name module:Engine.models.actual
 
         Object.defineProperty( this.models, "actual", {
 
@@ -117,7 +117,7 @@
         /// `actual` property that evaluates to a list of references to the pipeline tails. This is
         /// a list of the actual drivers after any intermediate stages and is useful for debugging.
         /// 
-        /// @name module:vwf.views.actual
+        /// @name module:Engine.views.actual
 
         Object.defineProperty( this.views, "actual", {
 
@@ -152,7 +152,7 @@
         /// The simulation clock, which contains the current time in seconds. Time is controlled by
         /// the reflector and updates here as we receive control messages.
         /// 
-        /// @name module:vwf.now
+        /// @name module:Engine.now
         /// 
         /// @private
 
@@ -166,7 +166,7 @@
         /// later time, and those that arrived after the current action, regardless of their
         /// scheduled time.
         /// 
-        /// @name module:vwf.sequence_
+        /// @name module:Engine.sequence_
         /// 
         /// @private
 
@@ -175,7 +175,7 @@
         /// The moniker of the client responsible for the currently executing action. `client_` will
         /// be falsy for actions originating in the server, such as time ticks.
         /// 
-        /// @name module:vwf.client_
+        /// @name module:Engine.client_
         /// 
         /// @private
 
@@ -183,7 +183,7 @@
 
         /// The identifer assigned to the client by the server.
         /// 
-        /// @name module:vwf.moniker_
+        /// @name module:Engine.moniker_
         /// 
         /// @private
 
@@ -191,7 +191,7 @@
 
         /// Nodes that are receiving ticks.
         /// 
-        /// @name module:vwf.tickable
+        /// @name module:Engine.tickable
         /// 
         /// @private
 
@@ -203,7 +203,7 @@
 
         // == Private variables ====================================================================
 
-        /// @name module:vwf.private
+        /// @name module:Engine.private
         /// 
         /// @private
 
@@ -268,7 +268,7 @@
 
         // -- loadConfiguration ---------------------------------------------------------------------------
 
-        // The main page only needs to call vwf.loadConfiguration() to launch the application. Use
+        // The main page only needs to call Engine.loadConfiguration() to launch the application. Use
         // require.ready() or jQuery(document).ready() to call loadConfiguration() once the page has
         // loaded. loadConfiguration() accepts three parameters.
         // 
@@ -279,9 +279,9 @@
         // Arguments may be specified as an array [1], as a single value if there is only one [2], or as 
         // undefined if there are none[3].
         // 
-        //     [1] vwf.loadConfiguration( ..., { "vwf/model/glge": [ "#scene, "second param" ] }, { ... } )
-        //     [2] vwf.loadConfiguration( ..., { "vwf/model/glge": "#scene" }, { ... } )
-        //     [3] vwf.loadConfiguration( ..., { "vwf/model/javascript": undefined }, { ... } )
+        //     [1] Engine.loadConfiguration( ..., { "vwf/model/glge": [ "#scene, "second param" ] }, { ... } )
+        //     [2] Engine.loadConfiguration( ..., { "vwf/model/glge": "#scene" }, { ... } )
+        //     [3] Engine.loadConfiguration( ..., { "vwf/model/javascript": undefined }, { ... } )
         this.loadConfiguration = function(/* [ componentURI|componentObject ] { modelInitializers }{ viewInitializers } */)
         {
             var args = Array.prototype.slice.call( arguments );
@@ -473,7 +473,7 @@
                    
                     ready( function() {
 
-                        // With the scripts loaded, we must initialize the framework. vwf.initialize()
+                        // With the scripts loaded, we must initialize the framework. Engine.initialize()
                         // accepts three parameters: a world specification, model configuration parameters,
                         // and view configuration parameters.
 
@@ -504,7 +504,7 @@
                             "vwf/view/jqueryui",
                         ];
 
-                        vwf.initialize(application, models, views, callback);
+                        Engine.initialize(application, models, views, callback);
 
                     } );
 
@@ -527,7 +527,7 @@
         this.goOffline = function()
         {
 
-            socket.removeListener( "disconnect", vwf.disconnected);
+            socket.removeListener( "disconnect", Engine.disconnected);
             socket.disconnect();
             socket = null;
             window.setInterval(this.generateTick.bind(this),50);
@@ -536,14 +536,14 @@
         {
             if(socket)
             {
-            socket.removeListener( "disconnect", vwf.disconnected);
+            socket.removeListener( "disconnect", Engine.disconnected);
             socket.disconnect();
             socket = null;
         }
         }
         // -- initialize ---------------------------------------------------------------------------
 
-        /// The main page only needs to call vwf.initialize() to launch the application. Use
+        /// The main page only needs to call Engine.initialize() to launch the application. Use
         /// require.ready() or jQuery(document).ready() to call initialize() once the page has
         /// loaded. initialize() accepts three parameters.
         /// 
@@ -553,12 +553,12 @@
         /// specialize a prototype, using a simple object literal allows existing component to be
         /// configured for special uses [3].
         /// 
-        ///     [1] vwf.initialize( "http://vwf.example.com/applications/sample12345", ... )
+        ///     [1] Engine.initialize( "http://Engine.example.com/applications/sample12345", ... )
         ///
-        ///     [2] vwf.initialize( { source: "model.dae", type: "model/vnd.collada+xml",
+        ///     [2] Engine.initialize( { source: "model.dae", type: "model/vnd.collada+xml",
         ///             properties: { "p1": ... }, ... }, ... )
         ///
-        ///     [3] vwf.initialize( { extends: "http://vwf.example.com/applications/sample12345",
+        ///     [3] Engine.initialize( { extends: "http://Engine.example.com/applications/sample12345",
         ///             source: "alternate-model.dae", type: "model/vnd.collada+xml" }, ... )
         /// 
         /// modelInitializers and viewInitializers identify the model and view modules that should be
@@ -567,11 +567,11 @@
         /// without parameters may be specified as a string [4]. Arguments may be specified as an
         /// array [5], or as a single value if there is only one [6].
         /// 
-        ///     [4] vwf.initialize( ..., [ "vwf/model/javascript" ], [ ... ] )
-        ///     [5] vwf.initialize( ..., [ { "vwf/model/glge": [ "#scene, "second param" ] } ], [ ... ] )
-        ///     [6] vwf.initialize( ..., [ { "vwf/model/glge": "#scene" } ], [ ... ] )
+        ///     [4] Engine.initialize( ..., [ "vwf/model/javascript" ], [ ... ] )
+        ///     [5] Engine.initialize( ..., [ { "vwf/model/glge": [ "#scene, "second param" ] } ], [ ... ] )
+        ///     [6] Engine.initialize( ..., [ { "vwf/model/glge": "#scene" } ], [ ... ] )
         /// 
-        /// @name module:vwf.initialize
+        /// @name module:Engine.initialize
 
         this.initialize = function( /* [ componentURI|componentObject ] [ modelInitializers ]
                                      [ viewInitializers ] */ ) {
@@ -644,7 +644,7 @@
                         this.models.push( model );
                         this.models[modelName] = model; // also index by id  // TODO: this won't work if multiple model instances are allowed
 
-                        if ( modelName == "vwf/model/javascript" ) {  // TODO: need a formal way to follow prototype chain from vwf.js; this is peeking inside of vwf-model-javascript
+                        if ( modelName == "vwf/model/javascript" ) {  // TODO: need a formal way to follow prototype chain from Engine.js; this is peeking inside of vwf-model-javascript
                             this.models.javascript = model;
                             //  while ( this.models.javascript.model ) this.models.javascript = this.models.javascript.model;
                         }
@@ -764,7 +764,7 @@
 
         // -- ready --------------------------------------------------------------------------------
 
-        /// @name module:vwf.ready
+        /// @name module:Engine.ready
         this.getInstanceHost = function()
         {
 
@@ -813,7 +813,7 @@
         setInterval( function() {
 
             var fields = {
-                time: vwf.now + 0.010, // TODO: there will be a slight skew here since the callback intervals won't be exactly 10 ms; increment using the actual delta time; also, support play/pause/stop and different playback rates as with connected mode.
+                time: Engine.now + 0.010, // TODO: there will be a slight skew here since the callback intervals won't be exactly 10 ms; increment using the actual delta time; also, support play/pause/stop and different playback rates as with connected mode.
                 origin: "reflector",
             };
 
@@ -828,10 +828,10 @@
         socket.on( "connect", function() {
 
            
-            vwf.logger.infox( "-socket", "connected" );
+            Engine.logger.infox( "-socket", "connected" );
 
            
-                vwf.moniker_ = this.id;
+                Engine.moniker_ = this.id;
            
 
         } );
@@ -846,7 +846,7 @@
 
         socket.on( "message", function( message ) {
 
-            // vwf.logger.debugx( "-socket", "message", message );
+            // Engine.logger.debugx( "-socket", "message", message );
 
             try {   
                 
@@ -855,7 +855,7 @@
 
                 if(fields.action == 'goOffline')
                 {
-                    vwf.goOffline();
+                    Engine.goOffline();
                     return;
                 }
 
@@ -880,14 +880,14 @@
 
             } catch ( e ) {
 
-                vwf.logger.warn( fields.action, fields.node, fields.member, fields.parameters,
+                Engine.logger.warn( fields.action, fields.node, fields.member, fields.parameters,
                     "exception performing action:", require( "vwf/utility" ).exceptionMessage( e ) );
 
             }
 
         } );
 
-        socket.on( "disconnect",vwf.disconnected);
+        socket.on( "disconnect",Engine.disconnected);
 
         socket.on( "error", function() {
 
@@ -925,7 +925,7 @@
 this.disconnected = function()
 {
 
-    vwf.logger.infox( "-socket", "disconnected" );
+    Engine.logger.infox( "-socket", "disconnected" );
     alertify.alert('The client has been disconnected from the server, and must be reloaded.',function(){
         window.location.reload();
     });
@@ -935,7 +935,7 @@ this.disconnected = function()
 
 // -- plan ---------------------------------------------------------------------------------
 
-/// @name module:vwf.plan
+/// @name module:Engine.plan
 
 this.plan = function( nodeID, actionName, memberName, parameters, when, callback_async /* ( result ) */ ) {
 
@@ -967,7 +967,7 @@ this.plan = function( nodeID, actionName, memberName, parameters, when, callback
 /// Send a message to the reflector. The message will be reflected back to all participants
 /// in the instance.
 /// 
-/// @name module:vwf.send
+/// @name module:Engine.send
 
 this.send = function( nodeID, actionName, memberName, parameters, when, callback_async /* ( result ) */ ) {
 
@@ -1021,7 +1021,7 @@ this.send = function( nodeID, actionName, memberName, parameters, when, callback
 
 /// Return a result for a function invoked by the server.
 /// 
-/// @name module:vwf.respond
+/// @name module:Engine.respond
 
 this.respond = function( nodeID, actionName, memberName, parameters, result ) {
 
@@ -1061,7 +1061,7 @@ this.respond = function( nodeID, actionName, memberName, parameters, result ) {
 
 /// Handle receipt of a message. Unpack the arguments and call the appropriate handler.
 /// 
-/// @name module:vwf.receive
+/// @name module:Engine.receive
 
 this.receive = function( nodeID, actionName, memberName, parameters, respond, origin ) {
 
@@ -1094,10 +1094,10 @@ this.receive = function( nodeID, actionName, memberName, parameters, respond, or
         {
             //when creating over the reflector, call ready on heirarchy after create.
             //nodes from setState are readied in createNode
-            vwf.decendants(childID).forEach(function(i){
-                vwf.callMethod(i,'ready',[]);
+            Engine.decendants(childID).forEach(function(i){
+                Engine.callMethod(i,'ready',[]);
             });
-            vwf.callMethod(childID,'ready',[]);
+            Engine.callMethod(childID,'ready',[]);
         });
     }
     // Invoke the action.
@@ -1105,7 +1105,7 @@ this.receive = function( nodeID, actionName, memberName, parameters, respond, or
     //prevent the game from moving forward if the state is paused
     if(nodes.existing[this.application()])
     {
-        var paused = this.getProperty(vwf.application(),'playMode');
+        var paused = this.getProperty(Engine.application(),'playMode');
         if(paused === 'paused' || paused === 'stop')
         {
             if(actionName == 'tick' ||
@@ -1130,7 +1130,7 @@ this.receive = function( nodeID, actionName, memberName, parameters, respond, or
 /// simulation time that we should advance to and was taken from the time stamp of the last
 /// message received from the reflector.
 /// 
-/// @name module:vwf.dispatch
+/// @name module:Engine.dispatch
 this.lastTick = 0;
 this.propertySetTimes = {},
 this.dispatch = function() {
@@ -1220,7 +1220,7 @@ this.dispatch = function() {
 
 /// Send a log message to the reflector.
 /// 
-/// @name module:vwf.log
+/// @name module:Engine.log
 
 this.log = function() {
 
@@ -1232,7 +1232,7 @@ this.log = function() {
 
 /// Tick each tickable model, view, and node. Ticks are sent on each time change.
 /// 
-/// @name module:vwf.tick
+/// @name module:Engine.tick
 
 // TODO: remove, in favor of drivers and nodes exclusively using future scheduling;
 // TODO: otherwise, all clients must receive exactly the same ticks at the same times.
@@ -1241,9 +1241,11 @@ this.tick = function() {
 
     // Call ticking() on each model.
 
+    
     this.models.forEach( function( model ) {
         model.ticking && model.ticking( this.now ); // TODO: maintain a list of tickable models and only call those
     }, this );
+    
     
 
     // Call tick() on each tickable node.
@@ -1253,10 +1255,11 @@ this.tick = function() {
     //    }, this );
 
     // Call ticked() on each view.
-
+   
     this.views.forEach( function( view ) {
         view.ticked && view.ticked( this.now ); // TODO: maintain a list of tickable views and only call those
     }, this );
+   
 
 
 
@@ -1269,7 +1272,7 @@ this.tick = function() {
 /// in progress. createNode suspends the queue when necessary, but additional calls to
 /// suspend and resume the queue may be needed if other async operations are added.
 /// 
-/// @name module:vwf.setState
+/// @name module:Engine.setState
 /// 
 /// @see {@link module:vwf/api/kernel.setState}
 
@@ -1288,7 +1291,7 @@ this.setState = function( applicationState, callback_async /* () */ ) {
     // Update the internal kernel state.
 
     if ( applicationState.kernel ) {
-        if ( applicationState.kernel.time !== undefined ) vwf.now = applicationState.kernel.time;
+        if ( applicationState.kernel.time !== undefined ) Engine.now = applicationState.kernel.time;
     }
 
     // Create or update global nodes and their descendants.
@@ -1307,7 +1310,7 @@ this.setState = function( applicationState, callback_async /* () */ ) {
         var nodeAnnotation = nodes.length > 1 || applicationState.annotations ?
             annotations[nodeIndex] : "application";
 
-        vwf.createNode( nodeComponent, nodeAnnotation, function( nodeID ) /* async */ {
+        Engine.createNode( nodeComponent, nodeAnnotation, function( nodeID ) /* async */ {
             each_callback_async( undefined );
         } );
 
@@ -1320,10 +1323,10 @@ this.setState = function( applicationState, callback_async /* () */ ) {
 
         queue.filter( function( fields ) {
 
-            if ( fields.origin === "reflector" && fields.sequence > vwf.sequence_ ) {
+            if ( fields.origin === "reflector" && fields.sequence > Engine.sequence_ ) {
                 return true;
             } else {
-                vwf.logger.debugx( "setState", function() {
+                Engine.logger.debugx( "setState", function() {
                     return [ "removing", JSON.stringify( loggableFields( fields ) ), "from queue" ];
                 } );
             }
@@ -1346,7 +1349,7 @@ this.setState = function( applicationState, callback_async /* () */ ) {
 
 // -- getState -----------------------------------------------------------------------------
 
-/// @name module:vwf.getState
+/// @name module:Engine.getState
 /// 
 /// @see {@link module:vwf/api/kernel.getState}
 
@@ -1366,7 +1369,7 @@ this.getState = function( full, normalize ) {
         // Internal kernel state.
 
         kernel: {
-            time: vwf.now,
+            time: Engine.now,
         },
 
         // Global node and descendant deltas.
@@ -1405,7 +1408,7 @@ this.getState = function( full, normalize ) {
 
 // -- hashState ----------------------------------------------------------------------------
 
-/// @name module:vwf.hashState
+/// @name module:Engine.hashState
 /// 
 /// @see {@link module:vwf/api/kernel.hashState}
 
@@ -1465,7 +1468,7 @@ this.hashState = function() {
 /// the queue when necessary, but additional calls to suspend and resume the queue may be
 /// needed if other async operations are added.
 /// 
-/// @name module:vwf.createNode
+/// @name module:Engine.createNode
 /// 
 /// @see {@link module:vwf/api/kernel.createNode}
 
@@ -1475,7 +1478,7 @@ this.createNode = function( nodeComponent, nodeAnnotation, callback_async /* ( n
     // `createNode( nodeComponent, undefined, callback )`. (`nodeAnnotation` was added in
     // 0.6.12.)
     
-    if(nodeComponent && nodeComponent.id == vwf.application())
+    if(nodeComponent && nodeComponent.id == Engine.application())
     {
         $(document).trigger('setstatebegin');
     }
@@ -1537,7 +1540,7 @@ this.createNode = function( nodeComponent, nodeAnnotation, callback_async /* ( n
                 } else { // uri is loaded
 
                     if ( nodePatch ) {
-                        vwf.setNode( components[nodeURI], nodePatch, function( nodeID ) /* async */ {
+                        Engine.setNode( components[nodeURI], nodePatch, function( nodeID ) /* async */ {
                             callback_async && callback_async( components[nodeURI] );  // TODO: is this leaving a series callback hanging if we don't call series_callback_async?
                         } );
                     } else {
@@ -1593,7 +1596,7 @@ this.createNode = function( nodeComponent, nodeAnnotation, callback_async /* ( n
 
                 // Create the node as an unnamed child global object.
 
-                vwf.createChild( 0, nodeAnnotation, nodeDescriptor, nodeURI, function( nodeID ) /* async */ {
+                Engine.createChild( 0, nodeAnnotation, nodeDescriptor, nodeURI, function( nodeID ) /* async */ {
                     nodeComponent = nodeID;
                     series_callback_async( undefined, undefined );
                 } );
@@ -1613,7 +1616,7 @@ this.createNode = function( nodeComponent, nodeAnnotation, callback_async /* ( n
                 nodeID = nodeComponent;
 
                 if ( nodePatch ) {
-                    vwf.setNode( nodeID, nodePatch, function( nodeID ) /* async */ {
+                    Engine.setNode( nodeID, nodePatch, function( nodeID ) /* async */ {
                         series_callback_async( undefined, undefined );
                     } );
                 } else {
@@ -1655,10 +1658,10 @@ this.createNode = function( nodeComponent, nodeAnnotation, callback_async /* ( n
             $('#loadstatus').remove();
             _ProgressBar.hide();
 
-            vwf.decendants(vwf.application()).forEach(function(i){
-                vwf.callMethod(i,'ready',[]);
+            Engine.decendants(Engine.application()).forEach(function(i){
+                Engine.callMethod(i,'ready',[]);
             });
-            vwf.callMethod(vwf.application(),'ready',[]);
+            Engine.callMethod(Engine.application(),'ready',[]);
 
         }
 
@@ -1670,7 +1673,7 @@ this.createNode = function( nodeComponent, nodeAnnotation, callback_async /* ( n
 
 // -- deleteNode ---------------------------------------------------------------------------
 
-/// @name module:vwf.deleteNode
+/// @name module:Engine.deleteNode
 /// 
 /// @see {@link module:vwf/api/kernel.deleteNode}
 
@@ -1692,7 +1695,7 @@ this.deleteNode = function( nodeID ) {
     // have run.
 
     this.children(nodeID).forEach(function(child){
-        vwf.deleteNode(child);
+        Engine.deleteNode(child);
     });
 
     this.models.forEach( function( model ) {
@@ -1731,7 +1734,7 @@ this.deleteNode = function( nodeID ) {
 /// in progress. createChild suspends the queue when necessary, but additional calls to
 /// suspend and resume the queue may be needed if other async operations are added.
 /// 
-/// @name module:vwf.setNode
+/// @name module:Engine.setNode
 /// 
 /// @see {@link module:vwf/api/kernel.setNode}
 
@@ -1745,12 +1748,12 @@ this.setNode = function( nodeID, nodeComponent, callback_async /* ( nodeID ) */ 
 
     // Set the internal state.
 
-    vwf.models.object.internals( nodeID, nodeComponent );
+    Engine.models.object.internals( nodeID, nodeComponent );
 
     // Suppress kernel reentry so that we can write the state without coloring from
     // any scripts.
 
-    vwf.models.kernel.disable();
+    Engine.models.kernel.disable();
 
     // Create the properties, methods, and events. For each item in each set, invoke
     // createProperty(), createMethod(), or createEvent() to create the field. Each
@@ -1770,9 +1773,9 @@ this.setNode = function( nodeID, nodeComponent, callback_async /* ( nodeID ) */ 
         // Create or initialize the property.
 
         if ( creating ) {
-            vwf.createProperty( nodeID, propertyName, propertyValue );
+            Engine.createProperty( nodeID, propertyName, propertyValue );
         } else {
-            vwf.setProperty( nodeID, propertyName, propertyValue );
+            Engine.setProperty( nodeID, propertyName, propertyValue );
         }  // TODO: delete when propertyValue === null in patch
 
     } );
@@ -1781,7 +1784,7 @@ this.setNode = function( nodeID, nodeComponent, callback_async /* ( nodeID ) */ 
 
     // Restore kernel reentry.
 
-    vwf.models.kernel.enable();
+    Engine.models.kernel.enable();
 
 
     async.series( [
@@ -1797,11 +1800,11 @@ this.setNode = function( nodeID, nodeComponent, callback_async /* ( nodeID ) */ 
                 var creating = ! nodeHasOwnChild.call( vwf, nodeID, childName );
 
                 if ( creating ) {
-                    vwf.createChild( nodeID, childName, nodeComponent.children[childName], undefined, function( childID ) /* async */ {  // TODO: add in original order from nodeComponent.children  // TODO: ensure id matches nodeComponent.children[childName].id  // TODO: propagate childURI + fragment identifier to children of a URI component?
+                    Engine.createChild( nodeID, childName, nodeComponent.children[childName], undefined, function( childID ) /* async */ {  // TODO: add in original order from nodeComponent.children  // TODO: ensure id matches nodeComponent.children[childName].id  // TODO: propagate childURI + fragment identifier to children of a URI component?
                         each_callback_async( undefined );
                     } );
                 } else {
-                    vwf.setNode( nodeComponent.children[childName].id || nodeComponent.children[childName].patches,
+                    Engine.setNode( nodeComponent.children[childName].id || nodeComponent.children[childName].patches,
                         nodeComponent.children[childName], function( childID ) /* async */ {
                             each_callback_async( undefined );
                         } );
@@ -1843,17 +1846,17 @@ this.setNode = function( nodeID, nodeComponent, callback_async /* ( nodeID ) */ 
                 // Suppress kernel reentry so that initialization functions don't make any
                 // changes during replication.
 
-                vwf.models.kernel.disable();
+                Engine.models.kernel.disable();
 
                 // Create each script.
 
                 scripts.forEach( function( script ) {
-                    vwf.execute( nodeID, script.text, script.type ); // TODO: callback
+                    Engine.execute( nodeID, script.text, script.type ); // TODO: callback
                 } );
 
                 // Restore kernel reentry.
 
-                vwf.models.kernel.enable();
+                Engine.models.kernel.enable();
 
                 series_callback_async( err, undefined );
             } );
@@ -1873,7 +1876,7 @@ this.setNode = function( nodeID, nodeComponent, callback_async /* ( nodeID ) */ 
 
 // -- getNode ------------------------------------------------------------------------------
 
-/// @name module:vwf.getNode
+/// @name module:Engine.getNode
 /// 
 /// @see {@link module:vwf/api/kernel.getNode}
 //start looking into continious resync of nodes. Here, we return a node stripped of the children, plus the count of nodes
@@ -1882,15 +1885,15 @@ this.setNode = function( nodeID, nodeComponent, callback_async /* ( nodeID ) */ 
 
 this.resyncNode = function(nodeID,node)
 {
-    if(nodeID == vwf.application()) return;
+    if(nodeID == Engine.application()) return;
     if(!node || !node.properties) return;
     var keys = Object.keys(node.properties);
     for(var j =0; j < keys.length; j++)
     {
         var i = keys[j];
         //dont use json compare, it is not robust enough
-        if(!Object.deepEquals(vwf.getProperty(nodeID,i),node.properties[i]))
-            vwf.setProperty(nodeID,i,node.properties[i]);
+        if(!Object.deepEquals(Engine.getProperty(nodeID,i),node.properties[i]))
+            Engine.setProperty(nodeID,i,node.properties[i]);
     }
 
 }
@@ -1898,7 +1901,7 @@ this.resyncNode = function(nodeID,node)
 this.activeResync = function() {
 
 
-    var nodes = nodes = vwf.decendants(vwf.application());
+    var nodes = nodes = Engine.decendants(Engine.application());
     var nodeID = nodes[Math.floor(Math.random() * nodes.length - .001)];
     var props = this.getProperties(nodeID);
 
@@ -1913,7 +1916,7 @@ this.activeResync = function() {
         count: nodes.length
     }
 }
-this.getNode = function( nodeID, full, normalize ) {  // TODO: options to include/exclude children, prototypes
+this.getNode = function( nodeID, full, normalize,includeContinueBase ) {  // TODO: options to include/exclude children, prototypes
 
     if(!nodeID) return undefined;
     this.logger.debuggx( "getNode", nodeID, full );
@@ -1981,7 +1984,7 @@ this.getNode = function( nodeID, full, normalize ) {  // TODO: options to includ
     // Suppress kernel reentry so that we can read the state without coloring from any
     // scripts.
 
-    vwf.models.kernel.disable();
+    Engine.models.kernel.disable();
 
     // Properties.
 
@@ -2059,14 +2062,14 @@ this.getNode = function( nodeID, full, normalize ) {  // TODO: options to includ
 
     // Restore kernel reentry.
 
-    vwf.models.kernel.enable();
+    Engine.models.kernel.enable();
 
     // Children.
 
     nodeComponent.children = {};
 
     this.children( nodeID ).forEach( function( childID ) {
-        nodeComponent.children[ this.name( childID ) ] = this.getNode( childID, full );
+        nodeComponent.children[ this.name( childID ) ] = this.getNode( childID, full , normalize, includeContinueBase);
     }, this );
 
     for ( var childName in nodeComponent.children ) {  // TODO: distinguish add, change, remove
@@ -2097,7 +2100,7 @@ this.getNode = function( nodeID, full, normalize ) {  // TODO: options to includ
     // Return the descriptor created, unless it was arranged as a patch and there were no
     // changes. Otherwise, return the URI if this is the root of a URI component.
 
-    if(nodeComponent.continues)
+    if(nodeComponent.continues && !includeContinueBase)
         nodeComponent = objectDiff(nodeComponent,continuesDefs[nodeComponent.continues + nodeID],false,false);
 
     if ( full || ! node.patchable || patched ) {
@@ -2153,8 +2156,8 @@ this.deleteMethod = function( nodeID, methodName) {
     } );
 
     //remove from the tickable queue.
-    if(methodName == 'tick' && vwf.tickable.nodeIDs.indexOf(nodeID) != -1)
-        vwf.tickable.nodeIDs.splice(vwf.tickable.nodeIDs.indexOf(nodeID),1);
+    if(methodName == 'tick' && Engine.tickable.nodeIDs.indexOf(nodeID) != -1)
+        Engine.tickable.nodeIDs.splice(Engine.tickable.nodeIDs.indexOf(nodeID),1);
 
 };
 
@@ -2174,7 +2177,7 @@ this.getMethods = function( nodeID ) {  // TODO: rework as a cover for getProper
             for ( var methodName in intermediate_methods ) {
                 model_methods[methodName] =
                     model.gettingMethod( nodeID, methodName, intermediate_methods[methodName] );
-                if ( vwf.models.kernel.blocked() ) {
+                if ( Engine.models.kernel.blocked() ) {
                     model_methods[methodName] = undefined; // ignore result from a blocked getter
                 }
             }
@@ -2250,7 +2253,7 @@ this.getEvents = function( nodeID ) {  // TODO: rework as a cover for getPropert
             for ( var eventName in intermediate_events ) {
                 model_events[eventName] =
                     model.gettingEvent( nodeID, eventName, intermediate_events[eventName] );
-                if ( vwf.models.kernel.blocked() ) {
+                if ( Engine.models.kernel.blocked() ) {
                     model_events[eventName] = undefined; // ignore result from a blocked getter
                 }
             }
@@ -2288,7 +2291,7 @@ this.getEvents = function( nodeID ) {  // TODO: rework as a cover for getPropert
 };
 // -- hashNode -----------------------------------------------------------------------------
 
-/// @name module:vwf.hashNode
+/// @name module:Engine.hashNode
 /// 
 /// @see {@link module:vwf/api/kernel.hashNode}
 
@@ -2347,13 +2350,13 @@ this.hashNode = function( nodeID ) {  // TODO: works with patches?  // TODO: onl
 /// and the driver callbacks suspend the queue when necessary, but additional calls to
 /// suspend and resume the queue may be needed if other async operations are added.
 /// 
-/// @name module:vwf.createChild
+/// @name module:Engine.createChild
 /// 
 /// @see {@link module:vwf/api/kernel.createChild}
 
 this.createDepth = 0;
 this.createChild = function( nodeID, childName, childComponent, childURI, callback_async /* ( childID ) */ ) {
-    vwf.createDepth++;
+    Engine.createDepth++;
     
     this.logger.debuggx( "createChild", function() {
         return [ nodeID, childName, JSON.stringify( loggableComponent( childComponent ) ), childURI ];
@@ -2429,7 +2432,7 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
     // the parent's child list is correct when following siblings calculate their index
     // numbers.
 
-    vwf.models.object.creatingNode( nodeID, childID, childPrototypeID, childBehaviorIDs,
+    Engine.models.object.creatingNode( nodeID, childID, childPrototypeID, childBehaviorIDs,
         childComponent.source, childComponent.type, childIndex, childName );  // TODO: move node metadata back to the kernel and only use vwf/model/object just as a property store?
 
     // Construct the node.
@@ -2567,15 +2570,15 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
                     // Create or find the prototype and save the ID in childPrototypeID.
 
                     if ( childComponent.extends !== null ) {  // TODO: any way to prevent node loading node as a prototype without having an explicit null prototype attribute in node?
-                        vwf.createNode( childComponent.extends || nodeTypeURI, function( prototypeID ) /* async */ {
+                        Engine.createNode( childComponent.extends || nodeTypeURI, function( prototypeID ) /* async */ {
                             childPrototypeID = prototypeID;
 
 // TODO: the GLGE driver doesn't handle source/type or properties in prototypes properly; as a work-around pull those up into the component when not already defined
                             if ( ! childComponent.source ) {
-                                var prototype_intrinsics = vwf.intrinsics( prototypeID );
+                                var prototype_intrinsics = Engine.intrinsics( prototypeID );
                                 if ( prototype_intrinsics.source ) {
-                                    var prototype_uri = vwf.uri( prototypeID );
-                                    var prototype_properties = vwf.getProperties( prototypeID );
+                                    var prototype_uri = Engine.uri( prototypeID );
+                                    var prototype_properties = Engine.getProperties( prototypeID );
                                     childComponent.source = require( "vwf/utility" ).resolveURI( prototype_intrinsics.source, prototype_uri );
                                     childComponent.type = prototype_intrinsics.type;
                                     childComponent.properties = childComponent.properties || {};
@@ -2603,7 +2606,7 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
                         [].concat( childComponent.implements ) : []; // accept either an array or a single item
 
                     async.map( behaviorComponents, function( behaviorComponent, map_callback_async /* ( err, result ) */ ) {
-                        vwf.createNode( behaviorComponent, function( behaviorID ) /* async */ {
+                        Engine.createNode( behaviorComponent, function( behaviorID ) /* async */ {
                             map_callback_async( undefined, behaviorID );
                         } );
                     }, function( err, behaviorIDs ) /* async */ {
@@ -2629,13 +2632,13 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
             // behaviors. vwf/model/object knows that we call it more than once and only
             // updates the new information.
 
-            vwf.models.object.creatingNode( nodeID, childID, childPrototypeID, childBehaviorIDs,
+            Engine.models.object.creatingNode( nodeID, childID, childPrototypeID, childBehaviorIDs,
                 childComponent.source, childComponent.type, childIndex, childName );  // TODO: move node metadata back to the kernel and only use vwf/model/object just as a property store?
 
             // Call creatingNode() on each model. The node is considered to be constructed
             // after all models have run.
 
-            async.forEachSeries( vwf.models, function( model, each_callback_async /* ( err ) */ ) {
+            async.forEachSeries( Engine.models, function( model, each_callback_async /* ( err ) */ ) {
 
                 var driver_ready = true;
 
@@ -2670,7 +2673,7 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
             // Call createdNode() on each view. The view is being notified of a node that has
             // been constructed.
 
-            async.forEach( vwf.views, function( view, each_callback_async /* ( err ) */ ) {
+            async.forEach( Engine.views, function( view, each_callback_async /* ( err ) */ ) {
 
                 var driver_ready = true;
 
@@ -2700,12 +2703,12 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
 
             // Set the internal state.
 
-            vwf.models.object.internals( childID, childComponent );
+            Engine.models.object.internals( childID, childComponent );
 
             // Suppress kernel reentry so that we can read the state without coloring from
             // any scripts.
 
-            replicating && vwf.models.kernel.disable();
+            replicating && Engine.models.kernel.disable();
 
             // Create the properties, methods, and events. For each item in each set, invoke
             // createProperty(), createMethod(), or createEvent() to create the field. Each
@@ -2749,9 +2752,9 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
                 // Create or initialize the property.
 
                 if ( creating ) {
-                    vwf.createProperty( childID, propertyName, value, get, set );
+                    Engine.createProperty( childID, propertyName, value, get, set );
                 } else {
-                    vwf.setProperty( childID, propertyName, value );
+                    Engine.setProperty( childID, propertyName, value );
                 }
 
             } );
@@ -2759,9 +2762,9 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
             childComponent.methods && jQuery.each( childComponent.methods, function( methodName, methodValue ) {
 
                 if ( valueHasBody( methodValue ) ) {
-                    vwf.createMethod( childID, methodName, methodValue.parameters, methodValue.body );
+                    Engine.createMethod( childID, methodName, methodValue.parameters, methodValue.body );
                 } else {
-                    vwf.createMethod( childID, methodName, undefined, methodValue );
+                    Engine.createMethod( childID, methodName, undefined, methodValue );
                 }
 
             } );
@@ -2770,16 +2773,16 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
 
 
                 if ( valueHasBody( eventValue ) ) {
-                    vwf.createEvent( childID, eventName, eventValue.parameters, eventValue.body );
+                    Engine.createEvent( childID, eventName, eventValue.parameters, eventValue.body );
                 } else {
-                    vwf.createEvent( childID, eventName, undefined );
+                    Engine.createEvent( childID, eventName, undefined );
                 }
 
             } );
 
             // Restore kernel reentry.
 
-            replicating && vwf.models.kernel.enable();
+            replicating && Engine.models.kernel.enable();
 
             // Create and attach the children. For each child, call createChild() with the
             // child's component specification. createChild() delegates to the models and
@@ -2788,7 +2791,7 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
             async.forEach( Object.keys( childComponent.children || {} ), function( childName, each_callback_async /* ( err ) */ ) {
                 var childValue = childComponent.children[childName];
 
-                vwf.createChild( childID, childName, childValue, undefined, function( childID ) /* async */ {  // TODO: add in original order from childComponent.children  // TODO: propagate childURI + fragment identifier to children of a URI component?
+                Engine.createChild( childID, childName, childValue, undefined, function( childID ) /* async */ {  // TODO: add in original order from childComponent.children  // TODO: propagate childURI + fragment identifier to children of a URI component?
                     each_callback_async( undefined );
                 } );
 
@@ -2828,35 +2831,35 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
                 // Watch for any async kernel calls generated as we run the scripts and wait
                 // for them complete before completing the node.
 
-                vwf.models.kernel.capturingAsyncs( function() {
+                Engine.models.kernel.capturingAsyncs( function() {
 
                     // Suppress kernel reentry so that initialization functions don't make
                     // any changes during replication.
 
-                    replicating && vwf.models.kernel.disable();
+                    replicating && Engine.models.kernel.disable();
 
                     // Create each script.
 
                     scripts.forEach( function( script ) {
-                        vwf.execute( childID, script.text, script.type ); // TODO: callback
+                        Engine.execute( childID, script.text, script.type ); // TODO: callback
                     } );
 
                     // Perform initializations for properties with setter functions. These
                     // are assigned here so that the setters run on a fully-constructed node.
 
                     Object.keys( deferredInitializations ).forEach( function( propertyName ) {
-                        vwf.setProperty( childID, propertyName, deferredInitializations[propertyName] );
+                        Engine.setProperty( childID, propertyName, deferredInitializations[propertyName] );
                     } );
 
 // TODO: Adding the node to the tickable list here if it contains a tick() function in JavaScript at initialization time. Replace with better control of ticks on/off and the interval by the node.
 
-                    if ( vwf.execute( childID, "Boolean( this.tick )" ) ) {
-                        vwf.tickable.nodeIDs.push( childID );
+                    if ( Engine.execute( childID, "Boolean( this.tick )" ) ) {
+                        Engine.tickable.nodeIDs.push( childID );
                     }
 
                     // Restore kernel reentry.
 
-                    replicating && vwf.models.kernel.enable();
+                    replicating && Engine.models.kernel.enable();
 
                 }, function() {
 
@@ -2870,18 +2873,18 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
                     // for each prototype also call initializingNodeFromPrototype() to allow
                     // model drivers to apply the prototypes' initializers to the node.
 
-                    async.forEachSeries( vwf.prototypes( childID, true ).reverse().concat( childID ),
+                    async.forEachSeries( Engine.prototypes( childID, true ).reverse().concat( childID ),
                         function( childInitializingNodeID, each_callback_async /* err */ ) {
 
                             // Call initializingNode() on each model.
 
-                            vwf.models.kernel.capturingAsyncs( function() {
+                            Engine.models.kernel.capturingAsyncs( function() {
 
-                                vwf.models.forEach( function( model ) {
+                                Engine.models.forEach( function( model ) {
 
                                     // Suppress kernel reentry so that initialization functions
                                     // don't make any changes during replication.
-                                    replicating && vwf.models.kernel.disable();
+                                    replicating && Engine.models.kernel.disable();
 
                                     // For a prototype, call `initializingNodeFromPrototype` to
                                     // run the prototype's initializer on the node. For the
@@ -2905,7 +2908,7 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
                                     }
 
                                     // Restore kernel reentry.
-                                    replicating && vwf.models.kernel.enable();
+                                    replicating && Engine.models.kernel.enable();
 
                                 } );
 
@@ -2917,7 +2920,7 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
 
                             // Call initializedNode() on each view.
 
-                            vwf.views.forEach( function( view ) {
+                            Engine.views.forEach( function( view ) {
                                 view.initializedNode && view.initializedNode( nodeID, childID, childPrototypeID, childBehaviorIDs,
                                     childComponent.source, childComponent.type, childIndex, childName );
                             } );
@@ -2965,7 +2968,7 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
 
 // -- deleteChild --------------------------------------------------------------------------
 
-/// @name module:vwf.deleteChild
+/// @name module:Engine.deleteChild
 /// 
 /// @see {@link module:vwf/api/kernel.deleteChild}
 
@@ -2983,7 +2986,7 @@ this.deleteChild = function( nodeID, childName ) {
 
 // -- addChild -----------------------------------------------------------------------------
 
-/// @name module:vwf.addChild
+/// @name module:Engine.addChild
 /// 
 /// @see {@link module:vwf/api/kernel.addChild}
 
@@ -3010,7 +3013,7 @@ this.addChild = function( nodeID, childID, childName ) {
 
 // -- removeChild --------------------------------------------------------------------------
 
-/// @name module:vwf.removeChild
+/// @name module:Engine.removeChild
 /// 
 /// @see {@link module:vwf/api/kernel.removeChild}
 
@@ -3075,7 +3078,7 @@ this.decendants = function(nodeID)
     var walk = function(nodeid)
     {
         if(!nodeid) return;
-        var children = vwf.children(nodeid);
+        var children = Engine.children(nodeid);
         if(children)
         {
             list = list.concat(children);
@@ -3093,7 +3096,7 @@ this.decendants = function(nodeID)
 
 this.children = function( nodeID ) {  // TODO: no need to pass through all models; maintain a single truth in vwf/model/object and delegate there directly
 
-    this.logger.group( "vwf.children " + nodeID );
+    this.logger.group( "Engine.children " + nodeID );
 
     // Call childrening() on each model. The return value is the union of the non-undefined
     // results.
@@ -3131,7 +3134,7 @@ this.name = function( nodeID ) {  // TODO: no need to pass through all models; m
 
 /// Set all of the properties for a node.
 /// 
-/// @name module:vwf.setProperties
+/// @name module:Engine.setProperties
 /// 
 /// @see {@link module:vwf/api/kernel.setProperties}
 
@@ -3161,7 +3164,7 @@ this.setProperties = function( nodeID, properties ) {  // TODO: rework as a cove
 
                     model_properties[propertyName] =
                         model.settingProperty( nodeID, propertyName, properties[propertyName] );
-                    if ( vwf.models.kernel.blocked() ) {
+                    if ( Engine.models.kernel.blocked() ) {
                         model_properties[propertyName] = undefined; // ignore result from a blocked setter
                     }
 
@@ -3216,7 +3219,7 @@ this.setProperties = function( nodeID, properties ) {  // TODO: rework as a cove
 
 /// Get all of the properties for a node.
 /// 
-/// @name module:vwf.getProperties
+/// @name module:Engine.getProperties
 /// 
 /// @see {@link module:vwf/api/kernel.getProperties}
 
@@ -3244,7 +3247,7 @@ this.getProperties = function( nodeID ) {  // TODO: rework as a cover for getPro
 
                 model_properties[propertyName] =
                     model.gettingProperty( nodeID, propertyName, intermediate_properties[propertyName] );
-                if ( vwf.models.kernel.blocked() ) {
+                if ( Engine.models.kernel.blocked() ) {
                     model_properties[propertyName] = undefined; // ignore result from a blocked getter
                 }
 
@@ -3289,7 +3292,7 @@ this.getProperties = function( nodeID ) {  // TODO: rework as a cover for getPro
 
 /// Create a property on a node and assign an initial value.
 /// 
-/// @name module:vwf.createProperty
+/// @name module:Engine.createProperty
 /// 
 /// @see {@link module:vwf/api/kernel.createProperty}
 
@@ -3334,7 +3337,7 @@ this.createProperty = function( nodeID, propertyName, propertyValue, propertyGet
 
 /// Set a property value on a node.
 /// 
-/// @name module:vwf.setProperty
+/// @name module:Engine.setProperty
 /// 
 /// @see {@link module:vwf/api/kernel.setProperty}
 
@@ -3516,10 +3519,59 @@ this.setProperty.entrants = {}; // maps ( nodeID + '-' + propertyName ) => { ind
 
 /// Get a property value for a node.
 /// 
-/// @name module:vwf.getProperty
+/// @name module:Engine.getProperty
 /// 
 /// @see {@link module:vwf/api/kernel.getProperty}
 
+this.getPropertyFast = function(nodeID, propertyName)
+{
+    var answer = undefined;
+    for(var i =0; i < this.models.length; i++)
+    {
+        if(this.models[i].gettingProperty)
+        {
+            var ret = this.models[i].gettingProperty(nodeID,propertyName)
+            if(ret !== undefined)
+                return ret;
+        }
+
+    }
+    if(answer == undefined)
+    {
+        var proto = Engine.prototype(nodeID);
+        if(proto)
+            answer = Engine.getPropertyFast(proto,propertyName);
+    }
+    return answer;
+}
+this.setPropertyFastEntrants = [];
+this.setPropertyFast = function(nodeID, propertyName,propertyValue)
+{
+    var answer = undefined;
+    for(var i =0; i < this.models.length; i++)
+    {
+      //  if(!this.setPropertyFastEntrants[nodeID + propertyName + i])
+        if(this.models[i].settingProperty)
+        {
+        //    this.setPropertyFastEntrants[nodeID + propertyName + i] = true;
+            
+            var ret = this.models[i].settingProperty(nodeID,propertyName,propertyValue)
+          //  delete this.setPropertyFastEntrants[nodeID + propertyName + i];    
+            
+            
+            if(ret !== undefined)
+                answer = ret;
+        }
+    }
+    for(var i =0; i < this.views.length; i++)
+    {
+        if(this.views[i].satProperty)
+        {
+            this.views[i].satProperty(nodeID,propertyName,answer)
+        }
+    }
+    return answer;
+},
 this.getProperty = function( nodeID, propertyName, ignorePrototype, testDelegation) {
 
     this.logger.debuggx( "getProperty", nodeID, propertyName );
@@ -3684,7 +3736,7 @@ this.getProperty.entrants = {}; // maps ( nodeID + '-' + propertyName ) => { ind
 
 // -- createMethod -------------------------------------------------------------------------
 
-/// @name module:vwf.createMethod
+/// @name module:Engine.createMethod
 /// 
 /// @see {@link module:vwf/api/kernel.createMethod}
 
@@ -3708,15 +3760,15 @@ this.createMethod = function( nodeID, methodName, methodParameters, methodBody )
 
     if(methodName == 'tick')
     {
-        if(vwf.tickable.nodeIDs.indexOf(nodeID) < 0)
-            vwf.tickable.nodeIDs.push(nodeID)
+        if(Engine.tickable.nodeIDs.indexOf(nodeID) < 0)
+            Engine.tickable.nodeIDs.push(nodeID)
     }
     this.logger.debugu();
 };
 
 // -- callMethod ---------------------------------------------------------------------------
 
-/// @name module:vwf.callMethod
+/// @name module:Engine.callMethod
 /// 
 /// @see {@link module:vwf/api/kernel.callMethod}
 
@@ -3749,7 +3801,7 @@ this.callMethod = function( nodeID, methodName, methodParameters ) {
 
 // -- createEvent --------------------------------------------------------------------------
 
-/// @name module:vwf.creatEvent
+/// @name module:Engine.creatEvent
 /// 
 /// @see {@link module:vwf/api/kernel.createEvent}
 
@@ -3776,7 +3828,7 @@ this.createEvent = function( nodeID, eventName, eventParameters, eventBody ) {  
 
 // -- fireEvent ----------------------------------------------------------------------------
 
-/// @name module:vwf.fireEvent
+/// @name module:Engine.fireEvent
 /// 
 /// @see {@link module:vwf/api/kernel.fireEvent}
 
@@ -3809,7 +3861,7 @@ this.fireEvent = function( nodeID, eventName, eventParameters ) {
 /// the path from the global root to the node. Cancel when one of the handlers returns a
 /// truthy value to indicate that it has handled the event.
 /// 
-/// @name module:vwf.dispatchEvent
+/// @name module:Engine.dispatchEvent
 /// 
 /// @see {@link module:vwf/api/kernel.dispatchEvent}
 
@@ -3898,7 +3950,7 @@ this.dispatchEvent = function( nodeID, eventName, eventParameters, eventNodePara
 
 // -- execute ------------------------------------------------------------------------------
 
-/// @name module:vwf.execute
+/// @name module:Engine.execute
 /// 
 /// @see {@link module:vwf/api/kernel.execute}
 
@@ -3922,8 +3974,8 @@ this.execute = function( nodeID, scriptText, scriptType, callback_async /* resul
     // Watch for any async kernel calls generated as we execute the scriptText and wait for
     // them to complete before calling the callback.
 
-    vwf.models.kernel.capturingAsyncs( function() {
-        vwf.models.some( function( model ) {
+    Engine.models.kernel.capturingAsyncs( function() {
+        Engine.models.some( function( model ) {
             scriptValue = model.executing &&
                 model.executing( nodeID, scriptText, scriptType );
             return scriptValue !== undefined;
@@ -3931,7 +3983,7 @@ this.execute = function( nodeID, scriptText, scriptType, callback_async /* resul
 
         // Call executed() on each view to notify view that a script has been executed.
 
-        vwf.views.forEach( function( view ) {
+        Engine.views.forEach( function( view ) {
             view.executed && view.executed( nodeID, scriptText, scriptType );
         } );
 
@@ -3946,7 +3998,7 @@ this.execute = function( nodeID, scriptText, scriptType, callback_async /* resul
 
 // -- random -------------------------------------------------------------------------------
 
-/// @name module:vwf.random
+/// @name module:Engine.random
 /// 
 /// @see {@link module:vwf/api/kernel.random}
 
@@ -3956,7 +4008,7 @@ this.random = function( nodeID ) {
 
 // -- seed ---------------------------------------------------------------------------------
 
-/// @name module:vwf.seed
+/// @name module:Engine.seed
 /// 
 /// @see {@link module:vwf/api/kernel.seed}
 
@@ -3968,7 +4020,7 @@ this.seed = function( nodeID, seed ) {
 
 /// The current simulation time.
 /// 
-/// @name module:vwf.time
+/// @name module:Engine.time
 /// 
 /// @see {@link module:vwf/api/kernel.time}
 
@@ -3981,7 +4033,7 @@ this.time = function() {
 /// The moniker of the client responsible for the current action. Will be falsy for actions
 /// originating in the server, such as time ticks.
 /// 
-/// @name module:vwf.client
+/// @name module:Engine.client
 /// 
 /// @see {@link module:vwf/api/kernel.client}
 
@@ -3993,7 +4045,7 @@ this.client = function() {
 
 /// The identifer the server assigned to this client.
 /// 
-/// @name module:vwf.moniker
+/// @name module:Engine.moniker
 /// 
 /// @see {@link module:vwf/api/kernel.moniker}
 
@@ -4003,7 +4055,7 @@ this.moniker = function() {
 
 // -- application --------------------------------------------------------------------------
 
-/// @name module:vwf.application
+/// @name module:Engine.application
 /// 
 /// @see {@link module:vwf/api/kernel.application}
 
@@ -4014,7 +4066,7 @@ this.application = function( initializedOnly ) {
 
 // -- intrinsics ---------------------------------------------------------------------------
 
-/// @name module:vwf.intrinsics
+/// @name module:Engine.intrinsics
 /// 
 /// @see {@link module:vwf/api/kernel.intrinsics}
 
@@ -4024,7 +4076,7 @@ this.intrinsics = function( nodeID, result ) {
 
 // -- uri ----------------------------------------------------------------------------------
 
-/// @name module:vwf.uri
+/// @name module:Engine.uri
 /// 
 /// @see {@link module:vwf/api/kernel.uri}
 
@@ -4034,7 +4086,7 @@ this.uri = function( nodeID ) {
 
 // -- name ---------------------------------------------------------------------------------
 
-/// @name module:vwf.name
+/// @name module:Engine.name
 /// 
 /// @see {@link module:vwf/api/kernel.name}
 
@@ -4044,7 +4096,7 @@ this.name = function( nodeID ) {
 
 // -- prototype ----------------------------------------------------------------------------
 
-/// @name module:vwf.prototype
+/// @name module:Engine.prototype
 /// 
 /// @see {@link module:vwf/api/kernel.prototype}
 
@@ -4055,7 +4107,7 @@ this.prototype = function( nodeID ) {
 
 // -- prototypes ---------------------------------------------------------------------------
 
-/// @name module:vwf.prototypes
+/// @name module:Engine.prototypes
 /// 
 /// @see {@link module:vwf/api/kernel.prototypes}
 
@@ -4086,7 +4138,7 @@ this.prototypes = function( nodeID, includeBehaviors ) {
 
 // -- behaviors ----------------------------------------------------------------------------
 
-/// @name module:vwf.behaviors
+/// @name module:Engine.behaviors
 /// 
 /// @see {@link module:vwf/api/kernel.behaviors}
 
@@ -4096,7 +4148,7 @@ this.behaviors = function( nodeID ) {
 
 // -- ancestors ----------------------------------------------------------------------------
 
-/// @name module:vwf.ancestors
+/// @name module:Engine.ancestors
 /// 
 /// @see {@link module:vwf/api/kernel.ancestors}
 
@@ -4116,7 +4168,7 @@ this.ancestors = function( nodeID, initializedOnly ) {
 
 // -- parent -------------------------------------------------------------------------------
 
-/// @name module:vwf.parent
+/// @name module:Engine.parent
 /// 
 /// @see {@link module:vwf/api/kernel.parent}
 
@@ -4127,7 +4179,7 @@ this.parent = function( nodeID, initializedOnly ) {
 
 // -- children -----------------------------------------------------------------------------
 
-/// @name module:vwf.children
+/// @name module:Engine.children
 /// 
 /// @see {@link module:vwf/api/kernel.children}
 
@@ -4143,7 +4195,7 @@ this.children = function( nodeID ) {
 
 // -- descendants --------------------------------------------------------------------------
 
-/// @name module:vwf.descendants
+/// @name module:Engine.descendants
 /// 
 /// @see {@link module:vwf/api/kernel.descendants}
 
@@ -4166,7 +4218,7 @@ this.descendants = function( nodeID ) {
 
 // -- sequence -----------------------------------------------------------------------------
 
-/// @name module:vwf.sequence
+/// @name module:Engine.sequence
 /// 
 /// @see {@link module:vwf/api/kernel.sequence}
 
@@ -4174,9 +4226,9 @@ this.sequence = function( nodeID ) {
     return this.models.object.sequence( nodeID );
 };
 
-/// Locate nodes matching a search pattern. See vwf.api.kernel#find for details.
+/// Locate nodes matching a search pattern. See Engine.api.kernel#find for details.
 /// 
-/// @name module:vwf.find
+/// @name module:Engine.find
 ///
 /// @param {ID} nodeID
 ///   The reference node. Relative patterns are resolved with respect to this node. `nodeID`
@@ -4239,7 +4291,7 @@ this.find = function( nodeID, matchPattern, initializedOnly, callback /* ( match
 
 /// Locate client nodes matching a search pattern. 
 ///
-/// @name module:vwf.findClients
+/// @name module:Engine.findClients
 ///
 /// @param {ID} nodeID
 ///   The reference node. Relative patterns are resolved with respect to this node. `nodeID`
@@ -4273,9 +4325,9 @@ this.findClients = function( nodeID, matchPattern, callback /* ( matchID ) */ ) 
 
 };
 
-/// Test a node against a search pattern. See vwf.api.kernel#test for details.
+/// Test a node against a search pattern. See Engine.api.kernel#test for details.
 /// 
-/// @name module:vwf.test
+/// @name module:Engine.test
 /// 
 /// @param {ID} nodeID
 ///   The reference node. Relative patterns are resolved with respect to this node. `nodeID`
@@ -4520,7 +4572,7 @@ var componentIsDescriptor = function( candidate ) {
 /// @returns {Boolean}
 
 var componentIsID = function( candidate ) {
-    return isPrimitive( candidate ) && vwf.models.object.exists( candidate );
+    return isPrimitive( candidate ) && Engine.models.object.exists( candidate );
 };
 
 /// Determine if a value is a JavaScript primitive, or the boxed version of a JavaScript
@@ -4686,7 +4738,7 @@ var valueHasType = function( candidate ) {  // TODO: refactor and share with val
 };
 
 /// Convert a (potentially-abbreviated) component specification to a descriptor parsable by
-/// vwf.createChild. The following forms are accepted:
+/// Engine.createChild. The following forms are accepted:
 /// 
 ///   - Descriptor: { extends: component, source: ..., type: ..., ... }
 ///   - Component URI: http://host/path/to/component.vwf
@@ -5496,7 +5548,7 @@ var nodeCollectionPrototype = {
 /// 
 /// @name module:vwf~nodes
 
-function objectDiff (obj1, obj2,noRecurse,stringCompare) {
+window.objectDiff =function (obj1, obj2,noRecurse,stringCompare) {
    var delta = {};
 
     if( obj1 != obj2 && typeof obj1 == typeof obj2 && typeof obj1 == "number")
@@ -5966,7 +6018,7 @@ var queue = this.private.queue = {
         // to the host after invoking insert with chronic set.
 
         if ( chronic ) {
-            vwf.dispatch();
+            Engine.dispatch();
         }
 
     },
@@ -6009,10 +6061,10 @@ var queue = this.private.queue = {
     suspend: function( why ) {
 
         if ( this.suspension++ == 0 ) {
-            vwf.logger.infox( "-queue#suspend", "suspending queue at time", vwf.now, why ? why : "" );
+            Engine.logger.infox( "-queue#suspend", "suspending queue at time", Engine.now, why ? why : "" );
             return true;
         } else {
-            vwf.logger.debugx( "-queue#suspend", "further suspending queue at time", vwf.now, why ? why : "" );
+            Engine.logger.debugx( "-queue#suspend", "further suspending queue at time", Engine.now, why ? why : "" );
             return false;
         }
 
@@ -6031,11 +6083,11 @@ var queue = this.private.queue = {
     resume: function( why ) {
 
         if ( --this.suspension == 0 ) {
-            vwf.logger.infox( "-queue#resume", "resuming queue at time", vwf.now, why ? why : "" );
-            vwf.dispatch();
+            Engine.logger.infox( "-queue#resume", "resuming queue at time", Engine.now, why ? why : "" );
+            Engine.dispatch();
             return true;
         } else {
-            vwf.logger.debugx( "-queue#resume", "partially resuming queue at time", vwf.now, why ? why : "" );
+            Engine.logger.debugx( "-queue#resume", "partially resuming queue at time", Engine.now, why ? why : "" );
             return false;
         }
 

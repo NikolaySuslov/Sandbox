@@ -44,9 +44,8 @@ define([
     "vwf/kernel/model",
     "vwf/model/javascript",
     "ometa",
-    "vwf/model/jiglib",
     "vwf/model/threejs",
-    "vwf/model/scenejs",
+   
     "vwf/model/wires",
     "vwf/model/object",
     "vwf/model/stage/log",
@@ -55,7 +54,7 @@ define([
     'vwf/view/editorview/lib/angular',
     "vwf/view/EditorView",
     "vwf/view/threejs",
-    "vwf/view/googleEarth",
+   
     "vwf/utility",
     "vwf/view/WebRTC",
     "vwf/model/audio",

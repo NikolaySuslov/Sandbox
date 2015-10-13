@@ -185,7 +185,7 @@ define(["module", "vwf/view"], function(module, view)
         },
         getScreenCenter: function()
         {
-            if (this.isGUINode(vwf.prototype(this.getCreateParentNode())))
+            if (this.isGUINode(Engine.prototype(this.getCreateParentNode())))
                 return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
             return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 50, 50, 0, 1]; //when creating on a 3D asset, default to center of screen
         },
@@ -201,55 +201,55 @@ define(["module", "vwf/view"], function(module, view)
         {
             if (!childExtendsID) return false;
             if (childExtendsID == 'http-vwf-example-com-uielement-vwf') return true;
-            return this.isGUINode(vwf.prototype(childExtendsID));
+            return this.isGUINode(Engine.prototype(childExtendsID));
         },
         isDialog: function(childExtendsID)
         {
             if (!childExtendsID) return false;
             if (childExtendsID == 'http-vwf-example-com-dialog-vwf') return true;
-            return this.isDialog(vwf.prototype(childExtendsID));
+            return this.isDialog(Engine.prototype(childExtendsID));
         },
         isSlider: function(childExtendsID)
         {
             if (!childExtendsID) return false;
             if (childExtendsID == 'http-vwf-example-com-slider-vwf') return true;
-            return this.isSlider(vwf.prototype(childExtendsID));
+            return this.isSlider(Engine.prototype(childExtendsID));
         },
         isButton: function(childExtendsID)
         {
             if (!childExtendsID) return false;
             if (childExtendsID == 'http-vwf-example-com-button-vwf') return true;
-            return this.isButton(vwf.prototype(childExtendsID));
+            return this.isButton(Engine.prototype(childExtendsID));
         },
         isCheckbox: function(childExtendsID)
         {
             if (!childExtendsID) return false;
             if (childExtendsID == 'http-vwf-example-com-checkbox-vwf') return true;
-            return this.isCheckbox(vwf.prototype(childExtendsID));
+            return this.isCheckbox(Engine.prototype(childExtendsID));
         },
         isLabel: function(childExtendsID)
         {
             if (!childExtendsID) return false;
             if (childExtendsID == 'http-vwf-example-com-label-vwf') return true;
-            return this.isLabel(vwf.prototype(childExtendsID));
+            return this.isLabel(Engine.prototype(childExtendsID));
         },
         isPanel: function(childExtendsID)
         {
             if (!childExtendsID) return false;
             if (childExtendsID == 'http-vwf-example-com-panel-vwf') return true;
-            return this.isPanel(vwf.prototype(childExtendsID));
+            return this.isPanel(Engine.prototype(childExtendsID));
         },
         isImage: function(childExtendsID)
         {
             if (!childExtendsID) return false;
             if (childExtendsID == 'http-vwf-example-com-image-vwf') return true;
-            return this.isImage(vwf.prototype(childExtendsID));
+            return this.isImage(Engine.prototype(childExtendsID));
         },
         isHtml: function (childExtendsID)
         {
             if (childExtendsID == 'http-vwf-example-com-html-vwf') return true;
             else if (!childExtendsID) return false;
-            else return this.isHtml(vwf.prototype(childExtendsID));
+            else return this.isHtml(Engine.prototype(childExtendsID));
         },
         createdNode: function(nodeID, childID, childExtendsID, childImplementsIDs, childSource, childType, childURI, childName, callback /* ( ready ) */ )
         {
@@ -287,8 +287,8 @@ define(["module", "vwf/view"], function(module, view)
                     {
                         if (this.inSetter) return;
                         var pos = goog.vec.Mat4.createIdentity();
-                        pos[12] = ui.position.left / ($('#guioverlay_' + vwf.parent(this.vwfID)).width());
-                        pos[13] = ui.position.top / ($('#guioverlay_' + vwf.parent(this.vwfID)).height());
+                        pos[12] = ui.position.left / ($('#guioverlay_' + Engine.parent(this.vwfID)).width());
+                        pos[13] = ui.position.top / ($('#guioverlay_' + Engine.parent(this.vwfID)).height());
                         pos[12] *= 100;
                         pos[13] *= 100;
                         vwf_view.kernel.setProperty(this.vwfID, 'transform', matCpy(pos));
@@ -488,7 +488,7 @@ define(["module", "vwf/view"], function(module, view)
             else if (propertyName == 'visibleToCamera')
             {
                 node.visibleToCamera = propertyValue;
-                if ((!propertyValue || propertyValue === this.activeCamera) && vwf.getProperty(node.id, 'visible'))
+                if ((!propertyValue || propertyValue === this.activeCamera) && Engine.getProperty(node.id, 'visible'))
                     this.setNodeVisibility(node, true);
                 else
                     this.setNodeVisibility(node, false);
@@ -596,7 +596,7 @@ define(["module", "vwf/view"], function(module, view)
                     else
                     {
                         propertyName = 'background_color';
-                        propertyValue = vwf.getProperty(node.id, 'background_color');
+                        propertyValue = Engine.getProperty(node.id, 'background_color');
                     }
                 }
                 if (propertyName == 'background_color' && !(node.style && node.style['background-color']))
@@ -627,7 +627,7 @@ define(["module", "vwf/view"], function(module, view)
             for (var i in this.guiNodes)
             {
                 var node = this.guiNodes[i];
-                if ((!node.visibleToCamera || node.visibleToCamera === this.activeCamera) && vwf.getProperty(node.id, 'visible'))
+                if ((!node.visibleToCamera || node.visibleToCamera === this.activeCamera) && Engine.getProperty(node.id, 'visible'))
                     this.setNodeVisibility(node, true);
                 else
                     this.setNodeVisibility(node, false);
@@ -635,7 +635,7 @@ define(["module", "vwf/view"], function(module, view)
         },
         calledMethod: function(id, name, params)
         {
-            if (id === 'index-vwf' && name === 'setClientCamera' && params[0] === vwf.moniker())
+            if (id === 'index-vwf' && name === 'setClientCamera' && params[0] === Engine.moniker())
             {
                 this.activeCamera = params[1];
                 this.updateVisiblity();

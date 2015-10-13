@@ -1,3 +1,4 @@
+"use strict";
 (function() {
     function modifier(childID, childSource, childName) {
         this.active = true;

@@ -38,7 +38,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 						else if(!prototype)
 							return false;
 						else
-							return inherits(vwf.prototype(prototype), className);
+							return inherits(Engine.prototype(prototype), className);
 					}
 
 					var node = $scope.fields.nodes[nodeId];
@@ -449,7 +449,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 
 			function reparentTo(nodeId, parentId)
 			{
-				var val = vwf.getNode(nodeId);
+				var val = Engine.getNode(nodeId);
 
 				_UndoManager.startCompoundEvent();
 

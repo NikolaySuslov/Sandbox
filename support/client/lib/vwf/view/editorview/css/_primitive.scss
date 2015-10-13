@@ -15,4 +15,19 @@
         width: 30%;
         border-radius: 5px;
     }
+
+    .method-container{
+        width: 100%;
+        float: left;
+        clear: both;
+        margin: 4px 0;
+
+        button{
+            width: 45%;
+            height: 20px;
+            float: none;
+            margin: 0 auto;
+            display: block;
+        }
+    }
 }

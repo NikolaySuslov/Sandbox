@@ -198,9 +198,9 @@ define(["vwf/view/threejs/oldCameraController", "vwf/view/threejs/AvatarCameraCo
     }
     editorCameraController.prototype.postrender = function(e)
     {
-        this.camera.near = .01;;
-        this.camera.far = 5000;
-        this.camera.updateProjectionMatrix();
+        //this.camera.near = .01;;
+       // this.camera.far = 5000;
+       // this.camera.updateProjectionMatrix();
     }
     editorCameraController.prototype.updateCamera = function(e)
     {

@@ -426,7 +426,7 @@ var transformTool = function()
         {
             for (var i = 0; i < _Editor.getSelectionCount(); i++)
             {
-                var undo = new _UndoManager.SetPropertyEvent(_Editor.GetSelectedVWFID(i), 'transform', vwf.getProperty(_Editor.GetSelectedVWFID(i), 'transform'));
+                var undo = new _UndoManager.SetPropertyEvent(_Editor.GetSelectedVWFID(i), 'transform', Engine.getProperty(_Editor.GetSelectedVWFID(i), 'transform'));
                 undo.oldval = this.mouseDownTransforms[_Editor.GetSelectedVWFID(i)];
                 this.masterUndoRecord.push(undo);
             }
@@ -443,9 +443,9 @@ var transformTool = function()
         var axis = -1;
         for (var i = 0; i < this.getGizmoBody().children.length; i++)
         {
-            if (vwf.views[0].lastPick)
-                if (vwf.views[0].lastPick.object)
-                    if (vwf.views[0].lastPick.object == this.getGizmoBody().children[i]) axis = this.allChildren.indexOf(this.getGizmoBody().children[i]);
+            if (Engine.views[0].lastPick)
+                if (Engine.views[0].lastPick.object)
+                    if (Engine.views[0].lastPick.object == this.getGizmoBody().children[i]) axis = this.allChildren.indexOf(this.getGizmoBody().children[i]);
         }
         if (axis !== -1)
         {
@@ -457,12 +457,12 @@ var transformTool = function()
             for (var i = 0; i < _Editor.getSelectionCount(); i++)
             {
                 var ID = _Editor.GetSelectedVWFID(i);
-                var transform = vwf.getProperty(ID, 'worldTransform');
+                var transform = Engine.getProperty(ID, 'worldTransform');
                 var translation = [transform[12], transform[13], transform[14]]
                 this.mouseDownOffsets[ID] = MATH.subVec3(this.getPosition(), translation)
-                this.mouseDownTransforms[ID] = vwf.getProperty(ID, 'transform');
-                this.mouseDownWorldTransforms[ID] = vwf.getProperty(ID, 'worldTransform');
-                this.mouseDownWorldTransforms[vwf.parent(ID)] = vwf.getProperty(vwf.parent(ID), 'worldTransform');
+                this.mouseDownTransforms[ID] = Engine.getProperty(ID, 'transform');
+                this.mouseDownWorldTransforms[ID] = Engine.getProperty(ID, 'worldTransform');
+                this.mouseDownWorldTransforms[Engine.parent(ID)] = Engine.getProperty(Engine.parent(ID), 'worldTransform');
             }
             var worldRay = _Editor.GetWorldPickRay(e);
             this.mouseDownOrigin = this.getPosition();
@@ -479,7 +479,7 @@ var transformTool = function()
         var axis = -1;
         for (var i = 0; i < this.getGizmoBody().children.length; i++)
         {
-            if (vwf.views[0].lastPick && vwf.views[0].lastPick.object && vwf.views[0].lastPick.object == this.getGizmoBody().children[i]) axis = i;
+            if (Engine.views[0].lastPick && Engine.views[0].lastPick.object && Engine.views[0].lastPick.object == this.getGizmoBody().children[i]) axis = i;
         }
         for (var i = 0; i < this.getGizmoBody().children.length; i++)
         {
@@ -659,8 +659,8 @@ var transformTool = function()
         {
             var ID = _Editor.GetSelectedVWFID(i)
             var mouseDownOffset = this.mouseDownOffsets[ID];
-            var t = vwf.getProperty(ID, 'transform')
-            var pt = this.mouseDownWorldTransforms[vwf.parent(ID)];
+            var t = Engine.getProperty(ID, 'transform')
+            var pt = this.mouseDownWorldTransforms[Engine.parent(ID)];
             var wt = this.mouseDownWorldTransforms[ID]
             var tmat = new THREE.Matrix4();
             tmat.elements.set(t);
@@ -683,7 +683,7 @@ var transformTool = function()
                 newLocalmat.multiplyMatrices(ptmatInv, wtmat);
                 var newt = newLocalmat.elements;
                 if (TESTING)
-                    vwf.setProperty(_Editor.GetSelectedVWFID(i), 'transform', newt);
+                    Engine.setProperty(_Editor.GetSelectedVWFID(i), 'transform', newt);
                 else
                     var ok = _Editor.setProperty(_Editor.GetSelectedVWFID(i), 'transform', newt);
                 _dView.setViewTransformOverride(_Editor.GetSelectedVWFID(i), newt);

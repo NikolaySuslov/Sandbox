@@ -1,0 +1,13 @@
+---
+extends: prim2.vwf
+properties:
+  phi: 1.6
+  materialDef:
+  EditorData:
+    customProp:
+      displayname: "Slice width"
+      type: "slider"
+      min: 0
+      max: 6.2
+      step: 0.1
+      property: "phi"

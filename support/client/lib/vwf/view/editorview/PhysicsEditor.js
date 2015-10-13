@@ -22,7 +22,7 @@ define([], function() {
     function hasPrototype(nodeID, prototype) {
         if (!nodeID) return false;
         if (nodeID == prototype) return true;
-        else return hasPrototype(vwf.prototype(nodeID), prototype);
+        else return hasPrototype(Engine.prototype(nodeID), prototype);
     }
 
     function isSphere(id) {
@@ -131,7 +131,7 @@ define([], function() {
                 if (diag.propName == propName && diag.nodeid == nodeID) {
                     //typing into the textbox can be infuriating if it updates while you type!
                     //need to filter out sets from self
-                    if (diag.type == 'text' && vwf.client() != vwf.moniker()) diag.element.val(propVal);
+                    if (diag.type == 'text' && Engine.client() != Engine.moniker()) diag.element.val(propVal);
                     if (diag.type == 'slider') diag.element.slider('value', propVal);
                     if (diag.type == 'check') diag.element.prop('checked', propVal);
                 }
@@ -250,7 +250,7 @@ define([], function() {
         }
         this.createCheck = function(parentdiv, nodeid, propertyName, displayName) {
             $(parentdiv).append('<div><input style="vertical-align: middle" type="checkbox" id="' + propertyName + nodeid + '" nodename="' + nodeid + '" propname="' + propertyName + '"/><div style="display:inline-block;margin-bottom: 3px;margin-top: 3px;">' + displayName + ' </div></div>');
-            var val = vwf.getProperty(nodeid, propertyName);
+            var val = Engine.getProperty(nodeid, propertyName);
             $('#' + propertyName + nodeid).click(this.primPropertyChecked);
             if (val == true) {
                 $('#' + propertyName + nodeid).prop('checked', 'checked');
@@ -278,7 +278,7 @@ define([], function() {
                 _Editor.SetSelectMode('TempPick');
             });
             this.addPropertyEditorDialog(nodeid, propertyName, $('#' + nodeid + propertyName), 'text');
-            $('#' + nodeid + propertyName).val(vwf.getProperty(nodeid, propertyName));
+            $('#' + nodeid + propertyName).val(Engine.getProperty(nodeid, propertyName));
         },
         this.createVector = function(parentdiv, nodeid, propertyName, displayName) {
             var vecvalchanged = function(e) {
@@ -296,7 +296,7 @@ define([], function() {
                 //$('#basicSettings'+nodeid).append('<div style="display:inline-block;margin-bottom: 3px;margin-top: 3px;">'+editordata[i].displayname+': </div>');
             var baseid = 'basicSettings' + nodeid + propertyName + 'min';
             $(parentdiv).append('<div class="editorSliderLabel"  style="width:100%;text-align: left;margin-top: 4px;" ><div style="display:inline" >' + displayName + ':</div> <div style="display:inline-block;float:right">' + '<input id="' + baseid + 'X' + '" component="X" nodename="' + nodeid + '" propname="' + propertyName + '" type="number" step="' + .01 + '" class="vectorinputfront"/>' + '<input id="' + baseid + 'Y' + '" component="Y" nodename="' + nodeid + '" propname="' + propertyName + '" type="number" step="' + .01 + '" class="vectorinput"/>' + '<input id="' + baseid + 'Z' + '" component="Z" nodename="' + nodeid + '" propname="' + propertyName + '" type="number" step="' + .01 + '" class="vectorinput"/>' + '</div><div style="clear:both"/></div>');
-            var propmin = vwf.getProperty(nodeid, propertyName);
+            var propmin = Engine.getProperty(nodeid, propertyName);
             if (propmin) {
                 $('#' + baseid + 'X').val(propmin[0]);
                 $('#' + baseid + 'Y').val(propmin[1]);
@@ -314,7 +314,7 @@ define([], function() {
             var inputstyle = "";
             $(parentdiv).append('<div class="editorSliderLabel">' + displayName + ': </div>');
             $(parentdiv).append('<input class="primeditorinputbox" style="' + inputstyle + '" type="" id="' + nodeid + propertyName + 'value"></input>');
-            //	$('#' + nodeid + editordata[i].property + 'value').val(vwf.getProperty(node.id, editordata[i].property));
+            //	$('#' + nodeid + editordata[i].property + 'value').val(Engine.getProperty(node.id, editordata[i].property));
             //	$('#' + nodeid + editordata[i].property + 'value').change(this.primPropertyTypein);
             $('#' + nodeid + propertyName + 'value').attr("nodename", nodeid);
             $('#' + nodeid + propertyName + 'value').attr("propname", propertyName);
@@ -324,10 +324,10 @@ define([], function() {
                 change: this.primPropertyTypein,
                 spin: this.primSpinner
             })
-            $('#' + nodeid + propertyName + 'value').spinner('value', vwf.getProperty(nodeid, propertyName));
+            $('#' + nodeid + propertyName + 'value').spinner('value', Engine.getProperty(nodeid, propertyName));
             $('#' + nodeid + propertyName + 'value').parent().css('float', 'right');
             $(parentdiv).append('<div id="' + nodeid + propertyName + '" nodename="' + nodeid + '" propname="' + propertyName + '"/>');
-            var val = vwf.getProperty(nodeid, propertyName);
+            var val = Engine.getProperty(nodeid, propertyName);
             if (val == undefined) val = 0;
             $('#' + nodeid + propertyName).slider({
                 step: parseFloat(step),
@@ -344,7 +344,7 @@ define([], function() {
         this.createChoice = function(parentdiv, nodeid, propertyName, displayName, labels, values) {
             //  $('#basicSettings' + nodeid).append('<input type="button" style="width: 100%;font-weight: bold;" id="' + nodeid + i + '" nodename="' + nodeid + '" propname="' +  editordata[i].property + '"/>');
             $(parentdiv).append('<div><div class="editorSliderLabel">' + displayName + ': </div>' + '<select id="' + nodeid + propertyName + '" style="float:right;clear:right" ' + ' nodename="' + nodeid + '" propname="' + propertyName + '"" ></select></div>');
-            $('#' + nodeid + propertyName).val(displayName + ": " + labels[vwf.getProperty(nodeid, propertyName)]);
+            $('#' + nodeid + propertyName).val(displayName + ": " + labels[Engine.getProperty(nodeid, propertyName)]);
             $('#' + nodeid + propertyName).attr('index', propertyName);
             for (var k = 0; k < labels.length; k++) {
                 $('#' + nodeid + propertyName).append("<option value='" + values[k] + "'>  " + labels[k] + "  </option>")
@@ -352,7 +352,7 @@ define([], function() {
             //$('#' + nodeid + i).button();
             //find and select the current value in the dropdown
 
-            var selectedindex = values.indexOf(vwf.getProperty(nodeid, propertyName));
+            var selectedindex = values.indexOf(Engine.getProperty(nodeid, propertyName));
             var selectedLabel = labels[selectedindex];
             $("select option").filter(function() {
                 //may want to use $.trim in here
@@ -413,34 +413,34 @@ define([], function() {
             //we actually create all cylinder and cone prims with the Zaxis as up, but three.js builds them with y up. We need to add a rotation in this case.
             // This is handled in prim.js for the visual nodes.
             var needRotate = false;
-            if (!vwf.getProperty(i, '___physics_enabled') && !isConstraint(i)) return;
+            if (!Engine.getProperty(i, '___physics_enabled') && !isConstraint(i)) return;
             if (isSphere(i)) //sphere
             {
-                geo = new THREE.SphereGeometry(vwf.getProperty(i, 'radius') * worldScale[0], 10, 10);
+                geo = new THREE.SphereGeometry(Engine.getProperty(i, 'radius') * worldScale[0], 10, 10);
             }
             if (isBox(i)) //sphere
             {
-                geo = new THREE.BoxGeometry(vwf.getProperty(i, '_length') * worldScale[0], vwf.getProperty(i, 'width') * worldScale[1], vwf.getProperty(i, 'height') * worldScale[2], 5, 5, 5);
+                geo = new THREE.BoxGeometry(Engine.getProperty(i, '_length') * worldScale[0], Engine.getProperty(i, 'width') * worldScale[1], Engine.getProperty(i, 'height') * worldScale[2], 5, 5, 5);
             }
             if (isCylinder(i)) //sphere
             {
                 needRotate = true;
-                geo = new THREE.CylinderGeometry(vwf.getProperty(i, 'radius') * worldScale[0], vwf.getProperty(i, 'radius') * worldScale[0], vwf.getProperty(i, 'height') * worldScale[1], 10, 10);
+                geo = new THREE.CylinderGeometry(Engine.getProperty(i, 'radius') * worldScale[0], Engine.getProperty(i, 'radius') * worldScale[0], Engine.getProperty(i, 'height') * worldScale[1], 10, 10);
             }
             if (isCone(i)) //sphere
             {
                 needRotate = true;
-                geo = new THREE.CylinderGeometry(0, vwf.getProperty(i, 'radius') * worldScale[0], vwf.getProperty(i, 'height') * worldScale[1], 10, 10);
+                geo = new THREE.CylinderGeometry(0, Engine.getProperty(i, 'radius') * worldScale[0], Engine.getProperty(i, 'height') * worldScale[1], 10, 10);
             }
             if (isPlane(i)) //sphere
             {
-                geo = new THREE.PlaneGeometry(vwf.getProperty(i, '_length') * worldScale[0], vwf.getProperty(i, 'width') * worldScale[1], 5, 5);
+                geo = new THREE.PlaneGeometry(Engine.getProperty(i, '_length') * worldScale[0], Engine.getProperty(i, 'width') * worldScale[1], 5, 5);
             }
             if (isConstraint(i)) {
                 if (isHinge(i)) {
                     geo = new THREE.CylinderGeometry(.03, .03, 1, 10, 2);
-                    var lowerOff = vwf.getProperty(i, '___physics_joint_hinge_lower_ang_limit') * 0.0174532925;
-                    var upperOff = vwf.getProperty(i, '___physics_joint_hinge_upper_ang_limit') * 0.0174532925;
+                    var lowerOff = Engine.getProperty(i, '___physics_joint_hinge_lower_ang_limit') * 0.0174532925;
+                    var upperOff = Engine.getProperty(i, '___physics_joint_hinge_upper_ang_limit') * 0.0174532925;
 
                     var t = new THREE.Matrix4()
 
@@ -465,8 +465,8 @@ define([], function() {
                     geo = new THREE.CylinderGeometry(.03, .03, 1, 10, 2);
 
                     var min = new THREE.CylinderGeometry(.06, .06, .03, 10, 2);
-                    var lowerOff = vwf.getProperty(i, '___physics_joint_slider_lower_lin_limit');
-                    var upperOff = vwf.getProperty(i, '___physics_joint_slider_upper_lin_limit');
+                    var lowerOff = Engine.getProperty(i, '___physics_joint_slider_lower_lin_limit');
+                    var upperOff = Engine.getProperty(i, '___physics_joint_slider_upper_lin_limit');
                     var t = new THREE.Matrix4();
                     if (lowerOff < upperOff) {
 
@@ -494,32 +494,32 @@ define([], function() {
             }
             if (isAsset(i)) //asset
             {
-                switch (parseInt(vwf.getProperty(i, "___physics_collision_type"))) {
+                switch (parseInt(Engine.getProperty(i, "___physics_collision_type"))) {
                     case 1:
                         {
-                            geo = new THREE.SphereGeometry(vwf.getProperty(i, '___physics_collision_radius') * worldScale[0], 10, 10);
+                            geo = new THREE.SphereGeometry(Engine.getProperty(i, '___physics_collision_radius') * worldScale[0], 10, 10);
                         }
                         break;
                     case 2:
                         {
-                            geo = new THREE.BoxGeometry(vwf.getProperty(i, '___physics_collision_length') * worldScale[0], vwf.getProperty(i, '___physics_collision_width') * worldScale[1], vwf.getProperty(i, '___physics_collision_height') * worldScale[2], 5, 5, 5);
+                            geo = new THREE.BoxGeometry(Engine.getProperty(i, '___physics_collision_length') * worldScale[0], Engine.getProperty(i, '___physics_collision_width') * worldScale[1], Engine.getProperty(i, '___physics_collision_height') * worldScale[2], 5, 5, 5);
                         }
                         break;
                     case 3:
                         {
                             needRotate = true;
-                            geo = new THREE.CylinderGeometry(vwf.getProperty(i, '___physics_collision_radius') * worldScale[0], vwf.getProperty(i, '___physics_collision_radius') * worldScale[0], vwf.getProperty(i, '___physics_collision_height') * worldScale[1], 10, 10, 10);
+                            geo = new THREE.CylinderGeometry(Engine.getProperty(i, '___physics_collision_radius') * worldScale[0], Engine.getProperty(i, '___physics_collision_radius') * worldScale[0], Engine.getProperty(i, '___physics_collision_height') * worldScale[1], 10, 10, 10);
                         }
                         break;
                     case 4:
                         {
                             needRotate = true;
-                            geo = new THREE.CylinderGeometry(0, vwf.getProperty(i, '___physics_collision_radius') * worldScale[0], vwf.getProperty(i, '___physics_collision_height') * worldScale[1], 10, 5);
+                            geo = new THREE.CylinderGeometry(0, Engine.getProperty(i, '___physics_collision_radius') * worldScale[0], Engine.getProperty(i, '___physics_collision_height') * worldScale[1], 10, 5);
                         }
                         break;
                     case 5:
                         {
-                            geo = new THREE.PlaneGeometry(vwf.getProperty(i, '___physics_collision_length') * worldScale[0], vwf.getProperty(i, '___physics_collision_width') * worldScale[1], 5, 5);
+                            geo = new THREE.PlaneGeometry(Engine.getProperty(i, '___physics_collision_length') * worldScale[0], Engine.getProperty(i, '___physics_collision_width') * worldScale[1], 5, 5);
                         }
                         break;
                     case 6:
@@ -548,7 +548,7 @@ define([], function() {
 
                 mesh = new THREE.Mesh(geo, this.previewMaterial);
 
-                if (vwf.parent(i) != vwf.application()) {
+                if (Engine.parent(i) != Engine.application()) {
                     mesh.material = this.previewMaterialSubObject;
                 }
 
@@ -557,7 +557,7 @@ define([], function() {
             if (geo instanceof THREE.Object3D)
                 mesh = geo;
 
-            var children = vwf.children(i);
+            var children = Engine.children(i);
             //the current node does not have a mesh, so we use a blank object3
             if (!mesh) mesh = new THREE.Object3D();
             //apply a premultiplied rotation matrix
@@ -592,12 +592,12 @@ define([], function() {
             var roots = [];
             for (var i = 0; i < _Editor.getSelectionCount(); i++) {
                 var id = _Editor.GetSelectedVWFID(i);
-                while (id && vwf.parent(id) !== vwf.application()) id = vwf.parent(id);
+                while (id && Engine.parent(id) !== Engine.application()) id = Engine.parent(id);
                 roots[id] = true;
             }
 
             for (var i in roots) {
-                if (roots[i] && (vwf.getProperty(i, '___physics_enabled') || isConstraint(i))) {
+                if (roots[i] && (Engine.getProperty(i, '___physics_enabled') || isConstraint(i))) {
                     this.BuildPreviewInner(i, this.physicsPreviewRoot, [1, 1, 1]);
                 }
             }
@@ -612,9 +612,9 @@ define([], function() {
             }
             this.worldPreviewRoot = new THREE.Object3D();
 
-            var roots = vwf.children(vwf.application());
+            var roots = Engine.children(Engine.application());
             for (var i in roots) {
-                if (roots[i] && vwf.getProperty(roots[i], '___physics_enabled')) {
+                if (roots[i] && Engine.getProperty(roots[i], '___physics_enabled')) {
                     this.BuildPreviewInner(roots[i], this.worldPreviewRoot, [1, 1, 1]);
                 }
             }
@@ -624,7 +624,7 @@ define([], function() {
 
             this.BuildPreview();
             //does this object have it's own body, or is it just a compound collision?
-            var hasOwnBody = vwf.parent(_Editor.GetSelectedVWFID()) == vwf.application();
+            var hasOwnBody = Engine.parent(_Editor.GetSelectedVWFID()) == Engine.application();
             var lastTab = 0;
             //depending on ordering, this might not work
             try {
@@ -638,7 +638,7 @@ define([], function() {
            
 
             this.inSetup = true;
-            if (this.selectedID === vwf.application()) {
+            if (this.selectedID === Engine.application()) {
                 this.createVector($('#PhysicsBasicSettings'), this.selectedID, '___physics_gravity', 'Gravity');
                 this.createSlider($('#PhysicsBasicSettings'), this.selectedID, '___physics_accuracy', 'Physics Accuracy', 1, 1, 10);
                 this.createCheck($('#PhysicsBasicSettings'), this.selectedID, '___physics_active', 'Enable Physics');
@@ -672,8 +672,8 @@ define([], function() {
                         $('#physicsaccordion').append('<h3><a href="#">Motion Locks</a>    </h3>   <div id="PhysicsLockSettings">  </div>');
                         $('#PhysicsLockSettings').append('<div><input id="lockXMotion" type="checkbox" />X<input id="lockYMotion" type="checkbox" />Y<input id="lockZMotion" type="checkbox" />Z Motion Enabled</div>')
                         $('#PhysicsLockSettings').append('<div><input id="lockXRotation" type="checkbox" />X<input id="lockYRotation" type="checkbox" />Y<input id="lockZRotation" type="checkbox" />Z Rotation Enabled</div>')
-                        var linearFactor = vwf.getProperty(this.selectedID, '___physics_factor_linear');
-                        var angularFactor = vwf.getProperty(this.selectedID, '___physics_factor_angular');
+                        var linearFactor = Engine.getProperty(this.selectedID, '___physics_factor_linear');
+                        var angularFactor = Engine.getProperty(this.selectedID, '___physics_factor_angular');
                         if (linearFactor) {
                             if (linearFactor[0] == 1) $('#lockXMotion').prop('checked', 'checked');
                             if (linearFactor[1] == 1) $('#lockYMotion').prop('checked', 'checked');

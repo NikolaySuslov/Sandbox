@@ -1,0 +1,37 @@
+---
+extends: http://vwf.example.com/node3.vwf
+properties: 
+  DisplayName: Ocean
+  uChop: 1.5
+  uMag: .5
+  uFoam: 1.0
+  uReflectPow: 3.0
+  EditorData:
+    uChop:
+      type: slider
+      min: 0.0
+      max: 3.0
+      step: .001
+      displayname: "Chopiness"
+      property: "uChop"
+    uMag:
+      type: slider
+      min: 0.0
+      max: 3.0
+      step: .001
+      displayname: "Magnitude"
+      property: "uMag"
+    uRef:
+      type: slider
+      min: 0.0
+      max: 3.0
+      step: .001
+      displayname: "Reflection Power"
+      property: "uReflectPow"
+    uFoam:
+      type: slider
+      min: 0.0
+      max: 1.0
+      step: .001
+      displayname: "Foam Amount"
+      property: "uFoam"         

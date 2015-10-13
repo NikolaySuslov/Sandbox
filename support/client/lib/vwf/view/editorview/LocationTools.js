@@ -65,14 +65,14 @@ define(function ()
 					
 					if (!_UserManager.GetCurrentUserName())
 					{
-						vwf.models[0].model.nodes['index-vwf'].orbitPoint(vals);
-						vwf.models[0].model.nodes['index-vwf'].zoom = 5;
-						vwf.models[0].model.nodes['index-vwf'].updateCamera();
+						Engine.models[0].model.nodes['index-vwf'].orbitPoint(vals);
+						Engine.models[0].model.nodes['index-vwf'].zoom = 5;
+						Engine.models[0].model.nodes['index-vwf'].updateCamera();
 						return;
 					}					
 					
 				$('#MenuCamera3RDPersonicon').click();	
-				var trans = vwf.getProperty(_UserManager.GetCurrentUserID(),'transform');  //get the users current transform;
+				var trans = Engine.getProperty(_UserManager.GetCurrentUserID(),'transform');  //get the users current transform;
 				trans[12] = vals[0];
 				trans[13] = vals[1];
 				trans[14] = vals[2];
@@ -87,7 +87,7 @@ define(function ()
 		{
 			
 				
-			var placemarks = vwf.getProperty('index-vwf','placemarks');
+			var placemarks = Engine.getProperty('index-vwf','placemarks');
 			if(!placemarks || Object.keys(placemarks).length == 0)
 			{
 				_Notifier.alert('There are no placemarks in this scene.');
@@ -109,7 +109,7 @@ define(function ()
 		this.getCurrentPlacemarkPosition = function()
 		{
 		
-			var placemarks = vwf.getProperty('index-vwf','placemarks');
+			var placemarks = Engine.getProperty('index-vwf','placemarks');
 					var pos = null;
 					for(var i in placemarks)
 					{
@@ -123,7 +123,7 @@ define(function ()
 		this.getPlacemarkPosition = function(name)
 		{
 		
-			var placemarks = vwf.getProperty('index-vwf','placemarks');
+			var placemarks = Engine.getProperty('index-vwf','placemarks');
 					var pos = null;
 					for(var i in placemarks)
 					{
@@ -137,7 +137,7 @@ define(function ()
 		this.GoToPlacemark_inner = function(val)
 		{
 			
-			var placemarks = vwf.getProperty('index-vwf','placemarks');
+			var placemarks = Engine.getProperty('index-vwf','placemarks');
 			this.currentPlacemark = val;
 			window.location.hash = val;
 					var pos;
@@ -150,9 +150,9 @@ define(function ()
 					{
 						if (!_UserManager.GetCurrentUserName())
 						{
-							vwf.models[0].model.nodes['index-vwf'].orbitPoint([pos[0],pos[1],pos[2]]);
-							vwf.models[0].model.nodes['index-vwf'].zoom = 5;
-							vwf.models[0].model.nodes['index-vwf'].updateCamera();
+							Engine.models[0].model.nodes['index-vwf'].orbitPoint([pos[0],pos[1],pos[2]]);
+							Engine.models[0].model.nodes['index-vwf'].zoom = 5;
+							Engine.models[0].model.nodes['index-vwf'].updateCamera();
 							return;
 						}	
 					
@@ -174,9 +174,9 @@ define(function ()
 				{
 					
 					var title = val;
-					var location = vwf.getProperty(_UserManager.GetCurrentUserID(),'transform');
+					var location = Engine.getProperty(_UserManager.GetCurrentUserID(),'transform');
 					location = [location[12],location[13],location[14]];
-					var placemarks = vwf.getProperty('index-vwf','placemarks');
+					var placemarks = Engine.getProperty('index-vwf','placemarks');
 					placemarks[title] = location;
 					_Editor.setProperty('index-vwf','placemarks',placemarks);
 				
@@ -192,7 +192,7 @@ define(function ()
 					return;
 				}
 			
-			var location = vwf.getProperty(_UserManager.GetCurrentUserID(),'transform');
+			var location = Engine.getProperty(_UserManager.GetCurrentUserID(),'transform');
 			location = [location[12],location[13],location[14]];
 			location[2] = 10000;
 			var hit=_SceneManager.CPUPick(location,[0,0,-1],{ignore:[_Editor.findviewnode(_UserManager.GetCurrentUserID()),_Editor.GetMoveGizmo(),_dSky]});

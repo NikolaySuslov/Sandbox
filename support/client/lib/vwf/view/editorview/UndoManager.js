@@ -105,7 +105,7 @@ define(function ()
 		this.id = id;
 		this.name = _Editor.getNode(id).name;
 		this.proto = _DataManager.getCleanNodePrototype(id);
-		this.parent = vwf.parent(id);
+		this.parent = Engine.parent(id);
 		this.undo = function()
 		{
 			vwf_view.kernel.createChild(this.parent,this.name,this.proto);
@@ -131,7 +131,7 @@ define(function ()
 	{
 		this.property = property;
 		if(val === undefined) val = null;
-		if(oldval === undefined) oldval = vwf.getProperty(id,property) || null;
+		if(oldval === undefined) oldval = Engine.getProperty(id,property) || null;
 
 		this.val = JSON.parse(JSON.stringify(val));
 		this.id = id;

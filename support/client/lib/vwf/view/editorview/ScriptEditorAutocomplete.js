@@ -248,7 +248,7 @@ define(['./angular-app'], function(app)
         this.getSuggestions = function(editor, chr, line, filter)
             {
                 //get the keys
-                self.keys = vwf.callMethod(self.currentNode.id, 'JavascriptEvalKeys', [line]);
+                self.keys = Engine.callMethod(self.currentNode.id, 'JavascriptEvalKeys', [line]);
                 if (!line || !self.keys)
                 {
                        if(!self.keys)
@@ -396,7 +396,7 @@ define(['./angular-app'], function(app)
                 if (line.indexOf('(') == -1 && line.indexOf('=') == -1)
                 {
                     //Get the text for the tooltip
-                    var text = vwf.callMethod(self.currentNode.id, 'JavascriptEvalFunction', [line]);
+                    var text = Engine.callMethod(self.currentNode.id, 'JavascriptEvalFunction', [line]);
                     if (text)
                     {
                         window.setImmediate(function()

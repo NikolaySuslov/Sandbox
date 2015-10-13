@@ -70,7 +70,7 @@ define(function() {
         $("#FollowUser").click(function() {
             var id = '-object-Object-player-' + _UserManager.SelectedProfile.Username;
             require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
-            require("vwf/view/threejs/editorCameraController").followObject(vwf.models[0].model.nodes[id]);
+            require("vwf/view/threejs/editorCameraController").followObject(Engine.models[0].model.nodes[id]);
         });
         $("#PrivateMessage").button({
             label: 'Private Message'
@@ -84,7 +84,7 @@ define(function() {
         });
         $("#CallUser").click(function() {
            
-            vwf.callMethod('index-vwf', 'rtcCall', {
+            Engine.callMethod('index-vwf', 'rtcCall', {
                 target: _UserManager.SelectedProfile.clientID
             });
         });
@@ -93,14 +93,14 @@ define(function() {
             label: 'Video Call'
         });
         $("#VideoCallUser").click(function() {
-            vwf.callMethod('index-vwf', 'rtcVideoCall', {
+            Engine.callMethod('index-vwf', 'rtcVideoCall', {
                 target: _UserManager.SelectedProfile.clientID
             });
         });
 
         this.GetNextAnonName = function(clients)
         {
-            return "Anonymous_" + vwf.moniker();
+            return "Anonymous_" + Engine.moniker();
         }
         $(document).on('setstatecomplete', function() {
 
@@ -163,7 +163,7 @@ define(function() {
                         var username = logindata.username || logindata.user_uid || logindata.UID;
                         var userID = logindata.user_uid || logindata.UID;
 
-                        var clients = vwf.getProperty(vwf.application(), 'clients');
+                        var clients = Engine.getProperty(Engine.application(), 'clients');
                         var anonName = this.GetNextAnonName(clients);
 
                         //only the first client from a given login should create the avatart
@@ -179,7 +179,7 @@ define(function() {
                         //anonymous;
 
                         
-                        var clients = vwf.getProperty(vwf.application(), 'clients');
+                        var clients = Engine.getProperty(Engine.application(), 'clients');
                         var anonName = this.GetNextAnonName(clients);
 
                         
@@ -213,7 +213,7 @@ define(function() {
         }
         this.showProfile = function(clientID) {
 
-            var clients = vwf.getProperty(vwf.application(), 'clients');
+            var clients = Engine.getProperty(Engine.application(), 'clients');
             var profile = _DataManager.GetProfileForUser(clients[clientID].UID) || {};
             profile.clientID = clientID;
             if (!profile) return;
@@ -235,7 +235,7 @@ define(function() {
             $('#CallUser').show();
             $('#FollowUser').show();
             $('#VideoCallUser').show();
-            if (clientID == vwf.moniker()) {
+            if (clientID == Engine.moniker()) {
                 $('#EditProfile').show();
                 $('#PrivateMessage').hide();
                 $('#CallUser').hide();
@@ -258,11 +258,11 @@ define(function() {
 
                     //set cameramode to avatar if an avatar is created
                     //but only if the world is playing
-                    if (vwf.getProperty(vwf.application(), 'playMode') === 'play') {
+                    if (Engine.getProperty(Engine.application(), 'playMode') === 'play') {
                         _dView.setCameraDefault();
                         clearCameraModeIcons();
                         $('#MenuCamera3RDPersonicon').addClass('iconselected');
-                        require("vwf/view/threejs/editorCameraController").getController('Orbit').followObject(vwf.models[0].model.nodes[_UserManager.GetCurrentUserID()]);
+                        require("vwf/view/threejs/editorCameraController").getController('Orbit').followObject(Engine.models[0].model.nodes[_UserManager.GetCurrentUserID()]);
                         require("vwf/view/threejs/editorCameraController").setCameraMode('3RDPerson');
                     }
                 }
@@ -302,11 +302,11 @@ define(function() {
             require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
             
             //if no one has logged in before, this world is yours
-            if (vwf.getProperty('index-vwf', 'owner') == null) vwf.setProperty('index-vwf', 'owner', this.currentUsername);
+            if (Engine.getProperty('index-vwf', 'owner') == null) Engine.setProperty('index-vwf', 'owner', this.currentUsername);
 
             //if single player, world is yours
             if (statedata && statedata.publishSettings && statedata.publishSettings.singlePlayer)
-                vwf.setProperty('index-vwf', 'owner', this.currentUsername);
+                Engine.setProperty('index-vwf', 'owner', this.currentUsername);
 
             var parms = new Array();
             parms.push(JSON.stringify({
@@ -330,7 +330,7 @@ define(function() {
         this.getPlayers = function() {
             var playerNodes = [];
             for (var i = 0; i < this.getPlayerIDs().length; i++) {
-                playerNodes.push(vwf.models.javascript.nodes[this.getPlayerIDs()[i]]);
+                playerNodes.push(Engine.models.javascript.nodes[this.getPlayerIDs()[i]]);
 
             }
             playerNodes.sort(function(a, b) {
@@ -347,11 +347,11 @@ define(function() {
                 this.showPlayers();
         }
         this.firedEvent = function(id, event, params) {
-            if (id == vwf.application() && event == 'clientConnected') {
+            if (id == Engine.application() && event == 'clientConnected') {
                 if ($('#PlayerList').is(':visible'))
                     this.showPlayers();
             }
-            if (id == vwf.application() && event == 'clientDisconnected') {
+            if (id == Engine.application() && event == 'clientDisconnected') {
                 if ($('#PlayerList').is(':visible'))
                     this.showPlayers();
             }
@@ -386,19 +386,19 @@ define(function() {
         //these three functions should be deprecated and replaced by the ClientAPI on the Scene object for access
         //from within the model.
         this.GetPlayernameForClientID = function(id) {
-            var clients = vwf.getProperty(vwf.application(), 'clients')
+            var clients = Engine.getProperty(Engine.application(), 'clients')
             if (clients && clients[id])
                 return clients[id].UID;
         }
         this.GetAvatarForClientID = function(id) {
-            for (var i in vwf.models[0].model.nodes) {
-                var node = vwf.models[0].model.nodes[i];
+            for (var i in Engine.models[0].model.nodes) {
+                var node = Engine.models[0].model.nodes[i];
                 if (node.ownerClientID && node.ownerClientID.indexOf(id)>-1)
                     return node;
             }
         }
         this.GetClientIDForPlayername = function(id) {
-            var clients = vwf.getProperty(vwf.application(), 'clients')
+            var clients = Engine.getProperty(Engine.application(), 'clients')
             for (var i in clients) {
                 if (clients[i].UID == id) return clietns[i].cid;
             }
@@ -410,11 +410,11 @@ define(function() {
         }
         this.updatePermissions = function()
         {
-            var clients = vwf.getProperty(vwf.application(),'clients');
+            var clients = Engine.getProperty(Engine.application(),'clients');
             for(var id in clients)
             {
             var e = ToSafeID(id)
-            if(_PermissionsManager.getPermission(clients[id].name,vwf.application()))
+            if(_PermissionsManager.getPermission(clients[id].name,Engine.application()))
                     $("#" + e + "label .glyphicon-share").css('color','rgb(130, 184, 255)')
                 else    
                     $("#" + e + "label .glyphicon-share").css('color','')
@@ -435,14 +435,14 @@ define(function() {
             $('#PlayerList').show('blind', function() {});
             $('#playerstitle').addClass('sidetab-editor-title-active')
             $("#PlayerList").empty();
-            var clients = vwf.getProperty(vwf.application(), 'clients');
+            var clients = Engine.getProperty(Engine.application(), 'clients');
             
             for (var i in clients) {
                 var e = ToSafeID(i);
                  var id = i;
                 var self = this;
                 (function(e,id,clients){
-                $("#PlayerList").append("<div id='" + (e + "label") + "'  class='playerlabel'><span class='playerlabelname'>" + clients[i].name + (e == vwf.moniker() ? " (me)":"") + "<div class='playerlabelID'>" + i + "</div></span></div>");
+                $("#PlayerList").append("<div id='" + (e + "label") + "'  class='playerlabel'><span class='playerlabelname'>" + clients[i].name + (e == Engine.moniker() ? " (me)":"") + "<div class='playerlabelID'>" + i + "</div></span></div>");
                 $("#" + e + "label").append("<div class='glyphicon glyphicon-comment' />");
                 $("#" + e + "label").append("<div class='glyphicon glyphicon-user' />");
                 $("#" + e + "label").append("<div class='glyphicon glyphicon-earphone' />");
@@ -459,20 +459,20 @@ define(function() {
                  })
                  $("#" + e + "label .glyphicon-facetime-video").click(function()
                  {
-                     vwf.callMethod('index-vwf', 'rtcVideoCall', {
+                     Engine.callMethod('index-vwf', 'rtcVideoCall', {
                         target: id
                     });
                  });
                  $("#" + e + "label .glyphicon-earphone").click(function()
                  {
-                     vwf.callMethod('index-vwf', 'rtcCall', {
+                     Engine.callMethod('index-vwf', 'rtcCall', {
                         target: id
                     });
                  })
 
                  function updatePermission()
                  {
-                    if(_PermissionsManager.getPermission(clients[id].name,vwf.application()))
+                    if(_PermissionsManager.getPermission(clients[id].name,Engine.application()))
                         $("#" + e + "label .glyphicon-share").css('color','rgb(130, 184, 255)')
                     else    
                         $("#" + e + "label .glyphicon-share").css('color','')
@@ -480,10 +480,10 @@ define(function() {
                  updatePermission();
                  $("#" + e + "label .glyphicon-share").click(function()
                  {
-                    if(_PermissionsManager.getPermission(clients[id].name,vwf.application()))
-                        _PermissionsManager.setPermission(clients[id].name,vwf.application(),0);
+                    if(_PermissionsManager.getPermission(clients[id].name,Engine.application()))
+                        _PermissionsManager.setPermission(clients[id].name,Engine.application(),0);
                     else
-                        _PermissionsManager.setPermission(clients[id].name,vwf.application(),1);
+                        _PermissionsManager.setPermission(clients[id].name,Engine.application(),1);
                     
                     window.setTimeout(function(){
                         updatePermission();        

@@ -997,7 +997,7 @@ function GetCameras(SID, response, URL)
 			{
 				if (node[i].extends == 'SandboxCamera.vwf')
 				{
-					// based on vwf.js:1622
+					// based on engine.js:1622
 					var childID = 'SandboxCamera-vwf-' + node[i].name;
 					ret.push(
 					{

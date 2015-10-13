@@ -196,7 +196,7 @@ define([
         viewAPINotify: function(functionName, data)
         {
             //only pass messages to the editor components if the world is stopped, or if the messages are necessary to handle the play pause logic
-            if (vwf.models.object.gettingProperty(vwf.application(), 'playMode') !== 'play'||
+            if (Engine.models.object.gettingProperty(Engine.application(), 'playMode') !== 'play'||
                 data[1] =='playMode' ||data[1] =='playBackup' || data[1] == 'restoreState' || data[1] == 'postWorldRestore' || data[1] == 'preWorldPlay'
                 )
             {
@@ -233,7 +233,7 @@ define([
             {
                 if (window._Editor.createNodeCallback != null)
                 {
-                    window._Editor.CallCreateNodeCallback(childID, nodeID, vwf.name(childID));
+                    window._Editor.CallCreateNodeCallback(childID, nodeID, Engine.name(childID));
                 }
             }
         },
@@ -303,7 +303,7 @@ function InitializeEditor() {
     $('#tabs').css('z-index', '101');
     $('#AvatarChoice').buttonset();
     $('#vwf-root').attr('tabindex', '0');
-    vwf.logger.level = 6;
+    Engine.logger.level = 6;
     if (document.Players)
     {
         for (var i = 0; i < document.Players.length; i++)

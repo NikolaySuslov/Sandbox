@@ -215,10 +215,10 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             if (!addcount) addcount = 0;
             if (!newname) newname = 'Object';
             newname = newname.replace(/[0-9]*$/g, "");
-            var nodes = vwf.models.object.objects;
+            var nodes = Engine.models.object.objects;
             var count = 1 + addcount;
             for (var i in nodes) {
-                var thisname = vwf.getProperty(nodes[i].id, 'DisplayName') || '';
+                var thisname = Engine.getProperty(nodes[i].id, 'DisplayName') || '';
                 thisname = thisname.replace(/[0-9]*$/g, "");
                 if (thisname == newname) count++;
             }
@@ -257,7 +257,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             var testnode = vwfnode;
             while(!selected && testnode)
             {
-                testnode = vwf.parent(testnode);
+                testnode = Engine.parent(testnode);
                 selected = self.isSelected(testnode);
                 
             }
@@ -281,7 +281,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 }
             }
             var dispName;
-            if (vwfnode) dispName = vwf.getProperty(vwfnode, 'DisplayName');
+            if (vwfnode) dispName = Engine.getProperty(vwfnode, 'DisplayName');
             if (!dispName) dispName = vwfnode;
             $('#ContextMenuName').html((dispName || vwfnode || "{none selected}").escape());
             $('#ContextMenuName').attr('VWFID', vwfnode);
@@ -292,7 +292,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             this.ContextShowEvent = e;
             $('#ContextMenuActions').empty();
             if (vwfnode) {
-                var actions = vwf.getMethods(vwfnode);
+                var actions = Engine.getMethods(vwfnode);
                 for (var i in actions) {
                     if (actions[i].parameters.length == 0) {
                         $('#ContextMenuActions').append('<div id="Action' + i + '" class="ContextMenuAction">' + i + '</div>');
@@ -339,7 +339,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         this.saveTransforms = function() {
 
             for (var s = 0; s < SelectedVWFNodes.length; s++) {
-                this.backupTransfroms[s] = vwf.getProperty(SelectedVWFNodes[s].id, 'transform');
+                this.backupTransfroms[s] = Engine.getProperty(SelectedVWFNodes[s].id, 'transform');
             }
 
         }
@@ -348,18 +348,18 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             //not sure this logic makes sense when more than one thing selected
 
             if (this.getSelectionCount() > 1 && 
-            vwf.decendants(vwf.ancestors(_Editor.GetSelectedVWFID())[vwf.ancestors(_Editor.GetSelectedVWFID()).length-2] || _Editor.GetSelectedVWFID()).indexOf(pickID) == -1)
+            Engine.decendants(Engine.ancestors(_Editor.GetSelectedVWFID())[Engine.ancestors(_Editor.GetSelectedVWFID()).length-2] || _Editor.GetSelectedVWFID()).indexOf(pickID) == -1)
             {
-                return vwf.ancestors(pickID)[vwf.ancestors(pickID).length-2] || pickID;
+                return Engine.ancestors(pickID)[Engine.ancestors(pickID).length-2] || pickID;
             }
 
             if(this.getSelectionCount() > 1) return pickID;
-            var ancestors = vwf.ancestors(pickID);
+            var ancestors = Engine.ancestors(pickID);
             // this is a 2nd level object, so just return it
             if(ancestors.length < 2)
                 return pickID;
             var sceneroot = ancestors[ancestors.length-2];
-            var decendants = vwf.decendants(sceneroot);
+            var decendants = Engine.decendants(sceneroot);
 
             if(decendants.indexOf(this.GetSelectedVWFID()) > -1)
             {
@@ -425,10 +425,10 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     var h = this.mouseUpScreenPoint[1] - this.mouseDownScreenPoint[1];
                     var picksize = Math.sqrt(w * w + h * h);
                     if (picksize < 10) {
-                        if (vwf.views[0].lastPickId && vwf.views[0].lastPickId != 'index-vwf') {
+                        if (Engine.views[0].lastPickId && Engine.views[0].lastPickId != 'index-vwf') {
                             //implement some logic on the pick - select top level node, unless the current selection is 
                             // in the hierarchy of the new selection
-                            var newselection = vwf.views[0].lastPickId;
+                            var newselection = Engine.views[0].lastPickId;
                            
                             newselection = this.mouseDownSelectFilter(newselection);
                             this.SelectObject(_Editor.getNode(newselection), this.PickMod);
@@ -506,7 +506,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
 
                                 if(hitTest( $(this.selectionMarquee),$(glyphs[i])))
                                 {
-                                    if($(glyphs[i]).attr('vwfid') !== vwf.application())
+                                    if($(glyphs[i]).attr('vwfid') !== Engine.application())
                                         vwfhits.push($(glyphs[i]).attr('vwfid'));
                                 }
                             }
@@ -519,7 +519,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     e.stopPropagation();
                 }
                 if (SelectMode == 'TempPick') {
-                    if (this.TempPickCallback) this.TempPickCallback(_Editor.getNode(vwf.views[0].lastPickId));
+                    if (this.TempPickCallback) this.TempPickCallback(_Editor.getNode(Engine.views[0].lastPickId));
                     e.stopPropagation();
                 }
                 if (SelectMode == 'PointPick') {
@@ -556,7 +556,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
 
             if (MoveGizmo.getAxis() != -1 && this.undoPoint) {
                 for (var i = 0; i < SelectedVWFNodes.length; i++)
-                    this.undoPoint.list[i].val = vwf.getProperty(SelectedVWFNodes[i].id, 'transform');
+                    this.undoPoint.list[i].val = Engine.getProperty(SelectedVWFNodes[i].id, 'transform');
                 _UndoManager.pushEvent(this.undoPoint);
                 this.undoPoint = null;
             }else if(MoveGizmo.getAxis() != -1)
@@ -609,16 +609,16 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             _UndoManager.startCompoundEvent();
             for (var s = 0; s < SelectedVWFNodes.length; s++) {
 
-                var owner = vwf.getProperty(SelectedVWFNodes[s].id, 'owner');
+                var owner = Engine.getProperty(SelectedVWFNodes[s].id, 'owner');
                 if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), SelectedVWFNodes[s].id) == 0) {
                     _Notifier.notify('You do not have permission to delete this object');
                     continue;
                 }
-                if (vwf.prototype(SelectedVWFNodes[s].id) == 'character-vwf') {
+                if (Engine.prototype(SelectedVWFNodes[s].id) == 'character-vwf') {
                     _Notifier.alert('Avatars cannot be deleted');
                     continue;
                 }
-                if (SelectedVWFNodes[s].id == vwf.application()) {
+                if (SelectedVWFNodes[s].id == Engine.application()) {
                     _Notifier.alert('The root scene cannot be deleted');
                     continue;
                 }
@@ -641,7 +641,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         //	$('#vwf-root').keyup(function(e){
         this.keyup_Gizmo = function(e) {
 
-            if (vwf.getProperty(vwf.application(), 'playMode') == 'play') return;
+            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
             if (e.keyCode == 17) {
                 this.PickMod = NewSelect;
                 console.log(this.PickMod);
@@ -665,7 +665,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             },10);
         }
         this.keydown_Gizmo = function(e) {
-            if (vwf.getProperty(vwf.application(), 'playMode') == 'play') return;
+            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
             if (e.keyCode == 17) {
                 this.PickMod = Add;
                 console.log(this.PickMod);
@@ -754,7 +754,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         this.calledMethod = function(id, method, args) {
             //we're being notified that a peer has selected an object
             if (method == 'PeerSelection') {
-                if (vwf.client() != vwf.moniker()) {
+                if (Engine.client() != Engine.moniker()) {
                     var ids = args[0];
                     //why does this happen?
                     if (!ids) {
@@ -762,14 +762,14 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     }
                     if (!this.peerSelections)
                         this.peerSelections = {};
-                    if (!this.peerSelections[vwf.client()]) {
-                        this.peerSelections[vwf.client()] = {
+                    if (!this.peerSelections[Engine.client()]) {
+                        this.peerSelections[Engine.client()] = {
                             color: new THREE.Color(),
                             nodes: [],
                             bounds: []
                         };
                     }
-                    var peerselection = this.peerSelections[vwf.client()];
+                    var peerselection = this.peerSelections[Engine.client()];
                     for (var i = 0; i < peerselection.bounds.length; i++) {
                         var bound = peerselection.bounds[i];
                         if (bound) {
@@ -814,12 +814,12 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             //here, we update the selection bounds rect when the selction transforms
             if (window._Editor && propname == 'transform' && _Editor.isSelected(id)) {
                 _Editor.updateBoundsTransform(id);
-                if (vwf.client() == vwf.moniker()) {
+                if (Engine.client() == Engine.moniker()) {
                     if (_Editor.waitingForSet.length)
                         _Editor.waitingForSet.splice(_Editor.waitingForSet.indexOf(id), 1);
 
                 }
-                if (_Editor.waitingForSet.length == 0 || vwf.client() != vwf.moniker()) {
+                if (_Editor.waitingForSet.length == 0 || Engine.client() != Engine.moniker()) {
                     _Editor.updateGizmoLocation();
                    // _Editor.updateGizmoSize();
                     _Editor.updateGizmoOrientation(false);
@@ -834,14 +834,14 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
 
             //when an object moves, check that it's not hilighted by the peer selection display.
             //if it is, update the matrix of the selection rectangle.
-            if (vwf.client() != vwf.moniker() && propname == 'transform') {
+            if (Engine.client() != Engine.moniker() && propname == 'transform') {
 
                 if (!this.peerSelections)
                     this.peerSelections = {};
-                if (this.peerSelections[vwf.client()]) {
+                if (this.peerSelections[Engine.client()]) {
 
 
-                    var peerselection = this.peerSelections[vwf.client()];
+                    var peerselection = this.peerSelections[Engine.client()];
 
                     for (var i = 0; i < peerselection.nodes.length; i++) {
                         var boundingbox = peerselection.bounds[i];
@@ -858,7 +858,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         }
 
         this.SelectParent = function() {
-            if (self.GetSelectedVWFNode()) self.SelectObject(vwf.parent(self.GetSelectedVWFID()));
+            if (self.GetSelectedVWFNode()) self.SelectObject(Engine.parent(self.GetSelectedVWFID()));
         }
         this.intersectLinePlane = function(ray, raypoint, planepoint, planenormal) {
             var n = MATH.dotVec3(MATH.subVec3(planepoint, raypoint), planenormal);
@@ -1147,9 +1147,9 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             }
 
              //display the name of the objject under the mouse
-            if (vwf.views[0].lastPickId)
+            if (Engine.views[0].lastPickId)
             {
-                var mouseovernode = vwf.getProperty(vwf.views[0].lastPickId, 'DisplayName') || vwf.views[0].lastPickId;
+                var mouseovernode = Engine.getProperty(Engine.views[0].lastPickId, 'DisplayName') || Engine.views[0].lastPickId;
                 //avoid triggering a repaint of the status bar if the value is not changed
                 if ($('#StatusMouseOverName').text() !== mouseovernode)
                     $('#StatusMouseOverName').html((mouseovernode).escape());
@@ -1163,7 +1163,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             
         }.bind(this);
         this.isOwner = function(id, player) {
-            var owner = vwf.getProperty(id, 'owner');
+            var owner = Engine.getProperty(id, 'owner');
             if (typeof owner === 'string' && owner == player) {
                 return true;
             }
@@ -1345,16 +1345,16 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 ConstraintProto.properties.transform = MATH.transposeMat4(MATH.translateMatrix( _Editor.GetInsertPoint()));
             if(_Editor.getSelectionCount() == 1)
             {
-                var trans = vwf.getProperty(_Editor.GetSelectedVWFID(),'transform');
+                var trans = Engine.getProperty(_Editor.GetSelectedVWFID(),'transform');
                 trans = [trans[12],trans[13],trans[14] ]
                 ConstraintProto.properties.transform = MATH.transposeMat4(MATH.translateMatrix(trans));
                 ConstraintProto.properties.___physics_joint_body_A = _Editor.GetSelectedVWFNode(0).id;
             }
             if(_Editor.getSelectionCount() == 2)
             {
-                var trans = vwf.getProperty(_Editor.GetSelectedVWFNode(0).id,'transform');
+                var trans = Engine.getProperty(_Editor.GetSelectedVWFNode(0).id,'transform');
                 trans = [trans[12],trans[13],trans[14] ];
-                var trans2 = vwf.getProperty(_Editor.GetSelectedVWFNode(1).id,'transform');
+                var trans2 = Engine.getProperty(_Editor.GetSelectedVWFNode(1).id,'transform');
                 trans2 = [trans2[12],trans2[13],trans2[14] ];
                 trans[0] = (trans[0] + trans2[0])/2;
                 trans[1] = (trans[1] + trans2[1])/2;
@@ -1544,7 +1544,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             proto.properties.DisplayName = self.GetUniqueName('behavior');
             proto.properties.owner = _UserManager.GetCurrentUserName();
             var id = this.GetSelectedVWFID();
-            var owner = vwf.getProperty(id, 'owner');
+            var owner = Engine.getProperty(id, 'owner');
             if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), id) == 0) {
                 _Notifier.notify('You do not have permission to edit this object');
                 return;
@@ -1570,7 +1570,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             proto.properties.type = 'behavior';
             proto.properties.DisplayName = self.GetUniqueName(type);
             var id = this.GetSelectedVWFID();
-            var owner = vwf.getProperty(id, 'owner');
+            var owner = Engine.getProperty(id, 'owner');
             if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), id) == 0) {
                 _Notifier.notify('You do not have permission to edit this object');
                 return;
@@ -1606,7 +1606,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             proto.properties.type = 'modifier';
             proto.properties.DisplayName = self.GetUniqueName(type);
             var id = this.GetFirstChildLeaf(this.GetSelectedVWFNode()).id;
-            var owner = vwf.getProperty(id, 'owner');
+            var owner = Engine.getProperty(id, 'owner');
             if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), id) == 0) {
                 _Notifier.notify('You do not have permission to edit this object');
                 return;
@@ -1636,7 +1636,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             proto.properties.type = 'modifier';
             proto.properties.DisplayName = self.GetUniqueName(type);
             var id = this.GetFirstChildLeaf(this.GetSelectedVWFNode()).id;
-            var owner = vwf.getProperty(id, 'owner');
+            var owner = Engine.getProperty(id, 'owner');
             if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), id) == 0) {
                 _Notifier.notify('You do not have permission to edit this object');
                 return;
@@ -1650,7 +1650,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             if (object) {
                 if (object.children) {
                     for (var i in object.children) {
-                        if (vwf.getProperty(object.children[i].id, 'isModifier') == true) return this.GetFirstChildLeaf(object.children[i]);
+                        if (Engine.getProperty(object.children[i].id, 'isModifier') == true) return this.GetFirstChildLeaf(object.children[i]);
                     }
                 }
                 return object;
@@ -1659,7 +1659,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         }
         this.Duplicate = function() {
             for (var i = 0; i < SelectedVWFNodes.length; i++)
-                if (vwf.prototype(SelectedVWFNodes[i].id) == 'character-vwf') {
+                if (Engine.prototype(SelectedVWFNodes[i].id) == 'character-vwf') {
                     _Notifier.alert('Avatars cannot be copied');
                     return
                 }
@@ -1667,7 +1667,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             for (var i = 0; i < SelectedVWFNodes.length; i++) {
                 var proto = _DataManager.getCleanNodePrototype(SelectedVWFNodes[i].id);
                 proto.properties.DisplayName = self.GetUniqueName(proto.properties.DisplayName);
-                var parent = vwf.parent(self.GetSelectedVWFID());
+                var parent = Engine.parent(self.GetSelectedVWFID());
                 var newname = GUID();
                 newnames.push(newname);
                 self.createChild(parent, newname, proto, null, null, function() {
@@ -1696,7 +1696,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             _CopiedNodes = [];
 
             for (var i = 0; i < SelectedVWFNodes.length; i++)
-                if (vwf.prototype(SelectedVWFNodes[i].id) == 'character-vwf') {
+                if (Engine.prototype(SelectedVWFNodes[i].id) == 'character-vwf') {
                     _Notifier.alert('Avatars cannot be copied');
                     return
                 }
@@ -1793,18 +1793,18 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             self.SelectOnNextCreate(newnames);
         }
         this.getTransform = function(id) {
-            var mat = vwf.getProperty(id, this.transformPropertyName);
+            var mat = Engine.getProperty(id, this.transformPropertyName);
             if(!mat)
                 return Mat4.createIdentity();
             return mat;
         }
         this.getTranslation = function(id) {
-            var mat = vwf.getProperty(id, 'worldTransform');
+            var mat = Engine.getProperty(id, 'worldTransform');
             if(!mat) return [0,0,0];
             return [mat[12], mat[13], mat[14]];
         }
         this.getScale = function(id) {
-            var transform = vwf.getProperty(id, this.transformPropertyName);
+            var transform = Engine.getProperty(id, this.transformPropertyName);
             if(!transform) return [0,0,0];
             var sx = MATH.lengthVec3([transform[0], transform[4], transform[8]]);
             var sy = MATH.lengthVec3([transform[1], transform[5], transform[9]]);
@@ -1843,9 +1843,9 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             if(CoordSystem == LocalCoords)
                 this.MoveGizmo.updateOrientation(this.getTransformCallback(this.GetSelectedVWFID()));
             if(CoordSystem == WorldCoords)
-                this.MoveGizmo.updateOrientation(this.getTransformCallback(vwf.application()));
+                this.MoveGizmo.updateOrientation(this.getTransformCallback(Engine.application()));
             if(CoordSystem == ParentCoords)
-                this.MoveGizmo.updateOrientation(this.getTransformCallback(vwf.parent(this.GetSelectedVWFID())));
+                this.MoveGizmo.updateOrientation(this.getTransformCallback(Engine.parent(this.GetSelectedVWFID())));
         }.bind(this);
         this.triggerSelectionChanged = function(VWFNode) {
 
@@ -1893,8 +1893,8 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             mat = toGMat(self.findviewnode(id).matrixWorld).slice(0);
             var material = blueBoundingBoxMaterial;
             if (this.findviewnode(id).initializedFromAsset) color = redBoundingBoxMaterial;
-            if (vwf.getProperty(id, 'type') == 'Group' && vwf.getProperty(id, 'open') == false) color = greenBoundingBoxMaterial;
-            if (vwf.getProperty(id, 'type') == 'Group' && vwf.getProperty(id, 'open') == true) color = lightgreenBoundingBoxMaterial;
+            if (Engine.getProperty(id, 'type') == 'Group' && Engine.getProperty(id, 'open') == false) color = greenBoundingBoxMaterial;
+            if (Engine.getProperty(id, 'type') == 'Group' && Engine.getProperty(id, 'open') == true) color = lightgreenBoundingBoxMaterial;
             var boundingbox = new THREE.Object3D();
             boundingbox.name = "Bounds_+" + id;
             boundingbox.add(this.BuildWireBox([box.max[0] - box.min[0], box.max[1] - box.min[1], box.max[2] - box.min[2]], [box.min[0] + (box.max[0] - box.min[0]) / 2, box.min[1] + (box.max[1] - box.min[1]) / 2, box.min[2] + (box.max[2] - box.min[2]) / 2], [0,0,0],material), true);
@@ -1933,7 +1933,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         }.bind(this);
         this.OpenGroup = function() {
             for (var i = 0; i < this.getSelectionCount(); i++) {
-                if (vwf.getProperty(SelectedVWFNodes[i].id, 'type') == 'Group') {
+                if (Engine.getProperty(SelectedVWFNodes[i].id, 'type') == 'Group') {
                     this.setProperty(SelectedVWFNodes[i].id, 'open', true);
                 }
             }
@@ -1947,12 +1947,12 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     // look up the chain for a group, and close it if you find one
 
                     var parentGroup = SelectedVWFNodes[i].id;
-                    while (parentGroup && vwf.getNode(parentGroup).extends !== 'sandboxGroup.vwf')
-                        parentGroup = vwf.parent(parentGroup);
+                    while (parentGroup && Engine.getNode(parentGroup).extends !== 'sandboxGroup.vwf')
+                        parentGroup = Engine.parent(parentGroup);
 
                     if (!parentGroup) continue;
 
-                    if (vwf.getNode(parentGroup).extends == 'sandboxGroup.vwf') {
+                    if (Engine.getNode(parentGroup).extends == 'sandboxGroup.vwf') {
                         this.setProperty(parentGroup, 'open', false);
                         closedGroups.push(parentGroup);
                     }
@@ -1961,10 +1961,10 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 this.SelectObject(closedGroups);
             }
             //new vwf kernel does not add the ID to the get node, but all our old code expects it. Add it and return the node.
-        this.getNode = function(id) {
+        this.getNode = function(id,includeContinueBase) {
             if (!id) return null;
             try{
-                var node = vwf.getNode(id, true, true);
+                var node = Engine.getNode(id, true, true,includeContinueBase);
                 if(!node) return null;
             }catch(e) //this keeps happening because the node does not exist
             {
@@ -1980,7 +1980,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
 
             }
             walk(node);
-            node.name = vwf.name(id);
+            node.name = Engine.name(id);
             if(!node.properties) node.properties = {};
             return node;
         }
@@ -2019,15 +2019,15 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     for (var i = 0; i < VWFNode.length; i++) {
                         //if you've selected a node that is grouped, but not selected a group directly, select the nearest open group head.
                         try {
-                            if (vwf.getProperty(VWFNode[i].id, 'type') != 'Group') {
+                            if (Engine.getProperty(VWFNode[i].id, 'type') != 'Group') {
                                 var testnode = VWFNode[i];
                                 //'index-vwf can never be a group, skip getting it to check'
-                                while (testnode && (vwf.getProperty(testnode.id, 'type') != 'Group' || (vwf.getProperty(testnode.id, 'type') == 'Group' && vwf.getProperty(testnode.id, 'open') == true))) {
-                                    if (vwf.parent(testnode.id) == 'index-vwf') {
+                                while (testnode && (Engine.getProperty(testnode.id, 'type') != 'Group' || (Engine.getProperty(testnode.id, 'type') == 'Group' && Engine.getProperty(testnode.id, 'open') == true))) {
+                                    if (Engine.parent(testnode.id) == 'index-vwf') {
                                         testnode = null;
                                         break;
                                     } else {
-                                        testnode = _Editor.getNode(vwf.parent(testnode.id));
+                                        testnode = _Editor.getNode(Engine.parent(testnode.id));
                                     }
                                 }
                                 if (testnode)
@@ -2096,9 +2096,9 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     else
                         $('#StatusSelectedID').html((SelectedVWFNodes.length + ' objects').escape());
 
-                    $('#StatusSelectedName').html((vwf.getProperty(SelectedVWFNodes[0].id, 'DisplayName') || SelectedVWFNodes[0].id).escape());
+                    $('#StatusSelectedName').html((Engine.getProperty(SelectedVWFNodes[0].id, 'DisplayName') || SelectedVWFNodes[0].id).escape());
                     for (var i = 1; i < SelectedVWFNodes.length; i++)
-                        $('#StatusSelectedName').html(($('#StatusSelectedName').text() + ', ' + vwf.getProperty(SelectedVWFNodes[i].id, 'DisplayName')).escape());
+                        $('#StatusSelectedName').html(($('#StatusSelectedName').text() + ', ' + Engine.getProperty(SelectedVWFNodes[i].id, 'DisplayName')).escape());
                 }
                 // do some hilighting of GUI nodes to refect selection
                 $('.guiselected').off('dblclick', this.guiNodeDragStart);
@@ -2234,8 +2234,8 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     var id = this.GetSelectedVWFNode(i).id;
 
                     if (id != parent) {
-                        if (vwf.parent(id) != parent) {
-                            if (vwf.decendants(id).indexOf(parent) == -1) {
+                        if (Engine.parent(id) != parent) {
+                            if (Engine.decendants(id).indexOf(parent) == -1) {
                                 
                             } else {
                                 alertify.alert('This object cannot be assigned to be a child of one of its decendants')
@@ -2263,9 +2263,9 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     var id = this.GetSelectedVWFNode(i).id;
 
                     if (id != parent) {
-                        if (vwf.parent(id) != parent) {
-                            if (vwf.decendants(id).indexOf(parent) == -1) {
-
+                        if (Engine.parent(id) != parent) {
+                            if (Engine.decendants(id).indexOf(parent) == -1) {
+                           
 
                                 var node = _DataManager.getCleanNodePrototype(id);
 
@@ -2304,7 +2304,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 var newnames = [];
                 for (var i = 0; i < this.getSelectionCount(); i++) {
                     var id = this.GetSelectedVWFNode(i).id;
-                    _RenderManager.flashHilight(findviewnode(vwf.parent(id)));
+                    _RenderManager.flashHilight(findviewnode(Engine.parent(id)));
                     var node = _DataManager.getCleanNodePrototype(id);
 
 					if( this.findviewnode(id) )
@@ -2352,8 +2352,8 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             _UndoManager.startCompoundEvent();
 
             for (var i = 0; i < this.getSelectionCount(); i++) {
-                var vwfparent = vwf.parent(this.GetSelectedVWFNode(i).id);
-                var children = vwf.children(this.GetSelectedVWFNode(i).id);
+                var vwfparent = Engine.parent(this.GetSelectedVWFNode(i).id);
+                var children = Engine.children(this.GetSelectedVWFNode(i).id);
                 for (var j = 0; j < children.length; j++) {
                     var node = _DataManager.getCleanNodePrototype(children[j]);
                     var childmat = toGMat(this.findviewnode(children[j]).matrixWorld);
@@ -2431,9 +2431,9 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             _UndoManager.stopCompoundEvent();
         }
         this.findviewnode = function(id) {
-            for (var i = 0; i < vwf.views.length; i++) {
-                if (vwf.views[i] && vwf.views[i].state && vwf.views[i].state.nodes && vwf.views[i].state.nodes[id] && vwf.views[i].state.nodes[id].threeObject) return vwf.views[i].state.nodes[id].threeObject;
-                if (vwf.views[i] && vwf.views[i].state && vwf.views[i].state.scenes && vwf.views[i].state.scenes[id] && vwf.views[i].state.scenes[id].threeScene) return vwf.views[i].state.scenes[id].threeScene;
+            for (var i = 0; i < Engine.views.length; i++) {
+                if (Engine.views[i] && Engine.views[i].state && Engine.views[i].state.nodes && Engine.views[i].state.nodes[id] && Engine.views[i].state.nodes[id].threeObject) return Engine.views[i].state.nodes[id].threeObject;
+                if (Engine.views[i] && Engine.views[i].state && Engine.views[i].state.scenes && Engine.views[i].state.scenes[id] && Engine.views[i].state.scenes[id].threeScene) return Engine.views[i].state.scenes[id].threeScene;
             }
             return null;
         }.bind(this);
@@ -2460,11 +2460,11 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
 
             if (_Editor.GUIdragging) {
 
-                var val = vwf.getProperty(_Editor.GetSelectedVWFID(), 'transform');
+                var val = Engine.getProperty(_Editor.GetSelectedVWFID(), 'transform');
                 val[12] = e.clientX - 5;
                 val[13] = e.clientY - 5;
 
-                var div = '#guioverlay_' + vwf.parent(_Editor.GetSelectedVWFID());
+                var div = '#guioverlay_' + Engine.parent(_Editor.GetSelectedVWFID());
                 if (!$(div)[0])
                     div = $('#guioverlay_' + _Editor.GetSelectedVWFID()).parent()[0];
                 var l = $(div).offset().left;
@@ -2603,7 +2603,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             }
         }.bind(this);
         this.findscene = function() {
-            return vwf.views[0].state.scenes["index-vwf"].threeScene;
+            return Engine.views[0].state.scenes["index-vwf"].threeScene;
         }
         this.findcamera = function() {
             try {
@@ -2941,7 +2941,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
 
                 }
                 else {
-                    helper( vwf.parent(focusID) );
+                    helper( Engine.parent(focusID) );
                 }
             }
         }
@@ -3005,37 +3005,37 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         }
         this.mouseup = function(e) {
             if (!toolsOpen()) return;
-            if (vwf.getProperty(vwf.application(), 'playMode') == 'play') return;
+            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
             if (this.activeTool && this.activeTool.mouseup) this.activeTool.mouseup(e);
         }
         this.click = function(e) {
             if (!toolsOpen()) return;
-            if (vwf.getProperty(vwf.application(), 'playMode') == 'play') return;
+            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
             if (this.activeTool && this.activeTool.click) this.activeTool.click(e);
         }
         this.dblclick = function(e) {
             if (!toolsOpen()) return;
-            if (vwf.getProperty(vwf.application(), 'playMode') == 'play') return;
+            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
             if (this.activeTool && this.activeTool.dblclick) this.activeTool.dblclick(e);
         }
         this.mousemove = function(e) {
             if (!toolsOpen()) return;
-            if (vwf.getProperty(vwf.application(), 'playMode') == 'play') return;
+            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
             if (this.activeTool && this.activeTool.mousemove) this.activeTool.mousemove(e);
         }
         this.mousewheel = function(e) {
             if (!toolsOpen()) return;
-            if (vwf.getProperty(vwf.application(), 'playMode') == 'play') return;
+            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
             if (this.activeTool && this.activeTool.mousewheel) this.activeTool.mousewheel(e);
         }
         this.keyup = function(e) {
             if (!toolsOpen()) return;
-            if (vwf.getProperty(vwf.application(), 'playMode') == 'play') return;
+            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
             if (this.activeTool && this.activeTool.keyup) this.activeTool.keyup(e);
         }
         this.keydown = function(e) {
             if (!toolsOpen()) return;
-            if (vwf.getProperty(vwf.application(), 'playMode') == 'play') return;
+            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
             if (this.activeTool && this.activeTool.keydown) this.activeTool.keydown(e);
         }
         this.createdNode = function(nodeID,childID) {
@@ -3056,7 +3056,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 }, 500)
 
             }
-            if(window._RenderManager && vwf.getProperty(vwf.application(), 'playMode') !== 'play'){
+            if(window._RenderManager && Engine.getProperty(Engine.application(), 'playMode') !== 'play'){
                 _RenderManager.flashHilightMult(findviewnode(childID));
                 _RenderManager.flashHilightMult(findviewnode(nodeID));
             }

@@ -65,7 +65,7 @@
             //if any callbacks were waiting on the asset, call those callbacks
             this.getRoot().GetBoundingBox();
 
-            this.setTransformInternal(vwf.getProperty(this.ID, 'transform'), true);
+            this.setTransformInternal(Engine.getProperty(this.ID, 'transform'), true);
             this.getRoot().updateMatrixWorld(true);
 
             this.initializingNode();

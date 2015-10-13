@@ -52,7 +52,7 @@ var defaultPrimMaterial = new THREE.MeshPhongMaterial();
         this.dirtyStack = function(rebuild, cache) {
             
             //the the parent knows how to update the stack, let the parent deal with is. otherwise, start the update cascade here
-            var parentHandled = vwf.callMethod(vwf.parent(this.ID), 'dirtyStack',[rebuild, cache]);
+            var parentHandled = Engine.callMethod(Engine.parent(this.ID), 'dirtyStack',[rebuild, cache]);
             if(!parentHandled)
                 this.updateStack(rebuild, cache);
             return true;
@@ -64,10 +64,10 @@ var defaultPrimMaterial = new THREE.MeshPhongMaterial();
         }
         this.hasModifiers = function() {
             var has = false;
-            var children = vwf.children(this.ID);
+            var children = Engine.children(this.ID);
             if (children)
                 for (var i = 0; i < children.length; i++) {
-                    if (vwf.getProperty(children[i], 'type') == 'modifier')
+                    if (Engine.getProperty(children[i], 'type') == 'modifier')
                         has = true;
 
                 }
@@ -78,13 +78,13 @@ var defaultPrimMaterial = new THREE.MeshPhongMaterial();
           
             this.updateSelf(rebuild, cache && !this.hasModifiers());
 
-            var children = vwf.children(this.ID);
+            var children = Engine.children(this.ID);
 
 
             for (var i in children) {
-                vwf.callMethod(children[i], 'updateStack',[rebuild, cache]);
+                Engine.callMethod(children[i], 'updateStack',[rebuild, cache]);
             }
-            vwf.callMethod(this.ID, 'modifierStackUpdated');
+            Engine.callMethod(this.ID, 'modifierStackUpdated');
         }
         this.backupMesh = function() {
 

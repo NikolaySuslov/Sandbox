@@ -1,0 +1,86 @@
+{
+    "extends": "http://vwf.example.com/node3.vwf",
+    "methods": {
+        "_keyDown": {
+            "body": "",
+            "parameters": []
+        },
+        "_keyUp": {
+            "body": "",
+            "parameters": []
+        },
+        "bindToggle": {
+            "body": "var self = this;\n    self.unbindToggle();\n    \n    $(\"canvas\").on(\"keyup.cameraToggler\", function(e)\n    {\n        var camList = _dView.getCameraList()[1];\n        var camera = _dView.getCamera().parent;\n        var toCamera;\n        var key = self.keyCode ? self.keyCode.toUpperCase() : \" \";\n\n        //If necessary, remove the editor cam from camList\n        if (!self.cycleEditor && !camList[0]) camList.splice(0, 1);\n\n        //If the toggle button has been pressed and there are at least two cams in camList\n        if (camList.length >= 2 && e.keyCode === key.charCodeAt(0))\n        {\n            if (camera)\n            {\n                var index = (camList.indexOf(camera.vwfID) + 1) % camList.length;\n                toCamera = camList[index];\n            }\n\n            //If camera is falsy, then the editor cam is assumed active (camList[0])\n            else toCamera = camList[1];\n\n            _dView.setCamera(toCamera);\n        }\n\n        //Else, handle numpad and numbers row presses\n        else if (self.bindNumbers)\n        {\n            var numPad = e.keyCode - 96;\n            var numRow = e.keyCode - 48;\n            if (numPad >= 0 && numPad <= 9 && numPad < camList.length)\n            {\n                _dView.setCamera(camList[numPad]);\n            }\n            else if (numRow >= 0 && numRow <= 9 && numRow < camList.length)\n            {\n                _dView.setCamera(camList[numRow]);\n            }\n        }\n    });",
+            "parameters": []
+        },
+        "ready": {
+            "body": "if(this.autoBind === true) this.bindToggle();",
+            "parameters": []
+        },
+        "rotateCamera": {
+            "body": "console.log(\"got here\");",
+            "parameters": []
+        },
+        "tick": {
+            "body": "// The tick function is called 20 times every second.\n    // Write code here to animate over time",
+            "parameters": []
+        },
+        "unbindToggle": {
+            "body": "$(\"canvas\").off(\".cameraToggler\");",
+            "parameters": []
+        }
+    },
+    "properties": {
+        "DisplayName": "Camera Toggler",
+        "EditorData": {
+            "_bindNumbers": {
+                "displayname": "Camera shortcuts (numpad)",
+                "property": "bindNumbers",
+                "type": "check"
+            },
+            "_autoBind": {
+                "displayname": "Auto-bind on ready",
+                "property": "autoBind",
+                "type": "check"
+            },
+            "_cycleEditor": {
+                "displayname": "Include editor camera",
+                "property": "cycleEditor",
+                "type": "check"
+            },
+            "_keyCode": {
+                "displayname": "Cycle key",
+                "property": "keyCode",
+                "type": "text"
+            },
+            "bind": {
+                "label": "bindToggle",
+                "method": "bindToggle",
+                "type": "button"
+            },
+            "unbind": {
+                "label": "unbindToggle",
+                "method": "unbindToggle",
+                "type": "button"
+            }
+        },
+        "___sourceAssetTimestamp": "Thu Oct 08 2015 16:48:14 GMT-0400 (Eastern Daylight Time)",
+        "autoBind": true,
+        "bindNumbers": true,
+        "cycleEditor": true,
+        "glyphURL": "../vwf/view/editorview/images/icons/sphere.png",
+        "isCameraToggler": true,
+        "isToggleActive": true,
+        "keyCode": "C",
+        "owner": "ADLteam",
+        "sourceAssetId": "06960369",
+        "transform": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.989256739616394, 0.49512457847595215, 0.01774579845368862, 1]
+    },
+    "random": {
+        "c": 1,
+        "s0": 0.729582360014319,
+        "s1": 0.401870192959905,
+        "s2": 0.318857207661495
+    },
+    "sequence": 0
+}

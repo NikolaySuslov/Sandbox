@@ -1,3 +1,4 @@
+"use strict";
 (function()
 {
 
@@ -1124,7 +1125,7 @@
             if (propertyName == "particleCount" && propertyValue != this.ps[propertyName])
             {
 
-                var propbackup = vwf.getProperties(this.ID);
+                var propbackup = Engine.getProperties(this.ID);
                 delete propbackup.particleCount;
                 var oldSolver = propbackup.solver;
                 delete propbackup.solver;
@@ -1145,7 +1146,7 @@
             if (propertyName == "solver" && propertyValue != this.ps[propertyName])
             {
 
-                var propbackup = vwf.getProperties(this.ID);
+                var propbackup = Engine.getProperties(this.ID);
                 delete propbackup.solver;
                 var oldCount = propbackup.particleCount;
 

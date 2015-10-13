@@ -76,7 +76,7 @@
         this.setPathPoints = function(id)
         {
         	try{
-        		this.pathPoints = vwf.callMethod(id,'getPoints');
+        		this.pathPoints = Engine.callMethod(id,'getPoints');
         	}catch(e)
         	{
         		return;

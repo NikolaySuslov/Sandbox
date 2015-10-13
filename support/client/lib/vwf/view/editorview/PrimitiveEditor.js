@@ -49,7 +49,7 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
             if(newVal == oldVal) return;
 
             for(var i = 0; i < newVal.length; i++){
-                var current = vwf.getProperty($scope.node.id, flagProps[i]);
+                var current = Engine.getProperty($scope.node.id, flagProps[i]);
 
                 if(newVal[i] !== oldVal[i] && newVal[i] !== current){
                     if(newVal[i] || typeof newVal[i] === "boolean"){
@@ -125,7 +125,7 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
 
         function setupAnimation(){
             var node = $scope.node;
-            var animationLength = vwf.getProperty(node.id, 'animationLength');
+            var animationLength = Engine.getProperty(node.id, 'animationLength');
 
             if(animationLength > 0){
                 //This should be moved into a yaml file and implemented by all objects that support animations
@@ -154,18 +154,17 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
             var node = $scope.node;
             try {
                 //dont update the spinners when the user is typing in them, but when they drag the gizmo do.
-                if (node && (vwf.client() !== vwf.moniker()) || $("#index-vwf:focus").length ==1) {
+                if (node && (Engine.client() !== Engine.moniker()) || $("#index-vwf:focus").length ==1) {
 
-                    var mat = vwf.getProperty(node.id, 'transform');
+                    var mat = Engine.getProperty(node.id, 'transform');
                     var angles = rotationMatrix_2_XYZ(mat);
                     var pos = [mat[12],mat[13],mat[14]];
 
-                    var scl = [MATH.lengthVec3([mat[0],mat[4],mat[8]]),MATH.lengthVec3([mat[1],mat[5],mat[9]]),MATH.lengthVec3([mat[2],mat[6],mat[10]])]
-
                     for(var i = 0; i < 3; i++){
                         //since there is ambiguity in the matrix, we need to keep these values aroud. otherwise , the typeins don't really do what you would think
+                        var scl = i * 4;
                         var newRot = Math.round(angles[i] * 57.2957795);
-                        var newScale = Math.floor(MATH.lengthVec3([mat[0],mat[1],mat[2]]) * 1000) / 1000;
+                        var newScale = Math.floor(MATH.lengthVec3([mat[scl],mat[scl+1],mat[scl+2]]) * 1000) / 1000;
                         var newPos = Math.floor(pos[i] * 1000) / 1000;
 
                         //If newX == oldX, then this is the tailend of the Angular-VWF roundtrip initiated by the Sandbox
@@ -248,7 +247,7 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
         function setFlags(){
             for(var i = 0; i < flagProps.length; i++){
                 if($scope.node.properties[flagProps[i]] === undefined){
-                    var temp = vwf.getProperty($scope.node.id, flagProps[i]);
+                    var temp = Engine.getProperty($scope.node.id, flagProps[i]);
                     if(temp !== undefined){
                         $scope.node.properties[flagProps[i]] = temp;
                     }
@@ -279,7 +278,7 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
                 var props = node.properties;
                 var obj = {
                     name: props.DisplayName || node.id,
-                    type: props.type || vwf.getProperty(node.id, 'type'),
+                    type: props.type || Engine.getProperty(node.id, 'type'),
                     node: scopeNode,
                     editorProps: outEditorData
                 };
@@ -315,25 +314,25 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
         }
 
         function setDefaultValue(dest, key, type){
-            var value = vwf.getProperty(dest.id, key);
+            var value = Engine.getProperty(dest.id, key);
 
             if(value !== undefined){
                 dest.properties[key] = value;
-                //vwf.setProperty(dest.id, key, value);
+                //Engine.setProperty(dest.id, key, value);
             }
             else if(type === "color" || type === "vector"){
 
                 var arr = [0, 0, 0];
                 dest.properties[key] = arr;
-                //vwf.setProperty(dest.id, key, arr);
+                //Engine.setProperty(dest.id, key, arr);
             }
         }
 
         function recursevlyAddPrototypes(node, existingProps, scopeNode, scopeEditorData, ignoreBase){
             if(node){
-                var protoId = vwf.prototype(node.id);
+                var protoId = Engine.prototype(node.id);
 
-                buildEditorData(node, vwf.getProperty(node.id, "EditorData"), existingProps, scopeNode, scopeEditorData);
+                buildEditorData(node, Engine.getProperty(node.id, "EditorData"), existingProps, scopeNode, scopeEditorData);
                 if(protoId && !ignoreBase) recursevlyAddPrototypes(_Editor.getNode(protoId), existingProps, scopeNode, scopeEditorData);
             }
         }
@@ -420,7 +419,7 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
 
                     value = node.properties[prop];
 
-                    if(value !== vwf.getProperty(node.id, prop)){
+                    if(value !== Engine.getProperty(node.id, prop)){
                         pushUndoEvent(node, prop, value);
                         setProperty(node, prop, value);
                     }

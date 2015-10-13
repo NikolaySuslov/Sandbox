@@ -25,7 +25,7 @@
 			this.initializingNode = function()
 			{
 				
-				vwf.setProperty(this.ID,'points',this.points);
+				Engine.setProperty(this.ID,'points',this.points);
 				this.dirtyStack(true);
 			}
 			this.gettingProperty = function(propertyName)

@@ -230,8 +230,8 @@
                             for (var i = 0; i < targetCount; i++)
                                 defaultInfluences.push(0);
                             //notify the kernel of the state of the property so the default value is not null
-                            if (!vwf.getProperty(this.parentNode.ID, 'morphTargetInfluences'))
-                                vwf.setProperty(this.parentNode.ID, 'morphTargetInfluences', defaultInfluences)
+                            if (!Engine.getProperty(this.parentNode.ID, 'morphTargetInfluences'))
+                                Engine.setProperty(this.parentNode.ID, 'morphTargetInfluences', defaultInfluences)
                             for (var i = 0; i < targetCount; i++)
                             {
                                 var verts = [];
@@ -251,7 +251,7 @@
                                     vertices: verts
                                 });
                             }
-                            vwf.setProperty(this.parentNode.ID, 'morphTargetInfluences', vwf.getProperty(this.parentNode.ID, 'morphTargetInfluences'))
+                            Engine.setProperty(this.parentNode.ID, 'morphTargetInfluences', Engine.getProperty(this.parentNode.ID, 'morphTargetInfluences'))
                                 //  parentSkin.geometry.morphTargetsNeedUpdate = true;
                                 //  parentSkin.updateMorphTargets();
                                 //  window.parentSkin = parentSkin;
@@ -481,7 +481,7 @@
                 this.cleanTHREEJSnodes(this.getRoot());
                 //set some defaults now that the mesh is loaded
                 //the VWF should set some defaults as well
-                vwf.setProperty(childID, 'materialDef', this.materialDef);
+                Engine.setProperty(childID, 'materialDef', this.materialDef);
                 this.settingProperty('animationFrame', 0);
                 //if any callbacks were waiting on the asset, call those callbacks
                 this.getRoot().GetBoundingBox();

@@ -227,14 +227,14 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
 
 
 
-
+                /* this is very old and OBE
                 cam.name = 'camera';
                 this.state.cameraInUse = cam;
                 var camType = "http://vwf.example.com/camera.vwf";
 
-                vwf.createChild(childID, "camera", {
+                Engine.createChild(childID, "camera", {
                     "extends": camType
-                });
+                });*/
             }
 
             if (!nodeID) {
@@ -380,7 +380,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                     node.setAsset(scenenode);
                     node.threeObject = scenenode;
                     //we need to mark this node - because the VWF node is layered onto a GLGE node loaded from the art asset, deleteing the VWF node should not
-                    //delete the GLGE node. This should probably undo any changes made to the GLGE node by the VWF. This is tricky. I'm going to backup the matrix, and reset it
+                    //delete the GLGE node. This should probably undo any changes made to the GLGE node by the Engine. This is tricky. I'm going to backup the matrix, and reset it
                     //when deleting the VWF node.
                     if (node.threeObject) {
                         node.threeObject.initializedFromAsset = true;
@@ -621,7 +621,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
 
             if (node && threeObject && propertyValue !== undefined) {
                 if (threeObject instanceof THREE.Object3D) {
-                    if ((propertyName == 'transform' || propertyName == 'localMatrix') && nodeID != vwf.application()) {
+                    if ((propertyName == 'transform' || propertyName == 'localMatrix') && nodeID != Engine.application()) {
 
 
                         //console.info( "setting transform of: " + nodeID + " to " + Array.prototype.slice.call( propertyValue ) );
@@ -730,7 +730,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                     if (propertyName == 'isDynamic') {
                         //debugger;
 
-                        vwf.setProperty(nodeID, 'isStatic', false);
+                        Engine.setProperty(nodeID, 'isStatic', false);
                         setMeshDynamic(threeObject, propertyValue);
                     }
                     //This can be a bit confusing, as the node has a material property, and a material child node. 
@@ -1792,7 +1792,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
 
         while (objectIDFound == -1 && objectToLookFor) {
             if (debug) {
-                this.logger.info("====>>>  vwf.model-MATH.mousePick: searching for: " + path(objectToLookFor));
+                this.logger.info("====>>>  Engine.model-MATH.mousePick: searching for: " + path(objectToLookFor));
             }
             jQuery.each(this.state.nodes, function(nodeID, node) {
                 if (node.threeObject == objectToLookFor && !node.MATHMaterial) {

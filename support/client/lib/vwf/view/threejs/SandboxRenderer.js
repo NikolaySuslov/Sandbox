@@ -92,7 +92,7 @@ define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
 				this.renderer.clear();
 				if (_Editor.GetSelectedVWFID())
 					for (var i = 0; i < _Editor.getSelectionCount(); i++)
-						if(vwf.parent(_Editor.GetSelectedVWFID(i)) == vwf.application())
+						if(Engine.parent(_Editor.GetSelectedVWFID(i)) == Engine.application())
 							this.renderObject(findviewnode(_Editor.GetSelectedVWFID(i)), scene, camera, this.overrideMaterial);
 				//render to the screen
 				quad.material = quad.dialateMaterial;
@@ -113,13 +113,13 @@ define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
 				}
 				if (_Editor.GetSelectedVWFID())
 					for (var i = 0; i < _Editor.getSelectionCount(); i++)
-						if(vwf.parent(_Editor.GetSelectedVWFID(i)) != vwf.application())
+						if(Engine.parent(_Editor.GetSelectedVWFID(i)) != Engine.application())
 							this.renderObject(findviewnode(_Editor.GetSelectedVWFID(i)), scene, camera, this.overrideMaterial2);
 				if (this.hilightMouseOver)
 				{
-					if (vwf.views[0].lastPickId && findviewnode(vwf.views[0].lastPickId))
+					if (Engine.views[0].lastPickId && findviewnode(Engine.views[0].lastPickId))
 					{
-						this.renderObject(findviewnode(vwf.views[0].lastPickId), scene, camera, this.overrideMaterial3);
+						this.renderObject(findviewnode(Engine.views[0].lastPickId), scene, camera, this.overrideMaterial3);
 					}
 				}
 				//render to the screen

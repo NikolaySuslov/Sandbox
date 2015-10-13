@@ -159,9 +159,22 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 				var autocomplete = AC.initialize(editor);
 
 				$scope.sessions = {};
-
+				function cleanScopes()
+				{
+					for(var i in $scope.sessions)
+					{
+						if(!$scope.dirty[i])
+							if($scope.sessions[i])
+							{
+								$scope.sessions[i].destroy();
+								delete $scope.sessions[i];	
+							}
+					}
+				}
 				$scope.$watchGroup(['selectedField','dirty[selectedField.id]'], function(newvals)
 				{
+					
+
 					if(newvals[0])
 					{
 						if( !$scope.sessions[newvals[0].id] || !newvals[1] )
@@ -198,7 +211,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 						}
 
 					}
-
+					if($scope.sessions[item.id])
+					{
+						
+						var oldSession = $scope.sessions[item.id];
+						oldSession.destroy();
+					}
+					cleanScopes();
 					$scope.sessions[item.id] = ace.createEditSession(newBody);
 
 					if( $scope.guiState.openTab === 'properties' )
@@ -453,7 +472,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 				}
 
 				if($scope.guiState.inheritPrototype)
-					curNode = _Editor.getNode(vwf.prototype(curNode.id), true);
+					curNode = _Editor.getNode(Engine.prototype(curNode.id), true);
 				else
 					break;
 			}

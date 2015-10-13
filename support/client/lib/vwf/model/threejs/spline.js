@@ -83,12 +83,12 @@
 
 				this.updateSelf(rebuild);
 				
-				var children = vwf.children(this.ID);
+				var children = Engine.children(this.ID);
 				
 				
 				for(var i in children)
 				{
-					vwf.callMethod(children[i],'updateStack');
+					Engine.callMethod(children[i],'updateStack');
 				}
 			}
 			this.backupMesh = function()

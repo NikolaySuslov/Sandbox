@@ -100,8 +100,8 @@ define([], function() {
             this.resizeCounter++;
             //if the fps is low, but the ticktime is fast enough, then we should be able to go faster
             if(this.originalResScale == 1 ) //only do this if the user did not set the frame scale. otherwise use the user setting
-            if ((this.resizeCounter > FRAME_ROLLING_AVERAGE_LENGTH && vwf.getProperty(vwf.application(),'playMode') != 'playing') ||
-            	(this.resizeCounter > FRAME_ROLLING_AVERAGE_LENGTH && vwf.getProperty(vwf.application(),'playMode') == 'playing' && this.FPSTimeAverage < TICK_TIME_THRESHOLD )) {
+            if ((this.resizeCounter > FRAME_ROLLING_AVERAGE_LENGTH && Engine.getProperty(Engine.application(),'playMode') != 'playing') ||
+            	(this.resizeCounter > FRAME_ROLLING_AVERAGE_LENGTH && Engine.getProperty(Engine.application(),'playMode') == 'playing' && this.FPSTimeAverage < TICK_TIME_THRESHOLD )) {
                 this.resizeCounter = 0;
                 var p = FPS_GOAL_NUMBER - this.FPS;
                 this.FPSPID_I += p;

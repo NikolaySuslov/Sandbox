@@ -1,8 +1,8 @@
 function findviewnode(id)
 {
-    for (var i = 0; i < vwf.views.length; i++)
+    for (var i = 0; i < Engine.views.length; i++)
     {
-        if (vwf.views[i].state && vwf.views[i].state.nodes && vwf.views[i].state.nodes[id] && vwf.views[i].state.nodes[id].threeObject) return vwf.views[i].state.nodes[id].threeObject;
+        if (Engine.views[i].state && Engine.views[i].state.nodes && Engine.views[i].state.nodes[id] && Engine.views[i].state.nodes[id].threeObject) return Engine.views[i].state.nodes[id].threeObject;
     }
     return null;
 }

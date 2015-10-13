@@ -67,7 +67,7 @@ define([], function() {
             })
             $(window).on('setstatecomplete', function() {
 
-                var statebackup = vwf.getProperty(vwf.application(), 'playBackup');
+                var statebackup = Engine.getProperty(Engine.application(), 'playBackup');
                 if (!statebackup) {
                     _Publisher.backupState();
                 }
@@ -88,10 +88,10 @@ define([], function() {
             statedata.allowAnonymous = $('#allowAnonymous').is(':checked');
             statedata.createAvatar = $('#createAvatar').is(':checked');
             statedata.allowTools = $('#allowTools').is(':checked');
-            _Editor.setProperty(vwf.application(), 'publishSettings', statedata);
+            _Editor.setProperty(Engine.application(), 'publishSettings', statedata);
         }
         this.loadPublishSettings = function() {
-            var statedata = vwf.getProperty(vwf.application(), 'publishSettings') || {};
+            var statedata = Engine.getProperty(Engine.application(), 'publishSettings') || {};
 
             if (statedata.SinglePlayer)
                 $('#singlePlayer').prop('checked', 'checked');
@@ -114,7 +114,7 @@ define([], function() {
                 $('#allowTools').prop('checked', '');
 
             if (statedata.camera) {
-                $('#chooseCamera').button('option', 'label', vwf.getProperty(statedata.camera, 'DisplayName'));
+                $('#chooseCamera').button('option', 'label', Engine.getProperty(statedata.camera, 'DisplayName'));
                 $('#chooseCamera').attr('cameraID', statedata.camera);
             } else {
                 $('#chooseCamera').button('option', 'label', "Choose Camera");
@@ -125,13 +125,13 @@ define([], function() {
 
         this.stateBackup = null;
         this.backupState = function() {
-            var s = _Editor.getNode(vwf.application());
+            var s = _Editor.getNode(Engine.application(),true);
 
             function walk(node) {
                 if(!node)return;
                 for (var i in node.properties) {
                     //4th param as true returns whether or not delegation happened during get. if so, no need to store this property.
-                    if (vwf.getProperty(node.id, i, false, true)) {
+                    if (Engine.getProperty(node.id, i, false, true)) {
                         // console.log('Removing delegated property', node.id, i);
                         delete node.properties[i];
                     }
@@ -142,14 +142,14 @@ define([], function() {
             }
             walk(s)
 
-            vwf_view.kernel.setProperty(vwf.application(), 'playBackup', s);
+            vwf_view.kernel.setProperty(Engine.application(), 'playBackup', s);
 
 
         }
         this.satProperty = function(id, prop, val) {
 
 
-            if (id == vwf.application()) {
+            if (id == Engine.application()) {
 
                 var disableSelector = '#ScriptEditor, #sidepanel, #sidetabs, #statusbarinner, #toolbar, #EntityLibrary, .sidetab, #smoothmenu1, #smoothmenu1 ul li a';
                 if (prop == 'playMode' && val == 'play') {
@@ -205,16 +205,16 @@ define([], function() {
             }
         }
         this.calledMethod = function(id, name, args) {
-            if (id == vwf.application() && name == 'restoreState') {
+            if (id == Engine.application() && name == 'restoreState') {
                 this.restoreState_imp(args[0]);
             }
         }
         this.restoreState_imp = function(s) {
             //when stopping a published world, there will be no backup
             if (!s) return;
-            vwf.private.queue.suspend();
-            vwf.models.kernel.disable();
-            var currentState = _Editor.getNode(vwf.application());
+            Engine.private.queue.suspend();
+            Engine.models.kernel.disable();
+            var currentState = _Editor.getNode(Engine.application(),true);
 
             //find a node from one state in another
             var find = function(node, id) {
@@ -234,15 +234,15 @@ define([], function() {
                 }
                 async.eachSeries(Object.keys(node.children), function(i, eachSeriesCallback) {
 
-                    console.log(node.id,i)
+                   // console.log(node.id,i)
                     //does the node exist?
                     var exists = false;
                     try {
-                        exists = vwf.getNode(node.children[i].id);
+                        exists = Engine.getNode(node.children[i].id);
                     } catch (e) {
                         //create it and when done, do the next child of the current node
                         if (node.children[i].extends != 'character.vwf')
-                            vwf.createChild(node.id, i, node.children[i], null, function(childID) {
+                            Engine.createChild(node.id, i, node.children[i], null, function(childID) {
                                 eachSeriesCallback();
                             });
                         else
@@ -252,10 +252,10 @@ define([], function() {
                     if (exists) {
                         //set all the props of this node
                         for (var j in node.children[i].properties) {
-                            var currentprop = vwf.getProperty(node.children[i].id, j);
+                            var currentprop = Engine.getProperty(node.children[i].id, j);
                             //dont set props that have not changed, as this can be a lot of work for nothign
                             if (JSON.stringify(currentprop) !== JSON.stringify(node.children[i].properties[j]))
-                                vwf.setProperty(node.children[i].id, j, node.children[i].properties[j]);
+                                Engine.setProperty(node.children[i].id, j, node.children[i].properties[j]);
                         }
                         //create or set props of the child
                         walk(node.children[i], eachSeriesCallback)
@@ -263,7 +263,7 @@ define([], function() {
                     } else {
                         //create it and when done, do the next child of the current node
                         if (node.children[i].extends != 'character.vwf')
-                            vwf.createChild(node.id, i, node.children[i], null, function(childID) {
+                            Engine.createChild(node.id, i, node.children[i], null, function(childID) {
                                 eachSeriesCallback();
                             });
                         else
@@ -278,10 +278,10 @@ define([], function() {
 
                 //set all the properties on the root scene
                 for (var j in s.properties) {
-                    var currentprop = vwf.getProperty(s.id, j);
-                    //dont set props that have not changed, as this can be a lot of work for nothign
+                    var currentprop = Engine.getProperty(s.id, j);
+                    //dont set props that have not changed, as this can be a lot of work for nothing
                     if (JSON.stringify(currentprop) !== JSON.stringify(s.properties[j]) && j !== 'clients')
-                        vwf.setProperty(s.id, j, s.properties[j]);
+                        Engine.setProperty(s.id, j, s.properties[j]);
                 }
                 //synchronous walk of graph to find children that exist in the current state but not the old one. Delete nodes that were created
                 var walk2 = function(node) {
@@ -289,7 +289,7 @@ define([], function() {
                     if(!node) return;
                     if (!find(s, node.id) && node.extends != 'character.vwf') {
                         try{
-                            vwf.deleteNode(node.id);
+                            Engine.deleteNode(node.id);
                         }catch(e){}
                     } else {
                         for (var i in node.children) {
@@ -299,10 +299,10 @@ define([], function() {
                 }
                 walk2(currentState);
 
-                vwf.models.kernel.enable();
+                Engine.models.kernel.enable();
 
-                vwf.callMethod(vwf.application(), 'postWorldRestore');
-                vwf.private.queue.resume();
+                Engine.callMethod(Engine.application(), 'postWorldRestore');
+                Engine.private.queue.resume();
 
             });
 
@@ -310,60 +310,60 @@ define([], function() {
 
         }
         this.restoreState = function() {
-            if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), vwf.application()) == 0) {
+            if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), Engine.application()) == 0) {
                 alertify.log('You do not have permission to modify this world');
                 return;
             }
-            var s = vwf.getProperty(vwf.application(), 'playBackup');
-            vwf_view.kernel.setProperty(vwf.application(), 'playBackup', null);
-            vwf_view.kernel.callMethod(vwf.application(), 'restoreState', [s]);
+            var s = Engine.getProperty(Engine.application(), 'playBackup');
+            vwf_view.kernel.setProperty(Engine.application(), 'playBackup', null);
+            vwf_view.kernel.callMethod(Engine.application(), 'restoreState', [s]);
 
 
 
         }
         this.playWorld = function() {
 
-            if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), vwf.application()) == 0) {
+            if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), Engine.application()) == 0) {
                 alertify.log('You do not have permission to modify this world');
                 return;
             }
-            var currentState = vwf.getProperty(vwf.application(), 'playMode');
+            var currentState = Engine.getProperty(Engine.application(), 'playMode');
             if (currentState === 'play') return;
             if (currentState === 'stop')
                 this.backupState();
 
-            vwf_view.kernel.callMethod(vwf.application(), 'preWorldPlay');
-            vwf_view.kernel.setProperty(vwf.application(), 'playMode', 'play')
+            vwf_view.kernel.callMethod(Engine.application(), 'preWorldPlay');
+            vwf_view.kernel.setProperty(Engine.application(), 'playMode', 'play')
 
 
         }
         this.stopWorld = function() {
-            if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), vwf.application()) == 0) {
+            if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), Engine.application()) == 0) {
                 alertify.log('You do not have permission to modify this world');
                 return;
             }
-            var currentState = vwf.getProperty(vwf.application(), 'playMode');
+            var currentState = Engine.getProperty(Engine.application(), 'playMode');
             if (currentState === 'stop') return;
             this.restoreState();
             this.stateBackup = null;
-            vwf_view.kernel.callMethod(vwf.application(), 'preWorldStop');
-            vwf_view.kernel.setProperty(vwf.application(), 'playMode', 'stop')
+            vwf_view.kernel.callMethod(Engine.application(), 'preWorldStop');
+            vwf_view.kernel.setProperty(Engine.application(), 'playMode', 'stop')
 
         }
         this.togglePauseWorld = function() {
-                if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), vwf.application()) == 0) {
+                if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), Engine.application()) == 0) {
                     alertify.log('You do not have permission to modify this world');
                     return;
                 }
-                var currentState = vwf.getProperty(vwf.application(), 'playMode');
+                var currentState = Engine.getProperty(Engine.application(), 'playMode');
                 if (currentState === 'stop') return;
-                vwf_view.kernel.setProperty(vwf.application(), 'playMode', 'paused')
+                vwf_view.kernel.setProperty(Engine.application(), 'playMode', 'paused')
             }
             //quickly clone a world, publish it and open it. When that world closes, delete it.
         this.testPublish = function() {
 
 
-            var testSettings = vwf.getProperty(vwf.application(), 'publishSettings') || {
+            var testSettings = Engine.getProperty(Engine.application(), 'publishSettings') || {
                 SinglePlayer: true,
                 camera: null,
                 allowAnonymous: false,

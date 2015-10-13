@@ -74,7 +74,7 @@ define(function ()
 					}
 				}
 
-				var prompt = "Do you want to break the wire " + vwf.getProperty(self.selectedNodeID,'DisplayName') + "." + self.currentWires[i][1] + "." + ((self.currentWires[i][3] || []).join('.')) +" <== " + vwf.getProperty(self.currentWires[i][0],'DisplayName') +"." + self.currentWires[i][2] + "." + ((self.currentWires[i][4] || []).join('.'));
+				var prompt = "Do you want to break the wire " + Engine.getProperty(self.selectedNodeID,'DisplayName') + "." + self.currentWires[i][1] + "." + ((self.currentWires[i][3] || []).join('.')) +" <== " + Engine.getProperty(self.currentWires[i][0],'DisplayName') +"." + self.currentWires[i][2] + "." + ((self.currentWires[i][4] || []).join('.'));
 				alertify.confirm(prompt,function(ok){
 					if(ok)
 					{
@@ -87,7 +87,7 @@ define(function ()
 			}
 			else
 			{
-				var prompt = "Do you want to create the wire " + vwf.getProperty(self.selectedNodeID,'DisplayName') + "." + self.selectedProp + "." + ((self.subExp1 || []).join('.')) +" <== " + vwf.getProperty(self.pickSourceID,'DisplayName') +"." + self.pickSourceProp + "." + ((self.subExp2 || []).join('.'));
+				var prompt = "Do you want to create the wire " + Engine.getProperty(self.selectedNodeID,'DisplayName') + "." + self.selectedProp + "." + ((self.subExp1 || []).join('.')) +" <== " + Engine.getProperty(self.pickSourceID,'DisplayName') +"." + self.pickSourceProp + "." + ((self.subExp2 || []).join('.'));
 				
 
 				alertify.confirm(prompt,function(ok){
@@ -125,7 +125,7 @@ define(function ()
 		{
 			$('#WireEditor').dialog('open');
 			this.selectedNodeID = _Editor.GetSelectedVWFID();
-			this.currentWires = vwf.getProperty(this.selectedNodeID,'wires');
+			this.currentWires = Engine.getProperty(this.selectedNodeID,'wires');
 			this.buildGUI();
 		}
 		this.Hide = function()
@@ -148,7 +148,7 @@ define(function ()
 					properties[i] = node.properties[i];
 				
 				}
-				node = vwf.getNode(vwf.prototype(node.id),true);
+				node = Engine.getNode(Engine.prototype(node.id),true);
 			}
 			return properties;
 		}
@@ -180,7 +180,7 @@ define(function ()
 				_Editor.SetSelectMode('None');
 				_Editor.SelectObject();
 				self.selectedNodeID = e.id;
-				self.currentWires = vwf.getProperty(self.selectedNodeID,'wires');
+				self.currentWires = Engine.getProperty(self.selectedNodeID,'wires');
 				self.buildGUI();
 				self.setSource(self.pickSourceID);
 			}
@@ -199,7 +199,7 @@ define(function ()
 			this.pickSourceID = e.id || e;
 			
 
-			$('#WireEditorSourceName').text(vwf.getProperty(this.pickSourceID,'DisplayName') ||this.pickSourceID);
+			$('#WireEditorSourceName').text(Engine.getProperty(this.pickSourceID,'DisplayName') ||this.pickSourceID);
 			$('#WireEditorSourceProps').empty();
 			var props = this.getProperties(this.pickSourceID);
 			for(var i in props)
@@ -301,7 +301,7 @@ define(function ()
 		{
 			$('#WireEditorSelectedProps').empty();
 			$('#WireEditorSourceProps').empty();
-			$('#WireEditorSelectedName').text(vwf.getProperty(this.selectedNodeID,'DisplayName') ||this.selectedNodeID) ;
+			$('#WireEditorSelectedName').text(Engine.getProperty(this.selectedNodeID,'DisplayName') ||this.selectedNodeID) ;
 			$("#wireeditordisable").show();
 			$(".wireeditorright").addClass('wiredisabled');
 			var props = this.getProperties(this.selectedNodeID);

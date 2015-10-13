@@ -437,11 +437,10 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 	{
 		function createProto(proto)
 		{
-
 			if (typeof proto == "string"){
                         proto = JSON.parse(proto);
                        }
-
+					   
 			//very important to clean the node! Might have accidently left a name or id in the libarary
 			var newname = GUID();
 			proto = _DataManager.getCleanNodePrototype(proto);
@@ -453,7 +452,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			proto.properties.transform[12] = pos[0];
 			proto.properties.transform[13] = pos[1];
 			proto.properties.transform[14] = pos[2];
-					
+			proto.properties.___sourceAssetTimestamp = (new Date()).toString();		
 			if(data.dropOffset)
 			{
 				var dropOffset = new THREE.Matrix4();
@@ -559,9 +558,9 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			$.getJSON(data.url, function(proto) {
 				_UndoManager.startCompoundEvent();
 				for (var i in proto.properties)
-					_PrimitiveEditor.setProperty(vwf.application(), i, proto.properties[i]);
+					_PrimitiveEditor.setProperty(Engine.application(), i, proto.properties[i]);
 				for (var i in proto.children)
-					_Editor.createChild(vwf.application(), GUID(), proto.children[i]);
+					_Editor.createChild(Engine.application(), GUID(), proto.children[i]);
 				_UndoManager.stopCompoundEvent();
 			});
 		}
