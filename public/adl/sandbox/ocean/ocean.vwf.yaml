@@ -6,6 +6,15 @@ properties:
   uMag: .5
   uFoam: 1.0
   uReflectPow: 3.0
+  uOceanDepth: 100
+  uSunPower: 500
+  uAmbientPower: 500
+  direction: 1
+  directionVariation: 2
+  amplitude: 5
+  amplitudeVariation: 4
+  uNormalPower: .5
+  gA: .5
   EditorData:
     uChop:
       type: slider
@@ -35,3 +44,87 @@ properties:
       step: .001
       displayname: "Foam Amount"
       property: "uFoam"         
+    uOceanDepth:
+      type: slider
+      min: 0.0
+      max: 10.0
+      step: .001
+      displayname: "uOceanDepth"
+      property: "uOceanDepth"  
+    uSunPower:
+      type: slider
+      min: 0.0
+      max: 1000.0
+      step: .001
+      displayname: "uSunPower"
+      property: "uSunPower"
+    uAmbientPower:
+      type: slider
+      min: 0.0
+      max: 1000.0
+      step: .001
+      displayname: "uAmbientPower"
+      property: "uAmbientPower"
+    direction:
+      type: slider
+      min: 0.0
+      max: 5
+      step: .001
+      displayname: "direction"
+      property: "direction"                   
+    directionVariation:
+      type: slider
+      min: 0.0
+      max: 5
+      step: .001
+      displayname: "directionVariation"
+      property: "directionVariation"    
+    amplitude:
+      type: slider
+      min: 0.0
+      max: 30
+      step: .1
+      displayname: "amplitude"
+      property: "amplitude"    
+    amplitudeVariation:
+      type: slider
+      min: 0.0
+      max: 30.0
+      step: .01
+      displayname: "amplitudeVariation"
+      property: "amplitudeVariation"
+    waveEffectDepth:
+      type: slider
+      min: -3.0
+      max: 3.0
+      step: .01
+      displayname: "waveEffectDepth"
+      property: "waveEffectDepth"
+    uNormalPower:
+      type: slider
+      min: 0.0
+      max: 2.0
+      step: .001
+      displayname: "uNormalPower"
+      property: "uNormalPower"
+    gA:
+      type: slider
+      min: 0.0
+      max: 2.0
+      step: .001
+      displayname: "gA"
+      property: "gA"
+    waterType:
+      type: slider
+      min: 0.0
+      max: 7.0
+      step: 1
+      displayname: "waterType"
+      property: "waterType"
+    seed:
+      type: slider
+      min: 0.0
+      max: 12312312317.0
+      step: 1
+      displayname: "seed"
+      property: "seed"  

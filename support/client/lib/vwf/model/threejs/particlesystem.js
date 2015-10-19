@@ -564,8 +564,8 @@
 
         this.lastTime += time_in_ticks; //ticks - Math.floor(ticks);
 
-        var inv = this.threeParticleSystem.matrix.clone();
-        inv = inv.getInverse(inv);
+       // var inv = this.threeParticleSystem.matrix.clone();
+       // inv = inv.getInverse(inv);
 
         var particles = this.threeParticleSystem.geometry;
 
@@ -581,7 +581,7 @@
             while (pCount--)
             {
                 var particle = particles.vertices[pCount];
-                this.updateParticleEuler(particle, this.threeParticleSystem.matrix, inv, 3.333);
+                this.updateParticleEuler(particle, this.threeParticleSystem.matrix, null, 3.333);
             }
 
             //examples developed with faster tick - maxRate *33 is scale to make work 
@@ -599,8 +599,8 @@
 
                 var particle = this.regenParticles.shift();
                 particle.waitForRegen = false;
-                this.setupParticle(particle, this.threeParticleSystem.matrix, inv);
-                this.updateParticleEuler(particle, this.threeParticleSystem.matrix, inv, Math.random() * 3.33);
+                this.setupParticle(particle, this.threeParticleSystem.matrix, null);
+                this.updateParticleEuler(particle, this.threeParticleSystem.matrix, null, Math.random() * 3.33);
                 particle.age = 0;
 
             }
@@ -644,19 +644,19 @@
             //Run the formula to get position.
             var percent = particle.age / particle.lifespan;
             var pa2 = particle.age * particle.age;
-            particle.world.x = particle.initialx + (particle.velocity.x * particle.age) + 0.5 * (particle.acceleration.x * pa2)
-            particle.world.y = particle.initialy + (particle.velocity.y * particle.age) + 0.5 * (particle.acceleration.y * pa2)
-            particle.world.z = particle.initialz + (particle.velocity.z * particle.age) + 0.5 * (particle.acceleration.z * pa2)
+            particle.x = particle.initialx + (particle.velocity.x * particle.age) + 0.5 * (particle.acceleration.x * pa2)
+            particle.y = particle.initialy + (particle.velocity.y * particle.age) + 0.5 * (particle.acceleration.y * pa2)
+            particle.z = particle.initialz + (particle.velocity.z * particle.age) + 0.5 * (particle.acceleration.z * pa2)
 
-            this.temp.x = particle.world.x;
-            this.temp.y = particle.world.y;
-            this.temp.z = particle.world.z;
+            //this.temp.x = particle.world.x;
+            //this.temp.y = particle.world.y;
+            //this.temp.z = particle.world.z;
 
             //need to specify in object space, event though comptued in local
-            this.temp.applyMatrix4(inv);
-            particle.x = this.temp.x;
-            particle.y = this.temp.y;
-            particle.z = this.temp.z;
+            //this.temp.applyMatrix4(inv);
+            //particle.x = this.temp.x;
+            //particle.y = this.temp.y;
+            //particle.z = this.temp.z;
 
             //Should probably move this to the shader. Linear with time, no point in doing on CPU
             particle.color.x = this.startColor[0] + (this.endColor[0] - this.startColor[0]) * percent;
@@ -738,12 +738,12 @@
             this.temp.x = particle.world.x;
             this.temp.y = particle.world.y;
             this.temp.z = particle.world.z;
-            this.temp.applyMatrix4(inv);
+            //this.temp.applyMatrix4(inv);
             particle.x = this.temp.x;
             particle.y = this.temp.y;
             particle.z = this.temp.z;
             //careful to have prev and current pos in same space!!!!
-            particle.prevworld.applyMatrix4(inv);
+            //particle.prevworld.applyMatrix4(inv);
         }
     }
     ParticleSystem.prototype.update = function(time)
@@ -834,8 +834,8 @@
     //Change the system count. Note that this must be set before the first frame renders, cant be changed at runtime.
     ParticleSystem.prototype.setParticleCount = function(newcount)
     {
-        var inv = this.threeParticleSystem.matrix.clone();
-        inv = inv.getInverse(inv);
+       // var inv = this.threeParticleSystem.matrix.clone();
+       // inv = inv.getInverse(inv);
 
         var particles = this.threeParticleSystem.geometry;
         while (this.threeParticleSystem.geometry.vertices.length > newcount)
@@ -845,7 +845,7 @@
         while (this.threeParticleSystem.geometry.vertices.length < newcount)
         {
             var particle = this.createParticle(this.threeParticleSystem.geometry.vertices.length);
-            this.setupParticle(particle, this.threeParticleSystem.matrix, inv);
+            this.setupParticle(particle, this.threeParticleSystem.matrix, null);
             particle.age = Infinity;
             this.regenParticles.push(particle);
             particle.waitForRegen = true;
@@ -895,7 +895,7 @@
             var y = this.emitterSize[1] * Math.random() - this.emitterSize[1] / 2;
             var z = this.emitterSize[2] * Math.random() - this.emitterSize[2] / 2;
 
-            return point.add(emit);
+            return point.set(x, y, z).add(emit);
         }
         //Generate in a sphere
         //assumes centered at 0,0,0
@@ -952,7 +952,7 @@
         this.generatePoint(particle.world);
         if (this.solver != "AnalyticShader")
         {
-            particle.world.applyMatrix4(mat);
+            //particle.world.applyMatrix4(mat);
         }
 
 
@@ -1050,8 +1050,8 @@
 
         var time_in_ticks = time / 33.333;
 
-        var inv = this.threeParticleSystem.matrix.clone();
-        inv = inv.getInverse(inv);
+        //var inv = this.threeParticleSystem.matrix.clone();
+        //inv = inv.getInverse(inv);
 
         var particles = this.threeParticleSystem.geometry;
 
@@ -1060,7 +1060,7 @@
         while (pCount--)
         {
             var particle = particles.vertices[pCount];
-            this.updateParticleAnalytic(particle, this.threeParticleSystem.matrix, inv, time_in_ticks);
+            this.updateParticleAnalytic(particle, this.threeParticleSystem.matrix, null, time_in_ticks);
         }
 
         //examples developed with faster tick - maxrate *33 is scale to make work 
@@ -1076,9 +1076,9 @@
 
             //setup with new random values, and move randomly forward in time one step    
             var particle = this.regenParticles.shift();
-            this.setupParticle(particle, this.threeParticleSystem.matrix, inv);
+            this.setupParticle(particle, this.threeParticleSystem.matrix, null);
             if (this.maxRate < this.particleCount)
-                this.updateParticleAnalytic(particle, this.threeParticleSystem.matrix, inv, Math.random() * 3.33);
+                this.updateParticleAnalytic(particle, this.threeParticleSystem.matrix, null, Math.random() * 3.33);
             particle.waitForRegen = false;
         }
 

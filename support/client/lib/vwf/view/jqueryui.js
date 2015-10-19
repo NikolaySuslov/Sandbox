@@ -17,7 +17,7 @@ define(["module", "vwf/view"], function(module, view)
             {
                 var camera = _dView.cameraID;
                 self.activeCamera = camera;
-                self.updateVisiblity();
+                self.updateVisibility();
             })
         },
         createDialog: function(title)
@@ -95,7 +95,7 @@ define(["module", "vwf/view"], function(module, view)
                     owner: _UserManager.GetCurrentUserName(),
                     DisplayName: _Editor.GetUniqueName('Label'),
                     visible: true,
-					font_color: [0,0,0]
+                    font_color: [0,0,0]
                 }
             });
         },
@@ -493,6 +493,14 @@ define(["module", "vwf/view"], function(module, view)
                 else
                     this.setNodeVisibility(node, false);
             }
+            else if (propertyName == 'visibleToAncestor')
+            {
+                node.visibleToAncestor = propertyValue;
+                if ((!propertyValue || this.getAncestorCamera(node.id) === this.activeCamera) && Engine.getProperty(node.id, 'visible'))
+                    this.setNodeVisibility(node, true);
+                else
+                    this.setNodeVisibility(node, false);
+            }
             else if (propertyName == 'style')
             {
                 node.div.inSetter = true;
@@ -603,10 +611,13 @@ define(["module", "vwf/view"], function(module, view)
                 {
                     $(node.div).css('background-color', toCSSColor(propertyValue));
                 }
+				else if (propertyName == 'border_style' && !(node.style && node.style['border-style']))
+				{
+					$(node.div).css('border-style', propertyValue);
+				}
                 else if (propertyName == 'border_width' && !(node.style && node.style['border-width']))
                 {
                     $(node.div).css('border-width', propertyValue);
-                    $(node.div).css('border-style', 'solid');
                 }
                 else if (propertyName == 'border_radius' && !(node.style && node.style['border-radius']))
                 {
@@ -622,12 +633,30 @@ define(["module", "vwf/view"], function(module, view)
                 }
             }
         },
-        updateVisiblity: function()
+        getAncestorCamera: function(nodeid)
+        {
+            if( !nodeid )
+                return;
+            else if( nodeid === 'index-vwf' )
+                return '';
+            else if( Engine.prototype(nodeid) === 'SandboxCamera-vwf' )
+                return nodeid;
+            else
+                return this.getAncestorCamera(Engine.parent(nodeid));
+        },
+        updateVisibility: function()
         {
             for (var i in this.guiNodes)
             {
                 var node = this.guiNodes[i];
-                if ((!node.visibleToCamera || node.visibleToCamera === this.activeCamera) && Engine.getProperty(node.id, 'visible'))
+                if (
+                    Engine.getProperty(node.id, 'visible')
+                    && (
+                        !node.visibleToAncestor && !node.visibleToCamera
+                        || node.visibleToAncestor && this.getAncestorCamera(i) === this.activeCamera
+                        || node.visibleToCamera && node.visibleToCamera === this.activeCamera
+                    )
+                )
                     this.setNodeVisibility(node, true);
                 else
                     this.setNodeVisibility(node, false);
@@ -638,7 +667,7 @@ define(["module", "vwf/view"], function(module, view)
             if (id === 'index-vwf' && name === 'setClientCamera' && params[0] === Engine.moniker())
             {
                 this.activeCamera = params[1];
-                this.updateVisiblity();
+                this.updateVisibility();
             }
         },
         //Update the sound volume based on the position of the camera and the position of the object

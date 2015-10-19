@@ -19,7 +19,8 @@ properties:
   background_visible:
   background_color:
   background_image:
-  border_width:
+  border_style: none
+  border_width: 1
   border_color:
   border_radius:
   font_size:
@@ -51,6 +52,24 @@ properties:
       type: color
       displayname: Background Color
       property: background_color
+    border_style:
+      type: choice
+      displayname: Border Style
+      property: border_style
+      labels:
+        - None
+        - Solid
+        - Double
+        - Dashed
+        - Inset
+        - Outset
+      values:
+        - none
+        - solid
+        - double
+        - dashed
+        - inset
+        - outset
     border_width:
       type: slider
       min: 0

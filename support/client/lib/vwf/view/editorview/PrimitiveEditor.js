@@ -123,6 +123,21 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
             callMethod($scope.node, {method: method});
         }
 
+        $scope.deleteNode = function(node){
+            var user = _UserManager.GetCurrentUserName();
+            if (user == null) {
+                _Notifier.notify('You must log in to participate');
+            }
+            else if (_PermissionsManager.getPermission(user, node.id) == 0) {
+                _Notifier.notify('You do not have permission to edit this object');
+            }
+            else{
+                alertify.confirm("Are you sure you want to delete " + (node.name || node.id) + "?", function(confirmed){
+                    if(confirmed === true) vwf_view.kernel.deleteNode(node.id);
+                });
+            }
+        }
+
         function setupAnimation(){
             var node = $scope.node;
             var animationLength = Engine.getProperty(node.id, 'animationLength');

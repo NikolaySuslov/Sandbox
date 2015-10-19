@@ -243,16 +243,23 @@ function startVWF() {
 					global.configuration.assetDataDir = global.configuration.assetDataDir || 'assets';
 					var datadir = libpath.resolve(__dirname, '..','..', global.configuration.assetDataDir);
 
-					fs.mkdirs(datadir, function()
-					{
-						var assetServer = require('sandbox-asset-server');
-						app.use(global.configuration.assetAppPath, assetServer({
-							dataDir: datadir,
-							sessionCookieName: 'session',
-							sessionHeader: global.configuration.assetSessionHeader || 'X-Session-Header',
-							sessionSecret: global.configuration.sessionSecret || 'unsecure cookie secret'
-						}));
-						logger.info('Hosting assets locally at', global.configuration.assetAppPath);
+					fs.mkdirs(datadir, function(){
+						try {
+							var assetServer = require('sandbox-asset-server');
+							app.use(global.configuration.assetAppPath, assetServer({
+								dataDir: datadir,
+								sessionCookieName: 'session',
+								sessionHeader: global.configuration.assetSessionHeader || 'X-Session-Header',
+								sessionSecret: global.configuration.sessionSecret || 'unsecure cookie secret'
+							}));
+							logger.info('Hosting assets locally at', global.configuration.assetAppPath);
+						}
+						catch(e){
+							logger.error('Failed to start the asset server! Did it install correctly?');
+							app.all(global.configuration.assetAppPath+'/*', function(req,res){
+								res.status(500).send('Asset server not available');
+							});
+						}
 					});
 				}
 				else {

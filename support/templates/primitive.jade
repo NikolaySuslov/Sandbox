@@ -45,6 +45,7 @@ block content
 		.accordion-properties(ng-repeat-end)
 			div(ng-repeat="(key, value) in data.editorProps")
 				vwf-editor-property(vwf-prop="value", vwf-key="key", vwf-node="data.node")
+			button.delete-button(ng-click="deleteNode(data.node)") Delete
 			
 			
 	
@@ -97,7 +98,7 @@ block content
 	#vwf-template-nodeid(ng-non-bindable, style='display: none;')
 		label.vMargin {{displayname}}: 
 			br
-			input(ng-model='vwfNode.properties[vwfProp.property]', type='text', placeholder='{{displayname}}', ng-model-options="{updateOn: 'blur change'}")
+			input(ng-model='vwfNode.properties[vwfProp.property]', type='text', placeholder='{{displayname}}', ng-change='onChange()', ng-model-options="{updateOn: 'blur change'}")
 			button(ng-click='pickNode(vwfNode, vwfProp)') Choose Node
 		
 	#vwf-template-sectionTitle(ng-non-bindable, style='display: none;')

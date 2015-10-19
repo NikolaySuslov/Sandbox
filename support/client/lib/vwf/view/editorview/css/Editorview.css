@@ -1184,6 +1184,11 @@
     float: none;
     margin: 0 auto;
     display: block; }
+/* line 34, _primitive.scss */
+#primitiveEditor .delete-button {
+  margin: 20px auto 0 auto;
+  float: none;
+  display: block; }
 
 /* line 5, _materialeditor.scss */
 .htmlPalette.extrawide {

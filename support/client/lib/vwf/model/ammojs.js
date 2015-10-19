@@ -1,18 +1,18 @@
 "use strict";
 // Copyright 2012 United States Government, as represented by the Secretary of Defense, Under
 // Secretary of Defense (Personnel & Readiness).
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 // in compliance with the License. You may obtain a copy of the License at
-// 
+//
 //   http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software distributed under the License
 // is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 /// vwf/model/object.js is a backstop property store.
-/// 
+///
 /// @module vwf/model/object
 /// @requires vwf/model
 /// @requires vwf/configuration
@@ -36,7 +36,7 @@ function collectChildCollisions(node, list) {
         var col = node.buildCollisionShape();
         if (col) {
             list.push({
-                matrix: Engine.getProperty(node.id, 'orthoWorldTransform'), //don't use normal world transform. In non uniform spaces, the rotations are senseless. 
+                matrix: Engine.getProperty(node.id, 'orthoWorldTransform'), //don't use normal world transform. In non uniform spaces, the rotations are senseless.
                 collision: col,
                 mass: node.mass,
                 localScale: node.localScale,
@@ -106,26 +106,26 @@ phyJoint.prototype.deinitialize = function() {
 }
 phyJoint.prototype.getTransform = function(temp)
 {
-    //this is important and tricky!!! 
+    //this is important and tricky!!!
     //since the joint orientation is relative to the bodies, and the bodies are moving,
     //recreating the joint without updating it's position will result in very different results
-    //it's probably  good pratice to make the joint object a  child of the bodyA, so that the 
-    //joint location never changes relative to body a. However, we can also make this work by 
+    //it's probably  good pratice to make the joint object a  child of the bodyA, so that the
+    //joint location never changes relative to body a. However, we can also make this work by
     //updating the stored location of each joint to be relative to the body A position after each tick
 
     //NOTE:: the this.transform value should be storing the location RELATIVE to BODYA in the reference frame of the joint parent!!!
-    //NOTE:: updates from the physics tick should not actually change and rebind these joints, this information is useful only to 
+    //NOTE:: updates from the physics tick should not actually change and rebind these joints, this information is useful only to
     //late joiners and DB saves
-    
+
     if(this.bodyA)
     {
         if(!temp) temp = [];
-        
+
         if(!this.transRelBodyA) throw new Error('Body not initialized before tick');
         var bodyWorldTx = Engine.getProperty(this.aID, 'worldtransform');
         var bodyRelMat = Mat4.multMat(bodyWorldTx,this.transRelBodyA, temp);
 
-        
+
         return bodyRelMat;
     }
     else
@@ -258,7 +258,7 @@ phyHingeJoint.prototype.buildJoint = function() {
 }
 //NOTE: todo: limits need to be transformed from joint space to bodyA space
 //makes more sense GUI side to display in joint space, but bullet used bodyA reference frame
-//I think - make y axis vec. rotate around joint space x by limit. move this vec into bodya space. use arctan2 to find new rotation around joint x 
+//I think - make y axis vec. rotate around joint space x by limit. move this vec into bodya space. use arctan2 to find new rotation around joint x
 phyHingeJoint.prototype.setLowerAngLimit = function(limit)
 {
     this.lowerAngLimit = limit;
@@ -317,15 +317,15 @@ phySliderJoint.prototype.setUpperLinLimit = function(limit)
 phySliderJoint.prototype.getLowerLinLimit = function()
 {
    return this.lowerLinLimit ;
-    
+
 }
 phySliderJoint.prototype.getUpperLinLimit = function()
 {
     return this.upperLinLimit ;
-    
+
 }
 phySliderJoint.prototype.buildJoint = function() {
-    
+
     var worldTx = Engine.getProperty(this.id, 'worldtransform');
     this.pointA = this.getMatrixRelBody(this.aID, worldTx);
     this.pointB = this.getMatrixRelBody(this.bID, worldTx);
@@ -356,7 +356,7 @@ phyFixedJoint.prototype.buildJoint = function() {
     joint.setLinearUpperLimit(new Ammo.btVector3(0,0,0));
     joint.setAngularLowerLimit(new Ammo.btVector3(0,0,0));
     joint.setAngularUpperLimit(new Ammo.btVector3(0,0,0));
-    return joint;  
+    return joint;
 }
 function setupPhyObject(node, id, world) {
     node.body = null;
@@ -416,7 +416,7 @@ phyObject.prototype.addForce = function(vec, offset) {
 		Ammo.destroy(f);
 	}
 }
-//this is a global space force that is applied at every tick. Sort of a motor. Could be 
+//this is a global space force that is applied at every tick. Sort of a motor. Could be
 //used to do custom per object gravity.
 phyObject.prototype.setConstantForce = function(vec) {
     if(this.constantForce) Ammo.destroy(this.constantForce);
@@ -552,7 +552,7 @@ phyObject.prototype.initialize = function() {
                 quat = Quaternion.normalize(quat, []);
                 var q = new Ammo.btQuaternion(quat[0], quat[1], quat[2], quat[3]);
                 startTransform.setRotation(q);
-                //careful not to set the childcollision scale when the child is actually this - otherwise we'd be setting it twice, once on the 
+                //careful not to set the childcollision scale when the child is actually this - otherwise we'd be setting it twice, once on the
                 //collision body and once on the compound body
                 //if(childCollisions[i].node !== this)
                 //    childCollisions[i].collision.setLocalScaling(new Ammo.btVector3(childCollisions[i].localScale[0], childCollisions[i].localScale[1], childCollisions[i].localScale[2]));
@@ -671,7 +671,7 @@ phyObject.prototype.getTorque = function() {
     }
 }
 //this is probably not what you're looking for. Torque is an instantanious value, it
-//only has meaning within a tick cycle. This is only for replication. Use either addTorque 
+//only has meaning within a tick cycle. This is only for replication. Use either addTorque
 //or setConstantTorque
 phyObject.prototype.setTorque = function(torque) {
     if (this.initialized === true) {
@@ -716,7 +716,7 @@ phyObject.prototype.enable = function() {
     }
 }
 //must be very careful with data the the physics engine changes during the sim
-//can't return cached values if body is enabled because we'll refelct the data 
+//can't return cached values if body is enabled because we'll refelct the data
 //from the JS engine and not the changed state of the physics
 phyObject.prototype.getActivationState = function() {
     if (this.initialized === true) {
@@ -1281,7 +1281,7 @@ define(["module", "vwf/model", "vwf/configuration","vwf/model/ammo.js/ammo"], fu
                 for (var j in this.jointBodyMap[i])
                     if (this.jointBodyMap[i][j] == nodeID)
                         return true;
-            return false;        
+            return false;
         },
         creatingNode: function(nodeID, childID, childExtendsID, childImplementsIDs, childSource, childType, childIndex, childName, callback /* ( ready ) */ ) {
             if (childID === Engine.application()) {
@@ -1299,7 +1299,7 @@ define(["module", "vwf/model", "vwf/configuration","vwf/model/ammo.js/ammo"], fu
                 this.allNodes[Engine.application()] = this.nodes[Engine.application()];
                 this.resetWorld();
             }
-            //node ID 
+            //node ID
             //the parent does not exist, so.....
             if (!this.allNodes[nodeID]) return;
             if (nodeID && hasPrototype(childID, 'sphere2-vwf')) {
@@ -1414,7 +1414,7 @@ define(["module", "vwf/model", "vwf/configuration","vwf/model/ammo.js/ammo"], fu
                     var node = this.allNodes[nodekeys[i]];
                     if (node.body && node.initialized === true && node.mass > 0 && node.getActivationState() != 2) {
                         Engine.setProperty(node.id, 'transform', node.getTransform(tempmat));
-                        //so, we were setting these here in order to inform the kernel that the property changed. Can we not do this, and 
+                        //so, we were setting these here in order to inform the kernel that the property changed. Can we not do this, and
                         //rely on the getter? that would be great....
                         Engine.setPropertyFast(node.id, '___physics_activation_state', node.getActivationState());
                         Engine.setPropertyFast(node.id, '___physics_velocity_angular', node.getAngularVelocity());
@@ -1466,9 +1466,9 @@ define(["module", "vwf/model", "vwf/configuration","vwf/model/ammo.js/ammo"], fu
             return this.settingProperty(nodeID, propertyName, propertyValue);
         },
         resetWorld: function() {
-            
+
             this.pendingReset = true;
-            //here, we must reset the world whenever a new client joins. This is because the new client must be aligned. They will be 
+            //here, we must reset the world whenever a new client joins. This is because the new client must be aligned. They will be
             //initializing the world in a given state. There is stateful information internal to the physics engine that can only be reset on the other clients
             //by rebuilding the whole sim on each.
             var world = this.allNodes[Engine.application()].world;
@@ -1568,10 +1568,10 @@ define(["module", "vwf/model", "vwf/configuration","vwf/model/ammo.js/ammo"], fu
             if (methodName == '___physics_world_reset') {
                 //if a client joins (who is not myself), I need to reset.
                 //note that the timing of this call has been carefully examined. There can be no model changes (especially in the physics)
-                //between the GetState being sent to the load client, and this event occuring. 
+                //between the GetState being sent to the load client, and this event occuring.
                 // if(Engine.moniker() != args[0])
                 {
-                    console.log('reset world to sync late joining cleent at', Engine.getProperty(Engine.application(),'simTime'));
+                    console.log('reset world to sync late joining client at', Engine.getProperty(Engine.application(),'simTime'));
                     if (!this.pendingReset) this.resetWorld();
                 }
             }
@@ -1721,7 +1721,7 @@ define(["module", "vwf/model", "vwf/configuration","vwf/model/ammo.js/ammo"], fu
                     node.setUpperAngLimit(propertyValue);
                 }
 
-                
+
                 //this is a hack
                 //find a better way. Maybe delete the old key from the map above
                 if (node.body) this.bodiesToID[node.body.ptr] = nodeID;

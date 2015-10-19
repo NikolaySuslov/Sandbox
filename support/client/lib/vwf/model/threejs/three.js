@@ -24762,7 +24762,17 @@ THREE.WebGLRenderer = function ( parameters ) {
 				_gl.blendEquation( _gl.FUNC_ADD );
 				_gl.blendFunc( _gl.ZERO, _gl.ONE_MINUS_SRC_COLOR );
 
-			} else if ( blending === THREE.MultiplyBlending ) {
+			} 
+			else if ( blending === 9 ) {
+
+				// TODO: Find blendFuncSeparate() combination
+				_gl.enable( _gl.BLEND );
+				_gl.blendEquationSeparate( _gl.FUNC_ADD, _gl.FUNC_ADD );
+				_gl.blendFuncSeparate( _gl.ONE, _gl.ZERO, _gl.ONE, _gl.ZERO );
+
+
+			} 
+			else if ( blending === THREE.MultiplyBlending ) {
 
 				// TODO: Find blendFuncSeparate() combination
 				_gl.enable( _gl.BLEND );

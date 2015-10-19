@@ -35,6 +35,7 @@
     "multer": "~0.1.7",
     "nedb": "~0.10.2",
     "node-minify": "~0.8.1",
+    "node-sass": "~3.3.3",
     "node-uuid": "1.4.x",
     "nodemailer": "~0.6.0",
     "nstore": "~0.5.2",
@@ -54,8 +55,7 @@
     "winston": "~0.8.3",
     "ws": "~0.4.25",
     "yamljs": "~0.1.4",
-    "sandbox-asset-server": "https://github.com/NikolaySuslov/SandboxAssetServer.git#node4",
-    "node-sass": "~3.4.0-beta1"
+    "sandbox-asset-server": "1.2.x"
   },
   "devDependencies": {},
   "scripts": {

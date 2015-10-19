@@ -194,6 +194,9 @@ global.logger = {
 			else if (arg)
 				this._log += arg.toString() + '\n';
 		}
+
+		var strLen = this._log.length;
+		if(strLen > 5000) this._log = this._log.substr(strLen - 5000);
 	},
 	_log: ""
 };

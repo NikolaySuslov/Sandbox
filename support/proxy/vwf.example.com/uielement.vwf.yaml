@@ -19,7 +19,9 @@ properties:
     get: |
           return [this.transform[12],this.transform[13],this.transform[14]];
   DisplayName:
-  visible:
+  visible: true
+  visibleToCamera: ""
+  visibleToAncestor: false
   EditorData:
     visible:
       type: check
@@ -29,4 +31,8 @@ properties:
       type: nodeid
       displayname: Restrict to Camera
       property: visibleToCamera
+    visibleToAncestor:
+      type: check
+      displayname: Restrict to Ancestor Camera
+      property: visibleToAncestor
 events:
