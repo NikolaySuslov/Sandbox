@@ -575,6 +575,7 @@
         }
         this.renderRefractions = function()
         {
+             if (this.disable) return;
             var rttcam = _dView.getCamera();
             var rtt = this.refractionColorRtt;
 

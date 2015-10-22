@@ -326,6 +326,8 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             this.leftover = 0;
             this.future = 0;
 
+           
+
         },
         lerp: function(a, b, l, c) {
             //if(c) l = Math.min(1,Math.max(l,0));
@@ -705,6 +707,12 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 this.canvasQuery.css('box-sizing', 'border-box');
                 initScene.call(this, this.state.scenes[childID]);
                 require("vwf/view/threejs/editorCameraController").initialize(this.editorCamera);
+
+                var instanceData = _DataManager.getInstanceData();
+                var    publishSettings = instanceData.publishSettings;
+
+                this.cameraID = publishSettings.camera;
+                this.setCamera_internal(this.cameraID);
             }
         },
 
@@ -802,13 +810,18 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             vwf_view.kernel.callMethod(Engine.application(), 'setClientCamera', [Engine.moniker(), camID]);
         },
         setCamera_internal: function(camID) {
+
             var defaultCameraID;
             var instanceData = _DataManager.getInstanceData();
             var publishSettings = instanceData.publishSettings;
 
             if (publishSettings) defaultCameraID = publishSettings.camera;
 
-            this.cameraID = camID || defaultCameraID;
+            this.cameraID = camID  || defaultCameraID;
+
+            //allow the default 
+            if(!camID && publishSettings.allowTools)
+                this.cameraID = null;
 
             var cam = this.editorCamera;
 
@@ -1325,7 +1338,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
             //if we have a camera, but self.activecamera is null, then we were expecting a default camera, but it was not yet available
             //try to set it, so next frame we use it. 
-            if (!self.activeCamera) self.setCamera_internal();
+            if (!self.activeCamera) self.setCamera_internal(self.cameraID);
 
             if (self.paused === true)
                 return;

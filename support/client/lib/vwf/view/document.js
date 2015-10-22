@@ -35,6 +35,11 @@ define( [ "module", "vwf/view" ], function( module, view ) {
 
         initialize: function() {
             window.vwf_view = this;
+
+
+            var self = this;
+            window.Engine.emit = this.kernel;
+
         },
         
     }, function( kernelFunctionName ) {  // TODO: swap kernelGenerator and viewGenerator? we shouldn't need to provide a kernel function generator for view & model modules--only for stages

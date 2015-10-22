@@ -10,7 +10,7 @@
             "parameters": []
         },
         "bindToggle": {
-            "body": "var self = this;\n    self.unbindToggle();\n    \n    $(\"canvas\").on(\"keyup.cameraToggler\", function(e)\n    {\n        var camList = _dView.getCameraList()[1];\n        var camera = _dView.getCamera().parent;\n        var toCamera;\n        var key = self.keyCode ? self.keyCode.toUpperCase() : \" \";\n\n        //If necessary, remove the editor cam from camList\n        if (!self.cycleEditor && !camList[0]) camList.splice(0, 1);\n\n        //If the toggle button has been pressed and there are at least two cams in camList\n        if (camList.length >= 2 && e.keyCode === key.charCodeAt(0))\n        {\n            if (camera)\n            {\n                var index = (camList.indexOf(camera.vwfID) + 1) % camList.length;\n                toCamera = camList[index];\n            }\n\n            //If camera is falsy, then the editor cam is assumed active (camList[0])\n            else toCamera = camList[1];\n\n            _dView.setCamera(toCamera);\n        }\n\n        //Else, handle numpad and numbers row presses\n        else if (self.bindNumbers)\n        {\n            var numPad = e.keyCode - 96;\n            var numRow = e.keyCode - 48;\n            if (numPad >= 0 && numPad <= 9 && numPad < camList.length)\n            {\n                _dView.setCamera(camList[numPad]);\n            }\n            else if (numRow >= 0 && numRow <= 9 && numRow < camList.length)\n            {\n                _dView.setCamera(camList[numRow]);\n            }\n        }\n    });",
+            "body": "var self = this;\n    self.unbindToggle();\n\n    $(\"canvas\").on(\"keyup.cameraToggler\", function(e)\n    {\n        var camList = _dView.getCameraList()[1];\n        var camera = _dView.getCamera().parent;\n        var toCamera;\n        var key = self.keyCode ? self.keyCode.toUpperCase() : \" \";\n        var sender = self.Scene.children_by_name.xAPISender;\n\n        //If necessary, remove the editor cam from camList\n        if (!self.cycleEditor && !camList[0]) camList.splice(0, 1);\n\n        //If the toggle button has been pressed and there are at least two cams in camList\n        if (camList.length >= 2 && e.keyCode === key.charCodeAt(0))\n        {\n            if (camera)\n            {\n                var index = (camList.indexOf(camera.vwfID) + 1) % camList.length;\n                toCamera = camList[index];\n            }\n\n            //If camera is falsy, then the editor cam is assumed active (camList[0])\n            else toCamera = camList[1];\n\n            _dView.setCamera(toCamera);\n\n            if (sender)\n            {\n                sender.xAPISend(\"observed\", (toCamera || \"editorCamera\"), \"Instructor\", null);\n            }\n        }\n\n        //Else, handle numpad and numbers row presses\n        else if (self.bindNumbers)\n        {\n            var numPad = e.keyCode - 96;\n            var numRow = e.keyCode - 48;\n            if (numPad >= 0 && numPad <= 9 && numPad < camList.length)\n            {\n                _dView.setCamera(camList[numPad]);\n\n                if ((!camera && camList[numPad]) || (camera && camera.vwfID !== camList[numPad]))\n                {\n                    if (sender)\n                    {\n                        sender.xAPISend(\"observed\", (camList[numPad] || \"editorCamera\"), \"Instructor\", null);\n                    }\n                }\n            }\n            else if (numRow >= 0 && numRow <= 9 && numRow < camList.length)\n            {\n                _dView.setCamera(camList[numRow]);\n\n                if ((!camera && camList[numRow]) || (camera && camera.vwfID !== camList[numRow]))\n                {\n                    if (sender)\n                    {\n\n                        sender.xAPISend(\"observed\", (camList[numRow] || \"editorCamera\"), \"Instructor\", null);\n                    }\n                }\n            }\n        }\n    });",
             "parameters": []
         },
         "ready": {
@@ -33,14 +33,14 @@
     "properties": {
         "DisplayName": "Camera Toggler",
         "EditorData": {
-            "_bindNumbers": {
-                "displayname": "Camera shortcuts (numpad)",
-                "property": "bindNumbers",
-                "type": "check"
-            },
             "_autoBind": {
                 "displayname": "Auto-bind on ready",
                 "property": "autoBind",
+                "type": "check"
+            },
+            "_bindNumbers": {
+                "displayname": "Camera shortcuts (numpad)",
+                "property": "bindNumbers",
                 "type": "check"
             },
             "_cycleEditor": {
@@ -64,7 +64,7 @@
                 "type": "button"
             }
         },
-        "___sourceAssetTimestamp": "Thu Oct 08 2015 16:48:14 GMT-0400 (Eastern Daylight Time)",
+        "___sourceAssetTimestamp": "Wed Oct 21 2015 14:43:34 GMT-0400 (Eastern Daylight Time)",
         "autoBind": true,
         "bindNumbers": true,
         "cycleEditor": true,
@@ -73,8 +73,7 @@
         "isToggleActive": true,
         "keyCode": "C",
         "owner": "ADLteam",
-        "sourceAssetId": "06960369",
-        "transform": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.989256739616394, 0.49512457847595215, 0.01774579845368862, 1]
+        "transform": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -5.138374328613281, -42.01285934448242, 0.7359427809715271, 1]
     },
     "random": {
         "c": 1,

@@ -63,6 +63,9 @@ uniform sampler2D oNormal;
 uniform sampler2D diffuse;
 uniform sampler2D refractionColorRtt;
 
+uniform mat4 projectionMatrix;
+
+
 uniform sampler2D refractionDepthRtt;
 uniform float uChop;
 uniform float uReflectPow;
@@ -103,8 +106,11 @@ vec4 pack_depth( const in float depth ) {
 
 float LinearizeDepth(float depth)
 {
-	float near = 0.01;
-	float far = 10000.0;
+	float m22  = projectionMatrix[2][2];
+	float m32  = projectionMatrix[3][2];
+
+	float near = (2.0*m32)/(2.0*m22-2.0);
+	float far = ((m22-1.0)*near)/(m22+1.0);
 	float z = depth * 2.0 - 1.0; // Back to NDC
 	return (2.0 * near * far) / (far + near - z * (far - near));
 }
@@ -120,16 +126,20 @@ void main() {
 	vec3 pNormal;
 	vec3 nnvCamDir = normalize(-vCamDir);
 	float powerSum = 0.0;
-	for (int i = 0; i < 2; i++)
+	//for (int i = 0; i < 2; i++)
 	{
-		{
+		
 			float wavesInTexture = 10.0;
 			vec2 texToWorld = tc.xy / wavesInTexture;
-			vec2 texToWaveLen =  texToWorld / L[i];
-			vec2 directionAndSpeed = D[i] * S[i] / ( wavesInTexture * 15.0);
-			pNormal +=  A[i] *  texture2D(oNormal, texToWaveLen  + directionAndSpeed * t ).xyz;
-			powerSum += A[i];
-		}
+			vec2 texToWaveLen =  texToWorld / L[0];
+			vec2 directionAndSpeed = D[0] * S[0] / ( wavesInTexture * 15.0);
+			pNormal +=  A[0] *  texture2D(oNormal, texToWaveLen  + directionAndSpeed * t ).xyz;
+			powerSum += A[0];
+		
+			texToWaveLen =  texToWorld / L[1];
+			directionAndSpeed = D[1] * S[1] / ( wavesInTexture * 15.0);
+			pNormal +=  A[1] *  texture2D(oNormal, texToWaveLen  + directionAndSpeed * t ).xyz;
+			powerSum += A[1];
 	}
 
 	pNormal /= powerSum ;
@@ -154,16 +164,16 @@ void main() {
 	mapNormal.xy *= max(0.0, (uChop / 30.0 *  waves[0].x));
 	mapNormal.xy *= uNormalPower;
 	mapNormal = normalize(mapNormal);
-	//pNormal.xy *= max(0.0, uChop / 4.0);
+	pNormal.xy *= max(0.0, uChop / 4.0);
 
 
 	vec3 texNormal =  normalize(TBN * mapNormal);
 	vec3 texNormal1 =  normalize(TBN * pNormal);;
 
-	texNormal = mix(texNormal, texNormal1, clamp(0.0, 1.0, vCamLength / uHalfGrid));
+	float falloffmix = clamp(vCamLength / uHalfGrid,0.0, 1.0);
+	texNormal = mix(texNormal, texNormal1, falloffmix+.00000001);
 	texNormal = normalize(texNormal);
-
-
+	//texNormal = pNormal;
 
 
 	float ref = 0.0;
@@ -225,11 +235,18 @@ void main() {
 		
 	D1 = LinearizeDepth(D1);
 
+	vec3 ocean_bottom_color = texture2D(refractionColorRtt , sspos.xy + texNormal.xy / 20.0).xyz;
+
 	float depth = D1 - D0;
+	if(depth > -0.001)
+	{
+		depth =  -1000.0;
+		ocean_bottom_color = vec3(0.0,0.0,0.0);
+	}
 //if(length(rawDepth) < .2)
 //		depth =  -1000.0 ;
 
-	vec3 ocean_bottom_color = texture2D(refractionColorRtt , sspos.xy + texNormal.xy / 20.0).xyz;
+	
 	vec3 LZTP = ocean_bottom_color;
 
 
@@ -307,10 +324,13 @@ void main() {
 	// D0 = (D0 /gl_FragCoord.w);
 	// D1 = D1/gl_FragCoord.w;
 	
-	
-		//gl_FragColor.xyz = rawDepth.xyz;
+	//gl_FragColor = vec4(0.0,0.0,0.0,1.0);
+		//gl_FragColor.xyz = texNormal.xyz;
 
 	//if(vCamLength > depth*100.0)
 	//	depth = 100.0;
+
+	
+
 
 }

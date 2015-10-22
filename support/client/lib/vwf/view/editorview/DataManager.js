@@ -178,12 +178,12 @@ define(function ()
 		this.getCleanNodePrototype = function (id)
 		{
 			if (typeof id === "string") return this.DeleteIDs(this.fixExtendsAndArrays(this.GetNode(id)));
-			else return this.DeleteIDs(this.fixExtendsAndArrays(id));
+			else return this.DeleteIDs(this.fixExtendsAndArrays(JSON.parse(JSON.stringify(id))));
 		}
 		this.getSaveNodePrototype = function (id)
 		{
 			if (typeof id === "string") return this.DeleteIDs(this.fixExtendsAndArrays(this.GetNode(id)),true);
-			else return this.DeleteIDs(this.fixExtendsAndArrays(id),true);
+			else return this.DeleteIDs(this.fixExtendsAndArrays(JSON.parse(JSON.stringify(id))),true);
 		}
 		this.getSaveStateData = function()
 		{

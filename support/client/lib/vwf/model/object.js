@@ -215,6 +215,7 @@ if ( ! object ) return;  // TODO: patch until full-graph sync is working; driver
 
         settingProperty: function( nodeID, propertyName, propertyValue ) {
             var object = this.objects[nodeID];
+            if(!object) return;
             object.initialized && object.patches && ( object.patches.properties = true ); // placeholder for a property change list
             return object.properties[propertyName] = propertyValue;
         },

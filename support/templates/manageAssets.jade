@@ -93,7 +93,7 @@ mixin manageAssets_body
 							each perm in perms
 
 								- title = level +' '+ perm.toLowerCase()
-								- model = 'selected.permissions.'+level+'.'+perm
+								- model = 'selected.permissions.'+level.toLowerCase()+'.'+perm.toLowerCase()
 								td
 									input(type='checkbox', title=title, ng-model=model
 										ng-change='selected._permsDirty = true', ng-disabled='!selectedAsset')

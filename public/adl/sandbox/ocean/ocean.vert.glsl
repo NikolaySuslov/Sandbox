@@ -93,8 +93,8 @@ void main() {
       float p_w = tpos1.w;
       float p_dw = tpos2.w - p_w;
       float p_h = uWaterHeight;
-      float i_t = (p_w * p_h - p_z) / (p_dz - p_dw * p_h);
-
+      float i_t = (p_w * p_h - p_z) / ((p_dz - p_dw * p_h));
+      behind = 0.0;
       if (i_t > 1.0000)
       {
             behind = 1.0;

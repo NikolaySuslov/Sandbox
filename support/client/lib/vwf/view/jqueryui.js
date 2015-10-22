@@ -462,7 +462,14 @@ define(["module", "vwf/view"], function(module, view)
             }
             else if (propertyName == 'visible')
             {
-                if ((!node.visibleToCamera || node.visibleToCamera === this.activeCamera) && propertyValue)
+                if (
+                    propertyValue
+                    && (
+                        !node.visibleToAncestor && !node.visibleToCamera
+                        || node.visibleToAncestor && this.getAncestorCamera(childID) === this.activeCamera
+                        || node.visibleToCamera && node.visibleToCamera === this.activeCamera
+                    )
+                )
                     this.setNodeVisibility(node, true);
                 else
                     this.setNodeVisibility(node, false);

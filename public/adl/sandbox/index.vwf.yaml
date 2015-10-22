@@ -93,51 +93,7 @@ properties:
     value: white             
   owner:
   type: scene
-  ___clientAPI:
-    get : |
-           
-           if(this.____clientAPI) return this.____clientAPI;
-           this.____clientAPI = {};
-           this.____clientAPI.getUserNameForConnectionID = function(id)
-           {
-           	   if(!this.clients || !this.clients[id]) return null;
-           	   		return this.clients[id].name;
-           }.bind(this);
-           this.____clientAPI.getConnectionIDForUserName = function(name)
-           {
-           	   if(!this.clients) return null;
-           	   for(var i in this.clients)
-           	   {
-           	   		if(this.clients[i].name == name)
-           	   			return i;
-           	   }
-           	   return null;
-           }.bind(this);
-           this.____clientAPI.getAvatarForUserName = function(name)
-           {
-           	  return this.findNodeByID('character-vwf-' + name);
-           }.bind(this);
-           this.____clientAPI.focus = function(cid,nodeID)
-           {
-              //did the user enter a whole node, not a node ID?
-              if(nodeID && nodeID.id)
-                nodeID = nodeID.id;
-              if(this.clients[cid])
-              {
-                 this.clients[cid].focusID = nodeID;
-              }  
-           }.bind(this);
-           this.____clientAPI.getCameraIDForClient = function(id)
-           {
-             if(!this.clients || !this.clients[id]) return null;
-                  return this.clients[id].cameraID;
-           }.bind(this);
-           this.____clientAPI.getCameraForClient = function(id)
-           {
-             if(!this.clients || !this.clients[id]) return null;
-                  return this.findNodeByID(this.clients[id].cameraID);
-           }.bind(this);
-           return this.____clientAPI;
+  ___clientAPI: true
   commsAPI:
     get: |
           var self = this;
