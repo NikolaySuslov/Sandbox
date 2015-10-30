@@ -67,7 +67,10 @@ exports.getExampleMetadata = function(name,cb)
 			cb(JSON.parse(data));
 		}catch(e)
 		{
-			cb({title:"",description:"",isExample:true,publishSettings:{allowAnonymous:true,persistence:false,allowTools:true,createAvatar:true,singlePlayer:true}});
+			//we don't want to generate default values here because the lack of this data is used to inform the system 
+			//that this is a bad url
+			cb(null);
+			//cb({title:"",description:"",isExample:true,publishSettings:{allowAnonymous:true,persistence:false,allowTools:true,createAvatar:true,singlePlayer:true}});
 		}
 	});
 

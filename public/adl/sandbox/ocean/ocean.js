@@ -325,6 +325,7 @@
             this.nearmesh = new THREE.Mesh(this.near, this.mat);
             this.nearmesh.InvisibleToCPUPick = true;
             this.getRoot().add(this.nearmesh);
+            this.nearmesh.renderDepth = 10;
             this.nearmesh.frustumCulled = false;
             _dView.bind('prerender', this.prerender.bind(this));
             _dView.bind('postprerender', this.renderRefractions.bind(this));
@@ -343,6 +344,7 @@
             this.nearmesh = new THREE.Mesh(this.near, this.mat);
             this.nearmesh.InvisibleToCPUPick = true;
             this.getRoot().add(this.nearmesh);
+            this.nearmesh.renderDepth = 10;
             this.nearmesh.frustumCulled = false;
             this.uniforms.uHalfGrid.value = this.resolution / 2;
         }

@@ -232,6 +232,7 @@ define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview
 
 	app.createdNode = function(parentId, newId, newExtends, newImplements, newSource, newType)
 	{
+		
 		if( newId === 'http-vwf-example-com-camera-vwf-camera' ) return;
 
 		var node = app.root.fields.nodes[newId] = {};

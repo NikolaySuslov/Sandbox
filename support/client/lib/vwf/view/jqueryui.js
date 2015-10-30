@@ -51,6 +51,7 @@ define(["module", "vwf/view"], function(module, view)
                     left: 0,
                     top: 0,
                     width: 100,
+                    orientation: "horizontal",
                     transform: this.getScreenCenter(),
                     owner: _UserManager.GetCurrentUserName(),
                     DisplayName: _Editor.GetUniqueName('Slider'),
@@ -323,7 +324,7 @@ define(["module", "vwf/view"], function(module, view)
                     {
                         if ($(this).hasClass('guiselected')) return false;
                         if (_Editor.GetSelectMode() == 'Pick' || _Editor.GetSelectMode() == 'TempPick') return false;
-                    });
+                    });                                         
                 }
                 if (this.isButton(node.type))
                 {
@@ -350,7 +351,7 @@ define(["module", "vwf/view"], function(module, view)
                     $(node.parentdiv).append('<div id="guioverlay_' + node.id + '"/>')
                     node.div = $('#guioverlay_' + node.id)[0];
                     //$(node.div).html(('').escape());
-                    $(node.div).css('position', 'absolute');
+                    $(node.div).css('position', 'absolute');                  
                 }
                 if (this.isImage(node.type))
                 {
@@ -551,6 +552,12 @@ define(["module", "vwf/view"], function(module, view)
                 {
                     node.div.inSetter = true;
                     $(node.div).slider('option', 'value', propertyValue);
+                    node.div.inSetter = false;
+                }
+                else if (propertyName == 'orientation')
+                {
+                    node.div.inSetter = true;
+                    $(node.div).slider('option', 'orientation', propertyValue);
                     node.div.inSetter = false;
                 }
             }

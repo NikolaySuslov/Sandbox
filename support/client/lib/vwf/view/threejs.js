@@ -712,7 +712,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 var    publishSettings = instanceData.publishSettings;
 
                 this.cameraID = publishSettings.camera;
-                this.setCamera_internal(this.cameraID);
+                this.setCamera(this.cameraID);
             }
         },
 
@@ -2115,6 +2115,9 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     mouseLeftDown = true;
                     break;
             };
+
+            e.preventDefault();
+            
             var event = getEventData(e, false);
             if (event) {
                 pointerDownID = pointerPickID ? pointerPickID : sceneID;
@@ -2138,6 +2141,8 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     mouseLeftDown = false;
                     break;
             };
+
+            e.preventDefault();
 
             var eData = getEventData(e, ctrlAndAltDown);
             if (eData) {

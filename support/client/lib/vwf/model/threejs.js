@@ -2126,13 +2126,13 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                                 node[capi + 'Internal'] = [];
                                 if (node[capi])
                                     node[capi + 'Internal'].push(node[capi]);
-                                node[capi] = eval("var f = function(arg0,arg1,arg2,arg3,arg4,arg5)\n" +
-                                    "{\n" +
+                                node[capi] = new Function(["arg0","arg1","arg2","arg3","arg4","arg5"],
+                                    
                                     "var ret = undefined;\n" +
                                     "for(var i =0; i < this['" + capi + 'Internal' + "'].length; i++)\n" +
                                     "	ret = ret !== undefined ? ret : (this['" + capi + 'Internal' + "'][i] && this['" + capi + 'Internal' + "'][i].call(this,arg0,arg1,arg2,arg3,arg4,arg5));\n" +
-                                    "return ret;\n" +
-                                    "}; f;"
+                                    "return ret;"
+                                    
                                 );
                                 if (!proto[api + 'Internal']) {
                                     if (proto[capi])

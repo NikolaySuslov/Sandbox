@@ -1,24 +1,12 @@
 {
     "extends": "http://vwf.example.com/node3.vwf",
     "methods": {
-        "_keyDown": {
-            "body": "",
-            "parameters": []
-        },
-        "_keyUp": {
-            "body": "",
-            "parameters": []
-        },
         "bindToggle": {
-            "body": "var self = this;\n    self.unbindToggle();\n\n    $(\"canvas\").on(\"keyup.cameraToggler\", function(e)\n    {\n        var camList = _dView.getCameraList()[1];\n        var camera = _dView.getCamera().parent;\n        var toCamera;\n        var key = self.keyCode ? self.keyCode.toUpperCase() : \" \";\n        var sender = self.Scene.children_by_name.xAPISender;\n\n        //If necessary, remove the editor cam from camList\n        if (!self.cycleEditor && !camList[0]) camList.splice(0, 1);\n\n        //If the toggle button has been pressed and there are at least two cams in camList\n        if (camList.length >= 2 && e.keyCode === key.charCodeAt(0))\n        {\n            if (camera)\n            {\n                var index = (camList.indexOf(camera.vwfID) + 1) % camList.length;\n                toCamera = camList[index];\n            }\n\n            //If camera is falsy, then the editor cam is assumed active (camList[0])\n            else toCamera = camList[1];\n\n            _dView.setCamera(toCamera);\n\n            if (sender)\n            {\n                sender.xAPISend(\"observed\", (toCamera || \"editorCamera\"), \"Instructor\", null);\n            }\n        }\n\n        //Else, handle numpad and numbers row presses\n        else if (self.bindNumbers)\n        {\n            var numPad = e.keyCode - 96;\n            var numRow = e.keyCode - 48;\n            if (numPad >= 0 && numPad <= 9 && numPad < camList.length)\n            {\n                _dView.setCamera(camList[numPad]);\n\n                if ((!camera && camList[numPad]) || (camera && camera.vwfID !== camList[numPad]))\n                {\n                    if (sender)\n                    {\n                        sender.xAPISend(\"observed\", (camList[numPad] || \"editorCamera\"), \"Instructor\", null);\n                    }\n                }\n            }\n            else if (numRow >= 0 && numRow <= 9 && numRow < camList.length)\n            {\n                _dView.setCamera(camList[numRow]);\n\n                if ((!camera && camList[numRow]) || (camera && camera.vwfID !== camList[numRow]))\n                {\n                    if (sender)\n                    {\n\n                        sender.xAPISend(\"observed\", (camList[numRow] || \"editorCamera\"), \"Instructor\", null);\n                    }\n                }\n            }\n        }\n    });",
+            "body": "var self = this;\r\n    self.unbindToggle();\r\n\r\n    $(\"#vwf-root\").on(\"keyup.cameraToggler\", function(e)\r\n    {\r\n        var camList = _dView.getCameraList()[1];\r\n        var camera = _dView.getCamera().parent;\r\n        var toCamera;\r\n        var key = self.keyCode ? self.keyCode.toUpperCase() : \" \";\r\n\r\n        //If necessary, remove the editor cam from camList\r\n        if (!self.cycleEditor && !camList[0]) camList.splice(0, 1);\r\n\r\n        //If the toggle button has been pressed and there are at least two cams in camList\r\n        if (camList.length >= 2 && e.keyCode === key.charCodeAt(0))\r\n        {\r\n            if (camera)\r\n            {\r\n                var index = (camList.indexOf(camera.vwfID) + 1) % camList.length;\r\n                toCamera = camList[index];\r\n            }\r\n\r\n            //If camera is falsy, then the editor cam is assumed active (camList[0])\r\n            else toCamera = camList[1];\r\n\r\n            _dView.setCamera(toCamera);\r\n\r\n            self.xAPISend(toCamera);\r\n        }\r\n\r\n        //Else, handle numpad and numbers row presses\r\n        else if (self.bindNumbers)\r\n        {\r\n            var numPad = e.keyCode - 96;\r\n            var numRow = e.keyCode - 48;\r\n            if (numPad >= 0 && numPad <= 9 && numPad < camList.length)\r\n            {\r\n                _dView.setCamera(camList[numPad]);\r\n\r\n                //Send Statement only if camera changes\r\n                if ((!camera && camList[numPad]) || (camera && camera.vwfID !== camList[numPad]))\r\n                {\r\n                    self.xAPISend(camList[numPad]);\r\n                }\r\n            }\r\n            else if (numRow >= 0 && numRow <= 9 && numRow < camList.length)\r\n            {\r\n                _dView.setCamera(camList[numRow]);\r\n\r\n                //Send Statement only if camera changes\r\n                if ((!camera && camList[numRow]) || (camera && camera.vwfID !== camList[numRow]))\r\n                {\r\n                    self.xAPISend(camList[numRow]);\r\n                }\r\n            }\r\n        }\r\n    });",
             "parameters": []
         },
         "ready": {
             "body": "if(this.autoBind === true) this.bindToggle();",
-            "parameters": []
-        },
-        "rotateCamera": {
-            "body": "console.log(\"got here\");",
             "parameters": []
         },
         "tick": {
@@ -28,6 +16,10 @@
         "unbindToggle": {
             "body": "$(\"canvas\").off(\".cameraToggler\");",
             "parameters": []
+        },
+        "xAPISend": {
+            "body": "var sender = this.Scene.children_by_name.xAPISender;\n    if (sender)\n    {\n\n        if (camera)\n        {\n            var camList = _dView.getCameraList();\n            var idIndex = camList[1].indexOf(camera);\n            camera = camList[0][idIndex];\n        }\n        else camera = \"Editor Camera\";\n\n        sender.xAPISend(\"observed\", camera, \"Instructor\", null);\n    }",
+            "parameters": ["camera"]
         }
     },
     "properties": {
@@ -64,7 +56,7 @@
                 "type": "button"
             }
         },
-        "___sourceAssetTimestamp": "Wed Oct 21 2015 14:43:34 GMT-0400 (Eastern Daylight Time)",
+        "___sourceAssetTimestamp": "Thu Oct 15 2015 10:54:26 GMT-0400 (Eastern Daylight Time)",
         "autoBind": true,
         "bindNumbers": true,
         "cycleEditor": true,
@@ -73,7 +65,7 @@
         "isToggleActive": true,
         "keyCode": "C",
         "owner": "ADLteam",
-        "transform": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -5.138374328613281, -42.01285934448242, 0.7359427809715271, 1]
+        "transform": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1558.2525634765625, -1.3071998357772827, 20.132083892822266, 1]
     },
     "random": {
         "c": 1,

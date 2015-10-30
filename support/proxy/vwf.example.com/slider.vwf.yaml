@@ -19,6 +19,7 @@ properties:
   step:
   width:
   height:
+  orientation: "horizontal"
   value:
   EditorData:
     height:
@@ -49,6 +50,12 @@ properties:
       step: 1
       property: max
       displayname: max
+    orientation:
+      type: choice
+      labels: ["horizontal", "vertical"]
+      values: ["horizontal", "vertical"]
+      property: orientation
+      displayname: orientation
     step:
       type: slider
       min: 0

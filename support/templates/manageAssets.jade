@@ -36,69 +36,91 @@ mixin manageAssets_body
 
 		#propertyBrowser.verticalLayout
 
-			#dragarea.verticalLayout
-				span.fixed-height {{!selectedAsset ? '' : selectedAsset==='new' ? 'Create Asset' : 'Replace Asset'}}
-				p#filename.fixed-height(ng-show='selectedAsset') {{selected.filename || 'Drag/drop or click to upload'}}
-				#typeInput.horizontalLayout(ng-show='selectedAsset && selected.filename')
-					input(type='text', placeholder='application/octet-stream', ng-model='selected.type')
-					select(ng-model='selected.type', ng-options='prettifyType(v) for v in knownTypes')
-						option(value='') */*
-
-				input#fileInput(type='file', disabled='disabled', onchange='getFileData(this.files)')
-
-			hr
-
-			p#assetUrl.fixed-height(onselectstart='event.stopImmediatePropagation()') {{getAssetUrl(selectedAsset)}}
-			label#name.verticalLayout Name
+			p#assetUrl.fixed-height(onselectstart='event.stopImmediatePropagation()') 
+				{{assets.appPath}}
 				br
-				input(type='text', placeholder='Name', ng-model='selected.name', ng-change='selected._basicDirty = true', ng-disabled='!selectedAsset')
+				/assets/{{selectedAsset}}
 
-			label#description.verticalLayout Description
-				br
-				textarea(placeholder='Description', ng-model='selected.description', ng-change='selected._basicDirty = true', ng-disabled='!selectedAsset')
+			.scrollArea
 
-			label#license.verticalLayout License
-				br
-				select(ng-model='selected.license', ng-change='selected._basicDirty = true', ng-disabled='!selectedAsset')
-					option(value='CC0') CC0 Public Domain
-					option(value='CC-BY') CC Attribution
-					option(value='CC-BY-ND') CC Attribution-NoDerivs
-					option(value='CC-BY-NC') CC Attribution-NonCommercial
-					option(value='CC-BY-NC-ND') CC Attribution-NonCommercial-NoDerivs
+				#dragarea.verticalLayout
+					span {{!selectedAsset ? '' : selectedAsset==='new' ? 'Create Asset' : 'Replace Asset'}}
+					p#filename(ng-show='selectedAsset') {{selected.filename || 'Drag/drop or click to upload'}}
+					#typeInput.horizontalLayout(ng-show='selectedAsset && selected.filename')
+						input(type='text', placeholder='application/octet-stream', ng-model='selected.type')
+						select(ng-model='selected.type', ng-options='prettifyType(v) for v in knownTypes')
+							option(value='') */*
 
-			label#thumbnail.horizontalLayout
-				span Thumbnail asset id: 
-				input(type='text', placeholder='1a2b3c4d', ng-model='selected._thumbnailId', ng-change='selected._basicDirty = true', ng-disabled='!selectedAsset')
+					input#fileInput(type='file', disabled='disabled', onchange='getFileData(this.files)')
 
-			hr
+				div(ng-show='selected.type === "model/vnd.gltf+json"')
+					hr
+				
+					p.seclabel Bound glTF Buffers 
+						span(ng-hide='selected.doc') (
+							a(href='#', ng-click='fetchJSONAsset(selected.id)') Edit
+							| )
 
-			#permissions.horizontalLayout
+					label#gltfBuffer.horizontalLayout(ng-repeat='(bufName,def) in selected.doc.buffers')
+						| {{bufName}}
+						input(type='text', ng-model='def.path', ng-change='selected._dirty = true')
 
-				label Permissions
+				hr
+
+				p.seclabel Metadata
+
+				label#name.verticalLayout Name
 					br
-					input#group(type='text', placeholder='Group', ng-model='selected.group_name', ng-change='selected._groupDirty = true', ng-disabled='!selectedAsset')
+					input(type='text', placeholder='Name', ng-model='selected.name', ng-change='selected._basicDirty = true', ng-disabled='!selectedAsset')
 
-				table
-					tr
-						td
-						td R
-						td W
-						td D
+				label#description.verticalLayout Description
+					br
+					textarea(placeholder='Description', ng-model='selected.description', ng-change='selected._basicDirty = true', ng-disabled='!selectedAsset')
 
-					- levels = ['User','Group','Other']
-					- perms = ['Read','Write','Delete']
-					each level in levels
+				label#license.verticalLayout License
+					br
+					select(ng-model='selected.license', ng-change='selected._basicDirty = true', ng-disabled='!selectedAsset')
+						option(value='CC0') CC0 Public Domain
+						option(value='CC-BY') CC Attribution
+						option(value='CC-BY-ND') CC Attribution-NoDerivs
+						option(value='CC-BY-NC') CC Attribution-NonCommercial
+						option(value='CC-BY-NC-ND') CC Attribution-NonCommercial-NoDerivs
+
+				label#thumbnail.horizontalLayout
+					span Thumbnail asset id: 
+					input(type='text', placeholder='1a2b3c4d', ng-model='selected._thumbnailId', ng-change='selected._basicDirty = true', ng-disabled='!selectedAsset')
+
+				hr
+			
+				p.seclabel Permissions
+
+				#permissions.horizontalLayout
+
+					label Group
+						br
+						input#group(type='text', placeholder='Group', ng-model='selected.group_name', ng-change='selected._groupDirty = true', ng-disabled='!selectedAsset')
+
+					table
 						tr
-							td= level
-							each perm in perms
+							td
+							td R
+							td W
+							td D
 
-								- title = level +' '+ perm.toLowerCase()
-								- model = 'selected.permissions.'+level.toLowerCase()+'.'+perm.toLowerCase()
-								td
-									input(type='checkbox', title=title, ng-model=model
-										ng-change='selected._permsDirty = true', ng-disabled='!selectedAsset')
+						- levels = ['User','Group','Other']
+						- perms = ['Read','Write','Delete']
+						each level in levels
+							tr
+								td= level
+								each perm in perms
 
-			.spacer
+									- title = level +' '+ perm.toLowerCase()
+									- model = 'selected.permissions.'+level.toLowerCase()+'.'+perm.toLowerCase()
+									td
+										input(type='checkbox', title=title, ng-model=model
+											ng-change='selected._permsDirty = true', ng-disabled='!selectedAsset')
+
+				.spacer
 
 			hr
 

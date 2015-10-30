@@ -21,12 +21,12 @@ function ServeJSON(jsonobject,response,URL)
 	response.end();
 }
 
-//walk the whole data structure and pick out the url references
+// Walk the whole data structure and pick out the url references
 function walk(object, list)
 {
 	if(object && object.terrainType == "heightmapTerrainAlgorithm")
 	{
-		//so, we must be in the properties for a terrain object
+		// So, we must be in the properties for a terrain object
 		//todo - deal with img or bt switch
 		var terraindata;
 		if(object.terrainParams)
@@ -41,47 +41,79 @@ function walk(object, list)
 			return;
 		}
 	}
+
 	for(var i in object)
-	{	
-
-		if(i == 'parent')
+	{
+		if(i == 'parent') {
 			continue;
-
-		if(i == 'source')
-		{
-
-			if(object['type'] && object['type'] != 'link_existing/threejs')
-			{
+		}
+		else if(i == 'source') {
+			if(object['type'] && object['type'] != 'link_existing/threejs') {
 				list.push({type:object['type'],url:object[i]});
-				if(object.properties && object.properties.DisplayName)
+				if(object.properties && object.properties.DisplayName) {
 					list[list.length - 1].name = object.properties.DisplayName;
+				}
 			}
-			if(!object['type'])
-				list.push({type:"unknown",url:object[i]});
+			if(!object['type']) {
+				list.push({type: "unknown", url: object[i]});
+			}
 		}
-		if(i == 'src')
-		{
-			if(object['alpha'] !== undefined)
-				list.push({type:'texture',url:object[i]});
-			else
-				list.push({type:"unknown",url:object[i]});
+		else if(i == 'src') {
+			if(object['alpha'] !== undefined) {
+				list.push({type: 'texture', url: object[i]});
+			}
+			else {
+				list.push({type: "unknown", url: object[i]});
+			}
 		}
-		if(i == 'url' || i == 'uri')
-		{
-				list.push({type:"unknown",url:object[i]});
+		else if(i == 'url' || i == 'uri') {
+			list.push({type:"unknown",url:object[i]});
 		}
+		else if( i === 'continues' ) {
+			// Preload the continues node
+			list.push({type:"unknown", url:object[i]});
 
-		if(typeof object[i] != 'string')
-		walk(object[i],list);
+			// Search for assets in continues node to pre-load them
+			var children = object['children'];
+			for(var child in children)
+			{
+				// Criteria to determine if it is an asset, -sas-assets-hhhhhhhh
+				var objectNameParts = child.split('-');
+				if(objectNameParts.length >= 3) {
+					if(objectNameParts[1] === 'sas' && objectNameParts[2] === 'assets') {
+						var assetUrl = objectNameParts[3];
+						list.push({type:"unknown", url:assetUrl});
+					}
+				}
+			}
+		}
+		else if(typeof object[i] != 'string') {
+			walk(object[i], list);
+		}
 	}
 }
 
 //get all assets from the state data and make unique
 function parseStateForAssets(state,cb)
 {
-	
 	var list = [];
 	walk(state,list);
+
+	// Load Additional Assets selected by the User.  For now, the State file needs to be manually edited to
+	// append the assets that are to be preloaded.  The following line shows the text that needs to be
+	// appended at the end of the State file to load the 7e6084c4 asset.
+	//
+	// "___additionalAssets":["/sas/assets/7e6084c4"]
+	//
+	// Note: The variable name starts with three underscore characters.
+	if(state !== null) {
+		var additionalAssets = state[state.length - 1]['___additionalAssets'];
+		if (additionalAssets !== undefined) {
+			for (var idx = 0; idx < additionalAssets.length; idx++) {
+				list.push({type: "unknown", url: additionalAssets[idx]});
+			}
+		}
+	}
 
 	var unique = [];
 	for(var i =0; i < list.length; i++)
@@ -100,12 +132,9 @@ function parseStateForAssets(state,cb)
 			unique.push(list[i]);
 		}
 	}
-
-
-
 	cb(unique);
-
 }
+
 //get either the last cached copy of the state, or load it from disk
 function getState(id,cb)
 {

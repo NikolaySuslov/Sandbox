@@ -110,8 +110,8 @@ function ServeSinglePlayer(socket, namespace, instancedata)
         {
             socket.emit('message',
             {
-                "action": "createNode",
-                "parameters": [scene],
+                "action": "setState",
+                "parameters":  {nodes:[scene],kernel:{time:0},annotations:{"1":"application"}},
                 "time": 0
             });
             var joinMessage = messageCompress.pack(JSON.stringify(

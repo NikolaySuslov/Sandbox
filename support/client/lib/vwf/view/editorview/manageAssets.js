@@ -88,8 +88,9 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 			}
 			out.sort(function(a, b) {
 				var ret = 0;
-				if (a[field] < b[field]) ret = -1;
-				else if (a[field] == b[field]) ret = 0;
+				var aField = a[field].toLowerCase(), bField = b[field].toLowerCase();
+				if (aField < bField) ret = -1;
+				else if (aField == bField) ret = 0;
 				else ret = 1;
 				return reverse ? -ret : ret;
 			});
@@ -164,7 +165,10 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 			}
 		};
 	}]);
-	app.controller('AssetManagerController', ['$scope', '$http', 'AssetDataManager', function($scope, $http, assets) {
+	app.controller('AssetManagerController', ['$scope', '$http', 'AssetDataManager', function($scope, $http, assets)
+	{
+		window._AssetManager = $scope;
+
 		var fileData = {};
 		$scope.assets = assets;
 		$scope.selectedAsset = null;
@@ -251,49 +255,68 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 			}
 		});
 		// auto-fill mime type field when file is selected
-		window.getFileData = function(files) {
-			if (files[0]) {
+		window.getFileData = function(files)
+		{
+			if (files[0])
+			{
 				var fr = new FileReader();
-				fr.onloadend = function(evt) {
+				fr.onloadend = function(evt)
+				{
 					$scope.selected.filename = files[0].name;
 					fileData[$scope.selected.id] = new Uint8Array(fr.result);
+
 					if ($scope.selected.name === '<new asset>')
 						$scope.selected.name = files[0].name;
-					if (files[0].type) {
+
+					if (files[0].type){
 						$scope.selected.type = files[0].type;
-					} else if (/\.dae$/i.test(files[0].name)) {
+					}
+					else if (/\.dae$/i.test(files[0].name)) {
 						$scope.selected.type = 'model/vnd.collada+xml';
 					}
+					else if( /\.gltf$/i.test(files[0].name) ){
+						$scope.selected.type = 'model/vnd.gltf+json';
+					}
+
 					/* force user to disambiguate json extensions
 					else if(/\.json$/i.test(files[0].name)){
 						$scope.selected.type = 'application/json';
 					}*/
+
 					else
 					{
 						$scope.selected.type = '';
 					}
+
 					// attempt to determine image resolution
-					if ($scope.selected.type.slice(0, 6) === 'image/') {
+					if ($scope.selected.type.slice(0, 6) === 'image/')
+					{
 						// get data url from buffer
-						var dataStr = '',
-							buffer = fileData[$scope.selected.id];
+						var dataStr = '', buffer = fileData[$scope.selected.id];
+
 						for (var offset = 0; offset < buffer.byteLength; offset += 0x8000) {
 							dataStr += String.fromCharCode.apply(null, buffer.subarray(offset, offset + 0x8000));
 						}
+
 						var dataUrl = 'data:' + $scope.selected.type + ';base64,' + btoa(dataStr);
 						var img = new Image();
-						img.onload = function() {
-							if ($scope.selected.width != this.width || $scope.selected.height != this.height) {
+						img.onload = function()
+						{
+							if ($scope.selected.width != this.width || $scope.selected.height != this.height)
+							{
 								$scope.selected.width = this.width;
 								$scope.selected.height = this.height;
+
 								// set self thumbnail
 								if (this.width < 200 && this.height < 200 && !$scope.selected.thumbnail) {
 									$scope.selected.thumbnail = $scope.selected.id ? 'asset:' + $scope.selected.id : ':self';
 								}
+
 								// flag as a texture
 								var log2 = Math.log2 || function(x) {
 									return Math.log(x) / Math.LN2;
 								};
+
 								var exp = log2($scope.selected.width);
 								if ($scope.selected.width === $scope.selected.height && exp === Math.floor(exp) && exp >= 8)
 									$scope.selected.isTexture = true;
@@ -302,11 +325,30 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 								$scope.selected._basicDirty = true;
 							}
 						};
+
 						img.src = dataUrl;
 					}
+
+					// repoint buffer references from uploaded glTFs
+					if( $scope.selected.type === 'model/vnd.gltf+json' || $scope.selected.type === 'application/json' )
+					{
+						var buffer = fileData[$scope.selected.id], dataStr = '';
+						for (var offset = 0; offset < buffer.byteLength; offset += 0x8000) {
+							dataStr += String.fromCharCode.apply(null, buffer.subarray(offset, offset + 0x8000));
+						}
+
+						try {
+							$scope.selected.doc = JSON.parse(dataStr);
+						}
+						catch(e){
+							console.error('Cannot parse selected JSON file. Non-ANSI encoding?', e)
+						}
+					}
+
 					$scope.selected._dirty = true;
 					$scope.$apply();
 				};
+
 				fr.readAsArrayBuffer(files[0]);
 			}
 		}
@@ -363,11 +405,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 			var input = $('#manageAssetsDialog #fileInput');
 			input.replaceWith(input.val('').prop('disabled', !$scope.selectedAsset).clone(true));
 		}
-		$scope.getAssetUrl = function(id) {
-			if (!id) return '';
-			else if (id === 'new') return 'Unsaved Asset';
-			else return $scope.assets.appPath + '/assets/' + id;
-		};
+
 		// generate octal perms from checkbox array
 		$scope.getPackedPermissions = function() {
 				var perms = 0;
@@ -391,10 +429,30 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 				}
 				return perms;
 			}
-			// write asset data to the server
-		$scope.saveData = function(id) {
-			if (!id || id === 'new') {
-				if (fileData.new) {
+
+		$scope.fetchJSONAsset = function(id)
+		{
+			$.getJSON($scope.assets.appPath+'/assets/'+id)
+			.done(function(data){
+				$scope.selected.doc = data;
+				$scope.$apply();
+			});
+		}
+
+		// write asset data to the server
+		$scope.saveData = function(id)
+		{
+			// generate file buffer from in-memory version if available
+			var meta = id === 'new' ? $scope.new : $scope.assets[id];
+			if( meta && meta.type === 'model/vnd.gltf+json' && meta.doc )
+			{
+				fileData[id] = strToBytes( JSON.stringify(meta.doc, null, '\t') );
+			}
+
+			if (!id || id === 'new')
+			{
+				if (fileData.new)
+				{
 					var perms = $scope.getPackedPermissions();
 					var url = $scope.assets.appPath + '/assets/new';
 					var queryChar = '?';

@@ -45,7 +45,7 @@ define([
     "vwf/model/javascript",
     "ometa",
     "vwf/model/threejs",
-   
+    
     "vwf/model/wires",
     "vwf/model/object",
     "vwf/model/stage/log",

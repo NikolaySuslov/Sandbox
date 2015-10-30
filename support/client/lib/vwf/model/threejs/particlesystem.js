@@ -26,6 +26,7 @@
         this.y = 0;
         this.z = 0;
 
+        this.size = 1;
         //back up initial (needed by the analyticShader)
         this.initialx = this.world.x;
         this.initialy = this.world.y;
@@ -45,23 +46,7 @@
         this._aAge = this.system.shaderMaterial_interpolate.attributes.age;
         this._aLifespan = this.system.shaderMaterial_interpolate.attributes.lifespan;
         //set the size - stored per vertex
-        this.setSize = function(s)
-        {
-
-            this._aSize.value[this.i] = s;
-        }
-        //set the age - stored per vertex
-        this.setAge = function(a)
-        {
-            this.age = a;
-            this._aAge.value[this.i] = this.age;
-        }
-        //the lifespan - stored per vertex
-        this.setLifespan = function(a)
-        {
-            this.lifespan = a;
-            this._aLifespan.value[this.i] = this.lifespan;
-        }
+       
 
         //This looks like it could be computed from the start and end plus random on the shader
         //doing this saves computetime on the shader at expense of gpu mem
@@ -72,7 +57,7 @@
     }
     Particle.prototype.setSize = function(s)
     {
-
+        this.size = s;
         this._aSize.value[this.i] = s;
     }
     //set the age - stored per vertex
@@ -599,7 +584,7 @@
 
                 var particle = this.regenParticles.shift();
                 particle.waitForRegen = false;
-                this.setupParticle(particle, this.threeParticleSystem.matrix, null);
+                this.setupParticle(particle, this.threeParticleSystem.matrix);
                 this.updateParticleEuler(particle, this.threeParticleSystem.matrix, null, Math.random() * 3.33);
                 particle.age = 0;
 
@@ -845,7 +830,7 @@
         while (this.threeParticleSystem.geometry.vertices.length < newcount)
         {
             var particle = this.createParticle(this.threeParticleSystem.geometry.vertices.length);
-            this.setupParticle(particle, this.threeParticleSystem.matrix, null);
+            this.setupParticle(particle, this.threeParticleSystem.matrix);
             particle.age = Infinity;
             this.regenParticles.push(particle);
             particle.waitForRegen = true;
@@ -927,7 +912,7 @@
         var count = this.solver == "AnalyticShader" ? this.threeParticleSystem.geometry.vertices.length : Math.floor(this.maxRate * 3);
         for (var i = 0; i < count; i++)
         {
-            this.setupParticle(this.threeParticleSystem.geometry.vertices[i], this.threeParticleSystem.matrix, this.threeParticleSystem.matrix);
+            this.setupParticle(this.threeParticleSystem.geometry.vertices[i], this.threeParticleSystem.matrix);
             this.threeParticleSystem.geometry.vertices[i].waitForRegen = false;
         }
         this.regenParticles.length = 0;
@@ -939,8 +924,9 @@
         
     }
     //set the particles initial values. Used when creating and resuing particles
-    ParticleSystem.prototype.setupParticle = function(particle, mat, inv)
-    {
+    ParticleSystem.prototype.setupParticle = function(particle, mat)
+    {   
+     
         
 
         particle.x = 0;
@@ -1076,7 +1062,7 @@
 
             //setup with new random values, and move randomly forward in time one step    
             var particle = this.regenParticles.shift();
-            this.setupParticle(particle, this.threeParticleSystem.matrix, null);
+            this.setupParticle(particle, this.threeParticleSystem.matrix);
             if (this.maxRate < this.particleCount)
                 this.updateParticleAnalytic(particle, this.threeParticleSystem.matrix, null, Math.random() * 3.33);
             particle.waitForRegen = false;

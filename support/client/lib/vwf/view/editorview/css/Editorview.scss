@@ -1054,7 +1054,7 @@ input[type="text"]:focus, input[type="password"]:focus {
 	left: 0%;
 	top: 0%;
 	background: white;
-	z-index: 100000;
+	z-index: 10000;
 	box-shadow: 0px 0px 300px #666666 inset;
 	text-align: center;
 	font-size: 1.5em;
@@ -1107,6 +1107,21 @@ input[type="text"]:focus, input[type="password"]:focus {
 	border: 3px solid #8cb9ff;
 }
 
+@keyframes fade {
+	from { background-color: #3a8fff; }
+	50% { background-color: #999; }
+	to { background-color: #3a8fff; }
+}
+
+.ui-progressbar-value
+{
+	transition-property:width;
+	transition-duration:.5s;
+	animation: fade 5.5s infinite;
+	background-color: rgba(73,155,234,1);
+
+}
+
 #loadingSplash {
 	position: absolute;
 	align-content: center;
@@ -1114,9 +1129,9 @@ input[type="text"]:focus, input[type="password"]:focus {
 	width: 80%;
 	left: 10%;
 	top: 10%;
-	border: 1px solid grey;
-	box-shadow: 10px 10px 30px;
-	border-radius: 15px;
+	
+	box-shadow: 3px 3px  10px;
+	border-radius: 5px;
 }
 
 #GuestLogin {

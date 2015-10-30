@@ -118,9 +118,18 @@
 	#propertyBrowser
 	{
 		margin-left: 2px;
-		overflow: auto;
 
-		& > * {
+		.scrollArea
+		{
+			overflow: auto;
+
+			& > * {
+				margin: 2px 0;
+			}
+		}
+
+		hr {
+			@include flex-shrink(0);
 			margin: 2px 0;
 		}
 
@@ -134,15 +143,23 @@
 			}
 		}
 
+		a[href] {
+			color: #337ab7;
+		}
+
 		p, span, label
 		{
+			&.seclabel {
+				text-align: center;
+			}
+
 			&.fixed-height
 			{
-				min-height: 1.2em;
+				min-height: 2.4em;
 			}
 		}
 
-		label#thumbnail
+		label.horizontalLayout
 		{
 			margin-top: 3px;
 			@include justify-content(space-between);
@@ -155,9 +172,9 @@
 			border-radius: 5px;
 			background-color: grey;
 			position: relative;
-			height: 175px;
+			height: 145px;
 
-			@include justify-content(center);
+			@include justify-content(space-around);
 			@include align-items(center);
 
 			p#filename
@@ -192,9 +209,7 @@
 			}
 
 			span {
-				margin: 20px;
 				font-size: 18px;
-
 				text-decoration: underline;
 			}
 		}
@@ -203,6 +218,7 @@
 			text-align: center;
 			font-size: 18px;
 			word-wrap: break-word;
+			margin-bottom: 15px;
 		}
 
 		#permissions

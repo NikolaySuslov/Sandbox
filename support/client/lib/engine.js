@@ -21,12 +21,12 @@
 /// attaches to the global window object as window.Engine. Nothing else should affect the global
 /// environment.
 
-
+define(['progressScreen'],function(){
 ( function( window ) {
 
     window.console && console.debug && console.debug( "loading vwf" );
 
-    
+    var progressScreen = require('progressScreen');
 
     window.vwf = window.Engine = new function() {
 
@@ -1279,7 +1279,9 @@ this.tick = function() {
 this.setState = function( applicationState, callback_async /* () */ ) {
 
    
-    console.log(applicationState);
+    $(document).trigger('setstatebegin');
+    progressScreen.startSetState(applicationState);
+
     this.logger.debuggx( "setState" );  // TODO: loggableState
 
     // Set the runtime configuration.
@@ -1339,6 +1341,21 @@ this.setState = function( applicationState, callback_async /* () */ ) {
             queue.time = applicationState.queue.time;
             queue.insert( applicationState.queue.queue || [] );
         }
+
+        progressScreen.endSetState();
+
+        
+            $(document).trigger('setstatecomplete');
+            $('#loadstatus').remove();
+            _ProgressBar.hide();
+
+            Engine.decendants(Engine.application()).forEach(function(i){
+                Engine.callMethod(i,'ready',[]);
+            });
+            Engine.callMethod(Engine.application(),'ready',[]);
+
+        
+
 
         callback_async && callback_async();
 
@@ -1478,10 +1495,7 @@ this.createNode = function( nodeComponent, nodeAnnotation, callback_async /* ( n
     // `createNode( nodeComponent, undefined, callback )`. (`nodeAnnotation` was added in
     // 0.6.12.)
     
-    if(nodeComponent && nodeComponent.id == Engine.application())
-    {
-        $(document).trigger('setstatebegin');
-    }
+
 
     if ( typeof nodeAnnotation == "function" || nodeAnnotation instanceof Function ) {
         callback_async = nodeAnnotation;
@@ -1649,20 +1663,6 @@ this.createNode = function( nodeComponent, nodeAnnotation, callback_async /* ( n
             callbacks_async.forEach( function( callback_async ) {
                 callback_async && callback_async( nodeID );
             } );
-        }
-
-
-        if(nodeComponent == "index-vwf")
-        {
-            $(document).trigger('setstatecomplete');
-            $('#loadstatus').remove();
-            _ProgressBar.hide();
-
-            Engine.decendants(Engine.application()).forEach(function(i){
-                Engine.callMethod(i,'ready',[]);
-            });
-            Engine.callMethod(Engine.application(),'ready',[]);
-
         }
 
 
@@ -2357,12 +2357,17 @@ this.hashNode = function( nodeID ) {  // TODO: works with patches?  // TODO: onl
 this.createDepth = 0;
 this.createChild = function( nodeID, childName, childComponent, childURI, callback_async /* ( childID ) */ ) {
     Engine.createDepth++;
-    
+    progressScreen.startCreateNode(nodeID);
+
+
+
     this.logger.debuggx( "createChild", function() {
         return [ nodeID, childName, JSON.stringify( loggableComponent( childComponent ) ), childURI ];
     } );
 
     childComponent = normalizedComponent( childComponent );
+
+
 
     var child, childID, childIndex, childPrototypeID, childBehaviorIDs = [], deferredInitializations = {};
 
@@ -2416,6 +2421,38 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
     //       childID = childComponent.id || childComponent.uri || ( childComponent["extends"] || nodeTypeURI ) + "." + childName; 
     //     childID = childID.replace( /[^0-9A-Za-z_]+/g, "-" ); // stick to HTML id-safe characters  // TODO: hash uri => childID to shorten for faster lookups?  // TODO: canonicalize uri
 
+    function cleanChildComponent(node)
+    {
+        if(node===null || node === undefined)
+            return null;
+
+        if(node.extends === undefined && !node.properties && !node.continues && !node.source && !node.type)
+            return null;
+
+        var newChildren = {}
+        for( var i in node.children)
+        {
+            var c = cleanChildComponent(node.children[i]);
+            if(c)
+                newChildren[i] = c;
+        }
+        node.children = newChildren;
+        return node;
+    }
+    if(childComponent)
+        childComponent = cleanChildComponent(childComponent)
+    if(!childComponent)
+    {
+        console.log('skipping null node ' + nodeID)
+        async.nextTick(function()
+        {
+            progressScreen.stopCreateNode();
+            callback_async(childID);    
+        })
+        
+        return;
+    }
+
 
     if ( nodeID === 0 && childName == "application" && ! applicationID ) {
         applicationID = childID;
@@ -2465,11 +2502,14 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
                             }
                         }
                     }
+
                     cleanChildNames(data);
                     continuesDefs[childComponent.continues + childID] = JSON.parse(JSON.stringify(data));
-                    $.extend(true, data, childComponent)
-                    childComponent = data;
 
+                    $.extend(true, data, childComponent)
+
+                    childComponent = data;
+                    progressScreen.startContinuesNode(data);
                     series_callback_async(undefined, undefined);
                     queue.resume( "after beginning " + childID );
                 }
@@ -2926,9 +2966,9 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
                             } );
 
                             // Mark the node as initialized.
-                            nodes.initialize( childID );
-
-                            series_callback_async( err, undefined );
+                            series_callback_async( err, undefined );    
+                            
+                            
                         } );
                 } );
             } );
@@ -2942,7 +2982,7 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
 
         // Always complete asynchronously so that the stack doesn't grow from node to node
         // while createChild() recursively traverses a component.
-
+        progressScreen.stopCreateNode(nodeID);
         if(err)
         {
             console.error("Error loading entity: " + err);
@@ -2952,10 +2992,11 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
             
             queue.suspend( "before completing " + childID ); // suspend the queue
 
+            nodes.initialize( childID );
+            
             async.nextTick( function() {
                 callback_async( childID );
                 queue.resume( "after completing " + childID ); // resume the queue; may invoke dispatch(), so call last before returning to the host
-                
             } );
 
         }
@@ -4381,6 +4422,7 @@ var isSocketIO07 = function() {
 
 var loadComponent = function( nodeURI, callback_async /* ( nodeDescriptor ) */ ) {  // TODO: turn this into a generic xhr loader exposed as a kernel function?
 
+    progressScreen.increaseLoadSteps()
     if ( nodeURI == nodeTypeURI ) {
 
         callback_async( nodeTypeDescriptor );
@@ -4403,6 +4445,7 @@ var loadComponent = function( nodeURI, callback_async /* ( nodeDescriptor ) */ )
             dataType: "jsonp",
 
             success: function( nodeDescriptor ) /* async */ {
+                progressScreen.stopCreateNode(nodeURI);
                 callback_async( nodeDescriptor );
                 queue.resume( "after loading " + nodeURI ); // resume the queue; may invoke dispatch(), so call last before returning to the host
             },
@@ -6134,3 +6177,4 @@ var queue = this.private.queue = {
 };
 
 } ) ( window );
+});

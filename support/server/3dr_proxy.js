@@ -94,7 +94,7 @@ function proxy(string, response) {
         request['get'](string).auth(Get3DRUser(), Get3DRPassword(), true).on('error', function(e) {
 
             logger.error(e);
-            response.writeHead(500);
+            //response.writeHead(500);
             response.end();
 
         }).pipe(response);
@@ -102,7 +102,7 @@ function proxy(string, response) {
         request['get'](string).auth(Get3DRUser(), Get3DRPassword(), true).on('error', function(e) {
 
             logger.error(e);
-            response.writeHead(500);
+            //response.writeHead(500);
             response.end();
 
         }).pipe(cached.data);
@@ -113,7 +113,7 @@ function proxy(string, response) {
         request['get'](string).auth(Get3DRUser(), Get3DRPassword(), true).on('error', function(e) {
 
             logger.error(e);
-            response.writeHead(500);
+            //response.writeHead(500);
             response.end();
 
         }).pipe(response)

@@ -757,8 +757,8 @@ exports.createNew2 = function(req, res, next) {
             logger.debug(worlddata);
             if (!worlddata) {
                 require('./examples.js').getExampleMetadata(normalizedSID, function(data) {
-                    worlddata = data;
-                    if (worlddata) postWorldData();
+                    worlddata = data || {title:"",description:"",isExample:true,publishSettings:{allowAnonymous:true,persistence:false,allowTools:true,createAvatar:true,singlePlayer:true}};
+                    postWorldData();
                 });
             } else
                 postWorldData();

@@ -3,8 +3,8 @@
 //Note that the sim can go forward before the textures are loaded - the scene manager just fills them with blue 
 //textures and replaces them when loaded. So, we don't have to cache texture here, but we do let the scenemanager know to fire up
 //and start loading, just to give the textures a head start.
-define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify", "vwf/model/threejs/BufferGeometryUtils", 'vwf/model/threejs/ColladaLoaderOptimized'],
-        function()
+define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify", "vwf/model/threejs/BufferGeometryUtils", 'vwf/model/threejs/ColladaLoaderOptimized','progressScreen'],
+        function(backgroundLoader,alertify,BufferGeometryUtils,ColladaLoaderOptimized,progressScreen)
         {
             var assetLoader = {};
             var isInitialized = false;
@@ -206,11 +206,12 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                 this.BuildCollisionData = function(root, cb3)
                 {
                     var self = this;
+                    progressScreen.stepForward();
                     if (root instanceof THREE.Geometry || root instanceof THREE.BufferGeometry)
                     {
                         root.GenerateBounds();
                         root.BuildRayTraceAccelerationStructure();
-                        $('#preloadguiText').text($('#preloadguiText').text() + '.');
+                        
                     }
                     if (root.children)
                     {
@@ -220,7 +221,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                         {
                             self.BuildCollisionData(child, function()
                             {
-                                window.setImmediate(cb4);
+                                async.nextTick(cb4);
                             });
                         }, cb3)
                     }
@@ -642,46 +643,18 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                     this.addType('texture', this.loadTexture);
                     this.addType('subDriver/threejs', this.loadSubDriver);
                     this.addType('unknown', this.loadUnknown);
-                    this.startProgressGui = function(total)
-                        {
-                            //$(document.body).append('<div id = "preloadGUIBack" class=""><span id="fullscreenlink">Please enter full screen mode. Click here or hit F11.</span><img id="loadingSplash" /><div id = "preloadGUI" class=""><div class="preloadCenter"><div id="preloadprogress"><p class="progress-label">Loading...</p></div></div><div class=""><div class="" id="preloadguiText">Loading...</div></div></div></div>');
-							$('#preloadGUIBack').css('display','block');
-                            $('#preloadprogress').progressbar();
-                            $('#preloadprogress').progressbar("value", 0);
-                            $('#preloadprogress .progress-label').text("0%");
-                            var regExp = new RegExp(window.appPath + ".*\/");
-                            var sid = regExp.exec(window.location.pathname.toString()).toString();
-                            $('#loadingSplash').attr('src', "../vwfdatamanager.svc/thumbnail?SID=" + sid);
-                            $('#loadingSplash').attr('onerror', " this.src = '/adl/sandbox/img/thumbnotfound.png'");
-                            $('#fullscreenlink').click(function()
-                            {
-                                RunPrefixMethod(document.body, "RequestFullScreen", 1);
-                            })
-                        },
-                        this.updateProgressGui = function(count, data)
-                        {
-                            $('#preloadprogress').progressbar("value", count * 100);
-                            $('#preloadguiText').text((data.name ? data.name + ": " : "") + data.url);
-                            $('#preloadprogress .progress-label').text("Loading Assets: " + parseInt(count * 100) + "%");
-                        },
-                        this.closeProgressGui = function()
-                        {
-                            window.setTimeout(function()
-                            {
-                                $('#preloadGUIBack').fadeOut();
-                            }, 1000);
-                        }
+                    
                     this.loadAssets = function(assets, cb, noProgressbar)
                     {
                         var total = assets.length;
                         if (!noProgressbar)
-                            assetLoader.startProgressGui(total);
+                            progressScreen.startProgressGui(total);
                         var count = 0;
                         async.forEachSeries(assets, function(i, cb2)
                         {
                             count++;
                             if (!noProgressbar)
-                                assetLoader.updateProgressGui(count / total, i);
+                                progressScreen.updateProgressGui(count / total, i);
                             var type = i.type;
                             var url = i.url;
                             if (url)
@@ -707,12 +680,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                         }, function(err)
                         {
                             //assetLoader.closeProgressGui();
-                            if (!noProgressbar)
-                                $(window).bind('setstatecomplete', function()
-                                {
-                                    assetLoader.closeProgressGui();
-                                    return false
-                                });
+                            
                             cb();
                         })
                     }

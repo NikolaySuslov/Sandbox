@@ -136,8 +136,8 @@ var timeout = function(world)
                             })));
                             client.emit('message', messageCompress.pack(JSON.stringify(
                             {
-                                "action": "createNode",
-                                "parameters": [state],
+                                "action": "setState",
+                                "parameters": {nodes:[state],kernel:{time:this.namespace.getStateTime},annotations:{"1":"application"}},
                                 "time": this.namespace.getStateTime
                             })));
                             client.pending = false;
@@ -437,8 +437,8 @@ function sandboxWorld(id, metadata)
 
             //note: don't have to worry about pending status here, client is first
             self.messageClients({
-                "action": "createNode",
-                "parameters": [scene],
+                "action": "setState",
+                "parameters": {nodes:[scene],kernel:{time:0},annotations:{"1":"application"}},
                 "time": self.time
             },true,true);
 
@@ -703,7 +703,10 @@ function sandboxWorld(id, metadata)
                 else if (message.action == "activeResync")
                 {
                     //here we deal with continual resycn messages
+                    if(!message.result)
+                        return;
                     var node = message.result.node;
+
                     if (false && !global.configuration.disableResync && node)
                     {
                         if (message.time >= this.time)

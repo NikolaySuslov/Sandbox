@@ -59,7 +59,7 @@ define(['./angular-app'], function(app)
                 {
                     suggestedText = suggestedText + "(";
                     //focus on the editor
-                    window.setImmediate(function()
+                    async.nextTick(function()
                     {
                         self.methodEditor.focus();
                         self.triggerFunctionTip(self.methodEditor, true);
@@ -67,7 +67,7 @@ define(['./angular-app'], function(app)
                 }
                 else
                 {
-                    window.setImmediate(function()
+                    async.nextTick(function()
                     {
                         self.methodEditor.focus();
                     }, 0);
@@ -227,7 +227,7 @@ define(['./angular-app'], function(app)
                 $('#AutoComplete').scrollTop(0);
                 //this is annoying. Why?
                 $(document.body).scrollTop(0);
-                //  window.setImmediate(function()
+                //  async.nextTick(function()
                 //  {
                 //      $('#AutoComplete').focus();
                 //  }, 0);
@@ -399,7 +399,7 @@ define(['./angular-app'], function(app)
                     var text = Engine.callMethod(self.currentNode.id, 'JavascriptEvalFunction', [line]);
                     if (text)
                     {
-                        window.setImmediate(function()
+                        async.nextTick(function()
                         {
                             self.setupFunctionTip(text, editor, $(editor.renderer.$cursorLayer.cursor).offset(), $(editor.renderer.$cursorLayer.cursor).width());
                         }, 0);
