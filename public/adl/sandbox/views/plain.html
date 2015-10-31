@@ -17,7 +17,7 @@
 		{
 			font-family: 'Open Sans', sans-serif;
 						/* font-family: 'Open Sans', sans-serif; */
-background-image: url(/adl/sandbox/img/background.png);
+background-image: linear-gradient(#FFF,#ccc)
 background-size: 2220px;
 /* background-position-x: 0px; */
 /* opacity: 0; */
@@ -33,6 +33,7 @@ background-size: 2220px;
 		body 
 		{
 			background: none
+			opacity:0;
 		}
 		@media (max-width: 1420px){
 			#gitBanner{
@@ -57,7 +58,7 @@ background-size: 2220px;
 		.thinheader
 		{
 			text-align: right;
-			background-color: #C2D7E6;
+			background-color: #3D559E;
 			border-bottom: 1px solid lightgray;
 		}
 		.thinfooter
@@ -77,7 +78,7 @@ background-size: 2220px;
 			background: white;
 padding: 2em;
 border-radius: 4px;
-box-shadow: 3px 3px 6px;
+box-shadow: 1px 1px 3px #ccc;
 
 		}
 		.thinheaderlink
@@ -87,6 +88,11 @@ margin: 1em 1em;
 font-weight: bold;
 color: #FFF;
 text-shadow: 1px 1px 5px black;
+		}
+		.thinheaderlink:hover
+		{
+
+			color:#A6ABD3;	
 		}
 		#content
 		{
@@ -129,7 +135,7 @@ text-shadow: 1px 1px 5px black;
 				$('#content').css('margin-top',Math.max((wheight/2) - (height/2) - $('.thinfooter').height() + $('.thinheader').height() ,0));
 				
 				$('#content').css('opacity',1);
-				$('#content').css('transition','opacity .5s ease-in');
+				$('#content').css('transition','opacity .25s ease-in');
 
 				$(window).resize(function(){
 

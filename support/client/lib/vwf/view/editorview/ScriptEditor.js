@@ -598,6 +598,8 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 
 					if( $scope.guiState.openTab === 'methods' )
 					{
+						_UndoManager.pushEvent( new _UndoManager.SetMethodEvent($scope.fields.selectedNode.id, fieldName, {parameters: cleanParams, body: body}) );
+
 						if( $scope.fields.selectedNode.methods && $scope.fields.selectedNode.methods[fieldName] ){
 							vwf_view.kernel.deleteMethod($scope.fields.selectedNode.id, fieldName);
 						}
@@ -606,6 +608,8 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 					}
 					else
 					{
+						_UndoManager.pushEvent( new _UndoManager.SetEventEvent($scope.fields.selectedNode.id, fieldName, {parameters: cleanParams, body: body}) );
+
 						if( $scope.fields.selectedNode.events && $scope.fields.selectedNode.events[fieldName] ){
 							vwf_view.kernel.deleteEvent($scope.fields.selectedNode.id, fieldName);
 						}
@@ -627,6 +631,8 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 					catch(e){
 						val = rawtext;
 					}
+
+					_UndoManager.pushEvent( new _UndoManager.SetPropertyEvent($scope.fields.selectedNode.id, fieldName, val) );
 
 					if( $scope.fields.selectedNode.properties && $scope.fields.selectedNode.properties[fieldName] !== undefined ){
 						vwf_view.kernel.setProperty($scope.fields.selectedNode.id, fieldName, val);

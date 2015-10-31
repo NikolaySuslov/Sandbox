@@ -37,9 +37,9 @@ mixin manageAssets_body
 		#propertyBrowser.verticalLayout
 
 			p#assetUrl.fixed-height(onselectstart='event.stopImmediatePropagation()') 
-				{{assets.appPath}}
-				br
-				/assets/{{selectedAsset}}
+				| {{assets.appPath}}
+				wbr
+				| /assets/{{selectedAsset}}
 
 			.scrollArea
 

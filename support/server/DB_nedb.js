@@ -49,7 +49,7 @@ exports.new = function(DBTablePath, cb) {
 
                     DB.insert(data, function(err, newDoc) {
 
-                        cb(err, data, newDoc._key);
+                        cb(err, data, newDoc && newDoc._key);
                     })
                 });
             },

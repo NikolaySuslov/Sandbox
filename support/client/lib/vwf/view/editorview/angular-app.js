@@ -65,6 +65,10 @@ define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview
 			app.root.fields.undoAction = 'selection';
 		else if(undoFrame instanceof UndoManager.SetPropertyEvent)
 			app.root.fields.undoAction = 'change '+undoFrame.property;
+		else if(undoFrame instanceof UndoManager.SetEventEvent)
+			app.root.fields.undoAction = 'change '+undoFrame.name;
+		else if(undoFrame instanceof UndoManager.SetMethodEvent)
+			app.root.fields.undoAction = 'change '+undoFrame.name;
 		else if(undoFrame instanceof UndoManager.CompoundEvent)
 			app.root.fields.undoAction = undoFrame.list.length+' changes';
 
@@ -78,6 +82,10 @@ define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview
 			app.root.fields.redoAction = 'selection';
 		else if(redoFrame instanceof UndoManager.SetPropertyEvent)
 			app.root.fields.redoAction = 'change '+redoFrame.property;
+		else if(redoFrame instanceof UndoManager.SetEventEvent)
+			app.root.fields.redoAction = 'change '+redoFrame.name;
+		else if(redoFrame instanceof UndoManager.SetMethodEvent)
+			app.root.fields.redoAction = 'change '+redoFrame.name;
 		else if(redoFrame instanceof UndoManager.CompoundEvent)
 			app.root.fields.redoAction = redoFrame.list.length+' changes';
 

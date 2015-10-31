@@ -16,13 +16,13 @@
 		body{
 
 			
-			background-image: url(./img/background.png);
+			background:linear-gradient(#FFF,#CCC);;
 			background-size: 2220px;
 			background-position-x: 0px;
 			opacity: 0;
 			font-family: 'Open Sans', sans-serif;
 
-			opacity: 1;
+			
 /* transition: opacity 1.5s ease-in, background-position-x 30s; */
 /* -webkit-transition: opacity 1.5s ease-in, background-position-x 30s; */
 /* background-position-x: -300px; */
@@ -47,7 +47,7 @@ height: initial;
 			}
 			#logo1
 			{
-				zoom:1.75;
+				zoom:1.0
 				
 			}
 			.column
@@ -73,7 +73,7 @@ height: initial;
 			}
 			#logo1
 			{
-				zoom:1.5;
+				zoom:1.0;
 				
 			}
 		}
@@ -194,7 +194,7 @@ height: initial;
 			background: white;
 			border-radius: 4px;
 			min-height: 200px;
-			box-shadow: 3px 3px 6px;
+			box-shadow: 3px 3px 6px #ccc;
 			margin-bottom: 40px;
 			padding-bottom: 2em;
 			overflow: hidden;
@@ -324,7 +324,7 @@ function center()
 		center();
 		$(document.body).css('opacity','1');
 		$(document.body).css('background-position-x','-300px');
-		$(document.body).css('transition','opacity 1.5s ease-in, background-position-x 30s');
+		$(document.body).css('transition','opacity .25s ease-in, background-position-x 30s');
 
 
 	})

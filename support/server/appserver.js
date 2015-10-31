@@ -207,10 +207,12 @@ function _404(response) {
     response.end();
 }
 
+var jadeCache = {};
 function ServeTemplate(req,res, filename, instanceData, url)
 {
 	if( /^jade:/.test(filename) )
 	{
+       
 		if( url.query.notools )
 			var needsTools = false;
 		else
@@ -218,13 +220,20 @@ function ServeTemplate(req,res, filename, instanceData, url)
 
 		var templateFile = libpath.join(__dirname,'..','templates', filename.slice(5)+'.jade');
 
+        if(jadeCache[templateFile + needsTools])
+        {
+            res.send(jadeCache[templateFile + needsTools]);
+            return;
+        }
+
 		try {
 			var html = jade.renderFile(templateFile, {
 				filename: templateFile,
 				pretty: '\t',
 				needsTools: needsTools,
-				instanceData: instanceData
+				instanceData: {title:""}
 			});
+            jadeCache[templateFile + needsTools] = html;
 		}
 		catch(e){
 			console.error(e);

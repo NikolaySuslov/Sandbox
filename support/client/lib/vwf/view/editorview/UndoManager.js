@@ -133,16 +133,16 @@ define(function ()
 		if(val === undefined) val = null;
 		if(oldval === undefined) oldval = Engine.getProperty(id,property) || null;
 
-		this.val = JSON.parse(JSON.stringify(val));
+		this.val = JSON.stringify(val);
 		this.id = id;
-		this.oldval = JSON.parse(JSON.stringify(oldval));
+		this.oldval = JSON.stringify(oldval);
 		this.undo = function()
 		{
-			vwf_view.kernel.setProperty(this.id,this.property,this.oldval);
+			vwf_view.kernel.setProperty(this.id,this.property,JSON.parse(this.oldval));
 		}
 		this.redo = function()
 		{
-			vwf_view.kernel.setProperty(this.id,this.property,this.val);
+			vwf_view.kernel.setProperty(this.id,this.property,JSON.parse(this.val));
 		}
 		this.compare = function(event)
 		{
@@ -155,6 +155,66 @@ define(function ()
 			if(this.property != event.property)
 				return false;
 			return true;
+		}
+	}
+	function SetMethodEvent(id, name, newval)
+	{
+		this.id = id;
+		this.name = name;
+		this.newval = newval; // {parameters: ..., body: ...}
+		this.oldval = Engine.getMethods(id);
+
+		if(this.oldval)
+			this.oldval = this.oldval[name];
+
+		this.undo = function()
+		{
+			Engine.deleteMethod(id, name);
+			if(this.oldval){
+				Engine.createMethod(id, name, this.oldval.parameters, this.oldval.body);
+			}
+		}
+
+		this.redo = function()
+		{
+			Engine.deleteMethod(id, name);
+			if(this.newval){
+				Engine.createMethod(id, name, this.newval.parameters, this.newval.body);
+			}
+		}
+
+		this.compare = function(evt){
+			return JSON.stringify(this) === JSON.stringify(evt);
+		}
+	}
+	function SetEventEvent(id, name, newval)
+	{
+		this.id = id;
+		this.name = name;
+		this.newval = newval; // {parameters: ..., body: ...}
+		this.oldval = Engine.getEvents(id);
+
+		if(this.oldval)
+			this.oldval = this.oldval[name];
+
+		this.undo = function()
+		{
+			Engine.deleteEvent(id, name);
+			if(this.oldval){
+				Engine.createEvent(id, name, this.oldval.parameters, this.oldval.body);
+			}
+		}
+
+		this.redo = function()
+		{
+			Engine.deleteEvent(id, name);
+			if(this.newval){
+				Engine.createEvent(id, name, this.newval.parameters, this.newval.body);
+			}
+		}
+
+		this.compare = function(evt){
+			return JSON.stringify(this) === JSON.stringify(evt);
 		}
 	}
 	function CompoundEvent()
@@ -197,6 +257,8 @@ define(function ()
 		this.SelectionEvent = SelectionEvent;
 		this.DeleteNodeEvent = DeleteNodeEvent;
 		this.CreateNodeEvent = CreateNodeEvent;
+		this.SetMethodEvent = SetMethodEvent;
+		this.SetEventEvent = SetEventEvent;
 		this.CompoundEvent = CompoundEvent;
 		this.undo = function()
 		{

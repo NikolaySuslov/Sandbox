@@ -13,6 +13,10 @@ define([], function() {
 
 
     function initialize() {
+
+        // Represents the three buttons; Play, Pause, and Stop that control the simulation
+        var simulationControlButtons = { "Play": 1, "Pause": 2, "Stop": 3 };
+
         this.setup = function() {
             $(document.body).append('<div id="publishSettings"></div>');
 
@@ -147,55 +151,33 @@ define([], function() {
 
         }
         this.satProperty = function(id, prop, val) {
-
-
             if (id == Engine.application()) {
-
                 var disableSelector = '#ScriptEditor, #sidepanel, #sidetabs, #statusbarinner, #toolbar, #EntityLibrary, .sidetab, #smoothmenu1, #smoothmenu1 ul li a';
                 if (prop == 'playMode' && val == 'play') {
-
-
-                    $('#playButton').addClass('pulsing');
-                    $('#pauseButton').removeClass('pulsing');
-                    $('#stopButton').removeClass('pulsing');
+                    this.updateSimulationControlButtons(simulationControlButtons.Play);
 
                     $(disableSelector).css('opacity', .3);
                     $(disableSelector).css('background-color', 'gray');
                     $(disableSelector).css('pointer-events', 'none');
                     $(disableSelector).css('cursor', 'not-allowed');
 
-
                     _Editor.SetSelectMode('none');
                     $('#index-vwf').focus();
-               
-                    
-                  
-
                 }
-
                 if (prop == 'playMode' && val == 'paused') {
-
                     //restore selection
-                   
-                    $('#playButton').addClass('pulsing');
-                    $('#pauseButton').addClass('pulsing');
-                    $('#stopButton').removeClass('pulsing');
+                    this.updateSimulationControlButtons(simulationControlButtons.Pause);
+
                     $(disableSelector).css('opacity', '');
                     $(disableSelector).css('pointer-events', '');
                     $(disableSelector).css('cursor', '');
                     $(disableSelector).css('background-color', '');
                   
                     _Editor.SetSelectMode('Pick');
-
                 }
                 if (prop == 'playMode' && val == 'stop') {
+                    this.updateSimulationControlButtons(simulationControlButtons.Stop);
 
-                   
-                    
-                    
-                    $('#playButton').removeClass('pulsing');
-                    $('#pauseButton').removeClass('pulsing');
-                    $('#stopButton').addClass('pulsing');
                     $(disableSelector).css('opacity', '');
                     $(disableSelector).css('pointer-events', '');
                     $(disableSelector).css('cursor', '');
@@ -322,6 +304,7 @@ define([], function() {
 
         }
         this.playWorld = function() {
+            this.updateSimulationControlButtons(simulationControlButtons.Play);
 
             if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), Engine.application()) == 0) {
                 alertify.log('You do not have permission to modify this world');
@@ -334,10 +317,11 @@ define([], function() {
 
             vwf_view.kernel.callMethod(Engine.application(), 'preWorldPlay');
             vwf_view.kernel.setProperty(Engine.application(), 'playMode', 'play')
-
-
         }
+
         this.stopWorld = function() {
+            this.updateSimulationControlButtons(simulationControlButtons.Stop);
+
             if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), Engine.application()) == 0) {
                 alertify.log('You do not have permission to modify this world');
                 return;
@@ -350,19 +334,43 @@ define([], function() {
             vwf_view.kernel.setProperty(Engine.application(), 'playMode', 'stop')
 
         }
+
         this.togglePauseWorld = function() {
-                if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), Engine.application()) == 0) {
-                    alertify.log('You do not have permission to modify this world');
-                    return;
-                }
-                var currentState = Engine.getProperty(Engine.application(), 'playMode');
-                if (currentState === 'stop') return;
-                vwf_view.kernel.setProperty(Engine.application(), 'playMode', 'paused')
+            this.updateSimulationControlButtons(simulationControlButtons.Pause);
+
+            if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), Engine.application()) == 0) {
+                alertify.log('You do not have permission to modify this world');
+                return;
             }
-            //quickly clone a world, publish it and open it. When that world closes, delete it.
+            var currentState = Engine.getProperty(Engine.application(), 'playMode');
+            if (currentState === 'stop') return;
+            vwf_view.kernel.setProperty(Engine.application(), 'playMode', 'paused')
+        }
+
+        this.updateSimulationControlButtons = function(activeButton) {
+            switch (activeButton) {
+                case simulationControlButtons.Play:
+                   $('#playButton').addClass('pulsing');
+                   $('#pauseButton').removeClass('pulsing');
+                   $('#stopButton').removeClass('pulsing');
+                   break;
+
+                case simulationControlButtons.Pause:
+                   $('#playButton').addClass('pulsing');
+                   $('#pauseButton').addClass('pulsing');
+                   $('#stopButton').removeClass('pulsing');
+                   break;
+
+                case simulationControlButtons.Stop:
+                   $('#playButton').removeClass('pulsing');
+                   $('#pauseButton').removeClass('pulsing');
+                   $('#stopButton').addClass('pulsing');
+                   break;
+            }
+        }
+
+        //quickly clone a world, publish it and open it. When that world closes, delete it.
         this.testPublish = function() {
-
-
             var testSettings = Engine.getProperty(Engine.application(), 'publishSettings') || {
                 SinglePlayer: true,
                 camera: null,

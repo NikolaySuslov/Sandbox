@@ -14,12 +14,12 @@
 	{{{federal_analytics}}}
 	<style>
 		body{
-			background-image: url(./img/background.png);
+			background: linear-gradient(#FFF,#CCC);
 			background-size: 2220px;
 			background-position-x: 0px;
 			opacity: 0;
 			font-family: 'Open Sans', sans-serif;
-			opacity: 1;
+			
 /* transition: opacity 1.5s ease-in, background-position-x 30s; */
 /* -webkit-transition: opacity 1.5s ease-in, background-position-x 30s; */
 /* background-position-x: -300px; */
@@ -44,7 +44,7 @@ height: initial;
 			}
 			#logo1
 			{
-				zoom:1.75;
+				zoom:1.00;
 				
 			}
 			.column
@@ -70,7 +70,7 @@ height: initial;
 			}
 			#logo1
 			{
-				zoom:1.5;
+				zoom:1.00;
 				
 			}
 		}
@@ -153,7 +153,7 @@ height: initial;
 			margin: 1em 1em;
 			font-weight: bold;
 			color: #FFF;
-			text-shadow: 1px 1px 5px black;
+			text-shadow: 1px 1px 2px #555
 			
 		}
 		.ActionButton
@@ -191,7 +191,7 @@ height: initial;
 			background: white;
 			border-radius: 4px;
 			min-height: 200px;
-			box-shadow: 3px 3px 6px;
+			box-shadow: 3px 3px 6px #ccc;
 			margin-bottom: 40px;
 			padding-bottom: 2em;
 			overflow: hidden;
@@ -259,6 +259,10 @@ height: initial;
 		{
 			color: blue;
 		}
+		iframe {
+			width: 100%;
+			max-width:320px;
+		}
 		.panelheaderlogo
 		{
 			width: 50%;
@@ -267,7 +271,12 @@ height: initial;
 		.panelheaderscreenshot
 		{
 			text-align: center;
-			margin: 1em;
+			
+			width:100%;
+		}
+		.panelheaderscreenshot img
+		{
+			width: calc(100% - 2em);
 		}
 		.moreinfolink
 		{
@@ -325,13 +334,12 @@ function center()
 				});
 				$(window).resize();
 	}
-
 	$(document).ready(function(){
 
 		center();
 		$(document.body).css('opacity','1');
 		$(document.body).css('background-position-x','-300px');
-		$(document.body).css('transition','opacity 1.5s ease-in, background-position-x 30s');
+		$(document.body).css('transition','opacity 0.25s ease-in, background-position-x 30s');
 
 
 	})
