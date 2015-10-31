@@ -26,7 +26,7 @@
 
 
 
-define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
+define( [ "module", "vwf/model", "ometa-js/ometa-script-tag"], function( module, model, ometa) {
 
      var self;
     // vwf/model/example/scene.js is a demonstration of a scene manager.
@@ -120,17 +120,17 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
         creatingProperty: function( nodeID, propertyName, propertyValue ) {
             
-            // var node = this.objects[nodeID];
+            var node = this.objects[nodeID];
 
-            // if (propertyName.indexOf("ometaGrammar") > -1)
-            // {
-            //     var lngName = propertyName.slice(12,propertyName.length);
-            //     var methodName = 'ometaLng'+lngName;
-            //     vwf.createMethod(nodeID, methodName, null, "");
+            if (propertyName.indexOf("ometaGrammar") > -1)
+            {
+                var lngName = propertyName.slice(12,propertyName.length);
+                var methodName = 'ometaLng'+lngName;
+                vwf.createMethod(nodeID, methodName, null, "");
                  
-            // }
+            }
 
-            // return this.initializingProperty( nodeID, propertyName, propertyValue );
+            return this.initializingProperty( nodeID, propertyName, propertyValue );
         },
 
         // -- initializingProperty -----------------------------------------------------------------
@@ -150,34 +150,31 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
           
             
 
-            // if (propertyName.indexOf("ometaGrammar") > -1)
-            // {
+            if (propertyName.indexOf("ometaGrammar") > -1)
+            {
 
-            //     var node = this.objects[nodeID];
+                var node = this.objects[nodeID];
 
-            //      if (propertyValue == null) {
+                 if (propertyValue == null) {
 
-            //      node[propertyName] = propertyValue;
-            //      return;
-            //     }
+                 node[propertyName] = propertyValue;
+                 return;
+                }
 
-            //     var lngName = propertyName.slice(12,propertyName.length);
-            //     var methodName = 'ometaLng'+lngName;
-            //     node[propertyName] = propertyValue;
+                var lngName = propertyName.slice(12,propertyName.length);
+                var methodName = 'ometaLng'+lngName;
+                node[propertyName] = propertyValue;
 
-            //     var code = translateCode(propertyValue);
-            //    if (code ==  null) { code = lngName + "= 'error'";}
+                var code = translateCode(propertyValue);
+               if (code ==  null) { code = lngName + "= 'error'";}
 
-            //     var methodBody = ("'use strict'; var " + code + ";return " + lngName);
+                var methodBody = ("'use strict'; var " + code + ";return " + lngName);
 
-            //     vwf.deleteMethod(nodeID, methodName);
-            //     vwf.createMethod(nodeID, methodName, [], methodBody);
+                vwf.deleteMethod(nodeID, methodName);
+                vwf.createMethod(nodeID, methodName, [], methodBody);
 
-               
-            // }
-            
-             //vwf.setProperty(nodeID,'ometaLng'+lngName,null);
-
+                //vwf.setProperty(nodeID,'ometaLng'+lngName,null);
+            }
 /*
             if (propertyName.indexOf("ometaLng") > -1)
                 {
