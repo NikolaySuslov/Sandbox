@@ -29,6 +29,7 @@
 define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
      var self;
+   
     // vwf/model/example/scene.js is a demonstration of a scene manager.
 
     return model.load( module, {
@@ -42,11 +43,15 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
         // -- initialize ---------------------------------------------------------------------------
 
         initialize: function() {
+            
             self = this;
 
             this.objects = {}; // maps id => { property: value, ... }
             this.creatingNode( undefined, 0 ); 
             this.ometaLng = {};
+            
+            this.ohm = ohm;
+            window._ohm = this.ohm;
             
         },
 
@@ -148,7 +153,30 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
         settingProperty: function( nodeID, propertyName, propertyValue ) {
           
-            
+          if (propertyName.indexOf("ometa") > -1)
+            {
+            debugger;
+
+            var lngName = propertyName.slice(5,propertyName.length);
+            var node = this.objects[nodeID];
+            var gramName = 'grammar'+lngName;
+            var val = ohm.grammar(propertyValue);
+
+            this.objects[nodeID].ohmgr =  ohm.grammar(propertyValue);
+
+
+            // if( node.properties && node.properties[gramName] !== undefined ){
+            //             Engine.setProperty(nodeID, gramName, ohm.grammar(propertyValue));
+            //         }
+            //         else {
+            //             Engine.createProperty(nodeID, gramName, ohm.grammar(propertyValue));
+            //         }
+
+            }
+
+
+
+
 
             // if (propertyName.indexOf("ometaGrammar") > -1)
             // {
@@ -175,7 +203,7 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
                
             // }
-            
+
              //vwf.setProperty(nodeID,'ometaLng'+lngName,null);
 
 /*
@@ -195,9 +223,17 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
         // -- gettingProperty ----------------------------------------------------------------------
 
         gettingProperty: function( nodeID, propertyName, propertyValue ) {
+             if (propertyName.indexOf("ometa") > -1)
+            {
            
+
+        }
+
             var object = this.objects[nodeID];
             return object && object[propertyName];
+
+           
+
            
            /* if (propertyName.indexOf("ometaGrammar") > -1)
             {                 
