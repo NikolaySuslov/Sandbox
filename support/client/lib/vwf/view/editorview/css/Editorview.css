@@ -2323,7 +2323,8 @@ input[type="text"]:focus, input[type="password"]:focus {
   height: 28%;
   width: 95%;
   top: 16%;
-  left: 2.5%; }
+  left: 2.5%; 
+  background-color:#515151 }
 
 /* line 1039, Editorview.scss */
 .progress-label {
@@ -2334,7 +2335,8 @@ input[type="text"]:focus, input[type="password"]:focus {
   margin-left: auto;
   text-align: center;
   height: 100%;
-  margin: 0px; }
+  margin: 0px; 
+background-color:#515151 }
 
 /* line 1050, Editorview.scss */
 #preloadGUIBack {

@@ -29,7 +29,11 @@ html
 			URI and loaded from a network-visible location.
 
 
+
+
 		title= instanceData.title
+		style
+			#xLoader {position: absolute; top: 0; bottom: 0; right: 0; left: 0; background: white; z-index: 9 } #xLoader .google-spin-wrapper {top: 0; left: 0; width: 100%; height: 100%; z-index: 1000 } #xLoader .google-spin-wrapper .google-spin {display: block; position: relative; left: 50%; top: 50%; width: 100px; height: 100px; margin: -50px 0 0 -50px; border-radius: 50%; border: 10px solid transparent; border-top-color: #3A8FFF; -webkit-animation: xLoaderGoogleSpin 2s linear infinite; -moz-animation: xLoaderGoogleSpin 2s linear infinite; -ms-animation: xLoaderGoogleSpin 2s linear infinite; -o-animation: xLoaderGoogleSpin 2s linear infinite; animation: xLoaderGoogleSpin 2s linear infinite; box-shadow: 0px 0px 10px inset; } #xLoader .google-spin-wrapper .google-spin:before {content: ""; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; border-radius: 50%; border: 10px solid transparent; border-top-color: #515151; border-right-color: #515151; -webkit-animation: xLoaderGoogleSpin 3s linear infinite; -moz-animation: xLoaderGoogleSpin 3s linear infinite; -ms-animation: xLoaderGoogleSpin 3s linear infinite; -o-animation: xLoaderGoogleSpin 3s linear infinite; animation: xLoaderGoogleSpin 3s linear infinite; box-shadow: 0px 0px 10px; } #xLoader .google-spin-wrapper .google-spin:after {content: ""; position: absolute; top: 15px; left: 15px; right: 15px; bottom: 15px; border-radius: 50%; border: 3px solid transparent; border-top-color: #3A8FFF; border-left-color: #3A8FFF; -webkit-animation: xLoaderGoogleSpin 2s linear infinite; -moz-animation: xLoaderGoogleSpin 2s linear infinite; -ms-animation: xLoaderGoogleSpin 2s linear infinite; -o-animation: xLoaderGoogleSpin 2s linear infinite; animation: xLoaderGoogleSpin 2s linear infinite background-color: #999; box-shadow: 0px 0px 10px; } @-webkit-keyframes xLoaderGoogleSpin {0% {transform: rotate(0deg) } 100% {transform: rotate(360deg) } } @-moz-keyframes xLoaderGoogleSpin {0% {transform: rotate(0deg) } 100% {transform: rotate(360deg) } } @-ms-keyframes xLoaderGoogleSpin {0% {transform: rotate(0deg) } 100% {transform: rotate(360deg) } } @-o-keyframes xLoaderGoogleSpin {0% {transform: rotate(0deg) } 100% {transform: rotate(360deg) } } @keyframes xLoaderGoogleSpin {0% {transform: rotate(0deg) } 100% {transform: rotate(360deg) } }
 
 		script(type="text/javascript", src="../polyfills.js")
 		script(type="text/javascript", src="../require.js")
@@ -55,6 +59,8 @@ html
 		if needsTools
 			+editorTools_head
 
+		
+
 		script(type="text/javascript").
 			// here we go! this fires a bunch of loads, and when they are don, launches the VWF
 			var count = 0;
@@ -64,9 +70,8 @@ html
 			  //jQuery(".progress-label").text(map);
 			  var div = document.getElementById("preloadprogress");
 			  count++;
-			  div.style.backgroundColor = "#ccE";
+			 
 			  div.style.width = count/total * 95 +'%';
-			  console.log(count);
 			}
 
 			require(['../load']);
@@ -74,6 +79,8 @@ html
 
 	body(style="background: black;overflow:hidden")
 
+		
+		
 		//-
 			Generic clients may have nearly empty pages, but pages for custom clients may be laid
 			out in any manner desired. Any view and models that render to the page should be
@@ -84,13 +91,17 @@ html
 		//- asset preload loading screen
 		div#preloadGUIBack(style='display:block')
 			
-			img#loadingSplash
+			div#xLoader(style="  zoom:2;  position: fixed;z-index: 1000000;top: calc(30% - 50px);left: calc(50% - 40px);")
+				div.google-spin-wrapper
+						div.google-spin
+
+			// -img#loadingSplash
 			div#preloadGUI
 				div.preloadCenter
 					div#preloadprogress
-						p.progress-label Loading...
+						p.progress-label 
 				div
-					div#preloadguiText Loading...
+					div#preloadguiText Loading Engine...
 
 		mixin vwf-root
 			#vwf-root(style='left: 0%; width:100%; top:0%; height:100%')

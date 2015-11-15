@@ -110,6 +110,17 @@ block content
 	#vwf-template-prompt(ng-non-bindable, style='display: none;')
 		label.vMargin {{displayname}}:
 			button(ng-click='showPrompt(vwfNode, vwfProp, vwfNode.properties[vwfProp.property])') {{vwfNode.properties[vwfProp.property] || 'Set Value'}}
+
+
+	#vwf-template-assetPreloaderText(ng-non-bindable, style='display: none;')
+		label.inline {{displayname}}:
+			input(ng-model='vwfNode.properties[vwfProp.property]', type='text', placeholder='{{displayname}}', ng-change='onChange()', ng-model-options="{updateOn: 'blur change'}")
+
+	#vwf-template-assetPreloaderChoice(ng-non-bindable, style='display: none;')
+		label.inline {{displayname}}:
+			select(multiple='multiple', ng-model='vwfNode.properties[vwfProp.property]', ng-change='onChange()')
+				option(ng-repeat='value in vwfProp.values' ng-selected='vwfNode.properties[vwfProp.property] == value' value='{{value}}') {{labels[$index]}}
+
 			
 			
 			

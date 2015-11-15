@@ -121,16 +121,28 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
             {
                 var url = params[0];
                 var loop = params[1] || false;
+                var restart = params[3];
+                if(restart === undefined)
+                    restart = true;
                 //cache the sound - can only be played simultainously by different nodes
                 if (this.sounds[url])
                 {
+
+                    
+                    var vol = params[2] || 100;
                     if (this.sounds[url].getPercent() == 100)
+                    {
                         this.sounds[url].stop();
+                        this.sounds[url].setPercent(0);
+                    }
+                    if(restart)
+                        this.sounds[url].setPercent(0);
                     this.sounds[url].play();
                     if (loop)
                         this.sounds[url].loop();
                     else
                         this.sounds[url].unloop();
+                    this.sounds[url].volume = vol/100;
                 }
                 else
                 {
@@ -149,6 +161,9 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
                 var url = params[0];
                 var loop = params[1] || false;
                 var vol = params[2] || 1;
+                var restart = params[3];
+                if(restart === undefined)
+                    restart = true;
                 var soundid = id + url;
                 var Sound = this.soundSources[soundid];
                 var campos = [_dView.getCamera().matrixWorld.elements[12], _dView.getCamera().matrixWorld.elements[13], _dView.getCamera().matrixWorld.elements[14]];
@@ -177,12 +192,18 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
                     }
                     else
                     {
-                        if (Sound.sound.getPercent() == 100)
+                        if (Sound.sound.getPercent() == 100 && !Sound.looping)
+                        {
                             Sound.stop();
-                        Sound.sound.setPercent(0);
+                            Sound.sound.setPercent(0);
+                        }
+                        if(restart)
+                            Sound.sound.setPercent(0);
+                        if(!Sound.isPlaying())
                         Sound.play();
                         if (loop)
-                            Sound.loop();
+                            if(!Sound.looping)
+                                Sound.loop();
                         else
                             Sound.unloop();
                         Sound.volume = vol;

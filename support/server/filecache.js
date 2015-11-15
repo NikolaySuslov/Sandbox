@@ -248,7 +248,7 @@ function _FileCache() {
                                         });
                                         watcher.entry = newentry;
                                         watcher.on('error', function(e) {
-                                            console.log(filename + "WATCHER ERROR", e);
+                                            console.log(path + "WATCHER ERROR", e);
                                             this.close();
                                         })
                                     }

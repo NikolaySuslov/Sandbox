@@ -2480,7 +2480,7 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
 
             if (componentIsDescriptor(childComponent) && childComponent.continues && componentIsURI(childComponent.continues))
             { // TODO: for "includes:", accept an already-loaded component (which componentIsURI exludes) since the descriptor will be loaded again
-                function continueBaseLoaded(data)
+                var continueBaseLoaded = function (data)
                 {
                     //cache for future use
                     if (!continuesDefs[childComponent.continues])
@@ -2516,14 +2516,19 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
 
                 if (!continuesDefs[childComponent.continues])
                 {
-                     queue.suspend( "before beginning " + childID ); // suspend the queue
-                    $.getJSON(childComponent.continues,
-                        continueBaseLoaded).error(function()
+                    queue.suspend( "before beginning " + childID ); // suspend the queue
+                    $.ajax(
                     {
-                       
-                        series_callback_async("Error loading continues base URL: " + childComponent.continues, undefined);
-                         queue.resume( "after beginning " + childID );
-                    });
+                        dataType: "json",
+                        url: childComponent.continues,
+                        cache:false,
+                        success: continueBaseLoaded,
+                        error: function()
+                        {
+                            series_callback_async("Error loading continues base URL: " + childComponent.continues, undefined);
+                            queue.resume("after beginning " + childID);
+                        }
+                    })
                 }
                 else
                 {

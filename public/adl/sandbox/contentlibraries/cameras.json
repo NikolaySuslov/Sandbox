@@ -22,5 +22,11 @@
 		"url":"./contentlibraries/cameras/vwf/lookat.vwf.json",
 		"preview":"./contentlibraries/cameras/thumbs/camera.png",
 		"type":"asset"
+	},
+	{
+		"name": "Free",
+		"url":"./contentlibraries/cameras/vwf/free.vwf.json",
+		"preview":"./contentlibraries/cameras/thumbs/camera.png",
+		"type":"asset"
 	}
 ]

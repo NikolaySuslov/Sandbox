@@ -121,12 +121,16 @@ define({
 				var canvas = $('#index-vwf', viewport);
 				var resolutionScale = _SettingsManager.getKey('resolutionScale');
 				var w = parseInt(viewport.css('width')), h = parseInt(viewport.css('height'));
-
-				canvas.attr('width', w / resolutionScale);
-				canvas.attr('height', h / resolutionScale);
-				if(window._dRenderer){
+                if(window._dRenderer)
+                {
+			        canvas.attr('width', (w / resolutionScale)*_dRenderer.devicePixelRatio);
+                    canvas.attr('height', (h / resolutionScale)*_dRenderer.devicePixelRatio);
 					_dRenderer.setViewport(0, 0, w / resolutionScale, h / resolutionScale);
-				}
+				}else{
+
+                    canvas.attr('width', (w / resolutionScale));
+                    canvas.attr('height', (h / resolutionScale));
+                }
 	            _dView.getCamera().aspect = w/h;
 	            _dView.getCamera().updateProjectionMatrix()
 	            _dView.windowResized();
@@ -136,7 +140,7 @@ define({
 
 			}, 80);
 		};
-
+        if($('#vwf-root > #resizer').length > 0 && $('#vwf-root > #resizer')[0].contentDocument)
 		$('#vwf-root > #resizer')[0].contentDocument.defaultView.addEventListener('resize', window._resizeCanvas);
         if(toolsLoaded) //don't show the blue focus border on worlds that don't have editor tools
         {

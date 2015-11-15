@@ -75,65 +75,69 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 					}, 200);
 				});
 
-				$scope.open = function(){
-					return !elem.hasClass('collapsed');
-				}
-
-				$scope.getIcon = function(){
-					var classes = ['hierarchyicon', 'glyphicon'];
-					if( $('ul li', elem).length === 0 )
-						classes.push('glyphicon-ban-circle');
-					else if($scope.open())
-						classes.push('glyphicon-triangle-bottom');
-					else
-						classes.push('glyphicon-triangle-right');
-
-					return classes;
-				}
-
-				$scope.toggleCollapse = function(){
-					if( elem.hasClass('collapsed') )
-						elem.removeClass('collapsed');
-					else
-						elem.addClass('collapsed');
-				}
-
-				$scope.isBound = function(id)
-				{
-					if( $scope.fields.nodes[id] ){
-						return false;
-					}
-					else
-					{
-						for(var i=0; i<$scope.vwfNode.children.length; i++)
-						{
-							var vwfChild = $scope.fields.nodes[$scope.vwfNode.children[i]];
-							if( vwfChild.threeId && id && vwfChild.threeId === id )
-								return true;
-						}
-						return false;
-					}
-				}
-
-				$scope.hasUnboundChild = function(node)
-				{
-					if(node)
-					{
-						for(var i=0; i<node.children.length; i++){
-							if( !$scope.isBound(node.children[i]) )
-								return true;
-						}
-					}
-					else
-						return false;
-				}
-
-				$compile(template)($scope, function(e){
-					elem.html(e);
-				});
 			}
 		};
 	}]);
+
+	app.directive('treeNodeUnified', ['$interpolate', '$compile', function($interpolate, $compile)
+	{
+		var templateBase = $('#hierarchyManager #hierarchyNodeUnifiedTemplate').html();
+
+		return {
+			restrict: 'E',
+			scope: false,
+			link: function($scope, elem, attrs)
+			{
+				if(attrs.nodeId){
+					$scope.buildThreeDescendants(attrs.nodeId);
+				}
+
+				function updateIcon(forceArrow)
+				{
+					var classes = ['hierarchyicon', 'glyphicon'];
+
+					if(!forceArrow && $('ul li', $(elem)).length === 0)
+						classes.push('glyphicon-ban-circle');
+
+					else if(!$(elem).hasClass('collapsed'))
+						classes.push('glyphicon-triangle-bottom');
+
+					else
+						classes.push('glyphicon-triangle-right');
+
+					$(elem).children('.hierarchyicon').attr('class', classes.join(' '));
+					//attrs.$set('class', classes.join(' '));
+				}
+
+				$scope.toggleCollapse = function()
+				{
+					if( $(elem).hasClass('collapsed') )
+						$(elem).removeClass('collapsed');
+					else
+						$(elem).addClass('collapsed');
+
+					updateIcon();
+				};
+
+
+				var template = templateBase.replace(/\[\[(\w+?)\]\]/g, function(match, attrName){
+					return attrs[attrName] || "";
+				});
+
+				elem.html('').append($compile(template)($scope));
+
+				if(attrs.nodeId){
+					$scope.$watchCollection('fields.nodes["'+attrs.nodeId+'"].children', function(newval){
+						updateIcon();
+					});
+				}
+				else if(attrs.threeId && attrs.assetRoot){
+					updateIcon($scope.threeMaps[attrs.assetRoot].map[attrs.threeId].children.length);
+				}
+			}
+		};
+	}]);
+
 
 	app.controller('HierarchyController', ['$scope', function($scope)
 	{
@@ -147,21 +151,115 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 			type: 'any'
 		};
 
+
+
+		/***********************************************
+		 * Three.js Node Handling/detection
+		 ***********************************************/
+
+		$scope.threeMaps = {};
+
+		$scope.buildThreeDescendants = function(nodeId)
+		{
+			var threenode = _Editor.findviewnode(nodeId);
+			var node = $scope.fields.nodes[nodeId];
+			if(threenode)
+				node.threeId = threenode.uuid;
+
+			if( node && node.prototype === 'asset-vwf' && threenode )
+			{
+				if(node.subtype !== 'link_existing/threejs')
+				{
+					var threeMap = {'root': threenode.uuid};
+					buildTree(threenode);
+					$scope.threeMaps[nodeId] = threeMap[threenode.uuid];
+				}
+				else {
+					$scope.threeMaps[nodeId] = $scope.threeMaps[node.parent].map[threenode.uuid];
+				}
+			}
+
+			function buildTree(threenode)
+			{
+				var id = threenode.uuid;
+				threeMap[threenode.uuid] = {
+					id: threenode.uuid,
+					name: threenode.name,
+					prototype: 'threejs_node',
+					children: [],
+
+					node: threenode,
+					map: threeMap
+				};
+				
+				for(var i=0; i<threenode.children.length; i++)
+				{
+					var childnode = threenode.children[i];
+					threeMap[id].children.push( childnode.uuid );
+					buildTree(childnode);
+					threeMap[childnode.uuid].parent = id;
+				}
+
+				threeMap[id].children.sort(function(a,b)
+				{
+					a = threeMap[a];
+					b = threeMap[b];
+
+					if( !b || !b.name && a.name || a.name.toLowerCase() < b.name.toLowerCase() )
+						return -1;
+					else if( !a || !a.name && b.name || b.name.toLowerCase() < a.name.toLowerCase() )
+						return 1;
+					else
+						return 0;
+				});
+			}
+		}
+		
+		$scope.isThreeNodeBound = function(threeId, ancestorVwfId)
+		{
+			var vwfNode = $scope.fields.nodes[ancestorVwfId];
+			for(var i=0; i<vwfNode.children.length; i++)
+			{
+				var vwfChild = $scope.fields.nodes[vwfNode.children[i]];
+				if( vwfChild.threeId && threeId && vwfChild.threeId === threeId )
+					return true;
+			}
+			return false;
+		}
+
+		$scope.hasUnboundThreeChild = function(vwfId)
+		{
+			var threeNode = $scope.threeMaps[vwfId];
+
+			for(var i=0; threeNode && i<threeNode.children.length; i++){
+				if( !$scope.isThreeNodeBound(threeNode.children[i], vwfId) )
+					return true;
+			}
+			return false;
+		}
+
+
+
+		/***********************************************
+		 * Miscellaneous Utilities
+		 ***********************************************/
+
+		// open path to selected node on selection
 		$scope.$watch('fields.selectedNode', function(newval)
 		{
-
 			if( newval )
 			{
 				$scope.selectedThreeNode = null;
 
 				if( !_SidePanel.isTabOpen('hierarchyManager') )
-					$('#hierarchyDisplay tree-node[node-id="'+newval.id+'"]').parents('tree-node:not(.collapsed)').addClass('collapsed');
+					$('#hierarchyDisplay tree-node-unified[node-id="'+newval.id+'"]').parents('tree-node-unified:not(.collapsed)').addClass('collapsed');
 
 				// open ancestor nodes
-				$('#hierarchyDisplay tree-node[node-id="'+newval.id+'"]').parents('tree-node.collapsed').removeClass('collapsed');
+				$('#hierarchyDisplay tree-node-unified[node-id="'+newval.id+'"]').parents('tree-node-unified.collapsed').removeClass('collapsed');
 			}
 		});
 
+		// apply box effect to selected three nodes
 		$scope.$watch('selectedThreeNode', function(newval){
 			if( newval )
 				$scope.makeBounds(newval.node);
@@ -169,28 +267,30 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 				$scope.makeBounds();
 		});
 
-		$scope.select = function(node, evt)
+		$scope.select = function(nodeId, ancestorId, evt)
 		{
 			// vwf nodes
-			if( $scope.fields.nodes[node.id] )
+			if( $scope.fields.nodes[nodeId] )
 			{
 				$scope.selectedThreeNode = null;
 
 				// new selection = 0, add = 2, subtract = 3
 				if( !evt.ctrlKey )
 				{
-					_Editor.SelectObjectPublic(node.id, 0);
+					_Editor.SelectObjectPublic(nodeId, 0);
 				}
-				else if( $scope.fields.selectedNodeIds.indexOf(node.id) === -1 )
-					_Editor.SelectObjectPublic(node.id, 2);
+				else if( $scope.fields.selectedNodeIds.indexOf(nodeId) === -1 )
+					_Editor.SelectObjectPublic(nodeId, 2);
 				else
-					_Editor.SelectObjectPublic(node.id, 3);
+					_Editor.SelectObjectPublic(nodeId, 3);
 			}
 
 			// three.js nodes
-			else
+			else if( $scope.threeMaps[ancestorId].map[nodeId] && $scope.fields.nodes[ancestorId].threeId !== nodeId )
 			{
 				_Editor.SelectObject();
+
+				var node = $scope.threeMaps[ancestorId].map[nodeId];
 
 				if( $scope.selectedThreeNode !== node ){
 					$scope.selectedThreeNode = node;
@@ -201,9 +301,9 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 			}
 		}
 
-		$scope.focusNode = function(threeNode)
+		$scope.focusNode = function(nodeId)
 		{
-			if(!threeNode){
+			if(nodeId){
 				_Editor.focusSelected();
 			}
 		}
@@ -225,7 +325,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 				_Editor.SelectObject();
 			}
 			else if( 'Space' === evt.key || evt.which === 32 ){
-				$('#hierarchyDisplay .selected').closest('tree-node').toggleClass('collapsed');
+				$('#hierarchyDisplay .selected').closest('tree-node-unified').toggleClass('collapsed');
 			}
 
 			// select previous sibling
@@ -286,7 +386,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 			// select parent
 			else if( 'ArrowLeft' === evt.key || evt.which === 37 )
 			{
-				$('#hierarchyDisplay .selected').closest('tree-node').addClass('collapsed');
+				$('#hierarchyDisplay .selected').closest('tree-node-unified').addClass('collapsed');
 
 				if( $scope.fields.selectedNode && parent)
 				{
@@ -306,7 +406,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 			// select first child
 			else if( 'ArrowRight' === evt.key || evt.which === 39 )
 			{
-				$('#hierarchyDisplay .selected').closest('tree-node').removeClass('collapsed');
+				$('#hierarchyDisplay .selected').closest('tree-node-unified').removeClass('collapsed');
 
 				if( $scope.fields.selectedNode )
 				{
@@ -325,54 +425,6 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 						$scope.selectedThreeNode = threeMap[curNode.children[i]];
 					}
 				}
-			}
-		}
-
-		$scope.getThreeDescendants = function(node)
-		{
-			var threenode = _Editor.findviewnode(node.id);
-			node.threeId = threenode && threenode.uuid || null;
-
-			if( node.prototype === 'asset-vwf' && threenode )
-			{
-				var threeMap = {};
-				buildTree(threenode);
-				return threeMap;
-			}
-
-			function buildTree(threenode)
-			{
-				var id = threenode.uuid;
-				threeMap[threenode.uuid] = {
-					id: threenode.uuid,
-					name: threenode.name || threenode.uuid || threenode.vwfID || 'No Name',
-					prototype: 'threejs_node',
-					children: [],
-
-					node: threenode,
-					map: threeMap
-				};
-				
-				for(var i=0; i<threenode.children.length; i++)
-				{
-					var childnode = threenode.children[i];
-					threeMap[id].children.push( childnode.uuid );
-					buildTree(childnode);
-					threeMap[childnode.uuid].parent = id;
-				}
-
-				threeMap[id].children.sort(function(a,b)
-				{
-					a = threeMap[a];
-					b = threeMap[b];
-
-					if( !b || !b.name && a.name || a.name.toLowerCase() < b.name.toLowerCase() )
-						return -1;
-					else if( !a || !a.name && b.name || b.name.toLowerCase() < a.name.toLowerCase() )
-						return 1;
-					else
-						return 0;
-				});
 			}
 		}
 
@@ -515,6 +567,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 		}
 
 	}]);
+
 
 	app.directive('customSelect', function()
 	{

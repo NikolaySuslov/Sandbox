@@ -254,7 +254,7 @@ define(['./angular-app'], function(app)
                        if(!self.keys)
                        self.keys = [];
                     var session = editor.getSession();
-                    var locals = ArrNoDupe(session.getValue().split(/[ ;=\[\]\n]/).filter(function(e)
+                    var locals = ArrNoDupe(session.getValue().split(/[\. ;=\[\]\n]/).filter(function(e)
                     {
                         if (!e)
                         {
@@ -520,9 +520,12 @@ define(['./angular-app'], function(app)
         }
         this.filterLine = function(line)
         {
+           
             line = $.trim(line);
-            line = line.split(/[\,\(\)]/);
+            line = line.split(/[\|\\\/\-\+\,\(\)!\{\}]/);
+            line=line.filter(function(i){return i !== ""});
             line = line[line.length-1];
+             line = $.trim(line);
             var filteredLine = "";
             for (var i = 0; i < line.length; i++)
             {

@@ -232,6 +232,11 @@ define(function ()
 		}
 		this.push = function(newEvent)
 		{
+			//shim to deal with change in the compare operator
+			if(newEvent.oldval && !(typeof newEvent.oldval == "string"))
+			{
+				newEvent.oldval = JSON.stringify(newEvent.oldval);	
+			}
 			this.list.push(newEvent);
 		}
 		this.compare = function(event)

@@ -325,7 +325,7 @@
             this.nearmesh = new THREE.Mesh(this.near, this.mat);
             this.nearmesh.InvisibleToCPUPick = true;
             this.getRoot().add(this.nearmesh);
-            this.nearmesh.renderDepth = 10;
+            this.nearmesh.renderDepth = 3;
             this.nearmesh.frustumCulled = false;
             _dView.bind('prerender', this.prerender.bind(this));
             _dView.bind('postprerender', this.renderRefractions.bind(this));
@@ -344,7 +344,7 @@
             this.nearmesh = new THREE.Mesh(this.near, this.mat);
             this.nearmesh.InvisibleToCPUPick = true;
             this.getRoot().add(this.nearmesh);
-            this.nearmesh.renderDepth = 10;
+            this.nearmesh.renderDepth = 3;
             this.nearmesh.frustumCulled = false;
             this.uniforms.uHalfGrid.value = this.resolution / 2;
         }
@@ -363,6 +363,7 @@
             this.mat.lights = true;
             this.mat.side = 0;
             this.mat.wireframe = false;
+            this.mat.fog = true;
             if (this.nearmesh)
                 this.nearmesh.material = this.mat;
         }
@@ -542,7 +543,7 @@
         this.depthOverride;
         this.setupRenderTargets = function()
         {
-
+            this.reflectionCam = new THREE.PerspectiveCamera();
             var depthShader = THREE.ShaderLib[ "depthRGBA" ];
             var depthUniforms = THREE.UniformsUtils.clone( depthShader.uniforms );
 
@@ -564,10 +565,23 @@
             });
             
             this.refractionDepthRtt = rtt;
+
+            rtt = new THREE.WebGLRenderTarget(512, 512, {
+                format: THREE.RGBAFormat,
+                minFilter: THREE.LinearFilter,
+                magFilter: THREE.LinearFilter
+            });
+            
+            this.reflectionColorRtt = rtt;
             
             this.uniforms.refractionColorRtt = {
                 type:'t',
                 value:this.refractionColorRtt
+            }
+
+            this.uniforms.reflectionColorRtt = {
+                type:'t',
+                value:this.reflectionColorRtt
             }
 
             this.uniforms.refractionDepthRtt = {
@@ -575,21 +589,112 @@
                 value:this.refractionDepthRtt
             }
         }
+         this.setupProjectionMatrix = function(mirrorCamera)
+        {
+
+            
+            
+
+            var N = new THREE.Vector3(0, 0, 1);
+           
+            mirrorCamera.matrixWorldInverse.getInverse(mirrorCamera.matrixWorld);
+            // now update projection matrix with new clip plane
+            // implementing code from: http://www.terathon.com/code/oblique.html
+            // paper explaining this technique: http://www.terathon.com/lengyel/Lengyel-Oblique.pdf
+            var clipPlane = new THREE.Plane();
+            clipPlane.setFromNormalAndCoplanarPoint(N, new THREE.Vector3(0,0,this.waterHeight));
+            clipPlane.applyMatrix4(mirrorCamera.matrixWorldInverse);
+
+            clipPlane = new THREE.Vector4(clipPlane.normal.x, clipPlane.normal.y, clipPlane.normal.z, clipPlane.constant);
+
+            var q = new THREE.Vector4();
+            var projectionMatrix = mirrorCamera.projectionMatrix;
+
+            q.x = (Math.sign(clipPlane.x) + projectionMatrix.elements[8]) / projectionMatrix.elements[0];
+            q.y = (Math.sign(clipPlane.y) + projectionMatrix.elements[9]) / projectionMatrix.elements[5];
+            q.z = -1.0;
+            q.w = (1.0 + projectionMatrix.elements[10]) / mirrorCamera.projectionMatrix.elements[14];
+
+            // Calculate the scaled plane vector
+            var c = new THREE.Vector4();
+            c = clipPlane.multiplyScalar(2.0 / clipPlane.dot(q));
+
+            // Replace the third row of the projection matrix
+            projectionMatrix.elements[2] = c.x;
+            projectionMatrix.elements[6] = c.y;
+            projectionMatrix.elements[10] = c.z + 1.0;
+            projectionMatrix.elements[14] = c.w;
+
+        }
         this.renderRefractions = function()
         {
              if (this.disable) return;
             var rttcam = _dView.getCamera();
-            var rtt = this.refractionColorRtt;
+            
+            var oldFogStart = _dScene.fog.vFalloffStart;
+            var camZ = rttcam.matrixWorld.elements[14];
+            var camHeightOverFog = camZ - oldFogStart;
+            var oldShadowEnabled = _dRenderer.shadowMapEnabled;
+            _dRenderer.shadowMapEnabled = false
+            this.reflectionCam.near = rttcam.near;
+            this.reflectionCam.far = rttcam.far;
+            this.reflectionCam.fov = rttcam.fov;
+            this.reflectionCam.aspect = rttcam.aspect;
+            this.reflectionCam.updateProjectionMatrix();
 
+            this.reflectionCam.matrixAutoUpdate = false;            
+            this.reflectionCam.matrix.copy(rttcam.matrixWorld);
+            var m = new THREE.Matrix4()
+            m.fromArray([1, 0, 0, 0 ,0, 1, 0, 0, 0, 0,-1,0, 0, 0, this.waterHeight *2, 1]);
+         
+            this.reflectionCam.matrix.multiplyMatrices(m,this.reflectionCam.matrix.clone());
+                
+
+            var e = this.reflectionCam.matrix.elements;
+            var front = [e[0],e[1],e[2]];
+            var side = [e[8],e[9],e[10]];
+            var up = MATH.crossVec3(front,side);
+            e[4] = up[0];
+            e[5] = up[1];
+            e[6] = up[2];
+            this.reflectionCam.updateMatrixWorld(true);
+
+            _dScene.fog.vFalloffStart = this.reflectionCam.matrixWorld.elements[14] - camHeightOverFog;
+            _dRenderer.setRenderTarget(this.reflectionColorRtt);
+            _dRenderer.clear();
+            _dRenderer.setBlending(THREE.CustomBlending,THREE.AddEquation,THREE.OneFactor,THREE.ZeroFactor);
+            _dSky.material.blending = 9;
+            _dSky.material.transparent = true;
+            _RenderManager.renderObject(_dSky,_dScene,this.reflectionCam);
+            _dSky.material.transparent = false;
+            _dRenderer.setRenderTarget(null);
+            _dSky.visible = false;
+            _dSky.material.blending = 9;
+            this.setupProjectionMatrix(this.reflectionCam)
+             this.nearmesh.visible = false;
+           //flip all faces by tricking three.js into thinking front is back and back is front
+         //   THREE.BackSide = 0;
+            //THREE.FrontSide = 1;
+            _dRenderer.flipCulling = true;
+            _dRenderer.render(_dScene, this.reflectionCam, this.reflectionColorRtt, false);
+            _dRenderer.flipCulling = false;
+            _dScene.fog.vFalloffStart = oldFogStart;
+           // THREE.BackSide = 1;
+            //THREE.FrontSide = 0;
+            _dSky.visible = true;
+           
+
+
+            var rtt = this.refractionColorRtt;
             _dRenderer.setRenderTarget(rtt);
             _dRenderer.clear(_dScene, rttcam, rtt);
             _dRenderer.setRenderTarget();
-            this.nearmesh.visible = false;
+          
             _dRenderer.render(_dScene, rttcam, rtt);
            
             var _far = _dView.getCamera().far;
           //      _dView.getCamera().far = 100.0;
-          _dRenderer.setBlending(THREE.CustomBlending,THREE.AddEquation,THREE.OneFactor,THREE.ZeroFactor)
+          _dRenderer.setBlending(THREE.CustomBlending,THREE.AddEquation,THREE.OneFactor,THREE.ZeroFactor);
             rtt = this.refractionDepthRtt;
             _dRenderer.setRenderTarget(rtt);
             _dRenderer.setClearColor(new THREE.Color(1,1,1),1);
@@ -599,8 +704,10 @@
 
             _dRenderer.render(_dScene, rttcam, rtt);
             _dScene.overrideMaterial = null;
+            _dRenderer.setClearColor(new THREE.Color(0,0,1),1);
             
             this.nearmesh.visible = true;
+            _dRenderer.shadowMapEnabled = oldShadowEnabled;
          //       _dView.getCamera().far = _far;
 
         }
@@ -694,5 +801,6 @@
         var ocean1 = new ocean(childID, childSource, childName, childType, assetSource, asyncCallback);
         return ocean1;
     }
+    
 })();
 //@ sourceURL=threejs.subdriver.ocean

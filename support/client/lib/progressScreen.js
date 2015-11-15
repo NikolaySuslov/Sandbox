@@ -13,11 +13,11 @@ define(function()
 
             $('#preloadprogress').progressbar();
             $('#preloadprogress').progressbar("value", 0);
-            $('#preloadprogress .progress-label').text("0%");
+            $('#preloadprogress .progress-label').text("Loading Assets: 0%");
             var regExp = new RegExp(window.appPath + ".*\/");
             var sid = regExp.exec(window.location.pathname.toString()).toString();
-            $('#loadingSplash').attr('src', "../vwfdatamanager.svc/thumbnail?SID=" + sid);
-            $('#loadingSplash').attr('onerror', " this.src = '/adl/sandbox/img/thumbnotfound.png'");
+           // $('#loadingSplash').attr('src', "../vwfdatamanager.svc/thumbnail?SID=" + sid);
+           // $('#loadingSplash').attr('onerror', " this.src = '/adl/sandbox/img/thumbnotfound.png'");
             $('#fullscreenlink').click(function()
             {
                 RunPrefixMethod(document.body, "RequestFullScreen", 1);
