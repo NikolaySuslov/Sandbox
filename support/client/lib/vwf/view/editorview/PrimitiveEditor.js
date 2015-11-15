@@ -526,6 +526,24 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
                 else if(scope.type === "vector"){
                     scope.vwfNode.properties[scope.property] = scope.vwfNode.properties[scope.property].slice();
                 }
+                else if(scope.type == "assetPreloaderText")
+                {
+                }
+                else if(scope.type == "assetPreloaderChoice")
+                {
+                    if( (scope.labels !== null) && (scope.values !== null) )
+                    {
+                        var _assetManager = window._AssetManager;
+                        if((_assetManager !== null) && (_assetManager.assets !== null))
+                        {
+                            for(var asset in _assetManager.assets)
+                            {
+                                scope.labels.push(_assetManager.assets[asset].name);
+                                scope.values.push('/sas/assets/' + _assetManager.assets[asset].id);
+                            }
+                        }
+                    }
+                }
 
                 //Get template that corresponds with current type of property
                 var template = $("#vwf-template-" + scope.type).html();

@@ -37,7 +37,23 @@ var fills = {
         }
         window.RunPrefixMethod = RunPrefixMethod;
 
+        //force the developer to opt-in to see console.log messages
+        var saveLog = window.console.log;
+        fills.enableLog = function(){
+            window.console.log = saveLog.bind(window.console);
+            window.console.log.disable = fills.disableLog;
+        }
 
+        fills.disableLog = function(){
+            window.console.log = function(){};
+            window.console.log.enable = function()
+            {
+                fills.enableLog();
+            }
+
+        }
+
+        fills.disableLog();
     },
     debounce:function()
     {
@@ -81,11 +97,11 @@ var fills = {
             if (x === y) return true;
             // if both x and y are null or undefined and exactly the same
 
-            if (!(x instanceof Object) || !(y instanceof Object)) 
+            if (!(x instanceof Object) || !(y instanceof Object))
                 return false;
             // if they are not strictly equal, they both need to be Objects
 
-            if (x.constructor !== y.constructor) 
+            if (x.constructor !== y.constructor)
                 return false;
             // they must have the exact same prototype chain, the closest we can do is
             // test there constructor.
@@ -95,18 +111,18 @@ var fills = {
                 if (!x.hasOwnProperty(p)) continue;
                 // other properties were tested using x.constructor === y.constructor
 
-                if (!y.hasOwnProperty(p)) 
+                if (!y.hasOwnProperty(p))
                     return false;
                 // allows to compare x[ p ] and y[ p ] when set to undefined
 
                 if (x[p] === y[p]) continue;
                 // if they have the same strict value or identity then they are equal
 
-                if (typeof(x[p]) !== "object") 
+                if (typeof(x[p]) !== "object")
                     return false;
                 // Numbers, Strings, Functions, Booleans must be strictly equal
 
-                if (!Object.deepEquals(x[p], y[p])) 
+                if (!Object.deepEquals(x[p], y[p]))
                     return false;
                 // Objects and Arrays must be tested recursively
             }
@@ -114,7 +130,7 @@ var fills = {
             keys = Object.keys(y);
             for (var i=0; i < keys.length; i++) {
                 var p = keys[i];
-                if (y.hasOwnProperty(p) && !x.hasOwnProperty(p)) 
+                if (y.hasOwnProperty(p) && !x.hasOwnProperty(p))
                     return false;
                 // allows x[ p ] to be set to undefined
             }
@@ -185,7 +201,7 @@ var fills = {
 
     },
     setImmediate: function() {
-       
+
 
 
     },

@@ -586,7 +586,7 @@ define(["vwf/view/editorview/Editor"], function(Editor) {
                     $('#ModelLibrary').dialog('option', 'position', 'center');
                 },
                 error: function(xhr, ajaxOptions, thrownError) {
-                    alertify.alert(thrownError);
+                    console.error(thrownError);
                     _Notifier.stopWait();
                 }
             });

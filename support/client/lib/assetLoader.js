@@ -586,7 +586,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                     };
                     this.loadMorph = function(url, cb2)
                     {
-                        function MorphRawJSONLoader()
+                        var MorphRawJSONLoader = function ()
                         {
                             this.load = function(url, callback)
                             {
@@ -661,7 +661,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                             {
                                 if (assetLoader.loaders[type])
                                 {
-                                    function loaded(results)
+                                    var loaded = function (results)
                                     {
                                         assetLoader.cache[type][url] = results;
                                         cb2();

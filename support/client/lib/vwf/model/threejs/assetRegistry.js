@@ -401,8 +401,8 @@ var assetRegistry = function()
         //debugger;
         if (!this.initFromPreloader(childType, assetSource, reg))
         {
-            ;
-            function complete(data)
+            
+            var complete = function (data)
             {
                 if(data)
                     assetLoaded(data)

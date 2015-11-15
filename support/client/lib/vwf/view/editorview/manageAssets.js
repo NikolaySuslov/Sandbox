@@ -352,55 +352,63 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 				fr.readAsArrayBuffer(files[0]);
 			}
 		}
-		uploadVWFObject = function(name, data, type, existingId, cb) {
-				function walk(node) {
-					if (!node) return;
-					if (!node.children) return;
-					var childNames = Object.keys(node.children);
-					var newChildren = {};
-					for (var i in childNames) {
-						var childName = childNames[i];
-						var originalName = node.children[childName].properties ? node.children[childName].properties.___assetServerOriginalID : null;
-						if (originalName) {
-							newChildren[originalName] = node.children[childName]
-						} else {
-							if (node.children[childName].id) {
-								vwf_view.kernel.setProperty(node.children[childName].id, "___assetServerOriginalID", childName)
-							}
-							newChildren[childName] = node.children[childName];
-							if (!newChildren[childName].properties)
-								newChildren[childName].properties = {};
-							newChildren[childName].properties.___assetServerOriginalID = childName;
+
+		uploadVWFObject = function(name, data, type, existingId, cb)
+		{
+			function walk(node) {
+				if (!node) return;
+				if (!node.children) return;
+				var childNames = Object.keys(node.children);
+				var newChildren = {};
+				for (var i in childNames) {
+					var childName = childNames[i];
+					var originalName = node.children[childName].properties ? node.children[childName].properties.___assetServerOriginalID : null;
+					if (originalName) {
+						newChildren[originalName] = node.children[childName]
+					} else {
+						if (node.children[childName].id) {
+							vwf_view.kernel.setProperty(node.children[childName].id, "___assetServerOriginalID", childName)
 						}
+						newChildren[childName] = node.children[childName];
+						if (!newChildren[childName].properties)
+							newChildren[childName].properties = {};
+						newChildren[childName].properties.___assetServerOriginalID = childName;
 					}
-					node.children = newChildren;
-					for (var i in node.children)
-						walk(node.children[i])
 				}
-				walk(data); //walk once in order to set the values on the real nodes. 
-				var cleanObj = _DataManager.getCleanNodePrototype(data); //strip the IDs
-				if (!existingId) {
-					$scope.resetNew();
-					$scope.selectedAsset = 'new';
-					fileData['new'] = strToBytes(JSON.stringify(cleanObj, null, '\t'));
-					$scope.new.filename = name;
-					$scope.new.type = type;
-					$scope.new._added = true;
-					$scope.new._dirty = true;
-					$scope.new._uploadCallback = cb;
-				} else {
-					walk(cleanObj); //undo the random rename 
-					$scope.selectedAsset = existingId;
-					fileData[existingId] = strToBytes(JSON.stringify(cleanObj, null, '\t'));
-					$scope.assets[existingId].filename = name;
-					$scope.assets[existingId].type = type;
-					$scope.assets[existingId]._dirty = true;
-					$scope.assets[existingId]._uploadCallback = cb;
-					$scope.assets[existingId].___sourceAssetTimestamp = data.properties && data.properties.___sourceAssetTimestamp ? new Date(Date.parse(data.properties.___sourceAssetTimestamp)) : new Date(0);
-				}
-				//$scope.$apply();
+				node.children = newChildren;
+				for (var i in node.children)
+					walk(node.children[i])
 			}
-			// since file inputs are read-only...
+
+			walk(data); //walk once in order to set the values on the real nodes. 
+
+			var cleanObj = _DataManager.getCleanNodePrototype(data); //strip the IDs
+			if (!existingId)
+			{
+				$scope.resetNew();
+				$scope.selectedAsset = 'new';
+				fileData['new'] = strToBytes(JSON.stringify(cleanObj, null, '\t'));
+				$scope.new.filename = name;
+				$scope.new.type = type;
+				$scope.new._added = true;
+				$scope.new._dirty = true;
+				$scope.new._uploadCallback = cb;
+			}
+			else
+			{
+				walk(cleanObj); //undo the random rename 
+				$scope.selectedAsset = existingId;
+				fileData[existingId] = strToBytes(JSON.stringify(cleanObj, null, '\t'));
+				$scope.assets[existingId].filename = name;
+				$scope.assets[existingId].type = type;
+				$scope.assets[existingId]._dirty = true;
+				$scope.assets[existingId]._uploadCallback = cb;
+				$scope.assets[existingId].___sourceAssetTimestamp = data.properties && data.properties.___sourceAssetTimestamp ? new Date(Date.parse(data.properties.___sourceAssetTimestamp)) : new Date(0);
+			}
+			//$scope.$apply();
+		}
+
+		// since file inputs are read-only...
 		$scope.clearFileInput = function() {
 			var input = $('#manageAssetsDialog #fileInput');
 			input.replaceWith(input.val('').prop('disabled', !$scope.selectedAsset).clone(true));
@@ -408,27 +416,27 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 
 		// generate octal perms from checkbox array
 		$scope.getPackedPermissions = function() {
-				var perms = 0;
-				if ($scope.selected.permissions.user) {
-					perms = perms |
-						$scope.selected.permissions.user.read * 0400 |
-						$scope.selected.permissions.user.write * 0200 |
-						$scope.selected.permissions.user.delete * 0100;
-				}
-				if ($scope.selected.permissions.group) {
-					perms = perms |
-						$scope.selected.permissions.group.read * 0040 |
-						$scope.selected.permissions.group.write * 0020 |
-						$scope.selected.permissions.group.delete * 0010;
-				}
-				if ($scope.selected.permissions.other) {
-					perms = perms |
-						$scope.selected.permissions.other.read * 0004 |
-						$scope.selected.permissions.other.write * 0002 |
-						$scope.selected.permissions.other.delete * 0001;
-				}
-				return perms;
+			var perms = 0;
+			if ($scope.selected.permissions.user) {
+				perms = perms |
+					$scope.selected.permissions.user.read * 0400 |
+					$scope.selected.permissions.user.write * 0200 |
+					$scope.selected.permissions.user.delete * 0100;
 			}
+			if ($scope.selected.permissions.group) {
+				perms = perms |
+					$scope.selected.permissions.group.read * 0040 |
+					$scope.selected.permissions.group.write * 0020 |
+					$scope.selected.permissions.group.delete * 0010;
+			}
+			if ($scope.selected.permissions.other) {
+				perms = perms |
+					$scope.selected.permissions.other.read * 0004 |
+					$scope.selected.permissions.other.write * 0002 |
+					$scope.selected.permissions.other.delete * 0001;
+			}
+			return perms;
+		}
 
 		$scope.fetchJSONAsset = function(id)
 		{
@@ -551,90 +559,90 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 								if (ok)
 								{
 									$.getJSON($scope.assets.appPath + '/assets/' + $scope.selected.id , function(filedata) {
-											var file1 = fileData[$scope.selected.id];
-											file1 = JSON.parse(String.fromCharCode.apply(null, file1));
-											var file2 = filedata;
-											var diff = $.extend(true,objectDiff(file1,file2),objectDiff(file2,file1));
-											require("vwf/view/editorview/JSONPrompt").prompt(diff);
+										var file1 = fileData[$scope.selected.id];
+										file1 = JSON.parse(String.fromCharCode.apply(null, file1));
+										var file2 = filedata;
+										var diff = $.extend(true,objectDiff(file1,file2),objectDiff(file2,file1));
+										require("vwf/view/editorview/JSONPrompt").prompt(diff);
 									})
 									cb(false)
 								}
 								else
 									cb(false)
-							})
+							});
 						}
 					],
-					function doActualUploads(doit) {
-						if (!doit) //if we got here and never got a true, then dont upload.
-							return;
-						var toComplete = 0;
+				function doActualUploads(doit) {
+					if (!doit) //if we got here and never got a true, then dont upload.
+						return;
+					var toComplete = 0;
 
-						function checkRemaining() {
-							toComplete -= 1;
-							if (toComplete === 0) {
-								$scope.assets.refresh($scope.selected.id);
-							}
+					function checkRemaining() {
+						toComplete -= 1;
+						if (toComplete === 0) {
+							$scope.assets.refresh($scope.selected.id);
 						}
-						if (fileData[$scope.selected.id]) {
-							toComplete += 1;
-							var xhr = new XMLHttpRequest();
-							xhr.addEventListener('loadend', function(e) {
-								if (xhr.status !== 200) {
-									alertify.alert('Upload failed: ' + xhr.responseText);
-								} else {
-									$scope.clearFileInput();
-									fileData[$scope.selected.id] = null;
-									if ($scope.selected._uploadCallback) {
-										$.getJSON($scope.assets.appPath + '/assets/' + $scope.selected.id + "/meta", function(metadata) {
-											var last_modified = new Date(Date.parse(metadata.last_modified));
-											$scope.selected._uploadCallback(null, last_modified);
-										})
-									}
+					}
+					if (fileData[$scope.selected.id]) {
+						toComplete += 1;
+						var xhr = new XMLHttpRequest();
+						xhr.addEventListener('loadend', function(e) {
+							if (xhr.status !== 200) {
+								alertify.alert('Upload failed: ' + xhr.responseText);
+							} else {
+								$scope.clearFileInput();
+								fileData[$scope.selected.id] = null;
+								if ($scope.selected._uploadCallback) {
+									$.getJSON($scope.assets.appPath + '/assets/' + $scope.selected.id + "/meta", function(metadata) {
+										var last_modified = new Date(Date.parse(metadata.last_modified));
+										$scope.selected._uploadCallback(null, last_modified);
+									})
 								}
+							}
+							checkRemaining();
+						});
+						xhr.open('POST', $scope.assets.appPath + '/assets/' + $scope.selected.id);
+						xhr.setRequestHeader('Content-Type', $scope.selected.type);
+						if ($http.defaults.headers.post[appHeaderName]) {
+							xhr.setRequestHeader(appHeaderName, $http.defaults.headers.post[appHeaderName]);
+						}
+						xhr.send(fileData[$scope.selected.id]);
+					}
+					if ($scope.selected._basicDirty) {
+						toComplete += 1;
+						var meta = {
+							name: $scope.selected.name,
+							description: $scope.selected.description,
+							license: $scope.selected.license,
+							thumbnail: $scope.selected.thumbnail,
+							width: $scope.selected.width || null,
+							height: $scope.selected.height || null,
+							isTexture: $scope.selected.isTexture
+						};
+						$http.post($scope.assets.appPath + '/assets/' + $scope.selected.id + '/meta', meta).success(checkRemaining)
+							.error(function(data, status) {
+								alertify.alert('Failed to post metadata: ' + data);
 								checkRemaining();
 							});
-							xhr.open('POST', $scope.assets.appPath + '/assets/' + $scope.selected.id);
-							xhr.setRequestHeader('Content-Type', $scope.selected.type);
-							if ($http.defaults.headers.post[appHeaderName]) {
-								xhr.setRequestHeader(appHeaderName, $http.defaults.headers.post[appHeaderName]);
-							}
-							xhr.send(fileData[$scope.selected.id]);
-						}
-						if ($scope.selected._basicDirty) {
-							toComplete += 1;
-							var meta = {
-								name: $scope.selected.name,
-								description: $scope.selected.description,
-								license: $scope.selected.license,
-								thumbnail: $scope.selected.thumbnail,
-								width: $scope.selected.width || null,
-								height: $scope.selected.height || null,
-								isTexture: $scope.selected.isTexture
-							};
-							$http.post($scope.assets.appPath + '/assets/' + $scope.selected.id + '/meta', meta).success(checkRemaining)
-								.error(function(data, status) {
-									alertify.alert('Failed to post metadata: ' + data);
-									checkRemaining();
-								});
-						}
-						if ($scope.selected._groupDirty) {
-							toComplete += 1;
-							$http.post($scope.assets.appPath + '/assets/' + $scope.selected.id + '/meta/group_name', $scope.selected.group_name).success(checkRemaining)
-								.error(function(data, status) {
-									alertify.alert('Failed to change group: ' + data);
-									checkRemaining();
-								});
-						}
-						if ($scope.selected._permsDirty) {
-							var perms = $scope.getPackedPermissions();
-							toComplete += 1;
-							$http.post($scope.assets.appPath + '/assets/' + $scope.selected.id + '/meta/permissions', perms.toString(8)).success(checkRemaining)
-								.error(function(data, status) {
-									alertify.alert('Failed to change permissions: ' + data);
-									checkRemaining();
-								});
-						}
-					})
+					}
+					if ($scope.selected._groupDirty) {
+						toComplete += 1;
+						$http.post($scope.assets.appPath + '/assets/' + $scope.selected.id + '/meta/group_name', $scope.selected.group_name).success(checkRemaining)
+							.error(function(data, status) {
+								alertify.alert('Failed to change group: ' + data);
+								checkRemaining();
+							});
+					}
+					if ($scope.selected._permsDirty) {
+						var perms = $scope.getPackedPermissions();
+						toComplete += 1;
+						$http.post($scope.assets.appPath + '/assets/' + $scope.selected.id + '/meta/permissions', perms.toString(8)).success(checkRemaining)
+							.error(function(data, status) {
+								alertify.alert('Failed to change permissions: ' + data);
+								checkRemaining();
+							});
+					}
+				});
 			}
 		}
 		$scope.deleteData = function(id) {

@@ -33,7 +33,7 @@ uniform vec3 wrapRGB;
 #endif
 
 
-
+varying vec3 vFogPosition;
 varying vec3 vSundir;
 varying vec3 vNormal;
 varying vec3 vCamDir;
@@ -62,7 +62,9 @@ uniform samplerCube texture;
 uniform sampler2D oNormal;
 uniform sampler2D diffuse;
 uniform sampler2D refractionColorRtt;
+uniform sampler2D reflectionColorRtt;
 
+ 
 uniform mat4 projectionMatrix;
 
 
@@ -76,6 +78,7 @@ uniform float uAmbientPower;
 uniform float uSunPower;
 uniform float uOceanDepth;
 uniform float uNormalPower;
+uniform vec3 oCamPos;
 //physical params
 uniform vec3 c;
 uniform vec3 bb;
@@ -83,6 +86,62 @@ uniform vec3 a;
 uniform vec3 Kd;
 
 uniform float waveEffectDepth;
+
+varying vec3 stCamDir;
+
+
+
+#ifdef USE_FOG
+
+uniform vec3 fogColor;
+
+#ifdef FOG_EXP2
+
+uniform vec3 vAtmosphereColor; //vec3(0.0, 0.02, 0.04);
+uniform vec3 vHorizonColor; //vec3(0.88, 0.94, 0.999);
+uniform vec3 vApexColor; //vec3(0.78, 0.82, 0.999)
+uniform float vAtmosphereDensity; //.0005
+uniform float vFalloff;
+uniform float vFalloffStart;
+      uniform float fogDensity;
+
+#if MAX_DIR_LIGHTS > 0
+ 
+
+
+vec3 atmosphereColor(vec3 rayDirection){
+    float a = max(0.0, dot(rayDirection, vec3(0.0, 1.0, 0.0)));
+    vec3 skyColor = mix(vHorizonColor, vApexColor, a);
+    float sunTheta = max( dot(rayDirection, directionalLightDirection[0].xzy), 0.0 );
+    return skyColor+directionalLightColor[0]*4.0*pow(sunTheta, 16.0)*0.5;
+}
+
+vec3 applyFog(vec3 albedo, float dist, vec3 rayOrigin, vec3 rayDirection){
+    float fogDensityA = fogDensity ;
+    float fog = exp((-rayOrigin.y*vFalloff)*fogDensityA) * (1.0-exp(-dist*rayDirection.y*vFalloff*fogDensityA))/(rayDirection.y*vFalloff);
+    return mix(albedo, fogColor, clamp(fog, 0.0, 1.0));
+}
+
+vec3 aerialPerspective(vec3 albedo, float dist, vec3 rayOrigin, vec3 rayDirection){
+ //rayOrigin.y = max(-vFalloffStart,rayOrigin.y);
+ rayOrigin.y += vFalloffStart;
+ rayOrigin.y = abs(rayOrigin.y);
+     
+    vec3 atmosphere = atmosphereColor(rayDirection)+vAtmosphereColor; 
+    atmosphere = mix( atmosphere, atmosphere*.85, clamp(1.0-exp(-dist*vAtmosphereDensity), 0.0, 1.0));
+    vec3 color = mix( applyFog(albedo, dist, rayOrigin, rayDirection), atmosphere, clamp(1.0-exp(-dist*vAtmosphereDensity)-log(rayOrigin.y)/10.0, 0.0, 1.0));
+    return color;
+}                      
+#endif
+  #else
+
+       uniform float fogNear;
+       uniform float fogFar;
+
+   #endif
+
+#endif
+
 
 float unpackDepth( const in vec4 rgba_depth ) {
 
@@ -204,7 +263,9 @@ void main() {
 	vec3 ref_vec = -reflect(-camdir, texNormal);
 	//ref_vec = mix(-ref_vec, ref_vec, sign(ref_vec.z));
 	sky = uReflectPow * .333 * pow(textureCube(texture, ref_vec).xyz,vec3(2.2));
-
+	vec4 skyPlaner = pow(texture2D(reflectionColorRtt,sspos.xy+ texNormal.xy/5.0).xyzw,vec4(2.2));
+	float planerMix = pow(dot(normalize(ref_vec),normalize(-stCamDir)),1.0); 
+	sky = mix(skyPlaner.xyz,sky,clamp((1.0-planerMix) * skyPlaner.a,0.0,1.0));
 
 
 
@@ -319,12 +380,13 @@ void main() {
 
 
 	vec4 water  =  vec4(mix(pow(L0TP,vec3(2.2)), sky, ref), 1.0);
-	water += vec4(directionalLightColor[ 0 ], 1.0) * spec;
+	water += vec4(directionalLightColor[ 0 ], 1.0) * spec * max(0.0,1.0-skyPlaner.a);
 
 	vec4 foam = vec4(1.0, 1.0, 1.0, 1.0) * ndotl + vec4(ambientLightColor, 1.0);;
 	foam.a = 1.0;
 
-	float foamMix = max(0.0, h * diffuseTex.r) ;
+	float foamMix = max(0.0,  h * diffuseTex.r ) ;
+	foamMix += clamp(1.0+depth/0.3,0.0,1.0) * texture2D(diffuse,uv1 ).r;
 	//foamMix += (1.0-max(-depth/2.0,0.0))* diffuseTex.r;
 	gl_FragColor = mix(water, foam, clamp(foamMix * uFoam, 0.0, 1.0));
 
@@ -338,9 +400,15 @@ void main() {
 	// D1 = D1/gl_FragCoord.w;
 	
 	gl_FragColor.xyz = pow(gl_FragColor.xyz,vec3(1.0/2.2));
-	//gl_FragColor = vec4(0.0,0.0,0.0,1.0);
-		//gl_FragColor.xyz = texNormal.xyz;
-
+	#ifdef USE_FOG
+		#ifdef FOG_EXP2
+			#if MAX_DIR_LIGHTS > 0
+          		gl_FragColor.xyz = aerialPerspective(gl_FragColor.xyz, distance(vFogPosition.xyz,oCamPos),oCamPos.xzy, normalize(vFogPosition.xyz-oCamPos).xzy);
+        	#endif
+		#endif
+	#endif	
+          		//gl_FragColor.xyz = vec3();
+	//gl_FragColor.xyz = vFogPosition;
 	//if(vCamLength > depth*100.0)
 	//	depth = 100.0;
 

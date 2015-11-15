@@ -228,6 +228,8 @@ define([
                     //enable selection on the ancestors of all draggables, to make drag work in FF
                     $('[draggable]').parentsUntil().enableSelection();
                 }
+                //make sure to setup the view correctly
+                _resizeCanvas();
             }
             if (window._Editor && childID != 'index-vwf')
             {

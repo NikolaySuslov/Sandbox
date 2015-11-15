@@ -22,7 +22,7 @@ var DBstateToVWFDef = require('./sandboxState').DBstateToVWFDef;
 function startup(listen)
 {
     //create socket server
-    logger.info('startup refector', 0);
+    logger.info('startup reflector', 0);
     sio = sio(listen,
     {
         log: false,
@@ -33,7 +33,7 @@ function startup(listen)
         'heartbeat timeout': 30
     });
     //assoicate the session information from the handshake with the socket.
-    //this is a touch tricky, because we need to manually do the session decrypt from the cookie     
+    //this is a touch tricky, because we need to manually do the session decrypt from the cookie
     sio.use(function(socket, next)
     {
         var handshake = socket.request;
@@ -182,7 +182,7 @@ function WebSocketConnection(socket, _namespace)
         if (!socket.loginData.UID && socket.loginData.Username)
             socket.loginData.UID = socket.loginData.Username;
         var namespace = _namespace || getNamespace(socket);
-        //let the data viewer tool connect, but wait for it to tell us what namespace to join 
+        //let the data viewer tool connect, but wait for it to tell us what namespace to join
         if (namespace && namespace.indexOf('_adl_dataview_') == 0)
         {
             socket.on('setNamespace', function(msg)
@@ -288,7 +288,7 @@ global.instances = RunningInstances;
 function ClientConnected(socket, namespace, instancedata)
 {
     console.log('ClientConnected');
-    //if it's a new instance, setup record 
+    //if it's a new instance, setup record
     if (!RunningInstances.has(namespace))
     {
         logger.warn('adding new instance' + namespace)

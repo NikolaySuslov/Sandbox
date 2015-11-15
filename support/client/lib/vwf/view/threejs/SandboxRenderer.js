@@ -168,6 +168,7 @@ define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
 			var lights = scene.__lights;
 			var fog = scene.fog;
 			var objects = this.flattenObject(object);
+			if(!scene.__webglObjects) return;
 			var keys = Object.keys(scene.__webglObjects)
 			for (var k = 0; k < keys.length; k++)
 			{

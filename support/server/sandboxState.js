@@ -192,6 +192,7 @@ var sandboxState = function(id, metadata,world)
     {
         var ret = null;
         if (!parent) parent = this.nodes['index-vwf'];
+        if (!parent) return null;
         if (parent.id == id)
             ret = parent;
         else if (parent.children)

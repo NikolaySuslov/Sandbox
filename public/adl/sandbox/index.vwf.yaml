@@ -55,6 +55,8 @@ properties:
             this.sun.shadowDarkness = value;    
   ambientColor: 
     value: [.35, .35 , .35]
+  additionalUrlAsset: 'None'
+  additionalUrlAssetsList: ['None']
   fogColor: [1, 1, 1]
   fogNear: 100
   fogFar: 1000
@@ -135,6 +137,21 @@ properties:
           } 
           return this.___commsAPI;         
   EditorData:
+    additionalAssetsPreload:
+      displayname: 'Pre-Load Assets'
+      type: 'sectionTitle'
+    additionalUrlAasset:
+      displayname: Enter Asset Url
+      property: additionalUrlAsset
+      type: assetPreloaderText
+    additionalUrlAssetsList:
+      displayname: Select Assets
+      property: additionalUrlAssetsList
+      type: assetPreloaderChoice
+      labels:
+        - None
+      values:
+        - null
     fog:
       displayname: 'Fog'
       type: 'sectionTitle'

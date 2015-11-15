@@ -535,31 +535,19 @@
          }
          if ((this.cameramode == 'Orbit' || this.cameramode == 'Free') && this.middledown == true)
          {
-             var screenmousepos = [(parms.clientX - this.rel_x * 1000) / window.screen.width, (parms.clientY - this.rel_y * 1000) / window.screen.height, 0, 1];
-             screenmousepos[0] *= 2;
-             screenmousepos[1] *= 2;
-             screenmousepos[0] -= 1;
-             screenmousepos[1] -= 1;
-             screenmousepos[1] *= -1;
-             var worldmousepos = MATH.mulMat4Vec4(MATH.inverseMat4(getViewProjection(this.camera)), screenmousepos);
-             worldmousepos[0] /= worldmousepos[3];
-             worldmousepos[1] /= worldmousepos[3];
-             worldmousepos[2] /= worldmousepos[3];
-             screenmousepos = [this.last_x, this.last_y, 0, 1];
-             screenmousepos[0] *= 2;
-             screenmousepos[1] *= 2;
-             screenmousepos[0] -= 1;
-             screenmousepos[1] -= 1;
-             screenmousepos[1] *= -1;
-             var worldmousepos2 = MATH.mulMat4Vec4(MATH.inverseMat4(getViewProjection(this.camera)), screenmousepos);
-             worldmousepos2[0] /= worldmousepos2[3];
-             worldmousepos2[1] /= worldmousepos2[3];
-             worldmousepos2[2] /= worldmousepos2[3];
-             var panfactor = 10;
+            
+
+             var up = [this.camera.matrixWorldInverse.elements[0],this.camera.matrixWorldInverse.elements[4],this.camera.matrixWorldInverse.elements[8]];
+             var side = [this.camera.matrixWorldInverse.elements[1],this.camera.matrixWorldInverse.elements[5],this.camera.matrixWorldInverse.elements[9]];
+
+             var move = MATH.addVec3(MATH.scaleVec3(up,this.rel_x),MATH.scaleVec3(side,-this.rel_y));
+
+
+             var panfactor = 1;
              if (this.cameramode == 'Free')
                  panfactor = 50;
              ////console.log(this.zoom);
-             this.center = MATH.addVec3(this.center, MATH.scaleVec3(MATH.subVec3(worldmousepos2, worldmousepos), panfactor * this.zoom));
+             this.center = MATH.addVec3(this.center, MATH.scaleVec3(move, panfactor * this.zoom));
          }
          if (this.cameramode == 'Navigate' && this.middledown == true)
          {
@@ -775,6 +763,8 @@
              // headPos.applyQuaternion(q);
              this.camera.position.add(headPos);
          }
+         this.camera.near = .01 + this.zoom/500;
+         this.camera.updateProjectionMatrix();
          this.camera.updateMatrixWorld();
          this.camera.updateMatrix();
      }
@@ -803,13 +793,15 @@
          this.center = point;
          this.objectFollowed = null;
      }
-     this.ReprojectCameraCenter = function()
+     this.ReprojectCameraCenter = function(dist)
      {
+        if(!dist)
+            dist = .4;
          var campos = [this.camera.position.x, this.camera.position.y, this.camera.position.z];
          var worldmousepos = this.GetCameraCenterRay();
-         worldmousepos = MATH.scaleVec3(worldmousepos, .4);
+         worldmousepos = MATH.scaleVec3(worldmousepos, dist);
          this.center = MATH.addVec3(worldmousepos, campos);
-         this.zoom = .4;
+         this.zoom = dist;
      }
      this.GetCameraCenterRay = function()
      {

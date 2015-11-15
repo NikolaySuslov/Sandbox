@@ -1,6 +1,6 @@
-"use strict";
 // File:src/Three.js
 
+"use strict"
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -4458,7 +4458,7 @@ THREE.Matrix4.prototype = {
 		};
 
 	}(),
-	 orthogonalize: function(p) {
+	  orthogonalize: function(p) {
 
 
 
@@ -7798,13 +7798,14 @@ THREE.Object3D.prototype = {
 
             this.orthoMatrixWorld.copy(this.matrixWorld);
             if (this instanceof THREE.Bone) {
-               if(this.skin)
+                if(this.skin)
                 	this.orthoMatrixWorld.orthogonalize(this.skin.matrixWorld);
                 
+
             } else {
 
                 this.orthoMatrixWorld.orthogonalize();
-           }
+            }
 
             this.matrixWorldNeedsUpdate = false;
 
@@ -15496,8 +15497,6 @@ THREE.SkinnedMesh = function ( geometry, material, useVertexTexture ) {
 	this.normalizeSkinWeights();
 
 	this.updateMatrixWorld( true );
-	//TODO: remember to merge this fix  back into threejs
-	//this.bind( new THREE.Skeleton( bones, undefined, useVertexTexture ) );
 	this.bind( new THREE.Skeleton( bones, this.geometry.boneInverses || undefined, useVertexTexture ) );
 
 };
@@ -16038,6 +16037,7 @@ THREE.Scene = function () {
 	this.__objectsRemoved = [];
 	this.__skins = [];
 	this.__pointclouds = [];
+
 };
 
 THREE.Scene.prototype = Object.create( THREE.Object3D.prototype );
@@ -17361,7 +17361,7 @@ THREE.ShaderChunk[ 'lights_phong_fragment'] = "vec3 normal = normalize( vNormal 
 
 // File:src/renderers/shaders/ShaderChunk/fog_pars_fragment.glsl
 
-THREE.ShaderChunk[ 'fog_pars_fragment'] = "\n        #ifdef USE_FOG\n\n        uniform vec3 fogColor;\n\n        	#ifdef FOG_EXP2\n\n        uniform vec3 vAtmosphereColor; //vec3(0.0, 0.02, 0.04);\n        uniform vec3 vHorizonColor; //vec3(0.88, 0.94, 0.999);\n        uniform vec3 vApexColor; //vec3(0.78, 0.82, 0.999)\n        uniform float vAtmosphereDensity; //.0005\n        uniform float vFalloff;\n        uniform float vFalloffStart;\n        		uniform float fogDensity;\n\n        #if MAX_DIR_LIGHTS > 0\n         \n        \n\n        vec3 atmosphereColor(vec3 rayDirection){\n            float a = max(0.0, dot(rayDirection, vec3(0.0, 1.0, 0.0)));\n            vec3 skyColor = mix(vHorizonColor, vApexColor, a);\n            float sunTheta = max( dot(rayDirection, directionalLightDirection[0].xzy), 0.0 );\n            return skyColor+directionalLightColor[0]*4.0*pow(sunTheta, 16.0)*0.5;\n        }\n\n        vec3 applyFog(vec3 albedo, float dist, vec3 rayOrigin, vec3 rayDirection){\n            float fogDensityA = fogDensity ;\n            float fog = exp((-rayOrigin.y*vFalloff)*fogDensityA) * (1.0-exp(-dist*rayDirection.y*vFalloff*fogDensityA))/(rayDirection.y*vFalloff);\n            return mix(albedo, fogColor, clamp(fog, 0.0, 1.0));\n        }\n\n        vec3 aerialPerspective(vec3 albedo, float dist, vec3 rayOrigin, vec3 rayDirection){\n         rayOrigin.y += vFalloffStart;\n            vec3 atmosphere = atmosphereColor(rayDirection)+vAtmosphereColor; \n            atmosphere = mix( atmosphere, atmosphere*.85, clamp(1.0-exp(-dist*vAtmosphereDensity), 0.0, 1.0));\n            vec3 color = mix( applyFog(albedo, dist, rayOrigin, rayDirection), atmosphere, clamp(1.0-exp(-dist*vAtmosphereDensity)-log(rayOrigin.y)/10.0, 0.0, 1.0));\n            return color;\n        }						\n        #endif\n        	#else\n\n        		uniform float fogNear;\n        		uniform float fogFar;\n\n        	#endif\n\n        #endif";
+THREE.ShaderChunk[ 'fog_pars_fragment'] = "\n        #ifdef USE_FOG\n\n        uniform vec3 fogColor;\n\n        #ifdef FOG_EXP2\n\n        uniform vec3 vAtmosphereColor; //vec3(0.0, 0.02, 0.04);\n        uniform vec3 vHorizonColor; //vec3(0.88, 0.94, 0.999);\n        uniform vec3 vApexColor; //vec3(0.78, 0.82, 0.999)\n        uniform float vAtmosphereDensity; //.0005\n        uniform float vFalloff;\n        uniform float vFalloffStart;\n              uniform float fogDensity;\n\n        #if MAX_DIR_LIGHTS > 0\n         \n        \n\n        vec3 atmosphereColor(vec3 rayDirection){\n            float a = max(0.0, dot(rayDirection, vec3(0.0, 1.0, 0.0)));\n            vec3 skyColor = mix(vHorizonColor, vApexColor, a);\n            float sunTheta = max( dot(rayDirection, directionalLightDirection[0].xzy), 0.0 );\n            return skyColor+directionalLightColor[0]*4.0*pow(sunTheta, 16.0)*0.5;\n        }\n\n        vec3 applyFog(vec3 albedo, float dist, vec3 rayOrigin, vec3 rayDirection){\n            float fogDensityA = fogDensity ;\n            float fog = exp((-rayOrigin.y*vFalloff)*fogDensityA) * (1.0-exp(-dist*rayDirection.y*vFalloff*fogDensityA))/(rayDirection.y*vFalloff);\n            return mix(albedo, fogColor, clamp(fog, 0.0, 1.0));\n        }\n\n        vec3 aerialPerspective(vec3 albedo, float dist, vec3 rayOrigin, vec3 rayDirection){\n         //rayOrigin.y = max(-vFalloffStart,rayOrigin.y);\n         rayOrigin.y += vFalloffStart;\n         rayOrigin.y = abs(rayOrigin.y);\n             \n            vec3 atmosphere = atmosphereColor(rayDirection)+vAtmosphereColor; \n            atmosphere = mix( atmosphere, atmosphere*.85, clamp(1.0-exp(-dist*vAtmosphereDensity), 0.0, 1.0));\n            vec3 color = mix( applyFog(albedo, dist, rayOrigin, rayDirection), atmosphere, clamp(1.0-exp(-dist*vAtmosphereDensity)-log(rayOrigin.y)/10.0, 0.0, 1.0));\n            return color;\n        }                      \n        #endif\n          #else\n\n               uniform float fogNear;\n               uniform float fogFar;\n\n           #endif\n\n        #endif";
 
 // File:src/renderers/shaders/ShaderChunk/morphnormal_vertex.glsl
 
@@ -17797,8 +17797,8 @@ THREE.ShaderLib = {
             "tFogColor = mix( gl_FragColor, vec4( fogColor, gl_FragColor.w ), fogFactor );\n" +
             "#endif\n" +
             "#endif\n" +
-            "   vec4 temp = vec4(mix(cubeColor.xyz,skycolor,colorBlend),1.0);\n" +
-            "   gl_FragColor = vec4(mix(temp.xyz,tFogColor.xyz,fogBlend),1.0);\n" +
+			"   vec4 temp = vec4(mix(cubeColor.xyz,skycolor,colorBlend),1.0);\n" +
+            "   gl_FragColor = vec4(mix(temp.xyz,tFogColor.xyz,fogBlend),0.0);\n" +
             "}\n",
 
         //the default shader - the one used by the analytic solver, just has some simple stuff
@@ -22444,7 +22444,7 @@ THREE.WebGLRenderer = function ( parameters ) {
 
 		}
 
-		for( var i = 0; i < scene.__skins.length; i++)
+		for( i = 0; i < scene.__skins.length; i++)
 			updateSkeletons( scene.__skins[i] );
 
 		camera.matrixWorldInverse.getInverse( camera.matrixWorld );
@@ -24629,12 +24629,13 @@ THREE.WebGLRenderer = function ( parameters ) {
 		}
 
 	};
-
+	this.flipCulling = false;
 	this.setMaterialFaces = function ( material ) {
 
 		var doubleSided = material.side === THREE.DoubleSide;
 		var flipSided = material.side === THREE.BackSide;
-
+		if(this.flipCulling)
+			flipSided = material.side === THREE.FrontSide;
 		if ( _oldDoubleSided !== doubleSided ) {
 
 			if ( doubleSided ) {
@@ -25795,10 +25796,11 @@ THREE.WebGLProgram = ( function () {
 			prefix_vertex = [
 
 				
-
 				customDefines,
 				"precision " + parameters.precision + " float;",
 				"precision " + parameters.precision + " int;",
+
+
 				parameters.supportsVertexTextures ? "#define VERTEX_TEXTURES" : "",
 
 				_this.gammaInput ? "#define GAMMA_INPUT" : "",
@@ -29780,6 +29782,7 @@ THREE.Animation.prototype.setKey = function(keyf) {
     if (this.debugroot) {
         this.debugroot.updateMatrixWorld()
     }
+
 
 }
 
@@ -34950,7 +34953,7 @@ THREE.LensFlarePlugin = function () {
 
 			}
 
-		} );*/ //this is too slow!
+		} );*/
 
 		if ( flares.length === 0 ) return;
 
@@ -35747,7 +35750,7 @@ THREE.SpritePlugin = function () {
 
 			}
 
-		} );*/ //this is way too slow!
+		} );*/
 
 		if ( sprites.length === 0 ) return;
 
