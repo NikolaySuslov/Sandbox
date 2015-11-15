@@ -24,23 +24,6 @@
 // the License.
 "use strict";
 
-function makeGrammar(nodeID, propertyValue, grammarName) {
-debugger;
-  try  { var gram = ohm.grammar(propertyValue);
-
-                console.log("Grammar OK!");
-                //this.grammars[nodeID] = gram;
-                Engine.setProperty(nodeID, grammarName, gram);
-
-                } catch (e) {
-                        console.log(e); 
-                //this.grammars[nodeID] = null;
-                Engine.setProperty(nodeID, grammarName, {});
-            }
-
-
-
-}
 
 
 
@@ -110,17 +93,19 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
             for (var propName in props) {
                 if (propName.indexOf("ometa") > -1) {
-debugger;
+//debugger;
                     var lngName = propName.slice(5,propName.length);
                     var gram = Engine.getProperty(childID, propName);
 
-                    makeGrammar(childID, gram, lngName);
+                    this.makeGrammar(childID, gram, lngName);
 
-                    //Engine.setProperty(childID, lngName, gram);
+                   
                     
             }
 
         }
+
+         //Engine.setProperty(childID, lngName, gram);
            // if (Engine.getProperty(childID, "gram")) {
 
            //          debugger;
@@ -203,19 +188,13 @@ debugger;
           
           if (propertyName.indexOf("ometa") > -1)
             {
-           debugger;
+           //debugger;
 
-        try  { var gram = ohm.grammar(propertyValue);
+            var lngName = propertyName.slice(5,propertyName.length);
+            this.makeGrammar(nodeID, propertyValue, lngName);
 
-                console.log("Grammar OK!");
-                //this.grammars[nodeID] = gram;
-                Engine.setProperty(nodeID, 'gram', gram);
 
-                } catch (e) {
-                        console.log(e); 
-                //this.grammars[nodeID] = null;
-                Engine.setProperty(nodeID, 'gram', gram);
-            }
+        }
 
             // var lngName = propertyName.slice(5,propertyName.length);
             // var node = this.objects[nodeID];
@@ -233,7 +212,7 @@ debugger;
             //             Engine.createProperty(nodeID, gramName, ohm.grammar(propertyValue));
             //         }
 
-            }
+            
 
 
 
@@ -284,14 +263,14 @@ debugger;
         // -- gettingProperty ----------------------------------------------------------------------
 
         gettingProperty: function( nodeID, propertyName, propertyValue ) {
-             if (propertyName.indexOf("ometa") > -1)
-            {
+        //      if (propertyName.indexOf("ometa") > -1)
+        //     {
            
 
-        }
+        // }
 
-            var object = this.objects[nodeID];
-            return object && object[propertyName];
+             var object = this.objects[nodeID];
+             return object && object[propertyName];
 
            
 
@@ -337,6 +316,26 @@ debugger;
 
         executing: function( nodeID, scriptText, scriptType ) {
         },
+
+
+        makeGrammar: function (nodeID, propertyValue, grammarName) {
+            //var node = this.objects[nodeID];
+
+//debugger;
+  try  { var gram = ohm.grammar(propertyValue);
+
+                console.log("Grammar OK!");
+                //this.grammars[nodeID] = gram;
+                Engine.setPropertyFast(nodeID, grammarName, gram);
+
+                } catch (e) {
+                        console.log(e); 
+                //this.grammars[nodeID] = null;
+                Engine.setPropertyFast(nodeID, grammarName, {});
+            }
+        }
+
+
 
     } );
 
