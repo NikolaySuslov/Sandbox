@@ -192,9 +192,12 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
             var lngName = propertyName.slice(5,propertyName.length);
             this.makeGrammar(nodeID, propertyValue, lngName);
-
+            Engine.setProperty(nodeID, propertyName, propertyValue)
 
         }
+
+            
+              
 
             // var lngName = propertyName.slice(5,propertyName.length);
             // var node = this.objects[nodeID];
@@ -326,13 +329,24 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
                 console.log("Grammar OK!");
                 //this.grammars[nodeID] = gram;
-                Engine.setPropertyFast(nodeID, grammarName, gram);
+                
+                
+                        Engine.setProperty(nodeID, grammarName, gram);
+                 
+
 
                 } catch (e) {
                         console.log(e); 
                 //this.grammars[nodeID] = null;
-                Engine.setPropertyFast(nodeID, grammarName, {});
+               
+                        Engine.setProperty(nodeID, grammarName, gram);
+                   
+
             }
+
+
+
+
         }
 
 
