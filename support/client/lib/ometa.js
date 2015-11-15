@@ -24,6 +24,24 @@
 // the License.
 "use strict";
 
+function makeGrammar(nodeID, propertyValue, grammarName) {
+debugger;
+  try  { var gram = ohm.grammar(propertyValue);
+
+                console.log("Grammar OK!");
+                //this.grammars[nodeID] = gram;
+                Engine.setProperty(nodeID, grammarName, gram);
+
+                } catch (e) {
+                        console.log(e); 
+                //this.grammars[nodeID] = null;
+                Engine.setProperty(nodeID, grammarName, {});
+            }
+
+
+
+}
+
 
 
 define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
@@ -49,7 +67,8 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
             this.objects = {}; // maps id => { property: value, ... }
             this.creatingNode( undefined, 0 ); 
             this.ometaLng = {};
-            
+            this.grammars = {};
+
             this.ohm = ohm;
             window._ohm = this.ohm;
             
@@ -79,7 +98,36 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
             };
 
+                
+            
+
         },
+
+        // -- initializingNode ---------------------------------------------------------------------
+         initializingNode: function(nodeID, childID, childExtendsID, childImplementsIDs, childSource, childType, childIndex, childName) {
+            
+            var props = Engine.getProperties(childID);
+
+            for (var propName in props) {
+                if (propName.indexOf("ometa") > -1) {
+debugger;
+                    var lngName = propName.slice(5,propName.length);
+                    var gram = Engine.getProperty(childID, propName);
+
+                    makeGrammar(childID, gram, lngName);
+
+                    //Engine.setProperty(childID, lngName, gram);
+                    
+            }
+
+        }
+           // if (Engine.getProperty(childID, "gram")) {
+
+           //          debugger;
+           //   }
+
+         },
+
 
         // -- deletingNode -------------------------------------------------------------------------
 
@@ -155,14 +203,27 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
           
           if (propertyName.indexOf("ometa") > -1)
             {
-            debugger;
+           debugger;
 
-            var lngName = propertyName.slice(5,propertyName.length);
-            var node = this.objects[nodeID];
-            var gramName = 'grammar'+lngName;
-            var val = ohm.grammar(propertyValue);
+        try  { var gram = ohm.grammar(propertyValue);
 
-            this.objects[nodeID].ohmgr =  ohm.grammar(propertyValue);
+                console.log("Grammar OK!");
+                //this.grammars[nodeID] = gram;
+                Engine.setProperty(nodeID, 'gram', gram);
+
+                } catch (e) {
+                        console.log(e); 
+                //this.grammars[nodeID] = null;
+                Engine.setProperty(nodeID, 'gram', gram);
+            }
+
+            // var lngName = propertyName.slice(5,propertyName.length);
+            // var node = this.objects[nodeID];
+            // var gramName = 'grammar'+lngName;
+            // var val = ohm.grammar(propertyValue);
+
+            // this.objects[nodeID].ohmgr =  ohm.grammar(propertyValue);
+
 
 
             // if( node.properties && node.properties[gramName] !== undefined ){

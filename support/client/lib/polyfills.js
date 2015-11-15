@@ -53,7 +53,7 @@ var fills = {
 
         }
 
-        fills.disableLog();
+        fills.enableLog();
     },
     debounce:function()
     {
