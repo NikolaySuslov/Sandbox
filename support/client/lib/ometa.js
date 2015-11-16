@@ -301,6 +301,13 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
         // -- callingMethod ------------------------------------------------------------------------
 
         callingMethod: function( nodeID, methodName, methodParameters ) {
+          
+                 if (methodName == 'seman' )
+            {
+                debugger;
+                }
+
+
         },
 
         // -- creatingEvent ------------------------------------------------------------------------
@@ -322,30 +329,30 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
 
         makeGrammar: function (nodeID, propertyValue, grammarName) {
-            //var node = this.objects[nodeID];
 
-//debugger;
-  try  { var gram = ohm.grammar(propertyValue);
+             var semName = grammarName+"Semantics";
 
+         try  { 
+                var gram = ohm.grammar(propertyValue);
+                
+debugger;
                 console.log("Grammar OK!");
-                //this.grammars[nodeID] = gram;
-                
-                
-                        Engine.setProperty(nodeID, grammarName, gram);
-                 
+                Engine.setProperty(nodeID, grammarName, gram);
+                //function semantics()  Engine.getProperty(nodeID, grammarName).semantics();
+
+
+                Engine.setProperty(nodeID, semName, Engine.getProperty(nodeID, grammarName).semantics());
+                //var methodBody = ("return this." + grammarName+".semantics()");
+
+                //Engine.deleteMethod(nodeID, methodName);
+                //Engine.createMethod(nodeID, semName, [], semantics);
 
 
                 } catch (e) {
                         console.log(e); 
-                //this.grammars[nodeID] = null;
-               
-                        Engine.setProperty(nodeID, grammarName, gram);
-                   
-
+                 Engine.setProperty(nodeID, grammarName, {});
+                 Engine.setProperty(nodeID, semName, {});
             }
-
-
-
 
         }
 
