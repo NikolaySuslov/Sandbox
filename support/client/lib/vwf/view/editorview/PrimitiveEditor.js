@@ -5,9 +5,6 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
     var isInitialized = false;
     var inSetup = true;
 
-    //This allows us to keep the current log statements in place...
-    var console = { log: $.noop };
-
     window._PrimitiveEditor = {
         getSingleton: function(){
             if(!isInitialized){
@@ -88,9 +85,7 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
                 recursevlyAddPrototypes($scope.node, {}, $scope.node, $scope.allEditorData);
 
                 setFlags();
-                updateTransform();
                 setupAnimation();
-
             }
 
             $scope.refreshAccordion = ($scope.refreshAccordion + 1) % 1000;
@@ -165,34 +160,32 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
 
         var transformFromVWF = false;
         function updateTransform(vwfTransform, oldTransform){
-            if(vwfTransform == oldTransform) return;
             var node = $scope.node;
+            if(vwfTransform == oldTransform) return;
+
             try {
                 //dont update the spinners when the user is typing in them, but when they drag the gizmo do.
-                if (node && (Engine.client() !== Engine.moniker()) || $("#index-vwf:focus").length ==1) {
+                var mat = Engine.getProperty(node.id, 'transform');
+                var angles = rotationMatrix_2_XYZ(mat);
+                var pos = [mat[12],mat[13],mat[14]];
 
-                    var mat = Engine.getProperty(node.id, 'transform');
-                    var angles = rotationMatrix_2_XYZ(mat);
-                    var pos = [mat[12],mat[13],mat[14]];
+                for(var i = 0; i < 3; i++){
+                    //since there is ambiguity in the matrix, we need to keep these values aroud. otherwise , the typeins don't really do what you would think
+                    var scl = i * 4;
+                    var newRot = Math.round(angles[i] * 57.2957795);
+                    var newScale = Math.floor(MATH.lengthVec3([mat[scl],mat[scl+1],mat[scl+2]]) * 1000) / 1000;
+                    var newPos = Math.floor(pos[i] * 1000) / 1000;
 
-                    for(var i = 0; i < 3; i++){
-                        //since there is ambiguity in the matrix, we need to keep these values aroud. otherwise , the typeins don't really do what you would think
-                        var scl = i * 4;
-                        var newRot = Math.round(angles[i] * 57.2957795);
-                        var newScale = Math.floor(MATH.lengthVec3([mat[scl],mat[scl+1],mat[scl+2]]) * 1000) / 1000;
-                        var newPos = Math.floor(pos[i] * 1000) / 1000;
+                    //If newX == oldX, then this is the tailend of the Angular-VWF roundtrip initiated by the Sandbox
+                    if(newRot != $scope.transform.rotation[i] ||
+                        newScale != $scope.transform.scale[i]  ||
+                        newPos != $scope.transform.translation[i]){
 
-                        //If newX == oldX, then this is the tailend of the Angular-VWF roundtrip initiated by the Sandbox
-                        if(newRot != $scope.transform.rotation[i] ||
-                            newScale != $scope.transform.scale[i]  ||
-                            newPos != $scope.transform.translation[i]){
+                        $scope.transform.rotation[i] = newRot;
+                        $scope.transform.scale[i] = newScale;
+                        $scope.transform.translation[i] = newPos;
 
-                            $scope.transform.rotation[i] = newRot;
-                            $scope.transform.scale[i] = newScale;
-                            $scope.transform.translation[i] = newPos;
-
-                            transformFromVWF = true;
-                        }
+                        transformFromVWF = true;
                     }
                 }
             } catch (e) {

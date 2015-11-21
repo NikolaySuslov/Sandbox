@@ -10,11 +10,11 @@
             "parameters": []
         },
         "rotateCam": {
-            "body": "\n\n    var xrot = Quaternion.fromAngleAxis(rel_x, [0, 0, 1], []);\n        var offset = this.offset.internal_val;\n        offset = Mat4.multVec3NoTranslate(Quaternion.toRotationMatrix4(xrot, []), offset, []);\n       \n        var side = Vec3.cross(offset,[0,0,1],[]);\n        var yrot = Quaternion.fromAngleAxis(rel_y,side,[]);\n        offset = Mat4.multVec3NoTranslate(Quaternion.toRotationMatrix4(yrot, []), offset, []);\n         this.offset = offset;\n",
+            "body": "\n\n    var xrot = Quaternion.fromAngleAxis(rel_x, [0, 0, 1], []);\n        var offset = this.offset;\n        offset = Mat4.multVec3NoTranslate(Quaternion.toRotationMatrix4(xrot, []), offset, []);\n       \n        var side = Vec3.cross(offset,[0,0,1],[]);\n        var yrot = Quaternion.fromAngleAxis(rel_y,side,[]);\n        offset = Mat4.multVec3NoTranslate(Quaternion.toRotationMatrix4(yrot, []), offset, []);\n         this.offset = offset;\n",
             "parameters": ["rel_x", "rel_y"]
         },
         "tick": {
-            "body": "\n\n    var node = this.Scene.findNodeByID(this.objectToLookAt);\n            var pos = [0, 0, 0];\n            if (node)\n                pos = node.transformAPI.localToGlobal([0, 0, 0]);\n            var offset = this.offset.internal_val;\n            offset = MATH.scaleVec3(offset, this.zoom);\n            this.transformAPI.setPosition(MATH.addVec3(pos, offset));\n            this.transformAPI.lookat(pos, '', '-Y', 'Z');\n",
+            "body": "\n\n    var node = this.Scene.findNodeByID(this.objectToLookAt);\n            var pos = [0, 0, 0];\n            if (node)\n                pos = node.transformAPI.localToGlobal([0, 0, 0]);\n            var offset = this.offset;\n            offset = MATH.scaleVec3(offset, this.zoom);\n            this.transformAPI.setPosition(MATH.addVec3(pos, offset));\n            this.transformAPI.lookat(pos, '', '-Y', 'Z');\n",
             "parameters": []
         }
     },

@@ -2,7 +2,7 @@
         "extends": "sphere2.vwf",
         "methods": {
             "tick": {
-                "body": "\n\n    this.counter++;\n        if (this.counter == 30)\n        {\n            this.counter = 0;\n            var box = this.boxDef.internal_val;\n            var sphere = this.sphereDef.internal_val;\n            box.properties._length = this.random() + .5;\n            box.properties.width = this.random() + .5;\n            box.properties.height = this.random() + .5;\n            sphere.properties.radius = this.random() + .5;\n            if(this.random() > .3)\n                vwf.createChild(vwf.application(), GUID(), box);\n            else\n                vwf.createChild(vwf.application(), GUID(), sphere);\n            \n        }\n",
+                "body": "\n\n    this.counter++;\n        if (this.counter == 30)\n        {\n            this.counter = 0;\n            var box = this.boxDef;\n            var sphere = this.sphereDef;\n            box.properties._length = this.random() + .5;\n            box.properties.width = this.random() + .5;\n            box.properties.height = this.random() + .5;\n            sphere.properties.radius = this.random() + .5;\n            if(this.random() > .3)\n                vwf.createChild(vwf.application(), GUID(), box);\n            else\n                vwf.createChild(vwf.application(), GUID(), sphere);\n            \n        }\n",
                 "parameters": []
             }
         },

@@ -2426,7 +2426,7 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
         if(node===null || node === undefined)
             return null;
 
-        if(node.extends === undefined && !node.properties && !node.continues && !node.source && !node.type)
+        if((node.extends === undefined || node.extends == "http://vwf.example.com/node.vwf") && (!node.properties || ( Object.keys(node.properties).length == 1 && Object.keys(node.properties)[0] == "___assetServerOriginalID" ) )  && !node.continues && !node.source && !node.type)
             return null;
 
         var newChildren = {}
@@ -2482,6 +2482,8 @@ this.createChild = function( nodeID, childName, childComponent, childURI, callba
             { // TODO: for "includes:", accept an already-loaded component (which componentIsURI exludes) since the descriptor will be loaded again
                 var continueBaseLoaded = function (data)
                 {
+
+                    data = cleanChildComponent(data);
                     //cache for future use
                     if (!continuesDefs[childComponent.continues])
                         continuesDefs[childComponent.continues] = JSON.parse(JSON.stringify(data));

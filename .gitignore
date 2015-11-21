@@ -22,4 +22,4 @@ config.json
 *.orig
 .sass-cache
 configserver.json
-/support/client/lib/vwfbuild.js
+/support/client/lib/enginebuild.js

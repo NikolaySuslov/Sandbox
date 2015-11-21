@@ -119,8 +119,9 @@ function heightmapTerrainAlgorithm() {
             this.worldWidth = params && parseFloat(params.worldWidth) || 9500;
 
             //check if it was preloaded
-            if (_assetLoader.getTerrain(this.url)) {
-                var terraindata = _assetLoader.getTerrain(this.url);
+            if (_assetLoader.get(this.url,'terrain')) {
+                
+                var terraindata = _assetLoader.get(this.url,'terrain');
                 terraindata.worldLength = this.worldLength;
                 terraindata.worldWidth = this.worldWidth;
                 terraindata.addNoise = this.addNoise

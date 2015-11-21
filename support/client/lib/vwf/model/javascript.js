@@ -2183,6 +2183,7 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility)
         // -- firingEvent --------------------------------------------------------------------------
         firingEvent: function(nodeID, eventName, eventParameters)
         {
+
             var phase = eventParameters && eventParameters.phase; // the phase is smuggled across on the parameters array  // TODO: add "phase" as a fireEvent() parameter? it isn't currently needed in the kernel public API (not queueable, not called by the drivers), so avoid if possible
             var node = this.nodes[nodeID];
             if (!node) return;
@@ -2197,8 +2198,10 @@ define(["module", "vwf/model", "vwf/utility"], function(module, model, utility)
                 // phase.
                 if (!phase || listener.phases && listener.phases.indexOf(phase) >= 0)
                 {
+                    jsDriverSelf.enterNewContext();
                     //var result = listener.handler.apply(listener.context || jsDriverSelf.nodes[0], eventParameters); // default context is the global root  // TODO: this presumes this.creatingNode( undefined, 0 ) is retained above
                     var result = jsDriverSelf.tryExec(listener.context || jsDriverSelf.nodes[0], listener.handler, eventParameters)
+                    jsDriverSelf.exitContext();
                     return handled || result === true || result === undefined; // interpret no return as "return true"
                 }
                 return handled;

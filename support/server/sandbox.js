@@ -9,7 +9,7 @@ var libpath = require('path'),
     YAML = require('js-yaml'),
 	sass = require('node-sass');
 var logger = require('./logger');
-
+var requestProxy = require('express-request-proxy');
 
 
 
@@ -149,9 +149,11 @@ function startVWF() {
 
                 p = process.argv.indexOf('-d');
                 datapath = p >= 0 ? process.argv[p + 1] : (global.configuration.datapath ? libpath.normalize(global.configuration.datapath) : libpath.join(__dirname, "../../data"));
+                
+                datapath = libpath.resolve(datapath,'.');
                 global.datapath = datapath;
                 global.configuration.datapath = datapath;
-
+                console.log(datapath);
                 logger.initFileOutput(datapath);
 
                 p = process.argv.indexOf('-ls');
@@ -263,10 +265,17 @@ function startVWF() {
 					});
 				}
 				else {
-					app.all(global.configuration.assetAppPath+'/*', function(req,res){
-						var actualPath = req.path.slice(global.configuration.assetAppPath.length);
-						res.redirect(global.configuration.remoteAssetServerURL+actualPath);
-					});
+                    app.all(global.configuration.assetAppPath+'/:id(*)', function(req,res,next)
+                    {   
+                        //proxy the traffic to avoid redirect follow issues
+                        var proxy = requestProxy({
+                        url:global.configuration.remoteAssetServerURL + "/" + req.params.id,
+                        cache:false});
+                        proxy(req,res,next)
+                    });
+                    
+                   
+					
 					logger.info('Hosting assets remotely at', global.configuration.remoteAssetServerURL);
 				}
 				cb();
@@ -357,7 +366,7 @@ function startVWF() {
                     }
                     //first, check if the build file already exists. if so, skip this step
                     if (fs.existsSync(libpath.resolve(libpath.join(__dirname, '..', '..', 'build', 'index.css')))) {
-                        logger.warn('Build already exists. Use --clean to rebuild');
+                        logger.warn('Build already exists. Use -clean to rebuild');
                         loadCssIntoCache();
                         return;
                     } else {

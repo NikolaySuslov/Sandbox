@@ -405,8 +405,9 @@ function SplineTool() {
         var ray = _Editor.GetWorldPickRay(e);
         var campos = [_Editor.findcamera().position.x, _Editor.findcamera().position.y, _Editor.findcamera().position.z];
 
+        debugger;
         var hits = _Editor.findviewnode(self.selectedID).children[0].CPUPick(campos, ray, {});
-        if (hits.length > 0) {
+        if (hits && hits.length > 0) {
             var v1 = hits[0].vertindex;
             var v2;
             var t = hits[0].t
@@ -459,7 +460,7 @@ function SplineTool() {
         var campos = [_Editor.findcamera().position.x, _Editor.findcamera().position.y, _Editor.findcamera().position.z];
         var hits = _Editor.findviewnode(self.selectedID).children[0].CPUPick(campos, ray, {});
 
-        if (hits.length > 0 && !self.mousemoved) {
+        if (hits && hits.length > 0 && !self.mousemoved) {
             self.selectedIndex = hits[0].vertindex;
 
             _Editor.updateGizmoLocation();

@@ -710,7 +710,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
                 var instanceData = _DataManager.getInstanceData();
                 var    publishSettings = instanceData.publishSettings;
-
+                if(publishSettings)
                 this.cameraID = publishSettings.camera;
                 this.setCamera(this.cameraID);
             }
@@ -820,6 +820,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             this.cameraID = camID  || defaultCameraID;
 
             //allow the default 
+            if(publishSettings)
             if(!camID && publishSettings.allowTools)
                 this.cameraID = null;
 

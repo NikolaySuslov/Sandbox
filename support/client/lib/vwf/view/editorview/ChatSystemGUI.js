@@ -184,7 +184,7 @@ define({
 				$('#ChatLog').append('<div class="ChatFromMe"><div class="ChatFromMeLabel">' + displayNameSender + '</div><div class="ChatFromMeText">' + text + '</div></div>');
 			else
 				$('#ChatLog').append('<div class="ChatFromOther"><div class="ChatFromOtherLabel">' + displayNameSender + '</div><div class="ChatFromOtherText">' + text + '</div></div>');
-			_Notifier.notify(displayNameSender + ": " + message.text);
+			
 			$('#ChatLog').parent().animate({
 				scrollTop: $('#ChatLog').height()
 			}, "slow");

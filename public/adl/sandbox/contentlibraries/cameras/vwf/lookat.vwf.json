@@ -2,7 +2,7 @@
     "extends": "SandboxCamera.vwf",
     "methods": {
         "tick": {
-            "body": "\n  var node = this.Scene.findNodeByID(this.objectToLookAt);\n      var pos = [0, 0, 0];\n      if (node)\n          pos = node.transformAPI.localToGlobal([0, 0, 0]);\n      var offset = this.offset.internal_val;\n      offset = MATH.scaleVec3(offset, this.zoom);\n     \n      this.transformAPI.lookat(pos, '', '-Y', 'Z');\n",
+            "body": "\n  var node = this.Scene.findNodeByID(this.objectToLookAt);\n      var pos = [0, 0, 0];\n      if (node)\n          pos = node.transformAPI.localToGlobal([0, 0, 0]);\n      var offset = this.offset;\n      offset = MATH.scaleVec3(offset, this.zoom);\n     \n      this.transformAPI.lookat(pos, '', '-Y', 'Z');\n",
             "parameters": []
         }
     },

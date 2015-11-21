@@ -214,11 +214,17 @@
 			}
 		}
 
-		p#assetUrl {
+		a#assetUrl
+		{
 			text-align: center;
 			font-size: 18px;
 			word-wrap: break-word;
 			margin-bottom: 15px;
+			color: white;
+
+			&:hover {
+				color: #3379b7;
+			}
 		}
 
 		#permissions

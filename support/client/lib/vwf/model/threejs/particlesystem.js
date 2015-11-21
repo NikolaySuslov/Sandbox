@@ -910,7 +910,7 @@
     {
         if(!this.initialized) return;
         var count = this.solver == "AnalyticShader" ? this.threeParticleSystem.geometry.vertices.length : Math.floor(this.maxRate * 3);
-        for (var i = 0; i < count; i++)
+        for (var i = 0; i < count && i < this.threeParticleSystem.geometry.vertices.length; i++)
         {
             this.setupParticle(this.threeParticleSystem.geometry.vertices[i], this.threeParticleSystem.matrix);
             this.threeParticleSystem.geometry.vertices[i].waitForRegen = false;

@@ -17,7 +17,8 @@ mixin manageAssets_body
 			#assetList
 
 				.asset.horizontalLayout(ng-class='{"selected-asset": selectedAsset === asset.id}', ng-click='setSelection(asset.id)'
-					ng-repeat='asset in assets | sortByProp:"name":true | filterAssetThumbs:hideThumbs | searchForAsset:search', adl-scroll-to='selectedAsset == asset.id')
+					ng-repeat='asset in assets | sortByProp:"name":true | filterAssetThumbs:hideThumbs | searchForAsset:search'
+					adl-scroll-to='selectedAsset == asset.id')
 
 					.info.verticalLayout
 						p.name(ng-style='{"font-weight": asset._dirty ? "bold" : "normal"}') {{(asset._dirty ? '*' : '')+asset.name}}
@@ -36,10 +37,9 @@ mixin manageAssets_body
 
 		#propertyBrowser.verticalLayout
 
-			p#assetUrl.fixed-height(onselectstart='event.stopImmediatePropagation()') 
-				| {{assets.appPath}}
-				wbr
-				| /assets/{{selectedAsset}}
+			a#assetUrl.fixed-height(ng-href='{{assets.appPath}}/assets/{{selectedAsset}}', target='_blank')
+				| {{selectedAsset ? assets.appPath+'\u200b/assets/'+selectedAsset : '(no asset)'}}
+
 
 			.scrollArea
 

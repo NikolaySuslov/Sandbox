@@ -341,8 +341,12 @@ function routeToAPI(request, response, next) {
         //Route to DataServer
         SandboxAPI.serve(request, response);
         return;
+    }else if(URL.pathname.toLowerCase().indexOf('/datafiles/') == 0){
+         request.url=request.url.replace("/datafiles/","/vwfdatamanager.svc/datafile/");
+        SandboxAPI.serve(request, response);
+        return;
     }else
-      next();
+        next();
 
 }
 function handleRequest(request, response, next) {

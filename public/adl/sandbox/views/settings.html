@@ -28,6 +28,7 @@
 		{
 			
 			settings.shadows = $('#shadows:checked').val()?true:false;
+			settings.reflections = $('#reflections:checked').val()?true:false;
 			settings.useSimpleMaterials = $('#simple:checked').val()?true:false;
 			settings.filtering = $('#filtering:checked').val()?true:false;
 			settings.resolutionScale = 1.0/$('#resolution').slider('value');
@@ -43,6 +44,11 @@
 			$('#shadows').attr('checked', 'checked');
 		else
 			$('#shadows').removeAttr('checked');
+
+		if(settings.reflections)
+			$('#reflections').attr('checked', 'checked');
+		else
+			$('#reflections').removeAttr('checked');
 
 		if(settings.filtering)
 			$('#filtering').attr('checked', 'checked');
@@ -63,6 +69,7 @@
 		{
 			settings.shadows = $('#shadows:checked').val()?true:false;
 			settings.useSimpleMaterials = $('#simple:checked').val()?true:false;
+			settings.reflections = $('#reflections:checked').val()?true:false;
 			settings.filtering = $('#filtering:checked').val()?true:false;
 			settings.antialias = $('#antialias:checked').val()?true:false;
 			settings.resolutionScale = 1.0/$('#resolution').slider('value');
@@ -82,6 +89,7 @@
 				<div class="col-md-10" style="margin:0 auto;float:none;">
 					
 					<input id="shadows" checked='checked' type='checkbox' style='margin-right:.5em' name='shadows'></input><label for='shadows'>Enable Shadows</label><br/>
+					<input id="reflections" checked='checked' type='checkbox' style='margin-right:.5em' name='reflections'></input><label for='reflections'>Enable Reflections</label><br/>
 					<input id="antialias" checked='checked' type='checkbox' style='margin-right:.5em' name='antialias'></input><label for='antialias'>Antialiasing</label><br/>
 					<input id="filtering" checked='checked' type='checkbox' style='margin-right:.5em' name='filtering'></input><label for='filtering'>Enable Anisotropic Filtering</label><br/>
 					<input id="simple"  type='checkbox' style='margin-right:.5em' name='simple'></input><label for='filtering'>Use Simple Materials</label><br/>

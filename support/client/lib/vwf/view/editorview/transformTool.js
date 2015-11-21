@@ -460,7 +460,7 @@ var transformTool = function()
                 var transform = Engine.getProperty(ID, 'worldTransform');
                 var translation = [transform[12], transform[13], transform[14]]
                 this.mouseDownOffsets[ID] = MATH.subVec3(this.getPosition(), translation)
-                this.mouseDownTransforms[ID] = Engine.getProperty(ID, 'transform');
+                this.mouseDownTransforms[ID] = _Editor.getTransformCallback(ID)
                 this.mouseDownWorldTransforms[ID] = Engine.getProperty(ID, 'worldTransform');
                 this.mouseDownWorldTransforms[Engine.parent(ID)] = Engine.getProperty(Engine.parent(ID), 'worldTransform');
             }
@@ -659,7 +659,7 @@ var transformTool = function()
         {
             var ID = _Editor.GetSelectedVWFID(i)
             var mouseDownOffset = this.mouseDownOffsets[ID];
-            var t = Engine.getProperty(ID, 'transform')
+            var t = _Editor.getTransformCallback(ID);
             var pt = this.mouseDownWorldTransforms[Engine.parent(ID)];
             var wt = this.mouseDownWorldTransforms[ID]
             var tmat = new THREE.Matrix4();
@@ -685,8 +685,8 @@ var transformTool = function()
                 if (TESTING)
                     Engine.setProperty(_Editor.GetSelectedVWFID(i), 'transform', newt);
                 else
-                    var ok = _Editor.setProperty(_Editor.GetSelectedVWFID(i), 'transform', newt);
-                _dView.setViewTransformOverride(_Editor.GetSelectedVWFID(i), newt);
+                    var ok = _Editor.setTransformCallback(_Editor.GetSelectedVWFID(i), newt);
+               // _dView.setViewTransformOverride(_Editor.GetSelectedVWFID(i), newt);
             }
         }
     }

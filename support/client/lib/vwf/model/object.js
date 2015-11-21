@@ -257,9 +257,11 @@ if ( ! object ) return;  // TODO: patch until full-graph sync is working; driver
             result = result || {};
 
             // TODO: extends and implements IDs
-
+            if(object)
+            {
             result.source = object.source;
             result.type = object.type;
+            }
 
             return result;
         },

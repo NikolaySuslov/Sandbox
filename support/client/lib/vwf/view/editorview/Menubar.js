@@ -709,6 +709,24 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 					alertify.alert('Only one terrain can be created at a time');
 				}
 			},
+			MenuCreateTerrainOcean: function(e) {
+				var def = {
+				    "extends": "ocean/ocean.vwf",
+				    "properties": {
+				        "DisplayName": "OceanShader",
+				        "gA": 0.092,
+				        "transform": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+				        "uChop": 0.733,
+				        "uNormalPower": 0.184,
+				        "uOceanDepth": 0.037,
+				        "uReflectPow": 3,
+				        "waterHeight" :1
+				    },
+				    "source": "ocean/ocean.js",
+				    "type": "subDriver/threejs"
+				}
+				_Editor.createChild(Engine.application(),GUID(),def);
+			},
 
 			MenuAssets3DRUpload: function(e) {
 				_ModelLibrary.showUpload();

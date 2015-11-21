@@ -70,7 +70,7 @@
         label: "Select Start Prompt"
   methods: 
     findPrompt: 
-      body: "                                                                                                                                                                                                                            var prompts = this.prompt.internal_val;\n    for(var i = 0; i < prompts.length; i++)\n    {\n        if(prompts[i].id == promptnum)\n            return prompts[i];\n    }                                                                                                                                                                                                                            "
+      body: "                                                                                                                                                                                                                            var prompts = this.prompt;\n    for(var i = 0; i < prompts.length; i++)\n    {\n        if(prompts[i].id == promptnum)\n            return prompts[i];\n    }                                                                                                                                                                                                                            "
       parameters: 
         - "promptnum"
     promptChoice: 
@@ -89,7 +89,7 @@
       body: "       if(this.client == this.moniker)\n        this.editor.open();       "
       parameters: []
     SetStartNode: 
-      body: "       if (this.client == this.moniker)\n    {\n        var choices = [];\n        for (var i = 0; i < this.prompt.internal_val.length; i++)\n        {\n            choices.push(this.prompt[i].internal_val.message);\n        }\n        alertify.choice(\"Choose the node to start the conversation\", function(ok, val)\n        {\n            if (!ok) return;\n            var id = '';\n            for (var i = 0; i < this.prompt.internal_val.length; i++)\n            {\n                if (this.prompt[i].internal_val.message == val)\n                    id = this.prompt[i].internal_val.id;\n            }\n            vwf_view.kernel.setProperty(this.id, 'initialDialogIndex', id);\n        }.bind(this), choices);\n\n    }       "
+      body: "       if (this.client == this.moniker)\n    {\n        var choices = [];\n        for (var i = 0; i < this.prompt.length; i++)\n        {\n            choices.push(this.prompt[i].message);\n        }\n        alertify.choice(\"Choose the node to start the conversation\", function(ok, val)\n        {\n            if (!ok) return;\n            var id = '';\n            for (var i = 0; i < this.prompt.length; i++)\n            {\n                if (this.prompt[i].message == val)\n                    id = this.prompt[i].id;\n            }\n            vwf_view.kernel.setProperty(this.id, 'initialDialogIndex', id);\n        }.bind(this), choices);\n\n    }       "
       parameters: []
   events: 
     pointerClick: 

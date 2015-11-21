@@ -468,7 +468,9 @@ phyObject.prototype.setLinearFactor = function(vec) {
     if (vec.length !== 3) return;
     this.linearFactor = vec;
     if (this.initialized === true) {
-		this.body.getLinearFactor().setValue(vec[0], vec[1], vec[2]);
+        var f = new Ammo.btVector3(vec[0], vec[1], vec[2])
+		this.body.setLinearFactor(f);
+        Ammo.destroy(f);
     }
 }
 phyObject.prototype.getLinearFactor = function(vec) {
@@ -589,8 +591,17 @@ phyObject.prototype.initialize = function() {
 
         this.body.getLinearVelocity().setValue(this.linearVelocity[0], this.linearVelocity[1], this.linearVelocity[2]);
         this.body.getAngularVelocity().setValue(this.angularVelocity[0], this.angularVelocity[1], this.angularVelocity[2]);
-        //this.body.getAngularFactor().setValue(this.angularFactor[0], this.angularFactor[1], this.angularFactor[2])
-        //this.body.getLinearFactor().setValue(this.linearFactor[0], this.linearFactor[1], this.linearFactor[2]);
+        
+        
+        
+        var f = new Ammo.btVector3(this.linearFactor[0], this.linearFactor[1], this.linearFactor[2])
+        this.body.setLinearFactor(f);
+        Ammo.destroy(f);
+
+         f = new Ammo.btVector3(this.angularFactor[0], this.angularFactor[1], this.angularFactor[2])
+        this.body.setAngularFactor(f);
+        Ammo.destroy(f);
+        
 
         this.body.forceActivationState(this.activationState);
         this.body.setDeactivationTime(this.deactivationTime);

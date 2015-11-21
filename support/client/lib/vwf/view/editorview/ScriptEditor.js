@@ -726,7 +726,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 		}
 
 
-		var defaultSize = 12;
+		var defaultSize = 14;
 		$scope.fontSize = _SettingsManager.getKey('scriptEditorFontSize') || defaultSize;
 
 		$scope.$watch('fontSize', function(newval){

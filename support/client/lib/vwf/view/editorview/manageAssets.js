@@ -6,35 +6,50 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 		Object.defineProperty(data, 'refresh', {
 			enumerable: false,
 			writable: false,
-			value: function(id) {
+			value: function(id, cb)
+			{
 				var self = this;
-				var toComplete = 1;
-
-				function refCountCallback(cb) {
-					toComplete--;
-					if (toComplete === 0 && cb) cb();
-				}
 
 				function updateAsset(id, cb) {
-					$http.get(data.appPath + '/assets/' + id + '/meta?permFormat=json').success(function(data, status) {
-							if (status !== 304) {
-								self[id] = data;
-								self[id].id = id;
-							}
-							refCountCallback(cb);
-						})
-						.error(function(data, status) {
-							if (status === 404) {
-								delete self[id];
-							}
-							refCountCallback(cb);
-						});
+					$http.get(data.appPath + '/assets/' + id + '/meta?permFormat=json')
+					.success(function(data, status) {
+						if (status !== 304) {
+							self[id] = data;
+							self[id].id = id;
+						}
+						cb && cb(self[id]);
+					})
+					.error(function(data, status) {
+						if (status === 404) {
+							delete self[id];
+						}
+						//cb && cb(null);
+					});
 				}
-				if (id && typeof(id) === 'string') {
-					updateAsset(id);
-				} else {
-					var cb = typeof(id) === 'function' ? id : null;
-					$http.get(self.appPath + '/assets/by-user/' + _UserManager.GetCurrentUserName()).success(
+
+				if (id && typeof(id) === 'string'){
+					updateAsset(id, cb);
+				}
+				else
+				{
+					$http.get(
+						self.appPath + '/assets/by-meta/all-of' +
+						'?user_name=' + encodeURIComponent(_UserManager.GetCurrentUserName()) +
+						'&returns=id,name,description,type,size,license,thumbnail,permissions,group_name,isTexture' +
+						'&permFormat=json')
+					.success(function(list, status)
+					{
+						if( status === 200 ){
+							for(var i in list.matches){
+								self[i] = list.matches[i];
+							}
+							for(var i in self){
+								if(!list.matches[i])
+									delete self[i];
+							}
+						}
+					});
+					/*$http.get(self.appPath + '/assets/by-user/' + _UserManager.GetCurrentUserName()).success(
 						function(list, status) {
 							if (status !== 304) {
 								var ids = Object.keys(list.assets);
@@ -44,7 +59,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 								}
 							}
 						}
-					);
+					);*/
 				}
 			}.bind(data)
 		});
@@ -71,8 +86,8 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 				});
 			}
 		});
-		$rootScope.$watch('fields.worldIsReady', function() {
-			data.refresh();
+		$rootScope.$watch('fields.worldIsReady', function(newval) {
+			if(newval) data.refresh();
 		});
 		window._AssetLibrary = data;
 		return data;
@@ -165,6 +180,8 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 			}
 		};
 	}]);
+
+
 	app.controller('AssetManagerController', ['$scope', '$http', 'AssetDataManager', function($scope, $http, assets)
 	{
 		window._AssetManager = $scope;
@@ -497,20 +514,21 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 						queryChar = '&';
 					}
 					var xhr = new XMLHttpRequest();
-					xhr.addEventListener('loadend', function(e) {
-						if (xhr.status === 201) {
-							if ($scope.selected._uploadCallback) {
-								$.getJSON($scope.assets.appPath + '/assets/' + $scope.selected.id + "/meta", function(metadata) {
-									var last_modified = new Date(Date.parse(metadata.last_modified));
-									$scope.selected._uploadCallback(xhr.responseText, last_modified);
-								})
-							}
-							$scope.assets.refresh(xhr.responseText);
+					xhr.addEventListener('loadend', function(e)
+					{
+						if (xhr.status === 201)
+						{
+							$scope.assets.refresh(xhr.responseText, function(meta){
+								var last_modified = new Date(Date.parse(meta.last_modified));
+								$scope.selected._uploadCallback(xhr.responseText, last_modified);
+							});
+
 							fileData.new = null;
 							$scope.selectedAsset = xhr.responseText;
 							$scope.resetNew();
 							$scope.clearFileInput();
-						} else {
+						}
+						else {
 							alertify.alert('Upload failed: ' + xhr.responseText);
 						}
 					});
@@ -580,7 +598,10 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 					function checkRemaining() {
 						toComplete -= 1;
 						if (toComplete === 0) {
-							$scope.assets.refresh($scope.selected.id);
+							$scope.assets.refresh($scope.selected.id, function(meta){
+								var last_modified = new Date(Date.parse(metadata.last_modified));
+								$scope.selected._uploadCallback && $scope.selected._uploadCallback(null, last_modified);
+							});
 						}
 					}
 					if (fileData[$scope.selected.id]) {
@@ -592,12 +613,6 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 							} else {
 								$scope.clearFileInput();
 								fileData[$scope.selected.id] = null;
-								if ($scope.selected._uploadCallback) {
-									$.getJSON($scope.assets.appPath + '/assets/' + $scope.selected.id + "/meta", function(metadata) {
-										var last_modified = new Date(Date.parse(metadata.last_modified));
-										$scope.selected._uploadCallback(null, last_modified);
-									})
-								}
 							}
 							checkRemaining();
 						});
@@ -690,7 +705,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 					'application/vnd.vws-entity+json',
 					overwrite ? node.properties.sourceAssetId : null,
 					function(id, last_modified) {
-						if (id) // id is null if updating
+						if(id) // null if updating
 							vwf_view.kernel.setProperty(nodeId, 'sourceAssetId', id);
 						//get the lastmodified tiem from the server
 						vwf_view.kernel.setProperty(nodeId, '___sourceAssetTimestamp', last_modified.toString());

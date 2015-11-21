@@ -15,21 +15,22 @@ properties:
   amplitudeVariation: 4
   uNormalPower: .5
   gA: .5
+  waterHeight: 20
   EditorData:
+    waterHeight:
+      type: slider
+      min: 0.0
+      max: 100
+      step: .1
+      displayname: "Surface Height"
+      property: "waterHeight"
     uChop:
       type: slider
       min: 0.0
       max: 3.0
       step: .001
       displayname: "Chopiness"
-      property: "uChop"
-    uMag:
-      type: slider
-      min: 0.0
-      max: 3.0
-      step: .001
-      displayname: "Magnitude"
-      property: "uMag"
+      property: "uChop"  
     uRef:
       type: slider
       min: 0.0

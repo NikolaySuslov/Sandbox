@@ -1955,7 +1955,7 @@ THREE.Object3D.prototype.CPUPick = function(origin, direction, options, ret) {
 
     if(this.geometry)
         return this.CPUPick_internal(origin,direction,options,ret);
-    return null;
+    return ret;
 }
 
 function Frustrum(ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr) {

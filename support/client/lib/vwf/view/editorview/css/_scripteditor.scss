@@ -178,7 +178,7 @@
 		.content
 		{
 			position: relative;
-			background: url(vwf/view/editorview/images/ui-bg_diagonals-thick_8_cccccc_40x40.png) 50% 50% repeat;
+			//background: url(vwf/view/editorview/images/ui-bg_diagonals-thick_8_cccccc_40x40.png) 50% 50% repeat;
 			border: solid black 1px;
 			@include flex-grow(1);
 
@@ -195,7 +195,7 @@
 			border: none;
 			border-radius: 0;
 			background-color: inherit;
-			font-size: 12px;
+			font-size: 14px;
 
 			width: 100%;
 			height: 100%;

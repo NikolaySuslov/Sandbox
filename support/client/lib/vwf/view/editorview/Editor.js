@@ -195,6 +195,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             this.mouseDownScreenPoint = [e.clientX, e.clientY];
             if (MoveGizmo && e.button == 0) {
 
+                this.saveTransforms();
                 MoveGizmo.mouseDown(e);
 
                 if (MoveGizmo.getAxis() == -1 && SelectMode == 'Pick') {
@@ -1813,7 +1814,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         }
         this.setTransform = function(id, val) {
             this.waitingForSet.push(id);
-            var success = this.setProperty(id, this.transformPropertyName, val);
+            var success = this.setProperty(id, 'transform', val);
             if (!success) this.waitingForSet.pop();
             if (!success) this.SetLocation(MoveGizmo, originalGizmoPos);
             return success;
@@ -1862,7 +1863,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                var node = findviewnode(SelectedVWFNodes[i].id);
                if(node)
                {
-                transforms.push(node.matrixWorld.elements);    
+                transforms.push(_Editor.getTransformCallback(SelectedVWFNodes[i].id));    
                }
             }
             MoveGizmo.updateLocation(transforms);
@@ -2955,9 +2956,9 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             this.BuildMoveGizmo();
             this.SelectObject(null, 2, true);
             _dView.bind('prerender', this.updateGizmo.bind(this));
-            document.oncontextmenu = function() {
+            $('#vwf-root').on('contextmenu', function() {
                 return false;
-            };
+            });
             this.SelectionBoundsContainer = new THREE.Object3D();
             this.SelectionBoundsContainer.name = "SelectionBoundsContainer";
             this.findscene().add(this.SelectionBoundsContainer, true);

@@ -26,7 +26,8 @@ define(function ()
             normalMapTerrain:true,
             triPlanerMapTerrain:false,
             disableWebGL:false,
-            antialias:true
+            antialias:true,
+            reflections:true
         }
         this.readQueryString = function()
         {

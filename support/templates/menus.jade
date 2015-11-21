@@ -269,6 +269,7 @@ mixin menus_body
 						li: a#MenuCreateTerrain(title="Generate a random terrain with rolling hills", ng-click='lookUpHandler($event)') Terrain
 						li(ng-class='{"disabled": !worldHasTerrain}')
 							a#MenuCreateTerrainGrass(title="Generate grass on an existing terrain", ng-click='lookUpHandler($event)') Grass
+						li: a#MenuCreateTerrainOcean(title="Generate an infinite ocean surface", ng-click='lookUpHandler($event)') Ocean	
 				li
 					a#GUI GUI Elements
 					ul
