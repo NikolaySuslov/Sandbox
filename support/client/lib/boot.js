@@ -43,7 +43,7 @@ define([
     // simulation to a WebGL scene manager.
     "vwf/kernel/model",
     "vwf/model/javascript",
-    "ometa",
+    "ohm",
     "vwf/model/threejs",
     
     "vwf/model/wires",

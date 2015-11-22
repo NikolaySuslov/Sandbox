@@ -204,7 +204,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 					}
 					else if( $scope.guiState.openTab === 'properties' ){
 
-						if (item.name.includes('ometa') == true) {
+						if (item.name.includes('ohm') == true) {
 							newBody = item.value;
 						} else { 
 							newBody = angular.toJson(item.value, 4); 
@@ -555,7 +555,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 					if (s[i].type == 'error') errors += "<br/> line: " + s[i].row + "-" + s[i].text;
 				}
 								
-				if (fieldName.includes('ometa') == true) {
+				if (fieldName.includes('ohm') == true) {
 							return true;
 			}
 
@@ -621,7 +621,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 				{
 					try {
 
-						if (fieldName.includes('ometa') == true) {
+						if (fieldName.includes('ohm') == true) {
 							var val = rawtext;
 
 						} else {

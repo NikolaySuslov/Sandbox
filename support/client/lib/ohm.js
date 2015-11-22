@@ -49,8 +49,6 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
             this.objects = {}; // maps id => { property: value, ... }
             this.creatingNode( undefined, 0 ); 
-            this.ometaLng = {};
-            this.grammars = {};
 
             this.ohm = ohm;
             window._ohm = this.ohm;
@@ -92,24 +90,20 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
             var props = Engine.getProperties(childID);
 
             for (var propName in props) {
-                if (propName.indexOf("ometa") > -1) {
-//debugger;
-                    var lngName = propName.slice(5,propName.length);
+                if (propName.indexOf("ohm") > -1) {
+
+                    var lngName = propName.slice(3,propName.length);
                     var gram = Engine.getProperty(childID, propName);
 
                     this.makeGrammar(childID, gram, lngName);
-
+                    Engine.callMethod (childID, 'initGrammar'+lngName);
                    
                     
             }
 
         }
 
-         //Engine.setProperty(childID, lngName, gram);
-           // if (Engine.getProperty(childID, "gram")) {
-
-           //          debugger;
-           //   }
+    
 
          },
 
@@ -158,17 +152,6 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
         creatingProperty: function( nodeID, propertyName, propertyValue ) {
             
-            // var node = this.objects[nodeID];
-
-            // if (propertyName.indexOf("ometaGrammar") > -1)
-            // {
-            //     var lngName = propertyName.slice(12,propertyName.length);
-            //     var methodName = 'ometaLng'+lngName;
-            //     vwf.createMethod(nodeID, methodName, null, "");
-                 
-            // }
-
-            // return this.initializingProperty( nodeID, propertyName, propertyValue );
         },
 
         // -- initializingProperty -----------------------------------------------------------------
@@ -186,114 +169,43 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
         settingProperty: function( nodeID, propertyName, propertyValue ) {
           
-          if (propertyName.indexOf("ometa") > -1)
+          if (propertyName.indexOf("ohm") > -1)
             {
            //debugger;
 
-            var lngName = propertyName.slice(5,propertyName.length);
+            var lngName = propertyName.slice(3,propertyName.length);
             this.makeGrammar(nodeID, propertyValue, lngName);
-            Engine.setProperty(nodeID, propertyName, propertyValue)
+            Engine.setProperty(nodeID, propertyName, propertyValue);
+
+            var methods = Engine.getMethods(nodeID);
+            var methodN = 'initGrammar'+lngName;
+            for (var methodName in methods) {
+
+                 if (methodName == methodN) {
+                    Engine.callMethod (nodeID, methodN);
+                    return;
+        } 
+}
+            var methodBody = 'console.log(\'Init grammar: '  + lngName + '\');';
+            Engine.createMethod(nodeID, methodN, [], methodBody);
 
         }
 
-            
-              
-
-            // var lngName = propertyName.slice(5,propertyName.length);
-            // var node = this.objects[nodeID];
-            // var gramName = 'grammar'+lngName;
-            // var val = ohm.grammar(propertyValue);
-
-            // this.objects[nodeID].ohmgr =  ohm.grammar(propertyValue);
-
-
-
-            // if( node.properties && node.properties[gramName] !== undefined ){
-            //             Engine.setProperty(nodeID, gramName, ohm.grammar(propertyValue));
-            //         }
-            //         else {
-            //             Engine.createProperty(nodeID, gramName, ohm.grammar(propertyValue));
-            //         }
-
-            
-
-
-
-
-
-            // if (propertyName.indexOf("ometaGrammar") > -1)
-            // {
-
-            //     var node = this.objects[nodeID];
-
-            //      if (propertyValue == null) {
-
-            //      node[propertyName] = propertyValue;
-            //      return;
-            //     }
-
-            //     var lngName = propertyName.slice(12,propertyName.length);
-            //     var methodName = 'ometaLng'+lngName;
-            //     node[propertyName] = propertyValue;
-
-            //     var code = translateCode(propertyValue);
-            //    if (code ==  null) { code = lngName + "= 'error'";}
-
-            //     var methodBody = ("'use strict'; var " + code + ";return " + lngName);
-
-            //     vwf.deleteMethod(nodeID, methodName);
-            //     vwf.createMethod(nodeID, methodName, [], methodBody);
-
-               
-            // }
-
-             //vwf.setProperty(nodeID,'ometaLng'+lngName,null);
-
-/*
-            if (propertyName.indexOf("ometaLng") > -1)
-                {
-                debugger;
-                var lngName = propertyName.slice(8,propertyName.length);
-                //var lngGrammar = vwf.getProperty(nodeID, 'ometaGrammar'+lngName).replace(/[\n\r\t]/g, "");
-                var lngGrammar = node['ometaGrammar'+lngName];
-                var lngEval = ("'use strict'; var " + translateCode(node['ometaGrammar'+lngName]) + ";return" + lngName);
-                node[propertyName] = lngEval;
-                //this.ometaLng[propertyName] = eval(lngEval);
-                }
-*/
         },
 
         // -- gettingProperty ----------------------------------------------------------------------
 
         gettingProperty: function( nodeID, propertyName, propertyValue ) {
-        //      if (propertyName.indexOf("ometa") > -1)
-        //     {
-           
-
-        // }
-
+    
              var object = this.objects[nodeID];
              return object && object[propertyName];
-
-           
-
-           
-           /* if (propertyName.indexOf("ometaGrammar") > -1)
-            {                 
-                return object && object[propertyName];
-            }
-
-            if (propertyName.indexOf("ometaLng") > -1)
-            {
-               return this.ometaLng[propertyName];
-
-            }
-           */
         },
 
         // -- creatingMethod -----------------------------------------------------------------------
 
         creatingMethod: function( nodeID, methodName, methodParameters, methodBody ) {
+
+
         },
 
         // TODO: deletingMethod
@@ -302,11 +214,16 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
         callingMethod: function( nodeID, methodName, methodParameters ) {
           
-                 if (methodName == 'seman' )
-            {
-                debugger;
-                }
+        // if (methodName.indexOf("initGrammar") > -1)
+        //     {
+        //         debugger;
+               
+        //          var grammarName = methodName.slice(11,methodName.length);
+        //          var semName = 'semantics'+grammarName;
+        //          Engine.setProperty(nodeID, semName, Engine.getProperty(nodeID, grammarName).semantics());
+               
 
+        //     }
 
         },
 
@@ -330,26 +247,23 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
         makeGrammar: function (nodeID, propertyValue, grammarName) {
 
-             var semName = grammarName+"Semantics";
+             var semName = 'semantics'+grammarName;
 
          try  { 
                 var gram = ohm.grammar(propertyValue);
                 
-debugger;
+
                 console.log("Grammar OK!");
                 Engine.setProperty(nodeID, grammarName, gram);
+
+           
                 //function semantics()  Engine.getProperty(nodeID, grammarName).semantics();
 
 
                 Engine.setProperty(nodeID, semName, Engine.getProperty(nodeID, grammarName).semantics());
-                //var methodBody = ("return this." + grammarName+".semantics()");
-
-                //Engine.deleteMethod(nodeID, methodName);
-                //Engine.createMethod(nodeID, semName, [], semantics);
-
 
                 } catch (e) {
-                        console.log(e); 
+                    console.log(e); 
                  Engine.setProperty(nodeID, grammarName, {});
                  Engine.setProperty(nodeID, semName, {});
             }
