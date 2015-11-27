@@ -1375,7 +1375,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         this.CreateTurtle = function(type, translation, size, texture, owner, id) {
          var turtleProto = this.CreatePrimProto(type, translation, size, texture, owner, id);
          var penID = GUID();
-         debugger;
+        // debugger;
          var penProto = this.CreatePrimProto('line', [0, 0, 0], size, texture, owner, penID);
          penProto.properties.DisplayName = 'pen';
          turtleProto.children = {};

@@ -20,23 +20,38 @@
 			this.ssegs = 10;
 			this.iteration = 3;
 			this.rule = 'F++F++F';
-			this.axioms = {"F":"F-F++F-F", "G":""};
+			this.axiomF = 'F=F-F++F-F';
+			this.axiomG = 'G=';
 			this.angle = 60;
 			this.stepLength = 1;
-			this.lsys = this.rule;
-
-			this.ohmLSys ='Fib { \n\
-    Gen<x, y> \n\
-        = ReadRule+ \n\
-    ReadRule \n\
-        = letters | symbols \n\
-    letters \n\
-        = \"F\" | \"G\" \n\
-    symbols \n\
-        = \"-\" | \"+\" \n\
-   }';
+			this.lsys = this.iteration.toString() + ";" + this.axiomF + ";" + this.axiomG + ";" + this.rule;
 
 
+			this.ometaGrammarD = 'ometa D { \n\
+start :angle :line = \n\
+  (letter -> (vwf.callMethod(nodeID,\"goForward\",[line])) \n\
+| \"+\" -> (vwf.callMethod(nodeID,\"turn\",[angle])) \n\
+| \"-\" -> (vwf.callMethod(nodeID,\"turn\",[(-1*angle)])))* \n\
+}';
+
+			this.ometaGrammarM = 'ometa M { \n\
+  digit    = ^digit:d  -> d.digitValue(), \n\
+  symbols = (\"-\" | \"+\"):n -> n, \n\
+  readRule = letter:n -> n \n\
+      | symbols, \n\
+ expr = <digit*>:d \";\" spaces letter:f \"=\" spaces readRule*:a \";\" spaces letter:g \"=\" spaces readRule*:b \";\" \n\
+spaces readRule*:n spaces -> [d, [[f, a], [g, b]], n] \n\
+}';
+
+			this.ometaGrammarB = 'ometa B { \n\
+  symbols = (\"-\" | \"+\"):n -> n, \n\
+  line = (letter | symbols)*, \n\
+  rules = [letter [line]]*, \n\
+  takeRule:g = [takeRuleFor(g)*:m] -> (vwf.callMethod(nodeID,\"flatCollection\",[m])), \n\
+  takeRuleFor:g = letter:k -> (vwf.callMethod(nodeID,\"selectRule\",[g, k])) | symbols:n -> [[n]], \n\
+  gen 0 [rules] [line]:t -> t, \n\
+  gen :n :g takeRule(g):k = gen(n-1, g, k):m -> m \n\
+}';
 
 
 			this.EditorData = {};
@@ -48,9 +63,10 @@
 			this.EditorData.angle = {displayname:'Angle',property:'angle',type:'slider',min:1,max:360,step:1};
 			this.EditorData.stepLength = {displayname:'Step length',property:'stepLength',type:'slider',min:.1,max:10,step:.01};
 			this.EditorData.rule = {displayname:'Rule',property:'rule',type:'text'};
-			this.EditorData.axioms = {displayname:'Axioms', property:'axioms',type:'text'};
-
+			this.EditorData.axiomF = {displayname:'Axiom F',property:'axiomF',type:'text'};
+			this.EditorData.axiomG = {displayname:'Axiom G',property:'axiomG',type:'text'};
 			this.EditorData.generate = {label:'Generate',method:'generateLSys',type:'button'};
+			this.EditorData.lsys = {displayname:'All(opt)',property:'lsys',type:'text'};
 			
 
 
@@ -62,16 +78,17 @@
 			this.settingProperty = function(propertyName,propertyValue)
 			{
 				if(propertyName == 'radius' || propertyName == 'rsegs' || propertyName == 'ssegs'
-					|| propertyName == 'ohmLSys' || propertyName == 'angle' || propertyName == 'stepLength'
+					|| propertyName == 'ometaGrammarM' || propertyName == 'ometaGrammarB' || propertyName == 'ometaGrammarD'
+					|| propertyName == 'angle' || propertyName == 'stepLength'
 					)
 				{
 					this[propertyName] = propertyValue;
 					this.dirtyStack(true);
 				}
 
-				if(propertyName == 'iteration' || propertyName == 'rule' || propertyName == 'axioms'){
+				if(propertyName == 'iteration' || propertyName == 'rule' || propertyName == 'axiomF' || propertyName == 'axiomG'){
 					this[propertyName] = propertyValue;
-					//this.lsys = this.iteration.toString() + ";" + this.axiomF + ";" + this.axiomG + ";" + this.rule;
+					this.lsys = this.iteration.toString() + ";" + this.axiomF + ";" + this.axiomG + ";" + this.rule;
 					
 					//vwf.setProperty(this.ID,'lsys',this.lsys);
 					this.dirtyStack(true);
@@ -91,7 +108,9 @@
 			{
 
 				if(propertyName == 'radius' || propertyName == 'rsegs' || propertyName == 'ssegs'
-					|| propertyName == 'ohmLSys' || propertyName == 'iteration' ||  propertyName == 'rule' || propertyName == 'axioms' || propertyName == 'angle' || propertyName == 'stepLength' || propertyName == 'lsys' 
+					|| propertyName == 'ometaGrammarM' || propertyName == 'ometaGrammarB' || propertyName == 'ometaGrammarD'
+					|| propertyName == 'iteration' ||  propertyName == 'rule' || propertyName == 'axiomF' 
+					|| propertyName == 'axiomG' || propertyName == 'angle' || propertyName == 'stepLength' || propertyName == 'lsys' 
 					 || propertyName == 'EditorData')
 				{
 					return this[propertyName];
@@ -103,7 +122,10 @@
 			this.initializingNode = function()
 			{
 				
-				vwf.setProperty(this.ID,'ohmLSys',this.ohmLSys);
+				vwf.setProperty(this.ID,'ometaGrammarD',this.ometaGrammarD);
+				vwf.setProperty(this.ID,'ometaGrammarB',this.ometaGrammarB);
+				vwf.setProperty(this.ID,'ometaGrammarM',this.ometaGrammarM);
+
 				this.dirtyStack(true);
 			}
 

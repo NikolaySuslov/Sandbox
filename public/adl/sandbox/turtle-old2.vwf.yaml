@@ -32,9 +32,13 @@ properties:
   iteration: 3
   angle: 60
   stepLength: 1
+  lsys: '2;F=F-F++F-F;G=;F++F++F'
   rule: 'F++F++F'
-  axioms: {"F":"F-F++F-F", "G":""}
-ohmGrammarLSys:
+  axiomF: 'F=F-F++F-F'
+  axiomG: 'G='
+ometaGrammarM:
+ometaGrammarB:
+ometaGrammarD:
 methods:
   generateFrom:
   testLSys:
@@ -47,6 +51,12 @@ methods:
   selectRule:
 scripts:
 - |
+    this.testLSys = function(){
+    	var tree = this.ometaLngM().matchAll("2;F=F--F--F--G;G=GG;F--F--F", "expr");
+    	console.log(tree);
+    	var lsys = this.ometaLngB().matchAll(tree, "gen");
+    	console.log(lsys);
+    }
     this.resetLS = function(){
     	this.children_by_name.pen.points = [];
     }
@@ -54,8 +64,8 @@ scripts:
     	this.resetLS();
     	var oldPos = this.transformAPI.getWorldPosition();
     	this.transformAPI.setPosition(0, 0, 0);
-    	var lsys = this.genLSys();
-    	//this.ometaLngD().matchAll(lsys, "start", [60, 1]);
+    	var lsys = this.generateFrom("3; F=F-F++F-F; G=; F++F++F");
+    	this.ometaLngD().matchAll(lsys, "start", [60, 1]);
     	this.transformAPI.setPosition(oldPos);
     }
     this.generateLSys = function(){
@@ -70,6 +80,11 @@ scripts:
       this.transformAPI.setPosition(oldPos);
       this.transformAPI.setRotation(oldRot);
     }
+    this.generateFrom = function(str){
+    	var tree = this.ometaLngM().matchAll(str, "expr");
+        var lsys = this.ometaLngB().matchAll(tree, "gen");
+        return lsys;
+    }
     this.goForward = function(step){
     	this.transformAPI.move(step, 0, 0, "local");
      	var pos = this.transformAPI.getPosition();
@@ -79,53 +94,19 @@ scripts:
     this.turn = function(angle) {
     	this.transformAPI.rotateZ(angle, "local");
     }
-    function genLSys()
-{
-    console.log(this.axioms);
-    var sem = Engine.getProperty(this.id, 'semanticsLSys');
-
-    var str = this.rule;
-    for (var i = 1; i < this.iteration; i++)
-    {
-        var r = this.LSys.match(str);
-        var n = sem(r);
-        var res = n.gen(this.axioms);
-        console.log(res);
-        str = res.join("");
-        console.log(str);
-    }
-    return str;
-}
-    function initAB()
-    {
-    console.log("got here");
-    Engine.getProperty(this.id, 'semanticsLSys').addOperation('gen(x)',
-    {
-        Gen: function(e)
+    this.selectRule = function(g, k){
+    	var col = g.filter(function(x){
+        return x[0] == k;
+      });
+      if (col.length > 0)
         {
-            return e.gen(this.args.x);
-        },
-        ReadRule: function(e)
-        {
-            return e.gen(this.args.x);
-        },
-        letters: function(_)
-        {
-            for (var propName in this.args.x)
-            {
-                if (propName == this.interval.contents)
-                    return this.args.x[propName]
-            }
-            return this.interval.contents
-        },
-        symbols: function(_)
-        {
-            return this.interval.contents;
+          return col[0][1]
         }
-    });
-}
-  function initGrammarLSys()
-{
-    console.log('Init grammar: LSys');
-    this.initAB();
-}
+      return k;
+    }
+    this.flatCollection = function(arr){
+    	var out = [];
+      	for (var i = 0; i < arr.length; i++)
+      	{ out.push.apply(out, Array.isArray(arr[i]) ? this.flatCollection(arr[i]) : [arr[i]])}
+      	return out;
+    }
