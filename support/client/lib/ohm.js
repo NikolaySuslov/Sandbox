@@ -214,16 +214,6 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
         callingMethod: function( nodeID, methodName, methodParameters ) {
           
-        // if (methodName.indexOf("initGrammar") > -1)
-        //     {
-        //         debugger;
-               
-        //          var grammarName = methodName.slice(11,methodName.length);
-        //          var semName = 'semantics'+grammarName;
-        //          Engine.setProperty(nodeID, semName, Engine.getProperty(nodeID, grammarName).semantics());
-               
-
-        //     }
 
         },
 
@@ -265,7 +255,7 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
                 Engine.setProperty(nodeID, semName, Engine.getProperty(nodeID, grammarName).semantics());
 
                 } catch (e) {
-                   
+
                     console.log(e); 
                  Engine.setProperty(nodeID, grammarName, {});
                  Engine.setProperty(nodeID, semName, {});

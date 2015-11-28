@@ -464,10 +464,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 	{
 		function createProto(proto)
 		{
-			if (typeof proto == "string"){
-                        proto = JSON.parse(proto);
-                       }
-					   
+
 			//very important to clean the node! Might have accidently left a name or id in the libarary
 			var newname = GUID();
 			proto = _DataManager.getCleanNodePrototype(proto);

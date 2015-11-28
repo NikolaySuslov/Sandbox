@@ -26,30 +26,13 @@
 			this.angle = 60;
 			this.stepLength = 1;
 
-			this.ohmLSys ='LSys { \n\
-    Gen<x, y> \n\
-        = ReadRule+ \n\
-    ReadRule \n\
-        = letters | symbols \n\
-    letters \n\
-        = \"F\" | \"G\" \n\
-    symbols \n\
-        = \"-\" | \"+\" \n\
-   }';
-
-   			this.ohmTurtle = 'Turtle { \n\
-   				Draw<x, y> \n\
-   				= (drawLetter | turn)+ \n\
-   				drawLetter =letter \n\
-   				turn = \"+\" | \"-\" \n\ }';
-
 
 			this.EditorData = {};
 			this.EditorData.radius = {displayname:'Turtle radius',property:'radius',type:'slider',min:0,max:10,step:.01};
 			//this.EditorData.rsegs = {displayname:'R Segments',property:'rsegs',type:'slider',min:3,max:16};
 			//this.EditorData.ssegs = {displayname:'S Segments',property:'ssegs',type:'slider',min:3,max:16};
 
-			this.EditorData.iteration = {displayname:'Iterations',property:'iteration',type:'slider',min:1,max:4,step:1};
+			this.EditorData.iteration = {displayname:'Iterations',property:'iteration',type:'slider',min:1,max:6,step:1};
 			this.EditorData.angle = {displayname:'Angle',property:'angle',type:'slider',min:1,max:360,step:1};
 			this.EditorData.stepLength = {displayname:'Step length',property:'stepLength',type:'slider',min:.1,max:10,step:.01};
 			this.EditorData.rule = {displayname:'Rule',property:'rule',type:'text'};
@@ -92,11 +75,10 @@
 
 				if(propertyName == 'radius' || propertyName == 'rsegs' || propertyName == 'ssegs'
 					|| propertyName == 'ohmLSys' || propertyName == 'ohmTurtle' || propertyName == 'iteration' ||  propertyName == 'rule' || propertyName == 'axiomF' || propertyName == 'axiomG' || propertyName == 'angle' || propertyName == 'stepLength' 
-					 || propertyName == 'EditorData')
+					 )
 				{
 					return this[propertyName];
 				}
-			
 				
 			}
 			
@@ -132,6 +114,9 @@
 				}
 
 			}
+
+			this.ohmLSys = Engine.getProperties(Engine.prototype(this.ID))['ohmLSys'];
+			this.ohmTurtle = Engine.getProperties(Engine.prototype(this.ID))['ohmTurtle'];
 
 				Engine.setProperty(this.ID,'ohmLSys',this.ohmLSys);
 				Engine.setProperty(this.ID,'ohmTurtle',this.ohmTurtle);
