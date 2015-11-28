@@ -18,14 +18,15 @@
 			this.radius = 1;
 			this.rsegs = 10;
 			this.ssegs = 10;
+
 			this.iteration = 3;
 			this.rule = 'F++F++F';
-			this.axioms = {"F":"F-F++F-F", "G":""};
+			this.axiomF = "F-F++F-F";
+			this.axiomG = "";
 			this.angle = 60;
 			this.stepLength = 1;
-			this.lsys = this.rule;
 
-			this.ohmLSys ='Fib { \n\
+			this.ohmLSys ='LSys { \n\
     Gen<x, y> \n\
         = ReadRule+ \n\
     ReadRule \n\
@@ -36,7 +37,11 @@
         = \"-\" | \"+\" \n\
    }';
 
-
+   			this.ohmTurtle = 'Turtle { \n\
+   				Draw<x, y> \n\
+   				= (drawLetter | turn)+ \n\
+   				drawLetter =letter \n\
+   				turn = \"+\" | \"-\" \n\ }';
 
 
 			this.EditorData = {};
@@ -48,7 +53,9 @@
 			this.EditorData.angle = {displayname:'Angle',property:'angle',type:'slider',min:1,max:360,step:1};
 			this.EditorData.stepLength = {displayname:'Step length',property:'stepLength',type:'slider',min:.1,max:10,step:.01};
 			this.EditorData.rule = {displayname:'Rule',property:'rule',type:'text'};
-			this.EditorData.axioms = {displayname:'Axioms', property:'axioms',type:'text'};
+			//this.EditorData.axioms = {displayname:'Axioms', property:'axioms',type:'text'};
+			this.EditorData.axiomF = {displayname:'Axiom F', property:'axiomF',type:'text'};
+			this.EditorData.axiomG = {displayname:'Axiom G', property:'axiomG',type:'text'};
 
 			this.EditorData.generate = {label:'Generate',method:'generateLSys',type:'button'};
 			
@@ -62,28 +69,21 @@
 			this.settingProperty = function(propertyName,propertyValue)
 			{
 				if(propertyName == 'radius' || propertyName == 'rsegs' || propertyName == 'ssegs'
-					|| propertyName == 'ohmLSys' || propertyName == 'angle' || propertyName == 'stepLength'
-					)
+					|| propertyName == 'ohmLSys' || propertyName == 'ohmTurtle' )
 				{
 					this[propertyName] = propertyValue;
 					this.dirtyStack(true);
 				}
 
-				if(propertyName == 'iteration' || propertyName == 'rule' || propertyName == 'axioms'){
-					this[propertyName] = propertyValue;
-					//this.lsys = this.iteration.toString() + ";" + this.axiomF + ";" + this.axiomG + ";" + this.rule;
-					
-					//vwf.setProperty(this.ID,'lsys',this.lsys);
-					this.dirtyStack(true);
+				if(propertyName == 'iteration' || propertyName == 'rule' ||propertyName == 'angle' || propertyName == 'stepLength' || propertyName == 'axiomF' || propertyName == 'axiomG'){
 
+					this[propertyName] = propertyValue;
+					Engine.callMethod(this.ID, 'generateLSys');
+					this.dirtyStack(true);
 				}	
-
-				if(propertyName == 'lsys') {
-					this[propertyName] = propertyValue;
-					this.dirtyStack(true);
-				}
-
 				
+				
+
 
 			}
 			
@@ -91,7 +91,7 @@
 			{
 
 				if(propertyName == 'radius' || propertyName == 'rsegs' || propertyName == 'ssegs'
-					|| propertyName == 'ohmLSys' || propertyName == 'iteration' ||  propertyName == 'rule' || propertyName == 'axioms' || propertyName == 'angle' || propertyName == 'stepLength' || propertyName == 'lsys' 
+					|| propertyName == 'ohmLSys' || propertyName == 'ohmTurtle' || propertyName == 'iteration' ||  propertyName == 'rule' || propertyName == 'axiomF' || propertyName == 'axiomG' || propertyName == 'angle' || propertyName == 'stepLength' 
 					 || propertyName == 'EditorData')
 				{
 					return this[propertyName];
@@ -102,9 +102,44 @@
 			
 			this.initializingNode = function()
 			{
+
+				// console.log(Engine.getMethods(Engine.prototype(this.id))['initGrammarLSys'].body);
+				//Engine.createMethod(this.ID, 'initGrammarLSys', [], Engine.getMethods(Engine.prototype(this.ID))['initGrammarLSys'].body);
+
+			var methods = Engine.getMethods(this.ID);
+			var nodeMethods = ['initGrammarLSys', 'genLSys', 'initLSysSemantics', 'generateLSys', 'initGrammarTurtle', 'makeLSys', 'initTurtleSemantics'];
+
+			for (var i in nodeMethods) {
 				
-				vwf.setProperty(this.ID,'ohmLSys',this.ohmLSys);
+				if (methods[nodeMethods[i]] == undefined) {
+					var methodName = nodeMethods[i];
+					var prot = Engine.getMethods(Engine.prototype(this.ID))[methodName];
+					Engine.createMethod(this.ID, methodName, [], prot.body);
+
+				}
+
+			}
+
+			var nodeMethodsWithParams = ['turn', 'goForward', 'makeTurtle'];
+
+			for (var i in nodeMethodsWithParams) {
+			
+				if (methods[nodeMethodsWithParams[i]] == undefined) {
+					var methodName = nodeMethodsWithParams[i];
+					var prot = Engine.getMethods(Engine.prototype(this.ID))[methodName];
+					Engine.createMethod(this.ID, methodName, prot.parameters, prot.body);
+
+				}
+
+			}
+
+				Engine.setProperty(this.ID,'ohmLSys',this.ohmLSys);
+				Engine.setProperty(this.ID,'ohmTurtle',this.ohmTurtle);
+				
+				Engine.callMethod(this.ID, 'generateLSys');
+
 				this.dirtyStack(true);
+
 			}
 
 

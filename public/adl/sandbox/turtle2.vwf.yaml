@@ -32,73 +32,24 @@ properties:
   iteration: 3
   angle: 60
   stepLength: 1
-  rule: 'F++F++F'
-  axioms: {"F":"F-F++F-F", "G":""}
-ohmGrammarLSys:
+  rule: 'F-F++F-F'
+  axiomF: 'F-F++F-F'
+  axiomG: ''
+  ohmLSys: |
+      LSys { Gen<x, y> 
+        = ReadRule+ 
+        ReadRule 
+         = letters | symbols
+        letters  = "F" | "G" 
+        symbols  = "-" | "+" }
+  ohmTurtle: |
+      Turtle {
+       Draw<x, y> 
+        = (drawLetter | turn)+ 
+        drawLetter =letter
+        turn = "+" | "-" }
 methods:
-  generateFrom:
-  testLSys:
-  resetLS:
-  makeLSys:
-  generateLSys:
-  goForward:
-  turn:
-  flatCollection:
-  selectRule:
-scripts:
-- |
-    this.resetLS = function(){
-    	this.children_by_name.pen.points = [];
-    }
-    this.makeLSys = function(){
-    	this.resetLS();
-    	var oldPos = this.transformAPI.getWorldPosition();
-    	this.transformAPI.setPosition(0, 0, 0);
-    	var lsys = this.genLSys();
-    	//this.ometaLngD().matchAll(lsys, "start", [60, 1]);
-    	this.transformAPI.setPosition(oldPos);
-    }
-    this.generateLSys = function(){
-    	this.resetLS();
-    	var oldPos = this.transformAPI.getWorldPosition();
-      var oldRot = this.transformAPI.getRotation();
-      this.transformAPI.setPosition(0, 0, 0);
-      this.transformAPI.setRotation(0, 0, 0);
-      //this.lsys = this.iteration.toString() + ";F=" + this.axiomF + ";G=" + this.axiomG + ";" + this.rule;
-      var gen = this.generateFrom(this.lsys);
-      this.ometaLngD().matchAll(gen, "start", [this.angle, this.stepLength]);
-      this.transformAPI.setPosition(oldPos);
-      this.transformAPI.setRotation(oldRot);
-    }
-    this.goForward = function(step){
-    	this.transformAPI.move(step, 0, 0, "local");
-     	var pos = this.transformAPI.getPosition();
-     	pos = new THREE.Vector3(pos[0], pos[1], pos[2]);
-     	this.children_by_name.pen.points.push([pos.x, pos.y, pos.z]);
-    }
-    this.turn = function(angle) {
-    	this.transformAPI.rotateZ(angle, "local");
-    }
-    function genLSys()
-{
-    console.log(this.axioms);
-    var sem = Engine.getProperty(this.id, 'semanticsLSys');
-
-    var str = this.rule;
-    for (var i = 1; i < this.iteration; i++)
-    {
-        var r = this.LSys.match(str);
-        var n = sem(r);
-        var res = n.gen(this.axioms);
-        console.log(res);
-        str = res.join("");
-        console.log(str);
-    }
-    return str;
-}
-    function initAB()
-    {
-    console.log("got here");
+  initLSysSemantics: |
     Engine.getProperty(this.id, 'semanticsLSys').addOperation('gen(x)',
     {
         Gen: function(e)
@@ -123,9 +74,86 @@ scripts:
             return this.interval.contents;
         }
     });
-}
-  function initGrammarLSys()
-{
+  initTurtleSemantics: |
+    var myID = this.id;
+    Engine.getProperty(this.id, 'semanticsTurtle').addOperation('draw(x,y)',
+    {
+        Draw: function(e)
+        {
+            e.draw(this.args.x, this.args.y);
+        },
+        drawLetter: function(e)
+        {
+            Engine.callMethod(myID, 'goForward', [this.args.x]);
+        },
+        turn: function(e)
+        {
+            if (this.interval.contents == "+")
+                Engine.callMethod(myID, 'turn', [this.args.y]);
+            if (this.interval.contents == "-")
+                Engine.callMethod(myID, 'turn', [-1 * this.args.y]);
+           }
+      });
+  genLSys: |
+    var sem = Engine.getProperty(this.id, 'semanticsLSys');
+    var str = this.rule;
+    var axioms = {"F": this.axiomF, "G": this.axiomG};
+    for (var i = 1; i < this.iteration; i++)
+    {
+        var r = this.LSys.match(str);
+        var n = sem(r);
+        var res = n.gen(axioms);
+        str = res.join("");
+    }
+    return str;
+  resetLS: |
+    this.children_by_name.pen.points = [];
+  goForward:
+    parameters:
+      - step
+    body: |
+      this.transformAPI.move(step, 0, 0, "local");
+      var pos = this.transformAPI.getPosition();
+      pos = new THREE.Vector3(pos[0], pos[1], pos[2]);
+      this.children_by_name.pen.points.push([pos.x, pos.y, pos.z]);
+  turn: 
+    parameters:
+      - angle
+    body: |
+      this.transformAPI.rotateZ(angle, "local");
+  generateLSys: |
+    if (this.children_by_name.pen !== undefined)
+      {
+      this.resetLS();
+      var oldPos = this.transformAPI.getWorldPosition();
+      var oldRot = this.transformAPI.getRotation();
+      this.transformAPI.setPosition(0, 0, 0);
+      this.transformAPI.setRotation(0, 0, 0);
+      var lsys = this.genLSys();
+      var turtle = this.makeTurtle(lsys);
+      turtle.draw(this.stepLength, this.angle);
+      this.transformAPI.setPosition(oldPos);
+      this.transformAPI.setRotation(oldRot);
+      }
+  makeLSys: |
+      var lsys = this.genLSys();
+      var turtle = this.makeTurtle(lsys);
+      this.resetLS();
+      var oldPos = this.transformAPI.getWorldPosition();
+      this.transformAPI.setPosition(0, 0, 0);
+      turtle.draw(this.stepLength, this.angle);
+      this.transformAPI.setPosition(oldPos);
+  initGrammarLSys: |
     console.log('Init grammar: LSys');
-    this.initAB();
-}
+    this.initLSysSemantics();
+  initGrammarTurtle: |
+    console.log('Init grammar: Turtle');
+    this.initTurtleSemantics();
+  makeTurtle:
+    parameters:
+      - lsys
+    body: |
+      var sem = Engine.getProperty(this.id, 'semanticsTurtle');
+      var r = this.Turtle.match(lsys);
+      var n = sem(r);
+      return n;

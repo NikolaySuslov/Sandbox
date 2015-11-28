@@ -249,6 +249,8 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
              var semName = 'semantics'+grammarName;
 
+
+
          try  { 
                 var gram = ohm.grammar(propertyValue);
                 
@@ -263,6 +265,7 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
                 Engine.setProperty(nodeID, semName, Engine.getProperty(nodeID, grammarName).semantics());
 
                 } catch (e) {
+                   
                     console.log(e); 
                  Engine.setProperty(nodeID, grammarName, {});
                  Engine.setProperty(nodeID, semName, {});
