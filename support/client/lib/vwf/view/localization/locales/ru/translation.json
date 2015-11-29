@@ -129,6 +129,7 @@
 		"Script Editor": "Редактор скриптов",
 		"Object Properties": "Параметры объекта",
 		"Models": "Модели",
+
 		"Inventory": "Инвентарий",
 		"Public Inventory": "Публичный инвентарий",
 		"Show Hierarchy": "Показать иерархию объектов",
@@ -176,6 +177,9 @@
 		"It looks like the compatability test has previously failed on this computer":"Возможно предыдущий тест на совместимость браузера был с ошибками",
 		"You must pass the test before loading a world":"Вам необходимо повторить проверку до запуска мира",
 		"Click ok to run the test again":"Кликните для запуска теста снова",
+		"It looks like you haven't been here before":"Кажеться вы впервые заходите на сайт с этого браузера",
+		"It's best if you take the compatability test first":"Будет лучше, если вы проверите браузер на совместимость",
+		"Would you like to test your browser now":"Хотите протестировать браузер сейчас",
 		"Continue":"Тестировать",
 		"Skip test at own risk":"Пропустить тест на свой риск",
 		"Cancel":"Отмена",

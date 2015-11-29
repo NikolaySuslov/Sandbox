@@ -103,7 +103,13 @@ function promptTest(boot)
 		
         if((!settings || !settings.compatability || !settings.compatability.satisfied) && !noRender)
         {
-            alertify.confirm(i18n.t("It looks like you haven't been here before") + '.' + i18n.t("It's best if you take the compatability test first") + '.' + i18n.t("Would you like to test your browser now") + '?',
+            alertify.set({
+                        labels: {
+                                ok: i18n.t("Ok"),
+                                cancel: i18n.t("Cancel")
+                            }
+                        });
+            alertify.confirm(i18n.t("It looks like you haven't been here before") + "." + i18n.t("It's best if you take the compatability test first") + "." + i18n.t("Would you like to test your browser now") + "?",
                 function(ok)
                 {   
                     if(ok)
