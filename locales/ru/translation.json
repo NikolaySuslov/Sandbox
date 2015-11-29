@@ -136,6 +136,9 @@
 		"Shoot! Some of the graphics requirements are unsupported on this GPU! You might try upgrading your GPU, drivers, or browser":"Тест не пройден! Графическая карта не поддерживает требования приложения для запуска в браузере!",
 		"Shoot! Your browser is unable to connect via a WebSocket to our server! This might be a firewall issue":"Тест не пройден! Ваш браузер не может соединится с сервером используя WebSocket! Возможно это связано с защитным экраном (Firewall)",
 		"Check that WebSockets are allowed on port 80":"Проверьте, что WebSockets разрешены на порту 80",
-		"Cancel":"Отмена"
+		"Cancel":"Отмена",
+		"It looks like you haven't been here before":"Кажеться вы впервые заходите на сайт с этого браузера",
+		"It's best if you take the compatability test first":"Будет лучше, если вы проверите браузер на совместимость",
+		"Would you like to test your browser now":"Хотите протестировать браузер сейчас"
 
 }

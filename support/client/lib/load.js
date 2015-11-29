@@ -63,6 +63,8 @@ if (!window.jQuery) {
                                             require(["boot"], function(boot) {
                                                 //ok, the loading stage is complete - fire up some initial gui logic
 
+                                                   //localization
+                                                setupLocalization();
                                                 promptTest(boot);
                                             })
                                         })
@@ -78,6 +80,21 @@ if (!window.jQuery) {
     })
 }
 
+
+function setupLocalization(){
+
+    var lang = docCookies.getItem('i18next');
+    var option = {
+        lng: lang,
+        resGetPath: 'vwf/view/localization/locales/__lng__/__ns__.json',
+        useLocalStorage: true,
+        debug: true,
+        getAsync: false
+    };
+    i18n.init(option);
+}
+
+
 function promptTest(boot)
 {
 
@@ -86,7 +103,7 @@ function promptTest(boot)
 		
         if((!settings || !settings.compatability || !settings.compatability.satisfied) && !noRender)
         {
-            alertify.confirm("It looks like you haven't been here before. It's best if you take the compatability test first. Would you like to test your browser now?",
+            alertify.confirm(i18n.t("It looks like you haven't been here before") + '.' + i18n.t("It's best if you take the compatability test first") + '.' + i18n.t("Would you like to test your browser now") + '?',
                 function(ok)
                 {   
                     if(ok)
@@ -132,16 +149,6 @@ function startup(boot) {
     window.Mat4 = goog.vec.Mat4;
     window.Quaternion = goog.vec.Quaternion;
 
-    //localization
-    var lang = docCookies.getItem('i18next');
-    var option = {
-        lng: lang,
-        resGetPath: 'vwf/view/localization/locales/__lng__/__ns__.json',
-        useLocalStorage: true,
-        debug: true,
-        getAsync: false
-    };
-    i18n.init(option);
 
 
     //start when document is ready
