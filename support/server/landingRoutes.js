@@ -775,21 +775,17 @@ var cachedVWFCore = null;
 exports.getVWFCore = function() {
     if (!cachedVWFCore) {
         cachedVWFCore = fs.readFileSync('./support/client/lib/engine.js', 'utf8');
-        if (global.configuration.host && global.configuration.loadBalancer) //if the config contains an address for a load balancer, have the client
+        if (global.configuration.host && global.configuration.loadBalancerAddress) //if the config contains an address for a load balancer, have the client
         //look up what host to use
         {
-            cachedVWFCore = cachedVWFCore.replace('{{host}}', "this.getInstanceHost()");
-            cachedVWFCore = cachedVWFCore.replace('{{loadBalancerAddress}}', "'" + global.configuration.loadBalancer + "'");
-        } else if (global.configuration.host) //if there is no load balancer, the host is this host from the config. Note this is necessary since the CDN might
+            logger.warn("Using load balancer at " + global.configuration.loadBalancerAddress);
+            logger.warn("This host is " + global.configuration.host);
+            cachedVWFCore = cachedVWFCore.replace(/'\{\{loadBalancerAddress\}\}'/g, "'" + global.configuration.loadBalancerAddress + "'");
+        } else //if there is no load balancer, the host is this host from the config. Note this is necessary since the CDN might
         //not have our "real" hostname as the dns name, and might not proxy sockets
         {
-            cachedVWFCore = cachedVWFCore.replace('{{host}}', "'" + global.configuration.host + "'");
-            cachedVWFCore = cachedVWFCore.replace('{{loadBalancerAddress}}', "'" + global.configuration.loadBalancer + "'"); //otherwise, script syntax is invalid
-        } else {
-            //otherwise, this is a single, simple server. Look up the host from the url.
-            cachedVWFCore = cachedVWFCore.replace('{{host}}', "window.location.protocol +'//'+ window.location.host");
-            cachedVWFCore = cachedVWFCore.replace('{{loadBalancerAddress}}', "'" + global.configuration.loadBalancer + "'"); //otherwise, script syntax is invalid
-        }
+            cachedVWFCore = cachedVWFCore.replace(/'\{\{loadBalancerAddress\}\}'/g, "'undefined'"); //otherwise, script syntax is invalid
+        } 
     }
     return cachedVWFCore;
 

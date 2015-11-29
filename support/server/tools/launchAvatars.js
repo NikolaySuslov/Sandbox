@@ -9,7 +9,7 @@ var password;
 var count;
 
 function randomtick() {
-    return;
+   
     var rnd = Math.floor(require('../cryptoRandom.js').random() * 5);
     if (rnd == 4) {
         var rnd = Math.floor(require('../cryptoRandom.js').random() * count);

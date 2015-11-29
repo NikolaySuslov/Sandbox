@@ -380,7 +380,7 @@ function LaunchAvatar(username_in,password_in,server_in,port_in,session_in)
 		}
 		if(data.action == 'setState')
 		{
-			global.state = data.parameters[0].nodes[0];
+			global.state = data;
 			console.log(global.state);
 		}
 		//Here is the real meat of the simulation.
@@ -432,24 +432,27 @@ function LaunchAvatar(username_in,password_in,server_in,port_in,session_in)
 	function connectSocket(cookie)
 	{
 
+	  console.log('connecting socket to ' + server + ":" +port +"/" + session );
 	  //first, we connect the websocket to the server	
 	  socket = io('http://'+server+':'+port+'/',{reconnection : false,transports:['websocket'],query:'pathname='+session});
 	  
 	  socket.on('connect',function()
 	  {
-
+	  	console.log("socket connected");
 	  	socket.emit('authenticate', {cookie:cookie});
 		socketid = socket.id;
 		socket.on('message', function (data) {
 		OnMessage(data);
 	  	});
 		worldLoginComplete();
-
+	  })
+	  socket.on('error',function(e){
+	  	console.log(e);
 
 	  })
 
 
-	  socket.connect();
+	  //socket.connect();
 	  //we need to know this so we can tell the server that the user with the given session cookie ownes the socket
 	  
 	  /*
@@ -633,7 +636,7 @@ var port = p >= 0 ? process.argv[p+1] : "3000";
  
 // -w is the UID of the world to attach to 
 p = process.argv.indexOf('-w');
-var world = p >= 0 ? process.argv[p+1] : "YLGSwHUNuviUx37r";
+var world = p >= 0 ? process.argv[p+1] : "example_blankNetworked";
 
 //launch the simulated client 
 LaunchAvatar(user,password,server,port,global.appPath + "/" + world + "/");

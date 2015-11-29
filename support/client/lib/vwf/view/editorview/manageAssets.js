@@ -599,7 +599,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 						toComplete -= 1;
 						if (toComplete === 0) {
 							$scope.assets.refresh($scope.selected.id, function(meta){
-								var last_modified = new Date(Date.parse(metadata.last_modified));
+								var last_modified = new Date(Date.parse(meta.last_modified));
 								$scope.selected._uploadCallback && $scope.selected._uploadCallback(null, last_modified);
 							});
 						}

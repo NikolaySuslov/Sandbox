@@ -35,6 +35,7 @@
 
     "sessionSecret": "unsecure cookie secret", //enter a good random string here for security of sessions
 
+
     //use the the following settings to enable social media logins
     "facebook_app_id": null,
     "facebook_app_secret": null,
@@ -62,5 +63,8 @@
     "assetDataDir": "assets",
 	"assetSessionHeader": "X-Session-Cookie",
 
+    //service setup for loadbalancer
+    "host" : "http://localhost:3000" // the address of this server
+    "loadBalancerAddress" : "http://localhost:3001" // the address of the load balancer server
 
 }

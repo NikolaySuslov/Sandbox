@@ -84,8 +84,10 @@ function strEndsWith(str, suffix) {
 
 //send to the load balancer to let it know that this server is available
 function RegisterWithLoadBalancer() {
+    if(global.configuration.cluster)
+        return;  // them master process should handle this
     require('request').get({
-            url: global.configuration.loadBalancer + '/register',
+            url: global.configuration.loadBalancerAddress + '/register',
             json: {
                 host: global.configuration.host,
                 key: global.configuration.loadBalancerKey
@@ -98,7 +100,7 @@ function RegisterWithLoadBalancer() {
             } else {
                 logger.error("LoadBalancer registration failed!", 0);
                 logger.error(body, 0);
-                delete global.configuration.loadBalancer;
+                delete global.configuration.loadBalancerAddress;
             }
         });
 }
@@ -317,7 +319,7 @@ function startVWF() {
                 //do this before trying to compile, otherwise the enginebuild.js file will be created with the call to the load balancer, which may not be online
                 //NOTE: If this fails, then the build will have the loadbalancer address hardcoded in. Make sure that the balancer info is right if using loadbalancer and
                 // - compile together
-                if (global.configuration.loadBalancer && global.configuration.host && global.configuration.loadBalancerKey)
+                if (global.configuration.loadBalancerAddress && global.configuration.host && global.configuration.loadBalancerKey)
                     RegisterWithLoadBalancer();
                 cb();
             },
@@ -395,7 +397,21 @@ function startVWF() {
             },
             function compileIfDefined(cb) {
                 if (!compile) {
-                    cb();
+
+                    //build the engine with the templated info, then insert
+
+                    var buildPath = ('../../support/client/lib/engine.js');
+                    buildPath = libpath.resolve(__dirname, buildPath);
+                  
+                    //fs.writeFileSync(buildPath, Landing.getVWFCore());
+                   
+                   
+                    //var contents = fs.readFileSync(buildPath);
+                   
+                    var servepath = libpath.resolve(__dirname,'../../support/client/lib/engine.js');
+                   
+                    FileCache.insertFile(servepath, Landing.getVWFCore(), fs.statSync(servepath), "utf8", cb);
+                    //cb();
                     return;
                 }
                 if (compile) {

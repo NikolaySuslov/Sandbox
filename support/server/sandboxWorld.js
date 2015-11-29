@@ -809,7 +809,7 @@ function sandboxWorld(id, metadata)
                         "node": 'index-vwf',
                         member: 'cameraBroadcastEnd',
                         "time": this.time,
-                        client: socket.id
+                        client: client.id
                     });
                     this.messageClients(
                     {
@@ -820,7 +820,7 @@ function sandboxWorld(id, metadata)
                             []
                         ],
                         "time": this.time,
-                        client: socket.id
+                        client: client.id
                     });
                     this.state.deletedNode(avatarID);
                 }
@@ -836,7 +836,7 @@ function sandboxWorld(id, metadata)
             catch (e)
             {
                 logger.error('error in reflector disconnect')
-                logger.error(e);
+                logger.error(e.message);
             }
         }
     }

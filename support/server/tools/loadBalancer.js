@@ -10,22 +10,36 @@ url = require("url"),
 express = require('express'),
 app = express();
 var ServerFeatures = require("../serverFeatures.js");
-
+var logger = require('../logger');
 global.configuration = {
     "port": 3001,            
-    "loadBalancerKey" : "SECRETKEY"
+    "loadBalancerKey" : "SECRETKEY",
+    "appPath" : null
 }
 
-app.use(express.methodOverride());
+
+app.use(require('method-override')());
+
 //CORS support
 app.use(ServerFeatures.CORSSupport);
 
-app.use(express.cookieParser());
+//i18n support
+app.use(require('cookie-parser')());
 
-app.use(express.bodyParser());
+//Wait until all data is loaded before continuing
+//app.use (ServerFeatures.waitForAllBody);
+app.use(require('body-parser').json({
+    maxFieldsSize: 16 * 1024 * 1024 * 1024,
+    limit: '50mb'
+}));
+app.use(require('body-parser').urlencoded({
+    extended: true
+}));
+app.use(require('multer')());
 
 
-app.use(app.router);
+
+//app.use(app.router);
 
 
 function Host(url)
@@ -92,11 +106,15 @@ function Host(url)
 var hosts = [];
 
 
-
-
 app.get('/',function(req,res,next){
 	var instance = (req.query.instance);
+	if(global.configuration.appPath)
+	{
+		instance = instance.replace(global.configuration.appPath,"/adl/sandbox");
+	}
+
 	logger.info(instance);
+	instance=instance.replace(/\//g,"_");
 	for(var i =0; i < hosts.length; i++)
 	{
 		if(hosts[i].contains(instance))
@@ -124,7 +142,6 @@ app.get('/register',function(req,res,next){
 	if(host.key == global.configuration.loadBalancerKey)
 	{
 		
-
 		var found = -1;
 		for(var i =0; i < hosts.length; i++)
 		{
