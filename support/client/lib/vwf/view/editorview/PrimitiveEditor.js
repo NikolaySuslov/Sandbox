@@ -339,7 +339,6 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
         function recursevlyAddPrototypes(node, existingProps, scopeNode, scopeEditorData, ignoreBase){
             if(node){
                 var protoId = Engine.prototype(node.id);
-
                 buildEditorData(node, Engine.getProperty(node.id, "EditorData"), existingProps, scopeNode, scopeEditorData);
                 if(protoId && !ignoreBase) recursevlyAddPrototypes(_Editor.getNode(protoId), existingProps, scopeNode, scopeEditorData);
             }

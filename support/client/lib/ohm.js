@@ -186,7 +186,7 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
                     return;
         } 
 }
-            var methodBody = 'console.log(\'Init grammar: '  + lngName + '\');';
+            var methodBody = '//console.log(\'Init grammar: '  + lngName + '\');';
             Engine.createMethod(nodeID, methodN, [], methodBody);
 
         }
@@ -245,7 +245,7 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
                 var gram = ohm.grammar(propertyValue);
                 
 
-                console.log("Grammar OK!");
+                //console.log("Grammar OK!");
                 Engine.setProperty(nodeID, grammarName, gram);
 
            

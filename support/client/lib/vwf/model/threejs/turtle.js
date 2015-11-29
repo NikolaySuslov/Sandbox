@@ -28,19 +28,19 @@
 
 
 			this.EditorData = {};
-			this.EditorData.radius = {displayname:'Turtle radius',property:'radius',type:'slider',min:0,max:10,step:.01};
+			this.EditorData.a_radius = {displayname:'Turtle radius',property:'radius',type:'slider',min:0,max:10,step:.01};
 			//this.EditorData.rsegs = {displayname:'R Segments',property:'rsegs',type:'slider',min:3,max:16};
 			//this.EditorData.ssegs = {displayname:'S Segments',property:'ssegs',type:'slider',min:3,max:16};
 
-			this.EditorData.iteration = {displayname:'Iterations',property:'iteration',type:'slider',min:1,max:6,step:1};
-			this.EditorData.angle = {displayname:'Angle',property:'angle',type:'slider',min:1,max:360,step:1};
-			this.EditorData.stepLength = {displayname:'Step length',property:'stepLength',type:'slider',min:.1,max:10,step:.01};
-			this.EditorData.rule = {displayname:'Rule',property:'rule',type:'text'};
-			//this.EditorData.axioms = {displayname:'Axioms', property:'axioms',type:'text'};
-			this.EditorData.axiomF = {displayname:'Axiom F', property:'axiomF',type:'text'};
-			this.EditorData.axiomG = {displayname:'Axiom G', property:'axiomG',type:'text'};
+			this.EditorData.fa_iteration = {displayname:'Iterations',property:'iteration',type:'slider',min:1,max:6,step:1};
+			this.EditorData.f_angle = {displayname:'Angle',property:'angle',type:'slider',min:1,max:360,step:1};
+			this.EditorData.g_stepLength = {displayname:'Step length',property:'stepLength',type:'slider',min:.1,max:10,step:.01};
+			
+			this.EditorData.b_rule = {displayname:'Rule',property:'rule',type:'text'};
+			this.EditorData.c_axiomF = {displayname:'Axiom F', property:'axiomF',type:'text'};
+			this.EditorData.d_axiomG = {displayname:'Axiom G', property:'axiomG',type:'text'};
 
-			this.EditorData.generate = {label:'Generate',method:'generateLSys',type:'button'};
+			this.EditorData.x_generate = {label:'Generate',method:'generateLSys',type:'button'};
 			
 
 
@@ -75,11 +75,13 @@
 
 				if(propertyName == 'radius' || propertyName == 'rsegs' || propertyName == 'ssegs'
 					|| propertyName == 'ohmLSys' || propertyName == 'ohmTurtle' || propertyName == 'iteration' ||  propertyName == 'rule' || propertyName == 'axiomF' || propertyName == 'axiomG' || propertyName == 'angle' || propertyName == 'stepLength' 
-					 )
+					|| propertyName == 'EditorData' )
 				{
 					return this[propertyName];
 				}
+			
 				
+
 			}
 			
 			this.initializingNode = function()
