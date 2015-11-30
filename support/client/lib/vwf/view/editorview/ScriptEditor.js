@@ -203,7 +203,12 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 						}));
 					}
 					else if( $scope.guiState.openTab === 'properties' ){
-						newBody = angular.toJson(item.value, 4);
+
+						if (item.name.includes('ohm') == true) {
+							newBody = item.value;
+						} else { 
+							newBody = angular.toJson(item.value, 4); 
+						}
 					}
 					if($scope.sessions[item.id])
 					{
@@ -544,6 +549,10 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 					if (s[i].type == 'error') errors += "<br/> line: " + s[i].row + "-" + s[i].text;
 				}
 
+				if (fieldName.includes('ohm') == true) {
+					return true;
+				}
+
 				if (errors != "") {
 					alertify.alert('This script contains syntax errors, and cannot be saved. The errors are: \n' + errors.toString());
 					return false;
@@ -605,7 +614,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 				else if( $scope.guiState.openTab === 'properties' )
 				{
 					try {
-						var val = JSON.parse(rawtext);
+
+						if (fieldName.includes('ohm') == true) {
+							var val = rawtext;
+
+						} else {
+
+						var val = JSON.parse(rawtext);}
 					}
 					catch(e){
 						val = rawtext;

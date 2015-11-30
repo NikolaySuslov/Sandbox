@@ -1,0 +1,26 @@
+[
+   {
+        "name":  "Dragon",
+        "url": "./contentlibraries/entities/vwf/lsys/Dragon.vwf.json",
+        "preview": "./contentlibraries/entities/thumbs/lsys/dragon.jpg",
+        "type": "asset"
+    },
+    {
+        "name": "Koch snowflake",
+        "url": "./contentlibraries/entities/vwf/lsys/KochSnowflake.vwf.json",
+        "preview": "./contentlibraries/entities/thumbs/lsys/Koch.jpg",
+        "type": "asset"
+    },
+    {
+        "name":"Sierpinski curve",
+        "url": "./contentlibraries/entities/vwf/lsys/SierpinskiCurve.vwf.json",
+        "preview": "./contentlibraries/entities/thumbs/lsys/SierpinskiCurve.jpg",
+        "type": "asset"
+    },
+    {  
+        "name": "Sierpinski triangle",
+        "url": "./contentlibraries/entities/vwf/lsys/SierpinskiTriangle.vwf.json",
+        "preview": "./contentlibraries/entities/thumbs/lsys/SierpinskiTriangle.jpg",
+        "type": "asset"
+    }
+]

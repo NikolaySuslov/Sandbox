@@ -319,7 +319,7 @@ define(['progressScreen'],function(){
           
                 { library: "vwf/utility", active: true },
           
-                
+                { library: "ohm", active: true },
               
                 { library: "vwf/model/ammo.js/ammo", active: true },
                 { library: "vwf/view/webrtc/adapter", active: false },
@@ -343,6 +343,7 @@ define(['progressScreen'],function(){
                     { library: "vwf/model/glge", active: false },
                     { library: "vwf/model/threejs", active: true },
                     { library: "vwf/model/cesium", active: false },
+                    { library: "ohm", active: true },
                     { library: "vwf/model/object", active: true },
                     { library: "vwf/model/wires", active: true },
                     { library: "vwf/model/jqueryui", active: true },
@@ -481,6 +482,7 @@ define(['progressScreen'],function(){
                         "vwf/model/wires",
                         "vwf/model/threejs",
                         "vwf/model/jqueryui",
+                        "ohm",
                         "vwf/model/audio",
                         "vwf/model/object",
                     ];

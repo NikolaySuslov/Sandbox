@@ -1368,6 +1368,92 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             this.createChild('index-vwf', newname, ConstraintProto, null, null);
             this.SelectOnNextCreate([newname]);
         };
+
+
+      this.CreateTurtle = function(type, translation, size, texture, owner, id) {
+         var turtleProto = this.CreatePrimProto(type, translation, size, texture, owner, id);
+         var penID = GUID();
+        // debugger;
+         var penProto = this.CreatePrimProto('line', [0, 0, 0], size, texture, owner, penID);
+         penProto.properties.DisplayName = 'pen';
+         turtleProto.children = {};
+         turtleProto.children[penID] = penProto;
+
+         var newname = GUID();
+         this.createChild('index-vwf', newname, turtleProto, null, null);
+         this.SelectOnNextCreate([newname]);
+      }.bind(this);
+
+      this.CreatePrimProto = function(type, translation, size, texture, owner, id) {
+          translation[0] = this.SnapTo(translation[0], MoveSnap);
+          translation[1] = this.SnapTo(translation[1], MoveSnap);
+          translation[2] = this.SnapTo(translation[2], MoveSnap);
+          translation[2] += .001;
+          var BoxProto = {
+              extends: type + '2.vwf',
+              properties: {}
+          };
+          BoxProto.type = 'subDriver/threejs';
+          BoxProto.source = 'vwf/model/threejs/' + type + '.js';
+          var proto = BoxProto;
+
+          var defaultmaterialDef = {
+              shininess: 15,
+              alpha: 1,
+              ambient: {
+                  r: 1,
+                  g: 1,
+                  b: 1
+              },
+              color: {
+                  r: 1,
+                  g: 1,
+                  b: 1,
+                  a: 1
+              },
+              emit: {
+                  r: 0,
+                  g: 0,
+                  b: 0
+              },
+              reflect: 0.8,
+              shadeless: false,
+              shadow: true,
+              specularColor: {
+                  r: 0.5773502691896258,
+                  g: 0.5773502691896258,
+                  b: 0.5773502691896258
+              },
+              specularLevel: 1,
+              layers: [{
+                  alpha: 1,
+                  blendMode: 0,
+                  mapInput: 0,
+                  mapTo: 1,
+                  offsetx: 0,
+                  offsety: 0,
+                  rot: 0,
+                  scalex: 1,
+                  scaley: 1,
+                  src: "checker.jpg"
+              }]
+          }
+
+          proto.properties.materialDef = defaultmaterialDef;
+          proto.properties.size = size;
+          proto.properties.transform = MATH.transposeMat4(MATH.translateMatrix(translation));
+          proto.properties.scale = [1, 1, 1];
+          proto.properties.rotation = [0, 0, 1, 0];
+          proto.properties.owner = owner;
+          proto.properties.texture = texture;
+          proto.properties.type = 'primitive';
+          proto.properties.tempid = id;
+          proto.properties.DisplayName = self.GetUniqueName(type);
+          //proto.properties.children = {};
+          return proto;
+      }
+
+
         this.CreatePrim = function(type, translation, size, texture, owner, id) {
             translation[0] = this.SnapTo(translation[0], MoveSnap);
             translation[1] = this.SnapTo(translation[1], MoveSnap);
