@@ -56,8 +56,7 @@
     "tough-cookie": "^2.1.0",
     "winston": "~0.8.3",
     "ws": "~0.4.25",
-    "yamljs": "~0.1.4",
-    "sandbox-asset-server": "1.2.x"
+    "yamljs": "~0.1.4"
   },
   "devDependencies": {},
   "scripts": {
