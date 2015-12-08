@@ -109,7 +109,10 @@ function parseStateForAssets(state,cb)
 	//
 	// 3) The User selects one or more assets from the list of assets in the properties section of the scene editor
 	//
-	if(state !== null || state !== undefined) {
+
+	if(state !== null) {
+		if (state !== undefined){
+
 		// Load assets added manually to the state file
 		var additionalAssets = state[state.length - 1]['___additionalAssets'];
 		if (additionalAssets !== undefined) {
@@ -137,6 +140,8 @@ function parseStateForAssets(state,cb)
 				}
 			}
 		}
+
+	}
 	}
 
 	var unique = [];
