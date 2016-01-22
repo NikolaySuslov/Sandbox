@@ -168,15 +168,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 
 			},
 
-			MenuLogOut: function(e) {
-				if ($('#MenuLogOut').attr('disabled') == 'disabled') return;
-
-				var path = window.location.pathname;
-
-				if(path.indexOf('example_blank') > 0) window.location = '/adl/sandbox/demos';
-				else if(path.indexOf('example_') > 0) window.location = '/adl/sandbox/examples';
-				else window.location = path.replace('/sandbox/', '/sandbox/world/');
-			},
+			
 			MenuSelectPick: function(e) {
 				_Editor.SetSelectMode('Pick');
 			},
@@ -734,8 +726,10 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuAssets3DRUpload: function(e) {
 				_ModelLibrary.showUpload();
 			},
-
-
+			MenuConsole:function()
+			{
+				logger.open();
+			},
 			MenuUndo: function(e) {
 				_UndoManager.undo();
 			},

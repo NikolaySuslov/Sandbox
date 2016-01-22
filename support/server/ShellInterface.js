@@ -502,6 +502,17 @@ function StartShellInterface()
             }
         },
         {
+            'command': 'delete world <worldID>',
+            'description': 'Deletes the world with the given ID',
+            'callback': function(commands)
+            {
+                DAL.deleteInstance(commands[2], function(res)
+                {
+                    console.log(res);
+                });
+            }
+        },
+        {
             'command': 'test throw',
             'description': 'Throws an error, tests shutdown behavior',
             'callback': function()

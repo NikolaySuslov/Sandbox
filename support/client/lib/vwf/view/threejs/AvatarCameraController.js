@@ -15,6 +15,7 @@ var AvatarCameraController = function()
         this.shiftDown = false;
         this.ctrlDown = false;
         this.keysDown = {};
+         this.lastpos = new THREE.Vector3(0,0,0);
     }
     this.localTouchStart = function(event) {}
     this.localTouchEnd = function(event) {}
@@ -88,8 +89,15 @@ var AvatarCameraController = function()
         if (this.mouseDown || this.shiftDown)
         {
             var rot_z = new THREE.Quaternion();
-            rot_z.setFromAxisAngle(new THREE.Vector3(0, 0, 1), -this.rel_x / 300);
+            rot_z.setFromAxisAngle(new THREE.Vector3(0, 0, 1), -this.rel_x / 100);
             this.offset = this.offset.applyQuaternion(rot_z);
+            if(this.zoom < .5)
+            {
+                 var id = _UserManager.GetAvatarForClientID(Engine.moniker()).id;
+                vwf_view.kernel.callMethod(id, 'lookat', [
+                [-this.offset.x, -this.offset.y, -this.offset.z]
+            ]);
+            }
         }
         this.rel_y = e.clientY - this.last_y;
         this.last_y = e.clientY;
@@ -101,6 +109,7 @@ var AvatarCameraController = function()
         }
     }
     this.orientationEvent = function(e) {}
+
     this.updateCamera = function()
     {
         if (Object.keys(this.keysDown).length > 0)
@@ -110,11 +119,44 @@ var AvatarCameraController = function()
             this.offset.x = this.offset.x * .97 + charspaceforward[0] * .03;
             this.offset.y = this.offset.y * .97 + charspaceforward[1] * .03;
         }
-        var avatar = _UserManager.GetAvatarForClientID(Engine.moniker()).transformAPI.getPosition();
+        var avatarNode = _UserManager.GetAvatarForClientID(Engine.moniker());
+        if(!avatarNode)
+            return;
+        var avatar = avatarNode.transformAPI.getPosition();
         var center = new THREE.Vector3(avatar[0], avatar[1], avatar[2] + 1.5);
+        
+
         var pos = center.clone().add(this.offset.setLength(this.zoom));
-        pos.z += this.totalz / 200 * this.zoom;
-        this.camera.position.copy(pos);
+        if(this.zoom > .05)
+        {
+            pos.z += this.totalz / 200 * this.zoom;
+            findviewnode(_UserManager.GetAvatarForClientID(Engine.moniker()).id).traverse(function(o)
+            {
+                if(o instanceof THREE.Mesh)
+                    o.visible = true;
+            })
+        }
+        else{
+            this.zoom = .05;
+            pos.z -= this.totalz / 2000;
+            findviewnode(_UserManager.GetAvatarForClientID(Engine.moniker()).id).traverse(function(o)
+            {
+                if(o instanceof THREE.Mesh)
+                    o.visible = false;
+            })
+        }
+        if(this.zoom > .05)
+        {
+        this.lastpos.x = (this.lastpos.x * 90 + pos.x*10)/100;
+        this.lastpos.y = (this.lastpos.y * 90 + pos.y*10)/100;
+        this.lastpos.z = (this.lastpos.z * 90 + pos.z*10)/100;
+        this.camera.position.copy(this.lastpos);
+        }
+        else
+        {
+            this.lastpos.copy(pos);
+             this.camera.position.copy(pos);
+        }
         this.camera.lookAt(center);
     }
     this.setCameraMode = function(mode) {}
@@ -124,15 +166,30 @@ var AvatarCameraController = function()
     this.localpointerWheel = function(e)
     {
         if (e.deltaY > 0)
+        {
             this.zoom *= 1.1;
+            if(this.zoom < .5)
+                this.zoom = .55;
+        }
         else
             this.zoom *= .9;
         if (this.zoom < .5)
-            require("vwf/view/threejs/editorCameraController").setCameraMode('FirstPerson');
+        {
+            this.zoom = .05;
+        }
     }
+    this.totalTime = 0;
     this.prerender = function()
     {
-        this.updateCamera();
+        //framerate independant smoothing
+         var now = performance.now();
+         this.totalTime += now - (this.lastTime ? this.lastTime : now);
+         this.lastTime = now;
+         while(this.totalTime > 0)
+         {
+            this.totalTime -= 16;
+            this.updateCamera();
+        }
     }
 }
 define([], function()

@@ -1,9 +1,10 @@
 @import 'polyfill';
 
-.htmlPalette
+#htmlPalettePopup
 {
 	&.extrawide {
-		width: 230px;
+		//width: 230px;
+		height: 174px;
 	}
 	&.toplevel {
 		z-index: 5;

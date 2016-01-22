@@ -17,7 +17,22 @@ define(["vwf/view/threejs/oldCameraController", "vwf/view/threejs/AvatarCameraCo
         this.addController('FirstPerson', oldCameraController);
         this.addController('DeviceOrientation', oldCameraController);
         this.addController('VR', VRCameraController);
+
+
         this.setCameraMode('Orbit');
+        
+        $(document).on('setstatecomplete',function()
+        {
+            //if the world is published without tools, but it is creating avatars, then the editor camera controller should use the 
+            //avatar mode. Setting a world camera will override this.
+            var metadata = _DataManager.getInstanceData();
+            if(metadata && metadata.publishSettings)
+            {
+                if(!metadata.publishSettings.allowTools && metadata.publishSettings.createAvatar)
+                    this.setCameraMode('3RDPerson');
+            }
+        }.bind(this));
+        
         $('#index-vwf').mousedown(function(e)
         {
             this.localpointerDown(e);

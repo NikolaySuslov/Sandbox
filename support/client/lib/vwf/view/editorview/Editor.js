@@ -141,7 +141,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         var OldX = 0;
         var OldY = 0;
         var MouseMoved = false;
-        
+
         this.TempPickCallback = null;
         this.translationPropertyName = 'translation';
         this.transformPropertyName = 'worldTransform';
@@ -208,8 +208,8 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     this.selectionMarquee.css('border', '2px dotted darkslategray');
                     this.selectionMarquee.css('pointer-events', 'all');
                 }
-                
-                
+
+
             }
         }.bind(this);
         this.GetUniqueName = function(newname, addcount) {
@@ -245,11 +245,11 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             var campos = this.getCameraPosition();
             var pickopts = new THREE.CPUPickOptions();
             pickopts.OneHitPerMesh = true;
-            
+
             var pick = this.ThreeJSPick(campos, ray, {
                 OneHitPerMesh: false, ignore:[this.GetMoveGizmo().getGizmoBody()]
             });
-            
+
             var vwfnode;
             while (pick && pick.object && !pick.object.vwfID) pick.object = pick.object.parent;
             if (pick && pick.object) vwfnode = pick.object.vwfID;
@@ -260,7 +260,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             {
                 testnode = Engine.parent(testnode);
                 selected = self.isSelected(testnode);
-                
+
             }
             if(selected)
             vwfnode = testnode;
@@ -348,7 +348,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         {
             //not sure this logic makes sense when more than one thing selected
 
-            if (this.getSelectionCount() > 1 && 
+            if (this.getSelectionCount() > 1 &&
             Engine.decendants(Engine.ancestors(_Editor.GetSelectedVWFID())[Engine.ancestors(_Editor.GetSelectedVWFID()).length-2] || _Editor.GetSelectedVWFID()).indexOf(pickID) == -1)
             {
                 return Engine.ancestors(pickID)[Engine.ancestors(pickID).length-2] || pickID;
@@ -387,11 +387,11 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             if(_Editor.GetSelectedVWFID() && _PrimitiveEditor.isOpen())
                 _SidePanel.showPanel();
             },20)
-            
+
              this.mouseup(e);*/
         }
         this.mouseup_Gizmo = function(e) {
-            
+
             //tracking for double click
             if(performance.now() - this.mouseUpTime  < 300 && e.button == 0)
             {
@@ -417,7 +417,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             this.MouseLeftDown = false;
 
             this.mouseUpTime = performance.now();
-           
+
             this.mouseUpScreenPoint = [e.clientX, e.clientY];
 
             if (MoveGizmo.getAxis() == -1 && e.button == 0) {
@@ -427,10 +427,10 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     var picksize = Math.sqrt(w * w + h * h);
                     if (picksize < 10) {
                         if (Engine.views[0].lastPickId && Engine.views[0].lastPickId != 'index-vwf') {
-                            //implement some logic on the pick - select top level node, unless the current selection is 
+                            //implement some logic on the pick - select top level node, unless the current selection is
                             // in the hierarchy of the new selection
                             var newselection = Engine.views[0].lastPickId;
-                           
+
                             newselection = this.mouseDownSelectFilter(newselection);
                             this.SelectObject(_Editor.getNode(newselection), this.PickMod);
                         } else {
@@ -528,13 +528,13 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                         var ray;
                         var campos = this.getCameraPosition();
                         ray = this.GetWorldPickRay(e);
-                       
+
                         var pick = this.ThreeJSPick(campos, ray, {
                             filter: function(o) {
                                 return !(o.isAvatar === true)
                             },ignore:[self.GetMoveGizmo().getGizmoBody()]
                         });
-                        
+
                         var dxy = pick.distance;
                         newintersectxy = MATH.addVec3(campos, MATH.scaleVec3(ray, dxy * .99));
                         var dxy2 = this.intersectLinePlane(ray, campos, [0, 0, 0], [0, 0, 1]);
@@ -569,7 +569,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 this.SetCoordSystem(CoordSystem == WorldCoords ? LocalCoords : WorldCoords);
                 this.updateGizmoOrientation(true);
             }
-            
+
             this.mouseDownScreenPoint = null;
         }.bind(this);
         this.GetAllLeafMeshes = function(threeObject, list) {
@@ -825,7 +825,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                    // _Editor.updateGizmoSize();
                     _Editor.updateGizmoOrientation(false);
                 }
-                
+
             }
             if (window._Editor && propname == 'DisplayName' && _Editor.isSelected(id)) {
                 $('#StatusSelectedName').html((val).escape());
@@ -1118,7 +1118,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             if (SelectedVWFNodes.length > 0 && !(this.findviewnode(SelectedVWFNodes[0].id)).parent) return;
 
 
-            if (this.waitingForSet.length > 0) return;
+            //if (this.waitingForSet.length > 0) return;
 
             if (!MoveGizmo || MoveGizmo == null) {
                 return;
@@ -1160,8 +1160,8 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 if ($('#StatusMouseOverName').text() !== 'Scene')
                     $('#StatusMouseOverName').html(('Scene').escape());
             }
-           
-            
+
+
         }.bind(this);
         this.isOwner = function(id, player) {
             var owner = Engine.getProperty(id, 'owner');
@@ -1187,13 +1187,13 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             if (e) {
                 var ray;
                 ray = this.GetWorldPickRay(e);
-               
+
                 var pick = this.ThreeJSPick(campos, ray, {
                     filter: function(o) {
                         return !(o.isAvatar === true)
                     },ignore:[self.GetMoveGizmo().getGizmoBody()]
                 });
-                
+
                 var newintersectxy = [0, 0, 0];
                 if (pick) {
                     var dxy = pick.distance;
@@ -1372,7 +1372,8 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             this.SelectOnNextCreate([newname]);
         };
 
-        this.CreateTurtle = function(type, translation, size, texture, owner, id) {
+
+      this.CreateTurtle = function(type, translation, size, texture, owner, id) {
          var turtleProto = this.CreatePrimProto(type, translation, size, texture, owner, id);
          var penID = GUID();
         // debugger;
@@ -1418,7 +1419,9 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                   g: 0,
                   b: 0
               },
-              reflect: 0.8,
+
+              reflect: 0.0,
+
               shadeless: false,
               shadow: true,
               specularColor: {
@@ -1489,7 +1492,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                         g: 0,
                         b: 0
                     },
-                    reflect: 0.8,
+                    reflect: 0.0,
                     shadeless: false,
                     shadow: true,
                     specularColor: {
@@ -1525,7 +1528,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
 
             proto.properties.DisplayName = self.GetUniqueName(type);
             var newname = GUID();
-            
+
             this.createChild('index-vwf', newname, proto, null, null);
             this.SelectOnNextCreate([newname])
         }.bind(this);
@@ -1710,7 +1713,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 //this is so we can paste a group in a way that makes sense
                 if (t.properties && t.properties.transform) {
                     var tpos = new THREE.Vector3();
-                    tpos.setFromMatrixPosition(MoveGizmo.parent.matrixWorld);
+                    tpos.setFromMatrixPosition(MoveGizmo.getGizmoBody().matrixWorld);
                     originalGizmoPos = [tpos.x, tpos.y, tpos.z];
                     var gizoffset = MATH.subVec3(this.getTranslationCallback(tocopy[i].id), originalGizmoPos);
                     t.properties.transform[12] = gizoffset[0];
@@ -1746,13 +1749,13 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     else {
                         var ray;
                         ray = this.GetWorldPickRay(this.ContextShowEvent);
-                        
+
                         var pick = this.ThreeJSPick(campos, ray, {
                             filter: function(o) {
                                 return !(o.isAvatar === true)
                             },ignore:[self.GetMoveGizmo().getGizmoBody()]
                         });
-                        
+
                         var dxy = pick.distance;
                         newintersectxy = MATH.addVec3(campos, MATH.scaleVec3(ray, dxy * .99));
                         var dxy2 = this.intersectLinePlane(ray, campos, [0, 0, 0], [0, 0, 1]);
@@ -1813,15 +1816,21 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             return [sx, sy, sz];
         }
         this.setTransform = function(id, val) {
-            this.waitingForSet.push(id);
+
+            //don't bother if the value did not actually change
+            if(matComploose(vwf.getProperty(id,'transform'),val))
+            {
+                return true;
+            }
+            //this.waitingForSet.push(id);
             var success = this.setProperty(id, 'transform', val);
-            if (!success) this.waitingForSet.pop();
+            //if (!success) this.waitingForSet.pop();
             if (!success) this.SetLocation(MoveGizmo, originalGizmoPos);
             return success;
         }
         this.setTranslation = function(id, val) {
             var success = this.setProperty(id, this.translationPropertyName, val);
-            if (success) this.waitingForSet.push(id);
+            //if (success) this.waitingForSet.push(id);
             if (!success) this.SetLocation(MoveGizmo, originalGizmoPos);
             return success;
         }
@@ -1837,7 +1846,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         this.getTranslationCallback = this.getTranslation;
 
         this.updateGizmoOrientation = function() {
-            
+
             //prefer the override value
 
 
@@ -2007,7 +2016,6 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 else if (typeof(VWFNode) == 'string') VWFNode = [_Editor.getNode(VWFNode)];
 
 
-                	
                     //the editor can be loaded when tools are not, so this might not exist
                 	if(!skipUndo && window._UndoManager)
                 		window._UndoManager.recordSelection((VWFNode || []).slice(0));
@@ -2050,16 +2058,16 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                             SelectedVWFNodes.splice(index, 1);
                         }
 
-
+                        Engine.requestControl(VWFNode[i].id);
                     }
                 if (SelectedVWFNodes[0]) this.SelectedVWFID = SelectedVWFNodes[0].id;
                 else this.SelectedVWFID = null;
                 this.triggerSelectionChanged(SelectedVWFNodes[0]);
                 if (MoveGizmo == null) {
-                    
+
                     this.BuildMoveGizmo();
                 }
-                
+
                 this.backupTransfroms = [];
                 if (SelectedVWFNodes[0]) {
 
@@ -2078,7 +2086,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     this.updateGizmoOrientation(true);
                 } else {
                     this.hideMoveGizmo();
-                    
+
                     if (SelectionBounds.length > 0) {
                         for (var i = 0; i < SelectionBounds.length; i++) {
                             SelectionBounds[i].parent.remove(SelectionBounds[i], true);
@@ -2162,7 +2170,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 this.BuildMoveGizmo();
             this.MoveGizmo.SetGizmoMode(type);
         }
-        
+
         this.BuildWireBox = function(size, offset, color, material) {
 
             var mesh = new THREE.Line(new THREE.Geometry(), material ||(new THREE.LineBasicMaterial()), THREE.LinePieces);
@@ -2218,7 +2226,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             return mesh;
         }.bind(this);
 
-       
+
 
         //callback for setPArent. CAlled once a node is picked. Selected objects will become children of this node
         this.PickParentCallback = function(parentnode) {
@@ -2237,7 +2245,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     if (id != parent) {
                         if (Engine.parent(id) != parent) {
                             if (Engine.decendants(id).indexOf(parent) == -1) {
-                                
+
                             } else {
                                 alertify.alert('This object cannot be assigned to be a child of one of its decendants')
                                 return;
@@ -2266,7 +2274,6 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     if (id != parent) {
                         if (Engine.parent(id) != parent) {
                             if (Engine.decendants(id).indexOf(parent) == -1) {
-                           
 
                                 var node = _DataManager.getCleanNodePrototype(id);
 
@@ -2288,16 +2295,16 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                                 this.createChild(parentnode.id, newname, node);
                                 _RenderManager.flashHilight(findviewnode(parentnode.id));
 
-                            } 
-                        } 
-                    } 
+                            }
+                        }
+                    }
                 }
                 this.DeleteSelection();
                 this.TempPickCallback = null;
                 self.SelectOnNextCreate(newnames);
                 this.SetSelectMode('Pick');
                 _UndoManager.stopCompoundEvent();
-            } 
+            }
 
         }
         this.RemoveParent = function() {

@@ -1,0 +1,113 @@
+.logger
+{
+	
+	background: #444;
+	font-family: monospace;
+    font-size:12px;
+    margin:0px;
+    color: white;
+	.logButton
+    {
+        display: inline-block;
+        margin: .2em;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+    .logButton:hover
+    {
+        color:blue;
+    }
+    .logButton:active
+    {
+        color:lightblue;
+    }
+}
+
+#logMain {
+    div {
+        border-bottom: 1px solid #4a4a4a;
+        white-space:pre;
+    }
+    div:hover {
+            background:black;
+            
+    }
+    position: ABSOLUTE;
+    top: 2em;
+    height: calc(100% - 4em);
+    display: block;
+    overflow: scroll;
+    width: 100%;
+}
+.loggerlog::before {
+    content: "> Log: ";
+    width: 5em;
+    color: lightGreen;
+    display: inline-block;
+}
+
+.loggerwarn::before {
+    content: "> Warn: ";
+    width: 5em;
+    color: orange;
+    display: inline-block;
+}
+
+.loggererror::before {
+    content: "> Error: ";
+    width: 5em;
+    color: red;
+    display: inline-block;
+}
+
+.loggerinfo::before {
+    content: "> Info: ";
+    width: 5em;
+    color: grey;
+    display: inline-block;
+}
+
+.loggerdebug::before {
+    content: "> Debug: ";
+    width: 5em;
+    color: blue;
+    display: inline-block;
+}
+
+#logConsole
+{
+    position: absolute;
+    top: calc(100% - 2em);
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    height: 2em;
+    input {
+        position: ABSOLUTE;
+    right: 0px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    outline: none;
+    border: none;
+    cursor: text;
+    font-family: monospace;
+    text-decoration: none;
+    height: 1.7em;
+    text-indent: 1em;
+    }
+}
+#logConsole::before
+{
+        content: ">";
+    z-index: 100;
+    position: absolute;
+    color: black;
+    height: 100%;
+    vertical-align: middle;
+    line-height: 2em;
+}
+#logConsole input:hover
+{
+    color:black;
+}

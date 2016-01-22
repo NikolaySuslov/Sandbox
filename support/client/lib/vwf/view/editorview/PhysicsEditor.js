@@ -1,4 +1,4 @@
-define([], function() {
+define(["vwf/view/editorview/panelEditor"], function() {
     var PhysicsEditor = {};
     var isInitialized = false;
     return {

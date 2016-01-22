@@ -21,6 +21,7 @@ define([
 	"vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify",
 	"vwf/view/editorview/angular-app",
 	"vwf/view/editorview/Menubar",
+    "vwf/view/editorview/log",
 
 	// other things that need to be loaded first
 	"touch.js",
@@ -51,9 +52,10 @@ define([
 	"vwf/view/editorview/PhysicsEditor",
 	"vwf/view/editorview/PerformanceManager",
 	"vwf/view/editorview/JSONPrompt",
-    "vwf/view/localization/translate"
+     "vwf/view/localization/translate",
+     "vwf/view/editorview/lib/beautify.module.js"
 	//"vwf/view/editorview/panelEditor",
-], function(module, version, view, alertify, angular_app, Menubar) {
+], function(module, version, view, alertify, angular_app, Menubar,log) {
     return view.load(module, {
         // == Module Definition ====================================================================
         needTools: function()
@@ -66,6 +68,8 @@ define([
         },
         initialize: function() {
             window._EditorView = this;
+            //intialize the logger interface
+            log.initialize();
             if (!window._EditorInitialized) {
 
 				$(document).keydown(function(e){
@@ -130,7 +134,7 @@ define([
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/SplineTool.js"></script>');
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/TerrainTool.js"></script>');
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/lib/jquery.qtip-1.0.0-rc3.min.js"></script>');
-                    $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/lib/beautify.module.js"></script>');
+                    
                 }
                 $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/sha256.js"></script>');
                 $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/lib/jquery.ui.touch-punch.min.js"></script>');
@@ -195,6 +199,7 @@ define([
         // send the VWF events down to all registered objects
         viewAPINotify: function(functionName, data)
         {
+
             //only pass messages to the editor components if the world is stopped, or if the messages are necessary to handle the play pause logic
             if (Engine.models.object.gettingProperty(Engine.application(), 'playMode') !== 'play'||
                 data[1] =='playMode' ||data[1] =='playBackup' || data[1] == 'restoreState' || data[1] == 'postWorldRestore' || data[1] == 'preWorldPlay'
@@ -205,7 +210,12 @@ define([
                     var manager = this.managers[i];
                     if (manager[functionName])
                     {
+                        try{
                         manager[functionName].apply(manager, data)
+                        }catch(e)
+                        {
+                            console.error('error processing view api message ' + functionName)
+                        }
                     }
                 }
             }
@@ -328,9 +338,8 @@ function InitializeEditor() {
         //_EditorView.addManager(require("vwf/view/editorview/Menubar"));
         //require("vwf/view/editorview/SideTabs").initialize();
 
-        $('#toolbarLevel').show();
+		$('#toolbarLevel').show();
         require("vwf/view/localization/translate").initialize();
-        //$(document.head).append('<script type="text/javascript" src="vwf/view/localization/translate.js"></script>');
         window.translateMenu();
 
         //default to select mode

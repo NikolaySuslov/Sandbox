@@ -196,6 +196,7 @@ define([], function() {
             if (!s) return;
             Engine.private.queue.suspend();
             Engine.models.kernel.disable();
+           
             var currentState = _Editor.getNode(Engine.application(),true);
 
             //find a node from one state in another
@@ -284,6 +285,7 @@ define([], function() {
                 Engine.models.kernel.enable();
 
                 Engine.callMethod(Engine.application(), 'postWorldRestore');
+                Engine.markAllPropsCurrent();
                 Engine.private.queue.resume();
 
             });

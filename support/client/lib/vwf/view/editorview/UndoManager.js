@@ -36,7 +36,7 @@ define(function ()
 
 		this.oldSelection = [];
 		for(var i =0; i < _Editor.getSelectionCount(); i++)
-			this.oldSelection.push(_Editor.GetSelectedVWFNode(i).id);
+			this.oldSelection.push(_Editor.GetSelectedVWFID(i));
 		this.selection = [];
 		for(var i =0; i < selectionSet.length; i++)
 			if(selectionSet[i])
@@ -131,7 +131,11 @@ define(function ()
 	{
 		this.property = property;
 		if(val === undefined) val = null;
-		if(oldval === undefined) oldval = Engine.getProperty(id,property) || null;
+		if(oldval === undefined){
+			//Other falsy values are valid JSON. Only replace undefined with null
+			oldval = Engine.getProperty(id,property);
+			if(oldval === undefined) oldval = null;
+		}
 
 		this.val = JSON.stringify(val);
 		this.id = id;
@@ -235,7 +239,7 @@ define(function ()
 			//shim to deal with change in the compare operator
 			if(newEvent.oldval && !(typeof newEvent.oldval == "string"))
 			{
-				newEvent.oldval = JSON.stringify(newEvent.oldval);	
+				newEvent.oldval = JSON.stringify(newEvent.oldval);
 			}
 			this.list.push(newEvent);
 		}

@@ -114,7 +114,7 @@ function parseStateForAssets(state,cb)
 		if (state !== undefined){
 
 		// Load assets added manually to the state file
-		var additionalAssets = state[state.length - 1]['___additionalAssets'];
+		var additionalAssets = state[state.length - 1]? state[state.length - 1]['___additionalAssets'] : [];
 		if (additionalAssets !== undefined) {
 			for (var idx = 0; idx < additionalAssets.length; idx++) {
 				list.push({type: "unknown", url: additionalAssets[idx]});

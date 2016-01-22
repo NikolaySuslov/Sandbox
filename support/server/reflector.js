@@ -7,7 +7,7 @@ var url = require("url");
 var mime = require('mime');
 var sessions = require('./sessions.js');
 var messageCompress = require('../client/lib/messageCompress')
-    .messageCompress;
+    .messageCompress();   //note! We're calling the construtor here, so this file has just one instance
 var connect = require('connect'),
     parseSignedCookie = connect.utils.parseSignedCookie,
     cookie = require('express/node_modules/cookie');
@@ -33,7 +33,7 @@ function startup(listen)
         'heartbeat timeout': 30
     });
     //assoicate the session information from the handshake with the socket.
-    //this is a touch tricky, because we need to manually do the session decrypt from the cookie
+    //this is a touch tricky, because we need to manually do the session decrypt from the cookie     
     sio.use(function(socket, next)
     {
         var handshake = socket.request;
@@ -108,21 +108,26 @@ function ServeSinglePlayer(socket, namespace, instancedata)
         }
         DBstateToVWFDef(state, instancedata, function(scene)
         {
-            socket.emit('message',
+            socket.emit('m',
             {
                 "action": "setState",
                 "parameters":  {nodes:[scene],kernel:{time:0},annotations:{"1":"application"}},
                 "time": 0
             });
-            var joinMessage = messageCompress.pack(JSON.stringify(
+            var joinMessage = messageCompress.pack(
             {
                 "action": "fireEvent",
                 "parameters": ["clientConnected", [socket.id, socket.loginData.Username, socket.loginData.UID]],
                 node: "index-vwf",
                 "time": 0
+            });
+            socket.emit('m', joinMessage);
+			socket.emit('m', messageCompress.pack(
+            {
+                "action": "startSimulating",
+                "parameters": ["index-vwf"],
+                "time": 0
             }));
-            socket.emit('message', joinMessage);
-
             var tempState = (new(require('./sandboxState').sandboxState)("",
             {}));
 
@@ -138,8 +143,8 @@ function ServeSinglePlayer(socket, namespace, instancedata)
                         parameters: [avatar, null],
                         time: 0
                     };
-                    socket.emit('message', createAvatarMessage);
-                    socket.emit('message',
+                    socket.emit('m', createAvatarMessage);
+                    socket.emit('m',
                     {
                         "action": "goOffline",
                         "parameters": [scene],
@@ -150,7 +155,7 @@ function ServeSinglePlayer(socket, namespace, instancedata)
             }
             else
             {
-                socket.emit('message',
+                socket.emit('m',
                 {
                     "action": "goOffline",
                     "parameters": [scene],
@@ -182,7 +187,7 @@ function WebSocketConnection(socket, _namespace)
         if (!socket.loginData.UID && socket.loginData.Username)
             socket.loginData.UID = socket.loginData.Username;
         var namespace = _namespace || getNamespace(socket);
-        //let the data viewer tool connect, but wait for it to tell us what namespace to join
+        //let the data viewer tool connect, but wait for it to tell us what namespace to join 
         if (namespace && namespace.indexOf('_adl_dataview_') == 0)
         {
             socket.on('setNamespace', function(msg)
@@ -263,7 +268,7 @@ function runningInstanceList()
     this.remove = function(id)
     {
         //send a signal to the parent process that we are hosting this instance
-        if (global.configuration.cluster && this.instances[id])
+        if(global.configuration.cluster && this.instances[id])
         {
             var message = {};
             message.type = 'state';
@@ -288,7 +293,7 @@ global.instances = RunningInstances;
 function ClientConnected(socket, namespace, instancedata)
 {
     console.log('ClientConnected');
-    //if it's a new instance, setup record
+    //if it's a new instance, setup record 
     if (!RunningInstances.has(namespace))
     {
         logger.warn('adding new instance' + namespace)
@@ -315,5 +320,5 @@ exports.closeInstance = function(id)
         instance.shutdown();
         RunningInstances.remove(instance);
     }
-
+    
 }

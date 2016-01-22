@@ -20,10 +20,7 @@ define(['./angular-app'], function(app)
             }
         }
     ]);
-    /**********************************************************************
-     * Everything below this point is legacy unused code, but might be
-     * useful as a guide later, once we reimplement autocomplete.
-     *********************************************************************/
+   
     function initialize()
     {
         var self = this;
@@ -453,7 +450,7 @@ define(['./angular-app'], function(app)
                 }
                 else if (text == "." && $('#AutoComplete').is(":visible"))
                 {
-                    $('#AutoComplete').trigger('command', 'enter');
+                    //$('#AutoComplete').trigger('command', 'enter');
                     this.origOnTextInput(text);
                 }
                 else

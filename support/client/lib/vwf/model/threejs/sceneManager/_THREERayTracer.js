@@ -1,18 +1,16 @@
-//define( ["vwf/model/threejs/three","vwf/model/threejs/MATH"], function(three, MATH ) {
+define( ["vwf/model/threejs/MATH"], function() {
 "use strict";
 var Mat4 = goog.vec.Mat4;
 var Vec3 = goog.vec.Vec3;
+
 ///////////////////////////////////////////////////////////////////////////////
 // add cpu side ray casting to MATH. Faster then GPU based picking in many cases
-
 //Max number of faces a octree node may have before subdivding
 var OCTMaxFaces = 20;
 //max depth of the octree
 var OCTMaxDepth = 4;
-
-
-
-THREE.Object3D.prototype.getModelMatrix = function(mat) {
+THREE.Object3D.prototype.getModelMatrix = function(mat)
+{
     if (!mat) mat = [];
     var ele = this.matrixWorld.elements;
     mat[0] = ele[0];
@@ -31,12 +29,10 @@ THREE.Object3D.prototype.getModelMatrix = function(mat) {
     mat[7] = ele[13];
     mat[11] = ele[14];
     mat[15] = ele[15];
-
     return mat;
 }
-
-THREE.Object3D.prototype.getLocalMatrix = function(mat) {
-
+THREE.Object3D.prototype.getLocalMatrix = function(mat)
+{
     if (!mat) mat = [];
     var ele = this.matrix.elements;
     mat[0] = ele[0];
@@ -55,96 +51,93 @@ THREE.Object3D.prototype.getLocalMatrix = function(mat) {
     mat[7] = ele[13];
     mat[11] = ele[14];
     mat[15] = ele[15];
-
     return mat;
-
 }
-
-THREE.CPUPickOptions = function() {
-    this.UserRenderBatches = false;
-    this.ignore = [];
-    this.OneHitPerMesh = false;
-    this.faceTests = 0;
-    this.objectTests = 0;
-    this.regionTests = 0;
-    this.regionsRejectedByDist = 0;
-    this.regionsRejectedByBounds = 0;
-    this.objectsRejectedByBounds = 0;
-    this.objectRegionsRejectedByDist = 0;
-    this.objectRegionsRejectedByBounds = 0;
-    this.objectRegionsTested = 0;
-    this.objectsTested = [];
-    this.filter = null;
-    this.noTraverse = true;
-    this.cullQuery = false;
-}
-// Return the nearsest, highest priority hit 
-THREE.Scene.prototype.CPUPick = function(origin, direction, options, hitlist) {
-    //not currently using the max dist, but could make for some good optimizations	
-
-    if (!options) options = new THREE.CPUPickOptions();
-
-
-    //concat all hits from children	  
-    if (!hitlist)
-        hitlist = [];
-    var count = 0;
-    for (var i = 0; i < this.children.length; i++) {
-        if (this.children[i].CPUPick) {
-            this.children[i].CPUPick(origin, direction, options, hitlist);
-        }
+THREE.CPUPickOptions = function()
+    {
+        this.UserRenderBatches = false;
+        this.ignore = [];
+        this.OneHitPerMesh = false;
+        this.faceTests = 0;
+        this.objectTests = 0;
+        this.regionTests = 0;
+        this.regionsRejectedByDist = 0;
+        this.regionsRejectedByBounds = 0;
+        this.objectsRejectedByBounds = 0;
+        this.objectRegionsRejectedByDist = 0;
+        this.objectRegionsRejectedByBounds = 0;
+        this.objectRegionsTested = 0;
+        this.objectsTested = [];
+        this.filter = null;
+        this.noTraverse = true;
+        this.cullQuery = false;
     }
-    if (options.UserRenderBatches && this.renderBatches) {
-        for (var i = 0; i < this.renderBatches.length; i++) {
-            if (this.renderBatches[i].renderObject) {
-                this.renderBatches[i].renderObject.CPUPick(origin, direction, options, hitlist);
+    // Return the nearsest, highest priority hit 
+THREE.Scene.prototype.CPUPick = function(origin, direction, options, hitlist)
+    {
+        //not currently using the max dist, but could make for some good optimizations	
+        if (!options) options = new THREE.CPUPickOptions();
+        //concat all hits from children	  
+        if (!hitlist)
+            hitlist = [];
+        var count = 0;
+        for (var i = 0; i < this.children.length; i++)
+        {
+            if (this.children[i].CPUPick)
+            {
+                this.children[i].CPUPick(origin, direction, options, hitlist);
             }
         }
+        if (options.UserRenderBatches && this.renderBatches)
+        {
+            for (var i = 0; i < this.renderBatches.length; i++)
+            {
+                if (this.renderBatches[i].renderObject)
+                {
+                    this.renderBatches[i].renderObject.CPUPick(origin, direction, options, hitlist);
+                }
+            }
+        }
+        //sort the hits by priority and distance
+        hitlist = hitlist.sort(function(a, b)
+        {
+            var ret = b.priority - a.priority;
+            if (ret == 0)
+                ret = a.distance - b.distance;
+            return ret;
+        });
+        return hitlist[0];
     }
-    //sort the hits by priority and distance
-    hitlist = hitlist.sort(function(a, b) {
-        var ret = b.priority - a.priority;
-        if (ret == 0)
-            ret = a.distance - b.distance;
-        return ret;
-
-    });
-    return hitlist[0];
-}
-
-
-
-//MATH.Collada.prototype.CPUPick = MATH.Group.prototype.CPUPick;
-//MATH.Collada.prototype.FrustrumCast = MATH.Group.prototype.FrustrumCast;
-//this is a custom geometry type, not included in MATH distro
-//JSONNode.prototype.CPUPick = MATH.Group.prototype.CPUPick;
-//JSONNode.prototype.FrustrumCast = MATH.Group.prototype.FrustrumCast;
-//MATH.Collada.prototype.GetBoundingBox = MATH.Group.prototype.GetBoundingBox;
-//JSONNode.prototype.GetBoundingBox = MATH.Group.prototype.GetBoundingBox;
-
-//Return the min and max XYZ from a list of verts. positions should be a flat array in the form [x,y,z,x2,y2,z2,...]
-function FindMaxMin(positions) {
-
+    //MATH.Collada.prototype.CPUPick = MATH.Group.prototype.CPUPick;
+    //MATH.Collada.prototype.FrustrumCast = MATH.Group.prototype.FrustrumCast;
+    //this is a custom geometry type, not included in MATH distro
+    //JSONNode.prototype.CPUPick = MATH.Group.prototype.CPUPick;
+    //JSONNode.prototype.FrustrumCast = MATH.Group.prototype.FrustrumCast;
+    //MATH.Collada.prototype.GetBoundingBox = MATH.Group.prototype.GetBoundingBox;
+    //JSONNode.prototype.GetBoundingBox = MATH.Group.prototype.GetBoundingBox;
+    //Return the min and max XYZ from a list of verts. positions should be a flat array in the form [x,y,z,x2,y2,z2,...]
+function FindMaxMin(positions)
+{
     var min = [Infinity, Infinity, Infinity];
     var max = [-Infinity, -Infinity, -Infinity];
-
-    for (var i = 0; i < positions.length - 2; i += 3) {
+    for (var i = 0; i < positions.length - 2; i += 3)
+    {
         var vert = [positions[i], positions[i + 1], positions[i + 2]];
         if (vert[0] > max[0]) max[0] = vert[0];
         if (vert[1] > max[1]) max[1] = vert[1];
         if (vert[2] > max[2]) max[2] = vert[2];
-
         if (vert[0] < min[0]) min[0] = vert[0];
         if (vert[1] < min[1]) min[1] = vert[1];
         if (vert[2] < min[2]) min[2] = vert[2];
     }
     return [min, max];
 }
-
 //Generate the bounding box and sphere for a mesh;
-THREE.Geometry.prototype.GenerateBounds = function() {
+THREE.Geometry.prototype.GenerateBounds = function()
+{
     var positions = [];
-    for (var i = 0; i < this.vertices.length; i++) {
+    for (var i = 0; i < this.vertices.length; i++)
+    {
         positions.push(this.vertices[i].x);
         positions.push(this.vertices[i].y);
         positions.push(this.vertices[i].z);
@@ -152,24 +145,23 @@ THREE.Geometry.prototype.GenerateBounds = function() {
     var bounds = FindMaxMin(positions);
     var min = bounds[0];
     var max = bounds[1];
-
     this.BoundingSphere = new BoundingSphereRTAS(min, max);
     this.BoundingBox = allocate_BoundingBoxRTAS(min, max);
 }
 var n4;
 var d4;
 
-function intersectLinePlane(ray, raypoint, planepoint, planenormal) {
+function intersectLinePlane(ray, raypoint, planepoint, planenormal)
+{
     n4 = MATH.dotVec3(MATH.subVec3(planepoint, raypoint), planenormal);
     d4 = MATH.dotVec3(ray, planenormal);
     if (d4 == 0) return null;
-
     var alongray = MATH.scaleVec3(ray, n4 / d4);
     return MATH.addVec3(alongray, raypoint);
 }
-
 //return the intersection of a ray and a sphere
-var intersectRaySphere = function(origin, direction, center, radius) {
+var intersectRaySphere = function(origin, direction, center, radius)
+    {
         direction = MATH.scaleVec3(direction, 1.0 / MATH.lengthVec3(direction));
         center = MATH.subVec3(center, origin);
         var LdotC = MATH.dotVec3(direction, center);
@@ -180,8 +172,8 @@ var intersectRaySphere = function(origin, direction, center, radius) {
         return Math.max(d1, d2);
     }
     //The basic representation of a face
-
-function face(v0, v1, v2) {
+function face(v0, v1, v2)
+{
     this.v0 = v0;
     this.v1 = v1;
     this.v2 = v2;
@@ -192,44 +184,43 @@ function face(v0, v1, v2) {
     this.c[1] = (this.v0[1] + this.v1[1] + this.v2[1]) / 3.0;
     this.c[2] = (this.v0[2] + this.v1[2] + this.v2[2]) / 3.0;
     this.r = Math.max(MATH.distanceVec3(this.v0, this.c), MATH.distanceVec3(this.v1, this.c), MATH.distanceVec3(this.v2, this.c));
-
     //precomp some values used in intersection
     var s1 = MATH.subVec3(v1, v0);
     var s2 = MATH.subVec3(v2, v0);
     this.area = (MATH.lengthVec3(s1) * MATH.lengthVec3(s2)) / 2.0
     s1 = MATH.scaleVec3(s1, 1.0 / MATH.lengthVec3(s1));
     s2 = MATH.scaleVec3(s2, 1.0 / MATH.lengthVec3(s2));
-
     //generate the face normal
     var norm = MATH.crossVec3(s2, s1);
     norm = MATH.scaleVec3(norm, 1.0 / MATH.lengthVec3(norm));
     this.norm = norm;
-
 }
 
-function crossProduct(a, b, c) {
+function crossProduct(a, b, c)
+{
     a[0] = b[1] * c[2] - c[1] * b[2];
     a[1] = b[2] * c[0] - c[2] * b[0];
     a[2] = b[0] * c[1] - c[0] * b[1];
 }
 
-function innerProduct(v, q) {
+function innerProduct(v, q)
+{
     return (v[0] * q[0] +
         v[1] * q[1] +
         v[2] * q[2]);
 }
 
-function vector(a, b, c) {
+function vector(a, b, c)
+{
     a[0] = b[0] - c[0];
     a[1] = b[1] - c[1];
     a[2] = b[2] - c[2];
 }
 
-
-function distanceLineSegment(o, d, v1, v2, hitData) {
+function distanceLineSegment(o, d, v1, v2, hitData)
+{
     //P(s) = P0 + sU
     //Q(t) = Q0 + tV
-
     var p0 = o;
     var q0 = v1;
     var s = 1;
@@ -239,49 +230,40 @@ function distanceLineSegment(o, d, v1, v2, hitData) {
     var a = MATH.dotVec3(u, u);
     var b = MATH.dotVec3(u, v);
     var c = MATH.dotVec3(v, v);
-
     var w0 = MATH.subVec3(p0, q0);
-
     var d = MATH.dotVec3(u, w0);
     var e = MATH.dotVec3(v, w0);
-
     var Sc = (b * e - c * d) / (a * c - b * b);
     var Tc = (a * e - b * d) / (a * c - b * b);
-
     if (Tc / t < 0 || Tc / t > 1)
         return Infinity;
-
     var I1 = MATH.addVec3(p0, MATH.scaleVec3(u, Sc));
     var I2 = MATH.addVec3(q0, MATH.scaleVec3(v, Tc));
     hitData.point = I2;
     var dist = MATH.distanceVec3(I1, I2)
     hitData.t = Tc / MATH.distanceVec3(v1, v2);
-
     return dist;
 }
 
-
-function pointInFrustrum(point, frustrum) {
+function pointInFrustrum(point, frustrum)
+{
     //checks if cube points are within the frustum planes
-
-
     var x, y, z;
-
     x = point[0];
     y = point[1];
     z = point[2];
-
-    for (var i = 0; i < frustrum.planes.length; i++) {
+    for (var i = 0; i < frustrum.planes.length; i++)
+    {
         var vec = MATH.subVec3(point, frustrum.planes[i].point);
         vec = MATH.toUnitVec3(vec);
         if (MATH.dotVec3(vec, frustrum.planes[i].normal) < 0)
             return false;
     }
     return true;
-
 }
 
-function buildFaceListFromBounds(bound) {
+function buildFaceListFromBounds(bound)
+{
     var p1 = [bound.min[0], bound.min[1], bound.min[2]];
     var p2 = [bound.max[0], bound.min[1], bound.min[2]];
     var p3 = [bound.min[0], bound.max[1], bound.min[2]];
@@ -290,7 +272,6 @@ function buildFaceListFromBounds(bound) {
     var p6 = [bound.max[0], bound.min[1], bound.max[2]];
     var p7 = [bound.min[0], bound.max[1], bound.max[2]];
     var p8 = [bound.max[0], bound.max[1], bound.max[2]];
-
     var f1 = new face(p1, p2, p4);
     var f2 = new face(p4, p3, p1);
     var f3 = new face(p5, p6, p8);
@@ -303,82 +284,87 @@ function buildFaceListFromBounds(bound) {
     var f10 = new face(p8, p6, p2);
     var f11 = new face(p1, p3, p7);
     var f12 = new face(p7, p5, p1);
-
     var list = new SimpleFaceListRTAS([]);
     list.faces = [f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12];
     return list;
 }
-
-face.prototype.intersectFrustrum = function(frustrum, opts) {
-    if (pointInFrustrum(this.v0, frustrum) || pointInFrustrum(this.v0, frustrum) || pointInFrustrum(this.v0, frustrum)) {
+face.prototype.intersectFrustrum = function(frustrum, opts)
+{
+    if (pointInFrustrum(this.v0, frustrum) || pointInFrustrum(this.v0, frustrum) || pointInFrustrum(this.v0, frustrum))
+    {
         var point = this.c;
         var norm = this.norm;
         return allocate_FaceIntersect(point, norm, this);
     }
-    for (var i = 0; i < 4; i++) {
-
-        if (this.intersect1(frustrum.cornerRays[i].o, frustrum.cornerRays[i].d, opts)) {
+    for (var i = 0; i < 4; i++)
+    {
+        if (this.intersect1(frustrum.cornerRays[i].o, frustrum.cornerRays[i].d, opts))
+        {
             var point = this.c;
             var norm = this.norm;
             return allocate_FaceIntersect(point, norm, this);
-
         }
     }
     return null;
 }
-
 window.cache_FaceIntersect = [];
 
-function deallocate_FaceIntersect(FI) {
+function deallocate_FaceIntersect(FI)
+{
     cache_FaceIntersect.push(FI);
 }
 
-function clean_FaceIntersect(FI, point, norm, face) {
-
-    if (point) {
+function clean_FaceIntersect(FI, point, norm, face)
+{
+    if (point)
+    {
         FI.point[0] = point[0];
         FI.point[1] = point[1];
         FI.point[2] = point[2];
-    } else {
+    }
+    else
+    {
         FI.point[0] = 0;
         FI.point[1] = 0;
         FI.point[2] = 0;
     }
-
-    if (norm) {
+    if (norm)
+    {
         FI.norm[0] = norm[0];
         FI.norm[1] = norm[1];
         FI.norm[2] = norm[2];
-    } else {
+    }
+    else
+    {
         FI.norm[0] = 0;
         FI.norm[1] = 0;
         FI.norm[2] = 0;
     }
-
     FI.distance = -1;
     FI.object = null;
     FI.priority = -1;
-
     FI.face = face;
-
     FI.rawPoint = null;
     FI.t = 0;
     FI.vertindex = 0;
-
 }
 
-function allocate_FaceIntersect(point, norm, face) {
-    if (cache_FaceIntersect.length > 0) {
+function allocate_FaceIntersect(point, norm, face)
+{
+    if (cache_FaceIntersect.length > 0)
+    {
         var ret = cache_FaceIntersect.shift();
         clean_FaceIntersect(ret, point, norm, face);
         return ret;
-    } else {
-        
+    }
+    else
+    {
         return new FaceIntersect(point, norm, face)
     }
 }
 
-function FaceIntersect(point, norm, face) {
+function FaceIntersect(point, norm, face)
+{
     if (point)
         this.point = [point[0], point[1], point[2]];
     else
@@ -396,33 +382,34 @@ function FaceIntersect(point, norm, face) {
     this.vertindex = 0;
 }
 
-function release_FaceIntersect(FT) {
+function release_FaceIntersect(FT)
+{
     cache_FaceIntersect.push(FT);
     clean_FaceIntersect(FT);
 }
-FaceIntersect.prototype.release = function() {
+FaceIntersect.prototype.release = function()
+{
     release_FaceIntersect(this);
 }
-
 var temparray = [];
 //intersect a ray with a face
-face.prototype.intersect1 = function(p, d, opts) {
-
+face.prototype.intersect1 = function(p, d, opts)
+{
     //huh. profiling shows this is much slower.
     //var hit = intersectRaySphere(p,d,this.c,this.r)
     //if(hit < 0) return null;
     if (opts)
         opts.faceTests++;
-
     var v0 = this.v0;
     var v1 = this.v1;
     var v2 = this.v2;
-
-    if (!this.e1) {
+    if (!this.e1)
+    {
         this.e1 = [0, 0, 0]; //,e2[3],h[3],s[3],q[3];
         vector(this.e1, v1, v0);
     }
-    if (!this.e2) {
+    if (!this.e2)
+    {
         this.e2 = [0, 0, 0];
         vector(this.e2, v2, v0);
     }
@@ -433,59 +420,44 @@ face.prototype.intersect1 = function(p, d, opts) {
     var f = 0;
     var u = 0;
     var v = 0;
-
     crossProduct(h, d, this.e2);
     a = innerProduct(this.e1, h);
-
     //looks like this number needs tuning.... what is minimum Javascript eplison?
-    if (a > -0.00000001 && a < 0.00000001) {
-
+    if (a > -0.00000001 && a < 0.00000001)
+    {
         return null;
     }
-
-
     f = 1 / a;
     vector(s, p, v0);
     u = f * (innerProduct(s, h));
-
-    if (u < 0.0 || u > 1.0) {
-
+    if (u < 0.0 || u > 1.0)
+    {
         return null;
     }
-
     crossProduct(q, s, this.e1);
     v = f * innerProduct(d, q);
-
-    if (v < 0.0 || u + v > 1.0) {
-
+    if (v < 0.0 || u + v > 1.0)
+    {
         return null;
     }
-
     // at this stage we can compute t to find out where
     // the intersection point is on the line
     var t = f * innerProduct(this.e2, q);
-
     if (t > 0.00001) // ray intersection
     {
         var point = Vec3.add(p, Vec3.scale(d, t, temparray), []);
         var norm = this.norm;
         if (MATH.dotVec3(d, norm) > 0)
             norm = Vec3.scale(norm, -1, []);
-
         var ret = allocate_FaceIntersect(point, norm, this);
-
-
-
         return ret;
-    } else // this means that there is a line intersection
+    }
+    else // this means that there is a line intersection
     // but not a ray intersection
     {
-
         return null;
     }
-
 }
-
 var A;
 var B;
 var C;
@@ -522,11 +494,9 @@ var sep5;
 var sep6;
 var sep7;
 var separated;
-
-
 //p = [x,y,z] of center
-face.prototype.intersectSphere = function(P, r, opts) {
-
+face.prototype.intersectSphere = function(P, r, opts)
+{
     A = MATH.subVec3(this.v0, P);
     B = MATH.subVec3(this.v1, P);
     C = MATH.subVec3(this.v2, P);
@@ -563,26 +533,26 @@ face.prototype.intersectSphere = function(P, r, opts) {
     sep6 = (MATH.dotVec3(Q2, Q2) > rr * e2 * e2) && (MATH.dotVec3(Q2, QA) > 0);
     sep7 = (MATH.dotVec3(Q3, Q3) > rr * e3 * e3) && (MATH.dotVec3(Q3, QB) > 0);
     separated = sep1 || sep2 || sep3 || sep4 || sep5 || sep6 || sep7;
-    if (!separated) {
-
+    if (!separated)
+    {
         var point;
-        if (d < 0) {
+        if (d < 0)
+        {
             point = this.intersect1(P, this.norm, opts)
             if (point) point = point.point;
             else
                 point = intersectLinePlane(this.norm, P, this.v0, this.norm);
         }
-        if (d >= 0) {
+        if (d >= 0)
+        {
             point = this.intersect1(P, MATH.scaleVec3(this.norm, -1), opts);
             if (point) point = point.point;
             else
                 point = intersectLinePlane(MATH.scaleVec3(this.norm, -1), P, this.v0, this.norm);
         }
-
         var dp0 = Vec3.magnitudeSquared(MATH.subVec3(point, this.v0));
         var dp1 = Vec3.magnitudeSquared(MATH.subVec3(point, this.v1));
         var dp2 = Vec3.magnitudeSquared(MATH.subVec3(point, this.v2));
-
         if (Math.min(dp0, dp1, dp2) == dp0)
             point = this.v0;
         if (Math.min(dp0, dp1, dp2) == dp1)
@@ -594,92 +564,96 @@ face.prototype.intersectSphere = function(P, r, opts) {
             face: this,
             point: point
         };
-
     }
     return null;
-
 }
 
-function testSphereTriPerf() {
+function testSphereTriPerf()
+{
     var face1 = new face([Math.SecureRandom(), Math.SecureRandom(), Math.SecureRandom()], [Math.SecureRandom(), Math.SecureRandom(), Math.SecureRandom()], [Math.SecureRandom(), Math.SecureRandom(), Math.SecureRandom()]);
     var start = performance.now();
     var p = [Math.SecureRandom(), Math.SecureRandom(), Math.SecureRandom()];
     var r = Math.SecureRandom();
-    for (var i = 0; i < 100000; i++) {
+    for (var i = 0; i < 100000; i++)
+    {
         face1.intersectSphere(p, r);
     }
     console.log(performance.now() - start);
 }
 // for meshes that are few polys, just create a list of faces
-function SimpleFaceListRTAS(faces, verts) {
+function SimpleFaceListRTAS(faces, verts)
+{
     this.faces = [];
-
-    for (var i = 0; i < faces.length - 2; i += 3) {
-
+    for (var i = 0; i < faces.length - 2; i += 3)
+    {
         this.faces.push(new face([verts[faces[i] * 3 + 0], verts[faces[i] * 3 + 1], verts[faces[i] * 3 + 2]], [verts[faces[i + 1] * 3 + 0], verts[faces[i + 1] * 3 + 1], verts[faces[i + 1] * 3 + 2]], [verts[faces[i + 2] * 3 + 0], verts[faces[i + 2] * 3 + 1], verts[faces[i + 2] * 3 + 2]]));
     }
 }
 //Intersect a ray with a list of faces
-SimpleFaceListRTAS.prototype.intersect = function(origin, direction, opts, intersects) {
-
-    if (!intersects)
-        intersects = [];
-
-    for (var i = 0; i < this.faces.length; i++) {
-        var intersect = this.faces[i].intersect1(origin, direction, opts);
-        if (intersect) {
-            intersects.push(intersect);
-            if (opts && opts.OneHitPerMesh) {
-                return intersects;
+SimpleFaceListRTAS.prototype.intersect = function(origin, direction, opts, intersects)
+    {
+        if (!intersects)
+            intersects = [];
+        for (var i = 0; i < this.faces.length; i++)
+        {
+            var intersect = this.faces[i].intersect1(origin, direction, opts);
+            if (intersect)
+            {
+                intersects.push(intersect);
+                if (opts && opts.OneHitPerMesh)
+                {
+                    return intersects;
+                }
             }
         }
+        return intersects;
     }
-    return intersects;
-}
-
-//Intersect a sphere with a list of faces
-SimpleFaceListRTAS.prototype.intersectSphere = function(center, radius, opts) {
-    var intersects = [];
-    for (var i = 0; i < this.faces.length; i++) {
-        var intersect = this.faces[i].intersectSphere(center, radius);
-        if (intersect) {
-            intersects.push(intersect);
-            if (opts && opts.OneHitPerMesh)
-                return intersects;
-        }
-    }
-    return intersects;
-}
-
-//Intersect a frustrum with a list of faces
-SimpleFaceListRTAS.prototype.intersectFrustrum = function(frustrum, opts,ret) {
-    
-    for (var i = 0; i < this.faces.length; i++) {
-        var intersect = this.faces[i].intersectFrustrum(frustrum, opts);
-        if (intersect) {
-            ret.push(intersect);
-            if (opts && opts.OneHitPerMesh) {
-
-                return ;
+    //Intersect a sphere with a list of faces
+SimpleFaceListRTAS.prototype.intersectSphere = function(center, radius, opts)
+    {
+        var intersects = [];
+        for (var i = 0; i < this.faces.length; i++)
+        {
+            var intersect = this.faces[i].intersectSphere(center, radius);
+            if (intersect)
+            {
+                intersects.push(intersect);
+                if (opts && opts.OneHitPerMesh)
+                    return intersects;
             }
         }
+        return intersects;
     }
-    return ;
-}
-//a quick structure to test bounding spheres
-function BoundingSphereRTAS(min, max) {
-
+    //Intersect a frustrum with a list of faces
+SimpleFaceListRTAS.prototype.intersectFrustrum = function(frustrum, opts, ret)
+    {
+        for (var i = 0; i < this.faces.length; i++)
+        {
+            var intersect = this.faces[i].intersectFrustrum(frustrum, opts);
+            if (intersect)
+            {
+                ret.push(intersect);
+                if (opts && opts.OneHitPerMesh)
+                {
+                    return;
+                }
+            }
+        }
+        return;
+    }
+    //a quick structure to test bounding spheres
+function BoundingSphereRTAS(min, max)
+{
     this.center = MATH.scaleVec3(MATH.addVec3(min, max), .5);
     this.radius = MATH.lengthVec3(MATH.subVec3(max, min)) / 2.0;
 }
-BoundingSphereRTAS.prototype.intersect = function(origin, direction) {
-    return intersectRaySphere(origin, direction, this.center, this.radius);
-}
-
-
-
-// a quick structure to test bounding boxes
-function BoundingBoxRTAS(min, max) {
+BoundingSphereRTAS.prototype.intersect = function(origin, direction)
+    {
+        return intersectRaySphere(origin, direction, this.center, this.radius);
+    }
+    // a quick structure to test bounding boxes
+function BoundingBoxRTAS(min, max)
+{
     this.max = [-Infinity, -Infinity, -Infinity];
     this.min = [Infinity, Infinity, Infinity];
     this.faces = [];
@@ -688,22 +662,24 @@ function BoundingBoxRTAS(min, max) {
     if (max)
         this.max = [max[0], max[1], max[2]];;
 }
-
 var cache_BoundingBoxRTAS = [];
 
-function clean_BoundingBoxRTAS(box, min, max) {
+function clean_BoundingBoxRTAS(box, min, max)
+{
     box.min[0] = Infinity;
     box.min[1] = Infinity;
     box.min[2] = Infinity;
     box.max[0] = -Infinity;
     box.max[1] = -Infinity;
     box.max[2] = -Infinity;
-    if (min) {
+    if (min)
+    {
         box.min[0] = min[0];
         box.min[1] = min[1];
         box.min[2] = min[2];
     }
-    if (max) {
+    if (max)
+    {
         box.max[0] = max[0];
         box.max[1] = max[1];
         box.max[2] = max[2];
@@ -711,43 +687,42 @@ function clean_BoundingBoxRTAS(box, min, max) {
     box.faces.length = 0;
 }
 
-function allocate_BoundingBoxRTAS(min, max) {
-
-
+function allocate_BoundingBoxRTAS(min, max)
+{
     if (cache_BoundingBoxRTAS.length == 0)
         return new BoundingBoxRTAS(min, max);
-    else {
+    else
+    {
         var reuse = cache_BoundingBoxRTAS.shift();
         clean_BoundingBoxRTAS(reuse, min, max);
         return reuse;
     }
 }
 
-function deallocate_BoundingBoxRTAS(box) {
-
+function deallocate_BoundingBoxRTAS(box)
+{
     cache_BoundingBoxRTAS.push(box);
 }
-
-
-BoundingBoxRTAS.prototype.release = function() {
-
-    deallocate_BoundingBoxRTAS(this);
-}
-// copy
-BoundingBoxRTAS.prototype.clone = function() {
-    return allocate_BoundingBoxRTAS([this.min[0], this.min[1], this.min[2]], [this.max[0], this.max[1], this.max[2]]);
-}
-//sort of like add for two boxes. expand this box to include the new one was well as itself
-BoundingBoxRTAS.prototype.expandBy = function(bb) {
-    if (bb.min[0] < this.min[0]) this.min[0] = bb.min[0];
-    if (bb.min[1] < this.min[1]) this.min[1] = bb.min[1];
-    if (bb.min[2] < this.min[2]) this.min[2] = bb.min[2];
-    if (bb.max[0] > this.max[0]) this.max[0] = bb.max[0];
-    if (bb.max[1] > this.max[1]) this.max[1] = bb.max[1];
-    if (bb.max[2] > this.max[2]) this.max[2] = bb.max[2];
-}
-//10-5-14 working on optimization here. Seems to be a big bottleneck
-
+BoundingBoxRTAS.prototype.release = function()
+    {
+        deallocate_BoundingBoxRTAS(this);
+    }
+    // copy
+BoundingBoxRTAS.prototype.clone = function()
+    {
+        return allocate_BoundingBoxRTAS([this.min[0], this.min[1], this.min[2]], [this.max[0], this.max[1], this.max[2]]);
+    }
+    //sort of like add for two boxes. expand this box to include the new one was well as itself
+BoundingBoxRTAS.prototype.expandBy = function(bb)
+    {
+        if (bb.min[0] < this.min[0]) this.min[0] = bb.min[0];
+        if (bb.min[1] < this.min[1]) this.min[1] = bb.min[1];
+        if (bb.min[2] < this.min[2]) this.min[2] = bb.min[2];
+        if (bb.max[0] > this.max[0]) this.max[0] = bb.max[0];
+        if (bb.max[1] > this.max[1]) this.max[1] = bb.max[1];
+        if (bb.max[2] > this.max[2]) this.max[2] = bb.max[2];
+    }
+    //10-5-14 working on optimization here. Seems to be a big bottleneck
 var tempmap_TransformBy = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 var tempPoints_TransformBy = [
     [0, 0, 0],
@@ -759,7 +734,6 @@ var tempPoints_TransformBy = [
     [0, 0, 0],
     [0, 0, 0]
 ];
-
 var temppoints_vert0 = tempPoints_TransformBy[0];
 var temppoints_vert1 = tempPoints_TransformBy[1];
 var temppoints_vert2 = tempPoints_TransformBy[2];
@@ -771,17 +745,12 @@ var temppoints_vert7 = tempPoints_TransformBy[7];
 var allpoints = new Float32Array(24);
 var tempvert = [0, 0, 0];
 //transform the boundging box by a matrix, then re-axis align.
-BoundingBoxRTAS.prototype.transformBy = function(matrix) {
-
+BoundingBoxRTAS.prototype.transformBy = function(matrix)
+{
     //avoid flipping min and max when they are infinity
     if (this.min[0] == Infinity || this.max[0] == -Infinity)
         return this.clone();
-
-
-
     //mat = MATH.inverseMat4(mat); 
-
-
     var min = this.min;
     var max = this.max;
     //list of all corners
@@ -809,8 +778,8 @@ BoundingBoxRTAS.prototype.transformBy = function(matrix) {
     temppoints_vert7[0] = max[0];
     temppoints_vert7[1] = max[1];
     temppoints_vert7[2] = max[2];
-
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < 8; i++)
+    {
         //transform all points
         MATH.mulMat4Vec3(matrix, tempPoints_TransformBy[i], tempvert);
         allpoints[i * 3] = tempvert[0];
@@ -823,30 +792,32 @@ BoundingBoxRTAS.prototype.transformBy = function(matrix) {
     var max2 = bounds[1];
     return allocate_BoundingBoxRTAS(min2, max2);
 }
-
-BoundingBoxRTAS.prototype.intersectFrustrum = function(frustrum, opts) {
-    var p0 = [this.min[0], this.min[1], this.min[2]];
-    var p1 = [this.min[0], this.min[1], this.max[2]];
-    var p2 = [this.min[0], this.max[1], this.min[2]];
-    var p3 = [this.min[0], this.max[1], this.max[2]];
-    var p4 = [this.max[0], this.min[1], this.min[2]];
-    var p5 = [this.max[0], this.min[1], this.max[2]];
-    var p6 = [this.max[0], this.max[1], this.min[2]];
-    var p7 = [this.max[0], this.max[1], this.max[2]];
-
-    var points = [p0, p1, p2, p3, p4, p5, p6, p7];
-    for (var i = 0; i < 8; i++) {
-        if (pointInFrustrum(points[i], frustrum))
-            return [true];
+BoundingBoxRTAS.prototype.intersectFrustrum = function(frustrum, opts)
+    {
+        var p0 = [this.min[0], this.min[1], this.min[2]];
+        var p1 = [this.min[0], this.min[1], this.max[2]];
+        var p2 = [this.min[0], this.max[1], this.min[2]];
+        var p3 = [this.min[0], this.max[1], this.max[2]];
+        var p4 = [this.max[0], this.min[1], this.min[2]];
+        var p5 = [this.max[0], this.min[1], this.max[2]];
+        var p6 = [this.max[0], this.max[1], this.min[2]];
+        var p7 = [this.max[0], this.max[1], this.max[2]];
+        var points = [p0, p1, p2, p3, p4, p5, p6, p7];
+        for (var i = 0; i < 8; i++)
+        {
+            if (pointInFrustrum(points[i], frustrum))
+                return [true];
+        }
+        for (var i = 0; i < 4; i++)
+        {
+            if (this.intersect(frustrum.cornerRays[i].o, frustrum.cornerRays[i].d))
+                return [true];
+        }
+        return [];
     }
-    for (var i = 0; i < 4; i++) {
-        if (this.intersect(frustrum.cornerRays[i].o, frustrum.cornerRays[i].d))
-            return [true];
-    }
-    return [];
-}
-//intersect ray and bounding box
-BoundingBoxRTAS.prototype.intersect = function(o, d) {
+    //intersect ray and bounding box
+BoundingBoxRTAS.prototype.intersect = function(o, d)
+{
     //TODO: are these loose bounds necessary?
     var min = [0, 0, 0];
     min[0] = this.min[0];
@@ -873,33 +844,26 @@ BoundingBoxRTAS.prototype.intersect = function(o, d) {
     var t4 = (max[1] - o[1]) * dirfrac[1];
     var t5 = (min[2] - o[2]) * dirfrac[2];
     var t6 = (max[2] - o[2]) * dirfrac[2];
-
     var tMathmin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)), Math.min(t5, t6));
     var tMathmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)), Math.max(t5, t6));
-
-
     // if tMath.max < 0, ray (line) is intersecting AABB, but whole AABB is behing us
-    if (tMathmax < 0) {
+    if (tMathmax < 0)
+    {
         t = tMathmax;
         return false;
     }
-
     // if tMath.min > tMath.max, ray doesn't intersect AABB
-    if (tMathmin > tMathmax) {
+    if (tMathmin > tMathmax)
+    {
         t = tMathmax;
         return false;
     }
-
     t = tMathmin;
-
-
-
     return true; // if we made it here, there was an intersection - YAY
-
 }
-BoundingBoxRTAS.prototype.buildFacelist = function() {
+BoundingBoxRTAS.prototype.buildFacelist = function()
+{
     this.faces = [];
-
     this.faces.push(new face([this.min[0], this.min[1], this.min[2]], [this.min[0], this.min[0], this.min[0]], [this.min[0], this.min[0], this.min[0]]));
     this.faces.push(new face([this.min[0], this.min[1], this.min[2]], [this.min[0], this.min[0], this.min[0]], [this.min[0], this.min[0], this.min[0]]));
     this.faces.push(new face([this.min[0], this.min[1], this.min[2]], [this.min[0], this.min[0], this.min[0]], [this.min[0], this.min[0], this.min[0]]));
@@ -912,9 +876,9 @@ BoundingBoxRTAS.prototype.buildFacelist = function() {
     this.faces.push(new face([this.min[0], this.min[1], this.min[2]], [this.min[0], this.min[0], this.min[0]], [this.min[0], this.min[0], this.min[0]]));
     this.faces.push(new face([this.min[0], this.min[1], this.min[2]], [this.min[0], this.min[0], this.min[0]], [this.min[0], this.min[0], this.min[0]]));
     this.faces.push(new face([this.min[0], this.min[1], this.min[2]], [this.min[0], this.min[0], this.min[0]], [this.min[0], this.min[0], this.min[0]]));
-
 }
-BoundingBoxRTAS.prototype.intersectSphere = function(center, r) {
+BoundingBoxRTAS.prototype.intersectSphere = function(center, r)
+{
     var closest = [];
     closest[0] = (center[0] < this.min[0]) ? this.min[0] : (center[0] > this.max[0]) ? this.max[0] : center[0];
     closest[1] = (center[1] < this.min[1]) ? this.min[1] : (center[1] > this.max[1]) ? this.max[1] : center[1];
@@ -929,13 +893,15 @@ BoundingBoxRTAS.prototype.intersectSphere = function(center, r) {
     return [true];
 }
 
-function swap(a, b) {
+function swap(a, b)
+{
     var t = a;
     a = b;
     b = t;
 }
 // a octree octant. Holds a list of faces, and splits at a given number of faces
-function OctreeRegion(min, max, depth) {
+function OctreeRegion(min, max, depth)
+{
     this.faces = [];
     this.depth = depth;
     this.facesNotDistributed = [];
@@ -947,19 +913,20 @@ function OctreeRegion(min, max, depth) {
     this.c[0] = this.min[0] + (this.max[0] - this.min[0]) / 2;
     this.c[1] = this.min[1] + (this.max[1] - this.min[1]) / 2;
     this.c[2] = this.min[2] + (this.max[2] - this.min[2]) / 2;
-
     this.r = MATH.distanceVec3(this.min, this.max) / 2;
     var delta = this.r / 1000;
-
-    if (this.min[0] == this.max[0]) {
+    if (this.min[0] == this.max[0])
+    {
         this.min[0] -= delta;
         this.max[0] += delta;
     }
-    if (this.min[1] == this.max[1]) {
+    if (this.min[1] == this.max[1])
+    {
         this.min[1] -= delta;
         this.max[1] += delta;
     }
-    if (this.min[2] == this.max[2]) {
+    if (this.min[2] == this.max[2])
+    {
         this.min[2] -= delta;
         this.max[2] += delta;
     }
@@ -971,65 +938,63 @@ function OctreeRegion(min, max, depth) {
 OctreeRegion.prototype.testBounds = BoundingBoxRTAS.prototype.intersect;
 OctreeRegion.prototype.testBoundsSphere = BoundingBoxRTAS.prototype.intersectSphere;
 OctreeRegion.prototype.testBoundsFrustrum = BoundingBoxRTAS.prototype.intersectFrustrum;
-
 //add a face, and split if necessary
-OctreeRegion.prototype.addFace = function(face) {
-
-    //make the faces unique, or the split algo will go nuts, and keep spliting bounds trying to subdivide the faces if they are over the max face limit, but are have the same 
-    //values and can't ever end up in different regions. Will then bottom out at max depth.
-    //note max depth grows regions at 8^d;
-    //NOTE: This is just way way too slow, and not worth it.
-    // var facelisttocheck = this.isSplit? this.facesNotDistributed:this.faces;
-    // if(facelisttocheck.length < OCTMaxFaces)                  //nice to have, but building structure takes too long.
-    // for(var i = 0; i < facelisttocheck.length;i++)
-    // {
-    // var collide = false;
-    // if(comparefaces(face,facelisttocheck[i]))
-    // {
-    // collide = true;
-    // break;
-    // }
-    // if(collide)
-    // {
-    // debugger;
-    // console.log("rejecting duplicate face from octree");
-    // return;
-    // }
-    // }
-
-
-    this.faces.push(face);
-    //split of the new face pushes over the face limit, and not already split, and not too deep in the tree
-    if (this.faces.length > OCTMaxFaces && !this.isSplit && this.depth <= OCTMaxDepth)
-        this.split();
-    else {
-        //if it's split already, distribute the face to the sub regions
-        if (this.isSplit)
-            this.distributeFace(face);
+OctreeRegion.prototype.addFace = function(face)
+    {
+        //make the faces unique, or the split algo will go nuts, and keep spliting bounds trying to subdivide the faces if they are over the max face limit, but are have the same 
+        //values and can't ever end up in different regions. Will then bottom out at max depth.
+        //note max depth grows regions at 8^d;
+        //NOTE: This is just way way too slow, and not worth it.
+        // var facelisttocheck = this.isSplit? this.facesNotDistributed:this.faces;
+        // if(facelisttocheck.length < OCTMaxFaces)                  //nice to have, but building structure takes too long.
+        // for(var i = 0; i < facelisttocheck.length;i++)
+        // {
+        // var collide = false;
+        // if(comparefaces(face,facelisttocheck[i]))
+        // {
+        // collide = true;
+        // break;
+        // }
+        // if(collide)
+        // {
+        // debugger;
+        // console.log("rejecting duplicate face from octree");
+        // return;
+        // }
+        // }
+        this.faces.push(face);
+        //split of the new face pushes over the face limit, and not already split, and not too deep in the tree
+        if (this.faces.length > OCTMaxFaces && !this.isSplit && this.depth <= OCTMaxDepth)
+            this.split();
+        else
+        {
+            //if it's split already, distribute the face to the sub regions
+            if (this.isSplit)
+                this.distributeFace(face);
+        }
     }
-}
-//point inside a region
-OctreeRegion.prototype.pointInside = function(point) {
-
-    if (point[0] >= this.min[0] && point[0] <= this.max[0])
-        if (point[1] >= this.min[1] && point[1] <= this.max[1])
-            if (point[2] >= this.min[2] && point[2] <= this.max[2])
-                return true;
-    return false;
-}
-//a face is inside if any of the verts are inside;
-//OctreeRegion.prototype.testFace = function(face)
-//{
-//	if(this.pointInside(face.v0) && this.pointInside(face.v1) && this.pointInside(face.v2))
-//		return true;
-//    return false;
-//}
-
-function Project(points, norm) {
+    //point inside a region
+OctreeRegion.prototype.pointInside = function(point)
+    {
+        if (point[0] >= this.min[0] && point[0] <= this.max[0])
+            if (point[1] >= this.min[1] && point[1] <= this.max[1])
+                if (point[2] >= this.min[2] && point[2] <= this.max[2])
+                    return true;
+        return false;
+    }
+    //a face is inside if any of the verts are inside;
+    //OctreeRegion.prototype.testFace = function(face)
+    //{
+    //	if(this.pointInside(face.v0) && this.pointInside(face.v1) && this.pointInside(face.v2))
+    //		return true;
+    //    return false;
+    //}
+function Project(points, norm)
+{
     var min = Infinity;
     var max = -Infinity;
-
-    for (var i = 0; i < points.length; i++) {
+    for (var i = 0; i < points.length; i++)
+    {
         var val = MATH.dotVec3(norm, points[i]);
         if (val < min) min = val;
         if (val > max) max = val;
@@ -1037,7 +1002,8 @@ function Project(points, norm) {
     return [min, max];
 }
 
-function getCorners(box) {
+function getCorners(box)
+{
     return [
         [box.min[0], box.min[1], box.min[2]],
         [box.min[0], box.min[1], box.max[2]],
@@ -1050,16 +1016,17 @@ function getCorners(box) {
     ];
 }
 
-function AABBTriTest(box, tri) {
+function AABBTriTest(box, tri)
+{
     var triMin, triMax;
     var boxMin, boxMax;
-
     var boxNorms = [
         [1, 0, 0],
         [0, 1, 0],
         [0, 0, 1]
     ];
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < 3; i++)
+    {
         var n = boxNorms[i];
         var ret = Project([tri.v0, tri.v1, tri.v2], n);
         triMin = ret[0];
@@ -1067,7 +1034,6 @@ function AABBTriTest(box, tri) {
         if (triMax < box.min[i] || triMin > box.max[i])
             return false;
     }
-
     var boxVerts = getCorners(box);
     var triOffset = MATH.dotVec3(tri.norm, tri.v0);
     var ret = Project(boxVerts, tri.norm);
@@ -1075,10 +1041,10 @@ function AABBTriTest(box, tri) {
     boxMax = ret[1];
     if (boxMax < triOffset || boxMin > triOffset)
         return false;
-
     var triEdges = [MATH.subVec3(tri.v0, tri.v1), MATH.subVec3(tri.v1, tri.v2), MATH.subVec3(tri.v2, tri.v0)];
     for (var i = 0; i < 3; i++)
-        for (var j = 0; j < 3; j++) {
+        for (var j = 0; j < 3; j++)
+        {
             var axis = MATH.crossVec3(triEdges[i], boxNorms[j]);
             var ret = Project(boxVerts, axis);
             boxMin = ret[0];
@@ -1091,24 +1057,23 @@ function AABBTriTest(box, tri) {
         }
     return true;
 }
-
 //a face is inside if any of the verts are inside;
-OctreeRegion.prototype.testFace = function(face) {
-    if (this.pointInside(face.v0) || this.pointInside(face.v1) || this.pointInside(face.v2))
-        return true;
-
-    return AABBTriTest(this, face);
-
-}
-
-//distriubte a face to the child nodes. 
-//NOTE: the face in region test could place the face in multiple sub nodes
-OctreeRegion.prototype.distributeFace = function(face) {
+OctreeRegion.prototype.testFace = function(face)
+    {
+        if (this.pointInside(face.v0) || this.pointInside(face.v1) || this.pointInside(face.v2))
+            return true;
+        return AABBTriTest(this, face);
+    }
+    //distriubte a face to the child nodes. 
+    //NOTE: the face in region test could place the face in multiple sub nodes
+OctreeRegion.prototype.distributeFace = function(face)
+{
     var added = 0;
     var addchild = null;
-    for (var i = 0; i < this.children.length; i++) {
-
-        if (this.children[i].testFace(face)) {
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (this.children[i].testFace(face))
+        {
             this.children[i].addFace(face);
             added++;
         }
@@ -1117,181 +1082,177 @@ OctreeRegion.prototype.distributeFace = function(face) {
     //NOTE: after some bug fixes, have not seen any faces here, but keeping just in case.
     //no, makes sense.
     // no it doesn't. There can be no faces that are in this region but intersect no child regions
-    if (added == 0) {
-
+    if (added == 0)
+    {
         //this.distributeFace(face);
         this.facesNotDistributed.push(face);
     }
 }
-OctreeRegion.prototype.getFaces = function(list) {
-    if (!list) list = [];
-    if (this.isSplit)
-        list = list.concat(this.facesNotDistributed)
-    else
-        list = list.concat(this.faces)
-
-    if (this.isSplit)
-        for (var i = 0; i < this.children.length; i++)
-            list = this.children[i].getFaces(list);
-
-    return list;
-
-}
-//Test a ray against an octree region
-OctreeRegion.prototype.intersect = function(o, d, opts, hits) {
-
-    if (!hits)
-        hits = [];
-    //if no faces, can be no hits. 
-    //remember, faces is all faces in this node AND its children
-    if (this.faces.length == 0)
-        return hits;
-
-    //if the node is split, then we test the non distributed faces, which are not in any children
-    var facelist = this.faces;
-    if (this.isSplit)
-        facelist = this.facesNotDistributed;
-
-
-    //cant do this until can figure way to deal with 1D distance move into nonuniform scale space
-    //	if(opts && opts.maxDist)
-    //	{
-    //		if(MATH.distanceVec3(o,this.c) - this.r > opts.maxDist)
-    //		{
-    //				opts.objectRegionsRejectedByDist++;
-    //				return hits;
-    //		}
-    //
-    //	}
-
-    //check either this nodes faces, or the not distributed faces. for a leaf, this will just loop all faces,
-    //for a non leaf, this will iterate over the faces that for some reason are not in children, which SHOULD be none
-    for (var i = 0; i < facelist.length; i++) {
-        var facehits = facelist[i].intersect1(o, d, opts);
-        if (facehits) {
-            hits.push(facehits);
-            if (opts && opts.OneHitPerMesh) {
-                return hits;
-            }
-        }
+OctreeRegion.prototype.getFaces = function(list)
+    {
+        if (!list) list = [];
+        if (this.isSplit)
+            list = list.concat(this.facesNotDistributed)
+        else
+            list = list.concat(this.faces)
+        if (this.isSplit)
+            for (var i = 0; i < this.children.length; i++)
+                list = this.children[i].getFaces(list);
+        return list;
     }
-
-    if (opts) opts.objectRegionsTested++;
-
-    //if the node is split, concat the hits from all children
-    if (this.isSplit) {
-        for (var i = 0; i < this.children.length; i++) {
-
-            //reject this node if the ray does not intersect it's bounding box
-            if (this.children[i].testBounds(o, d) == true) {
-                //console.log('region rejected');
-                this.children[i].intersect(o, d, opts, hits);
-            } else if (opts)
-                opts.objectRegionsRejectedByBounds++;
-        }
-    }
-    return hits;
-}
-
-//Test a ray against an octree region
-OctreeRegion.prototype.intersectFrustrum = function(frustrum, opts,hits) {
-
-    if(!hits)
-     hits = [];
-
-
-    //reject this node if the ray does not intersect it's bounding box
-    if (this.testBoundsFrustrum(frustrum).length == 0) {
-        //console.log('region rejected');
-        return hits;
-    }
-
-    //if no faces, can be no hits. 
-    //remember, faces is all faces in this node AND its children
-    if (this.faces.length == 0)
-        return hits;
-
-    //if the node is split, then we test the non distributed faces, which are not in any children
-    var facelist = this.faces;
-    if (this.isSplit)
-        facelist = this.facesNotDistributed;
-
-    //check either this nodes faces, or the not distributed faces. for a leaf, this will just loop all faces,
-    //for a non leaf, this will iterate over the faces that for some reason are not in children, which SHOULD be none
-    for (var i = 0; i < facelist.length; i++) {
-        var facehits = facelist[i].intersectFrustrum(frustrum, opts);
-        if (facehits) {
-            hits.push(facehits);
-            if (opts && opts.OneHitPerMesh) {
-
-                return hits;
-            }
-        }
-    }
-
-
-
-    //if the node is split, concat the hits from all children
-    if (this.isSplit) {
-        for (var i = 0; i < this.children.length; i++) {
-            var oldlen = hits.length;
-            this.children[i].intersectFrustrum(frustrum, opts,hits);
-            if (hits.length - oldlen > 1) {
-                if (opts && opts.OneHitPerMesh) {
-
+    //Test a ray against an octree region
+OctreeRegion.prototype.intersect = function(o, d, opts, hits)
+    {
+        if (!hits)
+            hits = [];
+        //if no faces, can be no hits. 
+        //remember, faces is all faces in this node AND its children
+        if (this.faces.length == 0)
+            return hits;
+        //if the node is split, then we test the non distributed faces, which are not in any children
+        var facelist = this.faces;
+        if (this.isSplit)
+            facelist = this.facesNotDistributed;
+        //cant do this until can figure way to deal with 1D distance move into nonuniform scale space
+        //	if(opts && opts.maxDist)
+        //	{
+        //		if(MATH.distanceVec3(o,this.c) - this.r > opts.maxDist)
+        //		{
+        //				opts.objectRegionsRejectedByDist++;
+        //				return hits;
+        //		}
+        //
+        //	}
+        //check either this nodes faces, or the not distributed faces. for a leaf, this will just loop all faces,
+        //for a non leaf, this will iterate over the faces that for some reason are not in children, which SHOULD be none
+        for (var i = 0; i < facelist.length; i++)
+        {
+            var facehits = facelist[i].intersect1(o, d, opts);
+            if (facehits)
+            {
+                hits.push(facehits);
+                if (opts && opts.OneHitPerMesh)
+                {
                     return hits;
                 }
             }
         }
+        if (opts) opts.objectRegionsTested++;
+        //if the node is split, concat the hits from all children
+        if (this.isSplit)
+        {
+            for (var i = 0; i < this.children.length; i++)
+            {
+                //reject this node if the ray does not intersect it's bounding box
+                if (this.children[i].testBounds(o, d) == true)
+                {
+                    //console.log('region rejected');
+                    this.children[i].intersect(o, d, opts, hits);
+                }
+                else if (opts)
+                    opts.objectRegionsRejectedByBounds++;
+            }
+        }
+        return hits;
     }
-    return hits;
-}
-
-//Test a ray against an octree region
-OctreeRegion.prototype.intersectSphere = function(center, r, opts) {
-
+    //Test a ray against an octree region
+OctreeRegion.prototype.intersectFrustrum = function(frustrum, opts, hits)
+    {
+        if (!hits)
+            hits = [];
+        //reject this node if the ray does not intersect it's bounding box
+        if (this.testBoundsFrustrum(frustrum).length == 0)
+        {
+            //console.log('region rejected');
+            return hits;
+        }
+        //if no faces, can be no hits. 
+        //remember, faces is all faces in this node AND its children
+        if (this.faces.length == 0)
+            return hits;
+        //if the node is split, then we test the non distributed faces, which are not in any children
+        var facelist = this.faces;
+        if (this.isSplit)
+            facelist = this.facesNotDistributed;
+        //check either this nodes faces, or the not distributed faces. for a leaf, this will just loop all faces,
+        //for a non leaf, this will iterate over the faces that for some reason are not in children, which SHOULD be none
+        for (var i = 0; i < facelist.length; i++)
+        {
+            var facehits = facelist[i].intersectFrustrum(frustrum, opts);
+            if (facehits)
+            {
+                hits.push(facehits);
+                if (opts && opts.OneHitPerMesh)
+                {
+                    return hits;
+                }
+            }
+        }
+        //if the node is split, concat the hits from all children
+        if (this.isSplit)
+        {
+            for (var i = 0; i < this.children.length; i++)
+            {
+                var oldlen = hits.length;
+                this.children[i].intersectFrustrum(frustrum, opts, hits);
+                if (hits.length - oldlen > 1)
+                {
+                    if (opts && opts.OneHitPerMesh)
+                    {
+                        return hits;
+                    }
+                }
+            }
+        }
+        return hits;
+    }
+    //Test a ray against an octree region
+OctreeRegion.prototype.intersectSphere = function(center, r, opts)
+{
     var hits = [];
     //if no faces, can be no hits. 
     //remember, faces is all faces in this node AND its children
     if (this.faces.length == 0)
         return hits;
-
     //if the node is split, then we test the non distributed faces, which are not in any children
     var facelist = this.faces;
     if (this.isSplit)
         facelist = this.facesNotDistributed;
-
     //check either this nodes faces, or the not distributed faces. for a leaf, this will just loop all faces,
     //for a non leaf, this will iterate over the faces that for some reason are not in children, which SHOULD be none
-    for (var i = 0; i < facelist.length; i++) {
+    for (var i = 0; i < facelist.length; i++)
+    {
         var facehits = facelist[i].intersectSphere(center, r, opts);
-        if (facehits) {
+        if (facehits)
+        {
             hits.push(facehits);
-            if (opts && opts.OneHitPerMesh) {
-
+            if (opts && opts.OneHitPerMesh)
+            {
                 return hits;
             }
             if (hits.length > 5)
                 break;
-
         }
     }
-
     //reject this node if the ray does not intersect it's bounding box
-    if (this.testBoundsSphere(center, r).length == 0) {
+    if (this.testBoundsSphere(center, r).length == 0)
+    {
         //console.log('region rejected');
         return hits;
     }
-
     //if the node is split, concat the hits from all children
-    if (this.isSplit) {
-        for (var i = 0; i < this.children.length; i++) {
+    if (this.isSplit)
+    {
+        for (var i = 0; i < this.children.length; i++)
+        {
             var childhits = this.children[i].intersectSphere(center, r, opts);
-            if (childhits) {
-                for (var j = 0; j < childhits.length; j++) {
+            if (childhits)
+            {
+                for (var j = 0; j < childhits.length; j++)
+                {
                     hits.push(childhits[j]);
-                    if (opts && opts.OneHitPerMesh) {
-
+                    if (opts && opts.OneHitPerMesh)
+                    {
                         return hits;
                     }
                 }
@@ -1300,74 +1261,78 @@ OctreeRegion.prototype.intersectSphere = function(center, r, opts) {
     }
     return hits;
 }
-
-OctreeRegion.prototype.getLeaves = function(leaves) {
-    if (!leaves)
-        leaves = [];
-    if (this.isSplit) {
-        for (var i = 0; i < this.children.length; i++)
-            leaves = this.children[i].getLeaves(leaves);
-    } else {
-        if (this.faces.length > 0)
-            leaves.push(this);
+OctreeRegion.prototype.getLeaves = function(leaves)
+    {
+        if (!leaves)
+            leaves = [];
+        if (this.isSplit)
+        {
+            for (var i = 0; i < this.children.length; i++)
+                leaves = this.children[i].getLeaves(leaves);
+        }
+        else
+        {
+            if (this.faces.length > 0)
+                leaves.push(this);
+        }
+        return leaves;
     }
-    return leaves;
-}
-//generate the children nodes from this node, and set the proper min and max
-//boy, getting this right is a bit tricky.
-OctreeRegion.prototype.split = function() {
-    var v0 = [this.min[0], this.min[1], this.min[2]];
-    var v1 = [this.min[0], this.min[1], this.max[2]];
-    var v2 = [this.min[0], this.max[1], this.min[2]];
-    var v3 = [this.min[0], this.max[1], this.max[2]];
-    var v4 = [this.max[0], this.min[1], this.min[2]];
-    var v5 = [this.max[0], this.min[1], this.max[2]];
-    var v6 = [this.max[0], this.max[1], this.min[2]];
-    var v7 = [this.max[0], this.max[1], this.max[2]];
-
-    this.c = [(this.max[0] + this.min[0]) / 2, (this.max[1] + this.min[1]) / 2, (this.max[2] + this.min[2]) / 2];
-
-    var m1 = [this.c[0], this.min[1], this.min[2]];
-    var m2 = [this.max[0], this.c[1], this.c[2]];
-    var m3 = [this.min[0], this.c[1], this.min[2]];
-    var m4 = [this.c[0], this.max[1], this.c[2]];
-    var m5 = [this.c[0], this.c[1], this.min[2]];
-    var m6 = [this.max[0], this.max[1], this.c[2]];
-    var m7 = [this.min[0], this.min[1], this.c[2]];
-    var m8 = [this.c[0], this.c[1], this.max[2]];
-    var m9 = [this.c[0], this.min[1], this.c[2]];
-    var m10 = [this.max[0], this.c[1], this.max[2]];
-    var m11 = [this.min[0], this.c[1], this.c[2]];
-    var m12 = [this.c[0], this.max[1], this.max[2]];
-
-    this.children[0] = new OctreeRegion(v0, this.c, this.depth + 1);
-    this.children[1] = new OctreeRegion(m1, m2, this.depth + 1);
-    this.children[2] = new OctreeRegion(m3, m4, this.depth + 1);
-    this.children[3] = new OctreeRegion(m5, m6, this.depth + 1);
-    this.children[4] = new OctreeRegion(m7, m8, this.depth + 1);
-    this.children[5] = new OctreeRegion(m9, m10, this.depth + 1);
-    this.children[6] = new OctreeRegion(m11, m12, this.depth + 1);
-    this.children[7] = new OctreeRegion(this.c, v7, this.depth + 1);
-
-    //if I have faces, but I split, I need to distribute my faces to my children
-    for (var i = 0; i < this.faces.length; i++)
-        this.distributeFace(this.faces[i]);
-
-    this.isSplit = true;
-}
-// compare too verts against a tollerance
-function compareverts(v1, v2, t) {
+    //generate the children nodes from this node, and set the proper min and max
+    //boy, getting this right is a bit tricky.
+OctreeRegion.prototype.split = function()
+    {
+        var v0 = [this.min[0], this.min[1], this.min[2]];
+        var v1 = [this.min[0], this.min[1], this.max[2]];
+        var v2 = [this.min[0], this.max[1], this.min[2]];
+        var v3 = [this.min[0], this.max[1], this.max[2]];
+        var v4 = [this.max[0], this.min[1], this.min[2]];
+        var v5 = [this.max[0], this.min[1], this.max[2]];
+        var v6 = [this.max[0], this.max[1], this.min[2]];
+        var v7 = [this.max[0], this.max[1], this.max[2]];
+        this.c = [(this.max[0] + this.min[0]) / 2, (this.max[1] + this.min[1]) / 2, (this.max[2] + this.min[2]) / 2];
+        var m1 = [this.c[0], this.min[1], this.min[2]];
+        var m2 = [this.max[0], this.c[1], this.c[2]];
+        var m3 = [this.min[0], this.c[1], this.min[2]];
+        var m4 = [this.c[0], this.max[1], this.c[2]];
+        var m5 = [this.c[0], this.c[1], this.min[2]];
+        var m6 = [this.max[0], this.max[1], this.c[2]];
+        var m7 = [this.min[0], this.min[1], this.c[2]];
+        var m8 = [this.c[0], this.c[1], this.max[2]];
+        var m9 = [this.c[0], this.min[1], this.c[2]];
+        var m10 = [this.max[0], this.c[1], this.max[2]];
+        var m11 = [this.min[0], this.c[1], this.c[2]];
+        var m12 = [this.c[0], this.max[1], this.max[2]];
+        this.children[0] = new OctreeRegion(v0, this.c, this.depth + 1);
+        this.children[1] = new OctreeRegion(m1, m2, this.depth + 1);
+        this.children[2] = new OctreeRegion(m3, m4, this.depth + 1);
+        this.children[3] = new OctreeRegion(m5, m6, this.depth + 1);
+        this.children[4] = new OctreeRegion(m7, m8, this.depth + 1);
+        this.children[5] = new OctreeRegion(m9, m10, this.depth + 1);
+        this.children[6] = new OctreeRegion(m11, m12, this.depth + 1);
+        this.children[7] = new OctreeRegion(this.c, v7, this.depth + 1);
+        //if I have faces, but I split, I need to distribute my faces to my children
+        for (var i = 0; i < this.faces.length; i++)
+            this.distributeFace(this.faces[i]);
+        this.isSplit = true;
+    }
+    // compare too verts against a tollerance
+function compareverts(v1, v2, t)
+{
     return ((v1[0] - v2[0]) * (v1[0] - v2[0]) + (v1[1] - v2[1]) * (v1[1] - v2[1]) + (v1[2] - v2[2]) * (v1[2] - v2[2])) < (t * t);
 }
 // no longer trying to remove duplicate faces, but used to use this to do so
-function comparefaces(f1, f2) {
+function comparefaces(f1, f2)
+{
     //just too expensive
     var v1 = [f1.v0, f1.v1, f1.v2];
     var v2 = [f2.v0, f2.v1, f2.v2];
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < 3; i++)
+    {
         var match = false;
-        for (var j = 0; j < 3; j++) {
-            if (compareverts(v1[i], v2[j], .0001)) {
+        for (var j = 0; j < 3; j++)
+        {
+            if (compareverts(v1[i], v2[j], .0001))
+            {
                 match = true;
                 break;
             }
@@ -1380,381 +1345,348 @@ function comparefaces(f1, f2) {
     //return compareverts(f1.c,f2.c,.001) && Math.abs(f1.r-f2.r) < .001
 }
 //The base ray trace accleration structure
-function OctreeRTAS(faces, verts, min, max) {
+function OctreeRTAS(faces, verts, min, max)
+{
     //first, put the faces in a list
     this.faces = [];
-
     //build the list of faces from the vert list
-    for (var i = 0; i < faces.length - 2; i += 3) {
-
+    for (var i = 0; i < faces.length - 2; i += 3)
+    {
         this.faces.push(new face([verts[faces[i] * 3 + 0], verts[faces[i] * 3 + 1], verts[faces[i] * 3 + 2]], [verts[faces[i + 1] * 3 + 0], verts[faces[i + 1] * 3 + 1], verts[faces[i + 1] * 3 + 2]], [verts[faces[i + 2] * 3 + 0], verts[faces[i + 2] * 3 + 1], verts[faces[i + 2] * 3 + 2]]));
     }
-
     //Then, create a root bound
     this.root = new OctreeRegion(min, max, 0);
     for (var i = 0; i < this.faces.length; i++)
         this.root.addFace(this.faces[i]);
 }
 //just intersect with the root octant
-OctreeRTAS.prototype.intersect = function(o, d, opts, hits) {
-
+OctreeRTAS.prototype.intersect = function(o, d, opts, hits)
+{
     return this.root.intersect(o, d, opts, hits);
 }
-OctreeRTAS.prototype.intersectFrustrum = function(frustrum, opts,hits) {
-    return this.root.intersectFrustrum(frustrum, opts,hits);
+OctreeRTAS.prototype.intersectFrustrum = function(frustrum, opts, hits)
+{
+    return this.root.intersectFrustrum(frustrum, opts, hits);
 }
-OctreeRTAS.prototype.intersectSphere = function(center, r, opts) {
+OctreeRTAS.prototype.intersectSphere = function(center, r, opts)
+{
     return this.root.intersectSphere(center, r, opts);
 }
 
-
-
-function NullRTAS() {
-
-}
-NullRTAS.prototype.intersect = function(o, d, opts, hits) {
-
+function NullRTAS()
+{}
+NullRTAS.prototype.intersect = function(o, d, opts, hits)
+{
     return hits;
 }
-NullRTAS.prototype.intersectFrustrum = function(frustrum, opts,hits) {
+NullRTAS.prototype.intersectFrustrum = function(frustrum, opts, hits)
+{
     return [];
 }
-NullRTAS.prototype.intersectSphere = function(center, r, opts) {
-    return [];
-}
-
-
-//Generate either an octree of a face list to test rays.
-//note: the max faces can make big performance difference here.
-THREE.Geometry.prototype.BuildRayTraceAccelerationStructure = function() {
-
-
+NullRTAS.prototype.intersectSphere = function(center, r, opts)
+    {
+        return [];
+    }
+    //Generate either an octree of a face list to test rays.
+    //note: the max faces can make big performance difference here.
+THREE.Geometry.prototype.BuildRayTraceAccelerationStructure = function()
+{
     //sigh, this is just not good enough, and does not save enough memory to be worth the trouble
     var bounds = this.GetBoundingBox();
     var volumex = bounds.max[0] - bounds.min[0];
     var volumey = bounds.max[1] - bounds.min[1];
     var volumez = bounds.max[2] - bounds.min[2];
-
     //plus one so that we still at least attempt to generate bounds for objects that are flat in one dimention like a plane.
     var volumeM3 = (volumez * volumey * volumex) + 1;
     var volCm3 = volumeM3 * (100 * 100 * 100);
-
     var denPerCm3 = this.faces.length / volCm3;
-
-    if (denPerCm3 > .1 && this.faces.length > OCTMaxFaces) {
+    if (denPerCm3 > .1 && this.faces.length > OCTMaxFaces)
+    {
         console.warn('Mesh density is greater than one poly per cubic centimeter. This is insane. Bailing out of octree generation');
         this.RayTraceAccelerationStructure = buildFaceListFromBounds(bounds);
         return;
     }
-
-
     var positions = [];
-    for (var i = 0; i < this.vertices.length; i++) {
+    for (var i = 0; i < this.vertices.length; i++)
+    {
         positions.push(this.vertices[i].x);
         positions.push(this.vertices[i].y);
         positions.push(this.vertices[i].z);
     }
     //decompose the face3 and face4 data from the THREEjs faces into a list of tri indexes
     var facedata = [];
-    for (var i = 0; i < this.faces.length; i++) {
+    for (var i = 0; i < this.faces.length; i++)
+    {
         var face = this.faces[i];
-        if (face instanceof THREE.Face3) {
+        if (face instanceof THREE.Face3)
+        {
             facedata.push(face.a);
             facedata.push(face.b);
             facedata.push(face.c);
         }
-        if (face instanceof THREE.Face4) {
+        if (face instanceof THREE.Face4)
+        {
             facedata.push(face.a);
             facedata.push(face.b);
             facedata.push(face.c);
-
             facedata.push(face.c);
             facedata.push(face.d);
             facedata.push(face.a);
         }
-
-
     }
-
-
-
-    if (this.faces.length > OCTMaxFaces) {
-
+    if (this.faces.length > OCTMaxFaces)
+    {
         this.RayTraceAccelerationStructure = new OctreeRTAS(facedata, positions, this.BoundingBox.min, this.BoundingBox.max);
-
-    } else {
+    }
+    else
+    {
         this.RayTraceAccelerationStructure = new SimpleFaceListRTAS(facedata, positions);
     }
-
 }
 THREE.Geometry.prototype.clone_internal = THREE.Geometry.prototype.clone;
-THREE.Geometry.prototype.clone = function() {
-
-    var ret = this.clone_internal();
-    ret.RayTraceAccelerationStructure = this.RayTraceAccelerationStructure;
-    return ret;
-}
-//Get the bounds for an object
-THREE.Geometry.prototype.GetBoundingBox = function() {
-    if (!this.BoundingSphere || !this.BoundingBox || this.dirtyMesh) {
-        this.GenerateBounds();
-    }
-    return this.BoundingBox.clone();
-}
-//Get the bounds for an object
-THREE.Geometry.prototype.setPickGeometry = function(PickGeometry) {
-    this.PickGeometry = PickGeometry;
-}
-//Do the actuall intersection with the mesh;
-THREE.Geometry.prototype.CPUPick = function(origin, direction, options, collisionType, meshparent, hits) {
-
-    if (!hits)
-        hits = [];
-    //sseems like it's possible that nan can creep into the three.matrix, reject this whole mesh in that case.
-    if (isNaN(origin[0]) || isNaN(direction[0]))
-        return hits;
-
-    if (!collisionType)
-        collisionType = 'mesh';
-
-    if (this.InvisibleToCPUPick)
-        return hits;
-
-    //allow a picking mesh that differs from the visible mesh
-    if (this.PickGeometry) {
-
-        return this.PickGeometry.CPUPick(origin, direction, options, collisionType, meshparent, hits);
-    }
-
-    //if for some reason dont have good bounds, generate	 
-    if (!this.BoundingSphere || !this.BoundingBox || this.dirtyMesh) {
-        this.GenerateBounds();
-    }
-
-
-    //try to reject based on bounding sphere
-    //*** profiling shows reject based on bounding sphere function is way too slow.
-    // ** faster just to check AABB	
-    //var hit = this.BoundingSphere.intersect(origin,direction);
-    var intersections = [];
-    intersections.length = 0;
-    //if(hit > 0 && hit < maxdist)
+THREE.Geometry.prototype.clone = function()
     {
-
-        //try to reject based on bounding box.
-        var bbhit = this.BoundingBox.intersect(origin, direction);
-        if (collisionType == 'mesh') {
-            if (bbhit) {
-
-                var oldTests = options ? options.faceTests : 0;
-                //build the octree or the facelist
-                if (!this.RayTraceAccelerationStructure || this.dirtyMesh) {
-
-                    this.BuildRayTraceAccelerationStructure();
-
-                    //use this to display the internal geometry octree
-                    if (false && this.RayTraceAccelerationStructure.root) {
-
-                        var leafBounds = this.RayTraceAccelerationStructure.root.getLeaves();
-                        
-                        var mat = new THREE.MeshPhongMaterial();
-                        mat.color.r = 1;
-                        mat.color.g = 0;
-                        mat.color.b = 0;
-                        mat.ambient.r = 1;
-                        mat.ambient.g = 0;
-                        mat.ambient.b = 0;
-                        //mat.opacity = .2;
-                        //mat.transparent = true;
-                        mat.wireframe = true;
-                        var faces = 0;
-                        for (var i = 0; i < leafBounds.length; i++) {
-                            faces += leafBounds[i].faces.length;
-                            var mesh = SceneManagerRegion.prototype.BuildWireBox([leafBounds[i].max[0] - leafBounds[i].min[0], leafBounds[i].max[1] - leafBounds[i].min[1], leafBounds[i].max[2] - leafBounds[i].min[2]], [0, 0, 0], [0, 0, 0]);
-
-                            mesh.matrix.elements[12] = leafBounds[i].c[0];
-                            mesh.matrix.elements[13] = leafBounds[i].c[1];
-                            mesh.matrix.elements[14] = leafBounds[i].c[2];
-                            mesh.matrixAutoUpdate = false;
-                            meshparent.add(mesh, true);
-                            mesh.updateMatrixWorld(true);
+        var ret = this.clone_internal();
+        ret.RayTraceAccelerationStructure = this.RayTraceAccelerationStructure;
+        return ret;
+    }
+    //Get the bounds for an object
+THREE.Geometry.prototype.GetBoundingBox = function()
+    {
+        if (!this.BoundingSphere || !this.BoundingBox || this.dirtyMesh)
+        {
+            this.GenerateBounds();
+        }
+        return this.BoundingBox.clone();
+    }
+    //Get the bounds for an object
+THREE.Geometry.prototype.setPickGeometry = function(PickGeometry)
+    {
+        this.PickGeometry = PickGeometry;
+    }
+    //Do the actuall intersection with the mesh;
+THREE.Geometry.prototype.CPUPick = function(origin, direction, options, collisionType, meshparent, hits)
+    {
+        if (!hits)
+            hits = [];
+        //sseems like it's possible that nan can creep into the three.matrix, reject this whole mesh in that case.
+        if (isNaN(origin[0]) || isNaN(direction[0]))
+            return hits;
+        if (!collisionType)
+            collisionType = 'mesh';
+        if (this.InvisibleToCPUPick)
+            return hits;
+        //allow a picking mesh that differs from the visible mesh
+        if (this.PickGeometry)
+        {
+            return this.PickGeometry.CPUPick(origin, direction, options, collisionType, meshparent, hits);
+        }
+        //if for some reason dont have good bounds, generate	 
+        if (!this.BoundingSphere || !this.BoundingBox || this.dirtyMesh)
+        {
+            this.GenerateBounds();
+        }
+        //try to reject based on bounding sphere
+        //*** profiling shows reject based on bounding sphere function is way too slow.
+        // ** faster just to check AABB	
+        //var hit = this.BoundingSphere.intersect(origin,direction);
+        var intersections = [];
+        intersections.length = 0;
+        //if(hit > 0 && hit < maxdist)
+        {
+            //try to reject based on bounding box.
+            var bbhit = this.BoundingBox.intersect(origin, direction);
+            if (collisionType == 'mesh')
+            {
+                if (bbhit)
+                {
+                    var oldTests = options ? options.faceTests : 0;
+                    //build the octree or the facelist
+                    if (!this.RayTraceAccelerationStructure || this.dirtyMesh)
+                    {
+                        this.BuildRayTraceAccelerationStructure();
+                        //use this to display the internal geometry octree
+                        if (false && this.RayTraceAccelerationStructure.root)
+                        {
+                            var leafBounds = this.RayTraceAccelerationStructure.root.getLeaves();
+                            var mat = new THREE.MeshPhongMaterial();
+                            mat.color.r = 1;
+                            mat.color.g = 0;
+                            mat.color.b = 0;
+                            mat.ambient.r = 1;
+                            mat.ambient.g = 0;
+                            mat.ambient.b = 0;
+                            //mat.opacity = .2;
+                            //mat.transparent = true;
+                            mat.wireframe = true;
+                            var faces = 0;
+                            for (var i = 0; i < leafBounds.length; i++)
+                            {
+                                faces += leafBounds[i].faces.length;
+                                var mesh = SceneManagerRegion.prototype.BuildWireBox([leafBounds[i].max[0] - leafBounds[i].min[0], leafBounds[i].max[1] - leafBounds[i].min[1], leafBounds[i].max[2] - leafBounds[i].min[2]], [0, 0, 0], [0, 0, 0]);
+                                mesh.matrix.elements[12] = leafBounds[i].c[0];
+                                mesh.matrix.elements[13] = leafBounds[i].c[1];
+                                mesh.matrix.elements[14] = leafBounds[i].c[2];
+                                mesh.matrixAutoUpdate = false;
+                                meshparent.add(mesh, true);
+                                mesh.updateMatrixWorld(true);
+                            }
                         }
-                        
+                    }
+                    this.RayTraceAccelerationStructure.intersect(origin, direction, options, hits);
+                    //do actual mesh intersection
+                    if (options)
+                    {
+                        options.objectTests++;
+                        options.objectsTested && options.objectsTested.push(
+                        {
+                            object: meshparent,
+                            hits: (options.faceTests - oldTests)
+                        });
                     }
                 }
-
-                this.RayTraceAccelerationStructure.intersect(origin, direction, options, hits);
-                //do actual mesh intersection
-                if (options) {
-                    options.objectTests++;
-                    options.objectsTested && options.objectsTested.push({
-                        object: meshparent,
-                        hits: (options.faceTests - oldTests)
-                    });
+                else
+                {
+                    if (options)
+                        options.objectsRejectedByBounds++;
                 }
-            } else {
-                if (options)
-                    options.objectsRejectedByBounds++;
             }
+            if (collisionType == 'box')
+            {}
+            if (collisionType == 'sphere')
+            {}
         }
-        if (collisionType == 'box') {
-
-        }
-        if (collisionType == 'sphere') {
-
-        }
+        this.dirtyMesh = false;
+        return hits;
     }
-    this.dirtyMesh = false;
-    return hits;
-
-
-}
-//Do the actuall intersection with the mesh;
-THREE.Geometry.prototype.FrustrumCast = function(frustrum, opts,ret) {
+    //Do the actuall intersection with the mesh;
+THREE.Geometry.prototype.FrustrumCast = function(frustrum, opts, ret)
+    {
+        if (this.InvisibleToCPUPick)
+            return null;
+        //allow a picking mesh that differs from the visible mesh
+        if (this.PickGeometry)
+            return this.PickGeometry.FrustrumCast(frustrum, opts, ret);
+        //if for some reason dont have good bounds, generate	 
+        if (!this.BoundingSphere || !this.BoundingBox || this.dirtyMesh)
+        {
+            this.GenerateBounds();
+        }
+        //try to reject based on bounding box.
+        var bbhit = this.BoundingBox.intersectFrustrum(frustrum, opts);
+        if (bbhit.length > 0)
+        {
+            //build the octree or the facelist
+            if (!this.RayTraceAccelerationStructure || this.dirtyMesh)
+            {
+                this.BuildRayTraceAccelerationStructure();
+            }
+            //do actual mesh intersection
+            this.RayTraceAccelerationStructure.intersectFrustrum(frustrum, opts, ret);
+        }
+        this.dirtyMesh = false;
+        return ret;
+    }
+    //Do the actuall intersection with the mesh;
+THREE.Geometry.prototype.SphereCast = function(center, r, opts)
+{
     if (this.InvisibleToCPUPick)
         return null;
-
-    //allow a picking mesh that differs from the visible mesh
-    if (this.PickGeometry)
-        return this.PickGeometry.FrustrumCast(frustrum, opts,ret);
-
-    //if for some reason dont have good bounds, generate	 
-    if (!this.BoundingSphere || !this.BoundingBox || this.dirtyMesh) {
-        this.GenerateBounds();
-    }
-
-    
-    //try to reject based on bounding box.
-    var bbhit = this.BoundingBox.intersectFrustrum(frustrum, opts);
-
-    if (bbhit.length > 0) {
-
-        //build the octree or the facelist
-        if (!this.RayTraceAccelerationStructure || this.dirtyMesh) {
-            this.BuildRayTraceAccelerationStructure();
-
-        }
-        //do actual mesh intersection
-        this.RayTraceAccelerationStructure.intersectFrustrum(frustrum, opts,ret);
-    }
-
-    this.dirtyMesh = false;
-   
-    return ret;
-}
-
-//Do the actuall intersection with the mesh;
-THREE.Geometry.prototype.SphereCast = function(center, r, opts) {
-    if (this.InvisibleToCPUPick)
-        return null;
-
     //allow a picking mesh that differs from the visible mesh
     if (this.PickGeometry)
         return this.PickGeometry.SphereCast(center, r, opts);
-
     //if for some reason dont have good bounds, generate	 
-    if (!this.BoundingSphere || !this.BoundingBox || this.dirtyMesh) {
+    if (!this.BoundingSphere || !this.BoundingBox || this.dirtyMesh)
+    {
         this.GenerateBounds();
     }
-
     var intersections = [];
     //try to reject based on bounding box.
-
     var bbhit = this.BoundingBox.intersectSphere(center, r, opts);
-
-    if (bbhit.length > 0) {
-
+    if (bbhit.length > 0)
+    {
         bbhit = this.BoundingBox.intersectSphere(center, r, opts);
         //build the octree or the facelist
-        if (!this.RayTraceAccelerationStructure || this.dirtyMesh) {
+        if (!this.RayTraceAccelerationStructure || this.dirtyMesh)
+        {
             this.BuildRayTraceAccelerationStructure();
-
         }
         //do actual mesh intersection
         intersections = this.RayTraceAccelerationStructure.intersectSphere(center, r, opts);
     }
-
     this.dirtyMesh = false;
     return intersections;
 }
-
 THREE.BufferGeometry.prototype.GetBoundingBox = THREE.Geometry.prototype.GetBoundingBox;
 THREE.BufferGeometry.prototype.FrustrumCast = THREE.Geometry.prototype.FrustrumCast;
 THREE.BufferGeometry.prototype.CPUPick = THREE.Geometry.prototype.CPUPick;
 THREE.BufferGeometry.prototype.SphereCast = THREE.Geometry.prototype.SphereCast;
-THREE.BufferGeometry.prototype.GenerateBounds = function() {
-
+THREE.BufferGeometry.prototype.GenerateBounds = function()
+{
     var positions = this.attributes.position.array;
     var bounds = FindMaxMin(positions);
     var min = bounds[0];
     var max = bounds[1];
-
     this.BoundingSphere = new BoundingSphereRTAS(min, max);
     this.BoundingBox = allocate_BoundingBoxRTAS(min, max);
 }
-
-THREE.BufferGeometry.prototype.BuildRayTraceAccelerationStructure = function() {
-
-
-    var positions = this.attributes.position.array;
-    //decompose the face3 and face4 data from the THREEjs faces into a list of tri indexes
-    var facedata;
-    if (this.attributes.index)
-        facedata = this.attributes.index.array;
-    else {
-        facedata = [];
-        for (var i = 0; i < positions.length / 3; i++)
-            facedata.push(i);
+THREE.BufferGeometry.prototype.BuildRayTraceAccelerationStructure = function()
+    {
+        var positions = this.attributes.position.array;
+        //decompose the face3 and face4 data from the THREEjs faces into a list of tri indexes
+        var facedata;
+        if (this.attributes.index)
+            facedata = this.attributes.index.array;
+        else
+        {
+            facedata = [];
+            for (var i = 0; i < positions.length / 3; i++)
+                facedata.push(i);
+        }
+        //sigh, this is just not good enough, and does not save enough memory to be worth the trouble
+        var bounds = this.GetBoundingBox();
+        var volumex = bounds.max[0] - bounds.min[0];
+        var volumey = bounds.max[1] - bounds.min[1];
+        var volumez = bounds.max[2] - bounds.min[2];
+        //plus one so that we still at least attempt to generate bounds for objects that are flat in one dimention like a plane.
+        var volumeM3 = (volumez * volumey * volumex) + 1;
+        var volCm3 = volumeM3 * (100 * 100 * 100);
+        var denPerCm3 = (facedata.length / 3) / volCm3;
+        if (denPerCm3 > .001 && (facedata.length / 3) > OCTMaxFaces)
+        {
+            console.warn('Mesh density is greater than one poly per cubic centimeter. This is insane. Bailing out of octree generation');
+            this.RayTraceAccelerationStructure = buildFaceListFromBounds(bounds);
+            return;
+        }
+        if (facedata.length / 3 > OCTMaxFaces)
+        {
+            this.RayTraceAccelerationStructure = new OctreeRTAS(facedata, positions, this.BoundingBox.min, this.BoundingBox.max);
+        }
+        else
+        {
+            this.RayTraceAccelerationStructure = new SimpleFaceListRTAS(facedata, positions);
+        }
     }
-
-
-    //sigh, this is just not good enough, and does not save enough memory to be worth the trouble
-    var bounds = this.GetBoundingBox();
-    var volumex = bounds.max[0] - bounds.min[0];
-    var volumey = bounds.max[1] - bounds.min[1];
-    var volumez = bounds.max[2] - bounds.min[2];
-
-    //plus one so that we still at least attempt to generate bounds for objects that are flat in one dimention like a plane.
-    var volumeM3 = (volumez * volumey * volumex) + 1;
-    var volCm3 = volumeM3 * (100 * 100 * 100);
-
-    var denPerCm3 = (facedata.length / 3) / volCm3;
-   
-    if (denPerCm3 > .001 && (facedata.length / 3) > OCTMaxFaces) {
-        console.warn('Mesh density is greater than one poly per cubic centimeter. This is insane. Bailing out of octree generation');
-        this.RayTraceAccelerationStructure = buildFaceListFromBounds(bounds);
-        return;
-    }
-
-
-    if (facedata.length / 3 > OCTMaxFaces) {
-
-        this.RayTraceAccelerationStructure = new OctreeRTAS(facedata, positions, this.BoundingBox.min, this.BoundingBox.max);
-
-    } else {
-        this.RayTraceAccelerationStructure = new SimpleFaceListRTAS(facedata, positions);
-    }
-
-
-
-}
-//Get the bounding box for a group
-THREE.Object3D.prototype.GetBoundingBox = function(local) {
+    //Get the bounding box for a group
+THREE.Object3D.prototype.GetBoundingBox = function(local)
+{
     //make blank box and expand by children's bounds
     var box = allocate_BoundingBoxRTAS();
-    for (var i = 0; i < this.children.length; i++) {
-        if (this.children[i].GetBoundingBox) {
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (this.children[i].GetBoundingBox)
+        {
             var tb = this.children[i].GetBoundingBox();
             box.expandBy(tb);
             tb.release()
         }
     }
-    if (this.geometry) {
+    if (this.geometry)
+    {
         var tb = this.geometry.GetBoundingBox()
         box.expandBy(tb);
         tb.release();
     }
-
     //Transform by the local matrix.
     //set local to true to get the bounds without this top node transform
     //useful for drawing the bounds in non AABB form
@@ -1763,53 +1695,54 @@ THREE.Object3D.prototype.GetBoundingBox = function(local) {
     return box;
 }
 var BoneHandle = new THREE.BoxGeometry(1, 1, 1, 1, 1, 1);
-THREE.Bone.prototype.buildSelectionHandles = function() {
-    var pos = [0, 0, 0];
-    var dist = Vec3.magnitude([this.matrix.elements[12], this.matrix.elements[13], this.matrix.elements[14]]);
-    if (this.children[0]) {
-        var dist2 = Vec3.magnitude([this.children[0].matrix.elements[12], this.children[0].matrix.elements[13], this.children[0].matrix.elements[14]]);
-        var offx = this.children[0].matrix.elements[12] / 2;
-        var offy = this.children[0].matrix.elements[13] / 2;
-        var offz = this.children[0].matrix.elements[14] / 2;
-        pos = [offx, offy, offz];
-        dist = dist2;
+THREE.Bone.prototype.buildSelectionHandles = function()
+    {
+        var pos = [0, 0, 0];
+        var dist = Vec3.magnitude([this.matrix.elements[12], this.matrix.elements[13], this.matrix.elements[14]]);
+        if (this.children[0])
+        {
+            var dist2 = Vec3.magnitude([this.children[0].matrix.elements[12], this.children[0].matrix.elements[13], this.children[0].matrix.elements[14]]);
+            var offx = this.children[0].matrix.elements[12] / 2;
+            var offy = this.children[0].matrix.elements[13] / 2;
+            var offz = this.children[0].matrix.elements[14] / 2;
+            pos = [offx, offy, offz];
+            dist = dist2;
+        }
+        //Can we find some better way to do intersections with skinned meshes?
+        this.debugDist = dist;
+        var d = this.debugDist;
+        this.debug = new THREE.Mesh(BoneHandle);
+        this.debug.name = "BoneSelectionHandle";
+        this.debug.material.color.r = this.initializedFromAsset ? 1 : .5;
+        this.debug.material.color.g = .5;
+        this.debug.material.color.b = .5;
+        this.debug.material.transparent = true;
+        this.debug.material.opacity = .5;
+        this.debug.position.x = pos[0];
+        this.debug.position.y = pos[1];
+        this.debug.position.z = pos[2];
+        this.debug.visible = _SceneManager ? _SceneManager.getBonesVisible() : false;
+        this.debug.scale.x = d;
+        this.debug.scale.z = d;
+        this.debug.scale.y = d;
+        this.updateMatrix();
+        this.add(this.debug);
     }
-
-    this.debugDist = dist;
-
-    var d = this.debugDist;
-    this.debug = new THREE.Mesh(BoneHandle);
-    this.debug.name = "BoneSelectionHandle";
-    this.debug.material.color.r = this.initializedFromAsset ? 1 : .5;
-    this.debug.material.color.g = .5;
-    this.debug.material.color.b = .5;
-    this.debug.material.transparent = true;
-    this.debug.material.opacity = .5;
-    this.debug.position.x = pos[0];
-    this.debug.position.y = pos[1];
-    this.debug.position.z = pos[2];
-    this.debug.visible = _SceneManager ? _SceneManager.getBonesVisible() : false;
-    this.debug.scale.x = d;
-    this.debug.scale.z = d;
-    this.debug.scale.y = d;
-
-    this.updateMatrix();
-    this.add(this.debug);
-}
-//dont take the mesh into account for the skinned meshes
-//roll up the bounds from the bones
-THREE.SkinnedMesh.prototype.GetBoundingBox = function(local) {
+    //dont take the mesh into account for the skinned meshes
+    //roll up the bounds from the bones
+THREE.SkinnedMesh.prototype.GetBoundingBox = function(local)
+{
     //make blank box and expand by children's bounds
-
     var box = allocate_BoundingBoxRTAS();
-    for (var i = 0; i < this.children.length; i++) {
-        if (this.children[i].GetBoundingBox) {
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (this.children[i].GetBoundingBox)
+        {
             var tb = this.children[i].GetBoundingBox();
             box.expandBy(tb);
             tb.release();
         }
     }
-
     //Transform by the local matrix.
     //set local to true to get the bounds without this top node transform
     //useful for drawing the bounds in non AABB form
@@ -1817,39 +1750,38 @@ THREE.SkinnedMesh.prototype.GetBoundingBox = function(local) {
         box = box.transformBy(this.getLocalMatrix());
     return box;
 }
-
-THREE.Bone.prototype.GetBoundingBox = function(local) {
+THREE.Bone.prototype.GetBoundingBox = function(local)
+{
+    /*
     if (!this.debug) {
         this.buildSelectionHandles();
     }
+    */
     return THREE.Object3D.prototype.GetBoundingBox.call(this, local);
 }
 THREE.Object3D.prototype.getBoundingBox = THREE.Object3D.prototype.GetBoundingBox;
 //Should I ignore this? true for yes
-THREE.Object3D.prototype.ignoreTest = function(ignore) {
+THREE.Object3D.prototype.ignoreTest = function(ignore)
+{
     if (!ignore)
         return false;
     if (ignore.length == 0)
         return false;
     var parent = this;
-    while (parent) {
+    while (parent)
+    {
         if (ignore.indexOf(parent) != -1) return true;
-
         parent = parent.parent;
     }
     return false;
 }
-
 THREE.Object3D.prototype.testSkipPick = function(options)
 {
-
-    if (options && options.filter && this) {
-
+    if (options && options.filter && this)
+    {
         if (!options.filter(this))
             return false;
     }
-
-
     if (this.ignoreTest(options && options.ignore))
         return false;
     if (options.UserRenderBatches && this.isBatched)
@@ -1858,125 +1790,115 @@ THREE.Object3D.prototype.testSkipPick = function(options)
         return false;
     return true;
 }
-THREE.Object3D.prototype.CPUPick_internal = function(origin,direction,options,ret)
+THREE.Object3D.prototype.CPUPick_internal = function(origin, direction, options, ret)
+    {
+        if (!(this instanceof THREE.SkinnedMesh))
+        {
+            //at this point, were going to move the ray into the space relative to the mesh. until now, the ray has been in worldspace.
+            var modelMatrix = this.getModelMatrix([]);
+            var modelMatrix_inverse = modelMatrix.slice(0)
+            var modelMatrix_inverse = [];
+            Mat4.invert(modelMatrix, modelMatrix_inverse);
+            var origin_modelSpace = MATH.mulMat4Vec3(modelMatrix_inverse, origin);
+            var direction_modelSpace = MATH.mulMat4Vec3NoTranslate(modelMatrix_inverse, direction);
+            if (this instanceof THREE.Mesh && !(this instanceof THREE.SkinnedMesh))
+            {
+                //collide with the mesh
+                var prevLen = ret.length;
+                this.geometry.CPUPick(origin_modelSpace, direction_modelSpace, options, null, this, ret);
+                for (var i = prevLen; i < ret.length; i++)
+                {
+                    //move the normal and hit point into worldspace
+                    var tmp = MATH.mulMat4Vec3(modelMatrix, ret[i].point, [0, 0, 0]);
+                    ret[i].point = tmp;
+                    tmp = MATH.mulMat4Vec3NoTranslate(modelMatrix, ret[i].norm, [0, 0, 0]);
+                    ret[i].norm = tmp;
+                    tmp = Vec3.normalize(ret[i].norm, [0, 0, 0]);
+                    ret[i].norm = tmp;
+                    ret[i].distance = MATH.distanceVec3(origin, ret[i].point);
+                    ret[i].object = this;
+                    ret[i].priority = this.PickPriority !== undefined ? this.PickPriority : 1;
+                }
+            }
+        }
+        if (this instanceof THREE.Line)
+        {
+            for (var i = 0; i < this.geometry.vertices.length - 1; i++)
+            {
+                var hitdata = allocate_FaceIntersect();
+                var v1 = [this.geometry.vertices[i].x, this.geometry.vertices[i].y, this.geometry.vertices[i].z];
+                var v2 = [this.geometry.vertices[i + 1].x, this.geometry.vertices[i + 1].y, this.geometry.vertices[i + 1].z];
+                var hitdist = distanceLineSegment(origin_modelSpace, direction_modelSpace, v1, v2, hitdata);
+                if (hitdist < Math.min(MATH.distanceVec3(origin_modelSpace, v1), MATH.distanceVec3(origin_modelSpace, v2)) / 50)
+                {
+                    var point = MATH.mulMat4Vec3(modelMatrix, hitdata.point, [0, 0, 0]);
+                    var norm = [0, 0, 1];
+                    var hit = allocate_FaceIntersect(point, norm, null);
+                    hit.rawPoint = hitdata.point;
+                    hit.vertindex = hitdata.t < .5 ? i : i + 1;
+                    hit.t = hitdata.t;
+                    hit.distance = MATH.distanceVec3(origin, hit.rawPoint);
+                    hit.object = this;
+                    hit.priority = this.PickPriority !== undefined ? this.PickPriority : 1;
+                    ret.push(hit);
+                }
+            }
+        }
+        return ret;
+    }
+    //no need to test bounding box here. Can only contain one mesh, and the mesh will check its own
+    //boudning box.
+    //Above is no longer true.... we should be exiting early here
+THREE.Object3D.prototype.CPUPick = function(origin, direction, options, ret)
 {
-    if (!(this instanceof THREE.SkinnedMesh)) {
-
-        //at this point, were going to move the ray into the space relative to the mesh. until now, the ray has been in worldspace.
-        var modelMatrix = this.getModelMatrix([]);
-        var modelMatrix_inverse = modelMatrix.slice(0)
-        var modelMatrix_inverse = [];
-        Mat4.invert(modelMatrix, modelMatrix_inverse);
-        
-        var origin_modelSpace = MATH.mulMat4Vec3(modelMatrix_inverse, origin);
-        var direction_modelSpace = MATH.mulMat4Vec3NoTranslate(modelMatrix_inverse, direction);
-
-        if (this instanceof THREE.Mesh && !(this instanceof THREE.SkinnedMesh)) {
-            //collide with the mesh
-            var prevLen = ret.length;
-            this.geometry.CPUPick(origin_modelSpace, direction_modelSpace, options, null, this, ret);
-
-            for (var i = prevLen; i < ret.length; i++) {
-
-                //move the normal and hit point into worldspace
-                var tmp = MATH.mulMat4Vec3(modelMatrix, ret[i].point, [0, 0, 0]);
-
-                ret[i].point = tmp;
-
-                tmp = MATH.mulMat4Vec3NoTranslate(modelMatrix, ret[i].norm, [0, 0, 0]);
-
-                ret[i].norm = tmp;
-
-                tmp = Vec3.normalize(ret[i].norm, [0, 0, 0]);
-
-                ret[i].norm = tmp;
-                ret[i].distance = MATH.distanceVec3(origin, ret[i].point);
-                ret[i].object = this;
-                ret[i].priority = this.PickPriority !== undefined ? this.PickPriority : 1;
-            }
-        }
-    }
-    if (this instanceof THREE.Line) {
-        for (var i = 0; i < this.geometry.vertices.length - 1; i++) {
-            var hitdata = allocate_FaceIntersect();
-
-            var v1 = [this.geometry.vertices[i].x, this.geometry.vertices[i].y, this.geometry.vertices[i].z];
-            var v2 = [this.geometry.vertices[i + 1].x, this.geometry.vertices[i + 1].y, this.geometry.vertices[i + 1].z];
-            var hitdist = distanceLineSegment(origin_modelSpace, direction_modelSpace, v1, v2, hitdata);
-            if (hitdist < Math.min(MATH.distanceVec3(origin_modelSpace, v1), MATH.distanceVec3(origin_modelSpace, v2)) / 50) {
-                var point = MATH.mulMat4Vec3(modelMatrix, hitdata.point, [0, 0, 0]);
-                var norm = [0, 0, 1];
-                var hit = allocate_FaceIntersect(point, norm, null);
-                hit.rawPoint = hitdata.point;
-                hit.vertindex = hitdata.t < .5 ? i : i + 1;
-                hit.t = hitdata.t;
-                hit.distance = MATH.distanceVec3(origin, hit.rawPoint);
-                hit.object = this;
-                hit.priority = this.PickPriority !== undefined ? this.PickPriority : 1;
-                ret.push(hit);
-            }
-        }
-    }
-    return ret;
-}
-//no need to test bounding box here. Can only contain one mesh, and the mesh will check its own
-//boudning box.
-//Above is no longer true.... we should be exiting early here
-THREE.Object3D.prototype.CPUPick = function(origin, direction, options, ret) {
-
-  //really need to be sure we never get here!
- //   if(origin.length !== 3 || direction.length !== 3 || !(options instanceof THREE.CPUPickOptions) || !(ret instanceof Array))
-   //     debugger;
-
-    if(!this.testSkipPick(options))
+    //really need to be sure we never get here!
+    //   if(origin.length !== 3 || direction.length !== 3 || !(options instanceof THREE.CPUPickOptions) || !(ret instanceof Array))
+    //     debugger;
+    if (!this.testSkipPick(options))
         return null;
-
     //really should be initialized before this.
-    if (this instanceof THREE.Bone) {
-
-        if (!this.debug) {
+    if (this instanceof THREE.Bone)
+    {
+        if (!this.debug)
+        {
             this.buildSelectionHandles();
         }
-
     }
-
     if (!ret)
         ret = [];
-
     //iterate the children and concat all hits
     //note - still in world space here
-    if (!options.noTraverse) {
-        for (var i = 0; i < this.children.length; i++) {
-            if (this.children[i].CPUPick) {
+    if (!options.noTraverse)
+    {
+        for (var i = 0; i < this.children.length; i++)
+        {
+            if (this.children[i].CPUPick)
+            {
                 this.children[i].CPUPick(origin, direction, options, ret);
             }
         }
     }
-
-    if(this.geometry)
-        return this.CPUPick_internal(origin,direction,options,ret);
+    if (this.geometry)
+        return this.CPUPick_internal(origin, direction, options, ret);
     return ret;
 }
 
-function Frustrum(ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr) {
+function Frustrum(ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr)
+{
     this.ntl = ntl;
     this.ntr = ntr;
     this.nbl = nbl;
     this.nbr = nbr;
-
     this.ftl = ftl;
     this.ftr = ftr;
     this.fbl = fbl;
     this.fbr = fbr;
-
-
     this.nearnorm = MATH.toUnitVec3(MATH.crossVec3(MATH.subVec3(this.ntr, this.nbr), MATH.subVec3(this.nbl, this.nbr)));
     this.farnorm = MATH.toUnitVec3(MATH.crossVec3(MATH.subVec3(this.ftl, this.fbl), MATH.subVec3(this.ftr, this.fbl)));
     this.leftnorm = MATH.toUnitVec3(MATH.crossVec3(MATH.subVec3(this.nbl, this.fbl), MATH.subVec3(this.ftl, this.fbl)));
     this.rightnorm = MATH.toUnitVec3(MATH.crossVec3(MATH.subVec3(this.ftr, this.ntr), MATH.subVec3(this.ntr, this.nbr)));
     this.topnorm = MATH.toUnitVec3(MATH.crossVec3(MATH.subVec3(this.ftl, this.ntr), MATH.subVec3(this.ntr, this.ftr)));
     this.bottomnorm = MATH.toUnitVec3(MATH.crossVec3(MATH.subVec3(this.nbl, this.nbr), MATH.subVec3(this.fbl, this.nbl)));
-
     this.nearplane = {
         point: this.ntl,
         normal: MATH.scaleVec3(this.nearnorm, -1)
@@ -2002,121 +1924,111 @@ function Frustrum(ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr) {
         normal: MATH.scaleVec3(this.bottomnorm, -1)
     };
     this.planes = [this.nearplane, this.farplane, this.leftplane, this.rightplane, this.topplane, this.bottomplane];
-
     this.cornerRays = [];
     var rayTL = MATH.toUnitVec3(MATH.subVec3(this.ftl, this.ntl));
     var rayTR = MATH.toUnitVec3(MATH.subVec3(this.ftr, this.ntr));
     var rayBL = MATH.toUnitVec3(MATH.subVec3(this.fbl, this.nbl));
     var rayBR = MATH.toUnitVec3(MATH.subVec3(this.fbr, this.nbr));
-
-    this.cornerRays.push({
+    this.cornerRays.push(
+    {
         o: this.ntl,
         d: rayTL
     });
-    this.cornerRays.push({
+    this.cornerRays.push(
+    {
         o: this.ntr,
         d: rayTR
     });
-    this.cornerRays.push({
+    this.cornerRays.push(
+    {
         o: this.nbl,
         d: rayBL
     });
-    this.cornerRays.push({
+    this.cornerRays.push(
+    {
         o: this.nbr,
         d: rayBR
     });
-
-
-    this.transformBy = function(matrix) {
+    this.transformBy = function(matrix)
+    {
         var ntl = MATH.mulMat4Vec3(matrix, this.ntl);
         var ntr = MATH.mulMat4Vec3(matrix, this.ntr);
         var nbl = MATH.mulMat4Vec3(matrix, this.nbl);
         var nbr = MATH.mulMat4Vec3(matrix, this.nbr);
-
         var ftl = MATH.mulMat4Vec3(matrix, this.ftl);
         var ftr = MATH.mulMat4Vec3(matrix, this.ftr);
         var fbl = MATH.mulMat4Vec3(matrix, this.fbl);
         var fbr = MATH.mulMat4Vec3(matrix, this.fbr);
-
         return new Frustrum(ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr);
     }
 }
-
-THREE.Object3D.prototype.FrustrumCast = function(frustrum, options, ret) {
-
-
-    if (options && options.filter && this) {
-
+THREE.Object3D.prototype.FrustrumCast = function(frustrum, options, ret)
+{
+    if (options && options.filter && this)
+    {
         if (!options.filter(this))
             return null;
     }
-
     if (this.ignoreTest(options && options.ignore))
         return null;
     if (options.UserRenderBatches && this.isBatched)
         return null;
     if (this.InvisibleToCPUPick && !options.cullQuery)
         return null;
-    if(!ret)
-     ret = [];
-
+    if (!ret)
+        ret = [];
     //iterate the children and concat all hits
-    if (!options.noTraverse) {
-        for (var i = 0; i < this.children.length; i++) {
-            if (this.children[i].FrustrumCast) {
-                this.children[i].FrustrumCast(frustrum, options,ret);
+    if (!options.noTraverse)
+    {
+        for (var i = 0; i < this.children.length; i++)
+        {
+            if (this.children[i].FrustrumCast)
+            {
+                this.children[i].FrustrumCast(frustrum, options, ret);
             }
         }
     }
-
     var bounds = this.boundsCache ? this.boundsCache : this.GetBoundingBox();
     var bbhit = bounds.intersectFrustrum(frustrum);
-    if(bbhit.length == 0)
-    return null;
-
+    if (bbhit.length == 0)
+        return null;
     //if checking the culling, then all bounding box corners (in world space) are needed, and count as intersetions
-    if(options.cullQuery)
+    if (options.cullQuery)
     {
-        ret.push(allocate_FaceIntersect([bounds.max[0],bounds.max[1],bounds.max[2]],[0,0,0],null));
-        ret.push(allocate_FaceIntersect([bounds.max[0],bounds.max[1],bounds.min[2]],[0,0,0],null));
-        ret.push(allocate_FaceIntersect([bounds.max[0],bounds.min[1],bounds.max[2]],[0,0,0],null));
-        ret.push(allocate_FaceIntersect([bounds.max[0],bounds.min[1],bounds.min[2]],[0,0,0],null));
-        ret.push(allocate_FaceIntersect([bounds.min[0],bounds.max[1],bounds.max[2]],[0,0,0],null));
-        ret.push(allocate_FaceIntersect([bounds.min[0],bounds.max[1],bounds.min[2]],[0,0,0],null));
-        ret.push(allocate_FaceIntersect([bounds.min[0],bounds.min[1],bounds.max[2]],[0,0,0],null));
-        ret.push(allocate_FaceIntersect([bounds.min[0],bounds.min[1],bounds.min[2]],[0,0,0],null));
-        for(var i = 0; i < 8; i ++)
+        ret.push(allocate_FaceIntersect([bounds.max[0], bounds.max[1], bounds.max[2]], [0, 0, 0], null));
+        ret.push(allocate_FaceIntersect([bounds.max[0], bounds.max[1], bounds.min[2]], [0, 0, 0], null));
+        ret.push(allocate_FaceIntersect([bounds.max[0], bounds.min[1], bounds.max[2]], [0, 0, 0], null));
+        ret.push(allocate_FaceIntersect([bounds.max[0], bounds.min[1], bounds.min[2]], [0, 0, 0], null));
+        ret.push(allocate_FaceIntersect([bounds.min[0], bounds.max[1], bounds.max[2]], [0, 0, 0], null));
+        ret.push(allocate_FaceIntersect([bounds.min[0], bounds.max[1], bounds.min[2]], [0, 0, 0], null));
+        ret.push(allocate_FaceIntersect([bounds.min[0], bounds.min[1], bounds.max[2]], [0, 0, 0], null));
+        ret.push(allocate_FaceIntersect([bounds.min[0], bounds.min[1], bounds.min[2]], [0, 0, 0], null));
+        for (var i = 0; i < 8; i++)
         {
-            ret[ret.length-i-1].object = this;
+            ret[ret.length - i - 1].object = this;
         }
         return ret;
     }
-
-    if (this.geometry) {
-
+    if (this.geometry)
+    {
         //at this point, were going to move the ray into the space relative to the mesh. until now, the ray has been in worldspace.
         var mat;
         var mat2;
-
-
-
         mat = this.getModelMatrix().slice(0);
         mat = MATH.inverseMat4(mat);
-
         //if space can't be inverted, just return null
-        if(isNaN(mat[0])) return null;
-
+        if (isNaN(mat[0])) return null;
         var tfrustrum = frustrum.transformBy(mat);
-
-        if (this instanceof THREE.Mesh) {
+        if (this instanceof THREE.Mesh)
+        {
             //collide with the mesh
             var oldlen = ret.length;
-            this.geometry.FrustrumCast(tfrustrum, options,ret);
+            this.geometry.FrustrumCast(tfrustrum, options, ret);
             if (ret.length)
                 mat2 = this.getModelMatrix().slice(0);
-            for (var i = oldlen; i < ret.length; i++) {
+            for (var i = oldlen; i < ret.length; i++)
+            {
                 //move the normal and hit point into worldspace
-
                 ret[i].point = MATH.mulMat4Vec3(mat2, ret[i].point);
                 mat2[3] = 0;
                 mat2[7] = 0;
@@ -2128,18 +2040,20 @@ THREE.Object3D.prototype.FrustrumCast = function(frustrum, options, ret) {
                 ret[i].priority = this.PickPriority !== undefined ? this.PickPriority : 1;
             }
         }
-        if (this instanceof THREE.Line) {
+        if (this instanceof THREE.Line)
+        {
             mat2 = this.getModelMatrix().slice(0);
-            for (var i = 0; i < this.geometry.vertices.length; i++) {
+            for (var i = 0; i < this.geometry.vertices.length; i++)
+            {
                 var v0 = [this.geometry.vertices[i].x, this.geometry.vertices[i].y, this.geometry.vertices[i].z];
-                if (pointInFrustrum(v0, tfrustrum)) {
-                    
+                if (pointInFrustrum(v0, tfrustrum))
+                {
                     var point = MATH.mulMat4Vec3(mat2, v0);
                     mat2[3] = 0;
                     mat2[7] = 0;
                     mat2[11] = 0;
                     var norm = MATH.mulMat4Vec3(mat2, [0, 0, 1]);
-                    var hit = allocate_FaceIntersect(point,norm,null);
+                    var hit = allocate_FaceIntersect(point, norm, null);
                     hit.distance = MATH.distanceVec3([0, 0, 0], hit.point);
                     hit.object = this;
                     hit.priority = this.PickPriority !== undefined ? this.PickPriority : 1;
@@ -2147,76 +2061,64 @@ THREE.Object3D.prototype.FrustrumCast = function(frustrum, options, ret) {
                 }
             }
         }
-
     }
     return ret;
 }
-
-THREE.Object3D.prototype.SphereCast = function(center, r, options) {
-    if (options && options.filter && this) {
-
+THREE.Object3D.prototype.SphereCast = function(center, r, options)
+{
+    if (options && options.filter && this)
+    {
         if (!options.filter(this))
             return null;
     }
-
     if (this.ignoreTest(options && options.ignore))
         return null;
     if (options.UserRenderBatches && this.isBatched)
         return null;
     if (this.InvisibleToCPUPick)
         return null;
-
-
     var ret = [];
-
     //iterate the children and concat all hits
-    for (var i = 0; i < this.children.length; i++) {
-        if (this.children[i].SphereCast) {
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (this.children[i].SphereCast)
+        {
             var hit = this.children[i].SphereCast(center, r, options);
-            if (hit) {
+            if (hit)
+            {
                 for (var j = 0; j < hit.length; j++)
                     ret.push(hit[j]);
             }
         }
     }
-
-
-
-    if (this.geometry) {
-
+    if (this.geometry)
+    {
         //at this point, were going to move the ray into the space relative to the mesh. until now, the ray has been in worldspace.
         var mat;
         var mat2;
-
         var mat = this.getModelMatrix().slice(0);
         mat = MATH.inverseMat4(mat);
         var tCenter = MATH.mulMat4Vec3(mat, center);
         //in cases where the matrix is bad (scale 0) this can occur. Bail out.
-        if(isNaN(tCenter[0])) return null;
-
+        if (isNaN(tCenter[0])) return null;
         mat[3] = 0;
         mat[7] = 0;
         mat[11] = 0;
         var tR = r * MATH.lengthVec3([mat[0], mat[4], mat[8]]);
-
         var mat2 = this.getModelMatrix().slice(0);
         var mat3 = this.getModelMatrix().slice(0);
         mat3[3] = 0;
         mat3[7] = 0;
         mat3[11] = 0;
-
-
-
-        if (this instanceof THREE.Mesh) {
+        if (this instanceof THREE.Mesh)
+        {
             //collide with the mesh
             ret = this.geometry.SphereCast(tCenter, tR, options);
             if (ret.length)
                 mat2 = this.getModelMatrix().slice(0);
-            for (var i = 0; i < ret.length; i++) {
+            for (var i = 0; i < ret.length; i++)
+            {
                 //move the normal and hit point into worldspace
-
-
-
                 ret[i].point = MATH.mulMat4Vec3(mat2, ret[i].point);
                 ret[i].norm = MATH.mulMat4Vec3(mat3, ret[i].norm);
                 ret[i].norm = MATH.scaleVec3(ret[i].norm, 1.0 / MATH.lengthVec3(ret[i].norm));
@@ -2246,11 +2148,9 @@ THREE.Object3D.prototype.SphereCast = function(center, r, options) {
         // }
         // }
         // }
-
     }
     return ret;
 }
-
 THREE.Scene.prototype.SphereCast = THREE.Object3D.prototype.SphereCast;
 /* MATH.Light.prototype.CPUPick = function(origin,direction,maxdist)
 {
@@ -2338,44 +2238,40 @@ MATH.ParticleSystem.prototype.CPUPick = function(origin,direction,maxdist)
 	  return ret;
 }
 */
-
-
-function findscene(node) {
+function findscene(node)
+{
     while (node && !(node instanceof MATH.Scene))
         node = node.parent;
     return node;
 }
-
-THREE.Light.prototype.GetBoundingBox = function() {
+THREE.Light.prototype.GetBoundingBox = function()
+{
     var bound = 1;
-
     return allocate_BoundingBoxRTAS([-bound, -bound, -bound], [bound, bound, bound]);
-
 }
 THREE.ParticleSystem.prototype.GetBoundingBox = THREE.Light.prototype.GetBoundingBox;
-THREE.Scene.prototype.GetBoundingBox = function() {
-    var box = allocate_BoundingBoxRTAS([-.0001, -.0001, -.0001], [.0001, .0001, .0001]);
-    for (var i = 0; i < this.children.length; i++) {
-        var tb = this.children[i].GetBoundingBox();
-        box.expandBy(tb);
-        tb.release;
+THREE.Scene.prototype.GetBoundingBox = function()
+    {
+        var box = allocate_BoundingBoxRTAS([-.0001, -.0001, -.0001], [.0001, .0001, .0001]);
+        for (var i = 0; i < this.children.length; i++)
+        {
+            var tb = this.children[i].GetBoundingBox();
+            box.expandBy(tb);
+            tb.release;
+        }
+        return box;
     }
-    return box;
-}
-//Do the actuall intersection with the mesh;
-THREE.Light.prototype.FrustrumCast = function(frustrum,ret) {
-
-
+    //Do the actuall intersection with the mesh;
+THREE.Light.prototype.FrustrumCast = function(frustrum, ret)
+{
     //try to reject based on bounding box.
     var mat2 = this.getModelMatrix().slice(0);
     var mat = MATH.inverseMat4(mat2);
     var tfrustrum = frustrum.transformBy(mat);
-    
     var ret2 = this.GetBoundingBox().intersectFrustrum(tfrustrum);
-
-    for (var i = 0; i < ret2.length; i++) {
+    for (var i = 0; i < ret2.length; i++)
+    {
         //move the normal and hit point into worldspace
-
         ret2[i] = allocate_FaceIntersect();
         ret2[i].point = MATH.mulMat4Vec3(mat2, [0, 0, 0]);
         mat2[3] = 0;
@@ -2390,43 +2286,91 @@ THREE.Light.prototype.FrustrumCast = function(frustrum,ret) {
     }
     return ret;
 }
-
 THREE.ParticleSystem.prototype.FrustrumCast = THREE.Light.prototype.FrustrumCast;
-THREE.Scene.prototype.FrustrumCast = function(frustrum) {
-
+THREE.Scene.prototype.FrustrumCast = function(frustrum)
+{
     var hitlist = this.GetBoundingBox().intersectFrustrum(frustrum);
-
-    for (var i = 0; i < hitlist.length; i++) {
+    for (var i = 0; i < hitlist.length; i++)
+    {
         //move the normal and hit point into worldspace
-
         hitlist[i] = allocate_FaceIntersect();
         hitlist[i].point = [0, 0, 0];
-
         hitlist[i].norm = [0, 0, 1];
         hitlist[i].norm = MATH.scaleVec3(hitlist[i].norm, 1.0 / MATH.lengthVec3(hitlist[i].norm));
         hitlist[i].distance = MATH.distanceVec3([0, 0, 0], hitlist[i].point);
         hitlist[i].object = this;
         hitlist[i].priority = this.PickPriority !== undefined ? this.PickPriority : 1;
     }
-
-
     //concat all hits from children	  
-
-    for (var i = 0; i < this.children.length; i++) {
-        if (this.children[i].FrustrumCast) {
-            this.children[i].FrustrumCast(frustrum,hitlist);
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (this.children[i].FrustrumCast)
+        {
+            this.children[i].FrustrumCast(frustrum, hitlist);
         }
     }
     return hitlist;
-
 }
-
-
+THREE.Matrix4.prototype.lookAt = function(eye, target, up, axis)
+{
+    var te = this.elements;
+    if (axis === undefined)
+        axis = 2;
+    var x = new THREE.Vector3();
+    var y = new THREE.Vector3();
+    var z = new THREE.Vector3();
+    z.subVectors(eye, target).normalize();
+    if (z.length() === 0)
+    {
+        z.z = 1;
+    }
+    x.crossVectors(up, z).normalize();
+    if (x.length() === 0)
+    {
+        z.x += 0.0001;
+        x.crossVectors(up, z).normalize();
+    }
+    y.crossVectors(z, x);
+    if (axis == 2)
+    {
+        te[0] = x.x;
+        te[4] = y.x;
+        te[8] = z.x;
+        te[1] = x.y;
+        te[5] = y.y;
+        te[9] = z.y;
+        te[2] = x.z;
+        te[6] = y.z;
+        te[10] = z.z;
+    }
+    if (axis == 1)
+    {
+        te[0] = x.x;
+        te[4] = z.x;
+        te[8] = y.x;
+        te[1] = x.y;
+        te[5] = z.y;
+        te[9] = y.y;
+        te[2] = x.z;
+        te[6] = z.z;
+        te[10] = y.z;
+    }
+    if (axis == 0)
+    {
+        te[0] = z.x;
+        te[4] = x.x;
+        te[8] = y.x;
+        te[1] = z.y;
+        te[5] = x.y;
+        te[9] = y.y;
+        te[2] = z.z;
+        te[6] = x.z;
+        te[10] = y.z;
+    }
+    return this;
+}
 window.BoundingBoxRTAS = BoundingBoxRTAS;
 window.allocate_FaceIntersect = allocate_FaceIntersect;
 window.Frustrum = Frustrum;
-//return {
-//	BoundingBoxRTAS:BoundingBoxRTAS
-//
-//};
-//});
+
+});

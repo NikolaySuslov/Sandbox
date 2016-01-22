@@ -1,6 +1,6 @@
 
 
-define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview/lib/html-palette.min'], function(angular, UndoManager)
+define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview/lib/html-palette'], function(angular, UndoManager)
 {
 	var app = angular.module('SandboxEditor', ['html-palette']);
 	var playing = false;
@@ -293,8 +293,9 @@ define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview
 		if( app.root.fields.cameras.indexOf(nodeId) > -1 )
 			app.root.fields.cameras.splice( app.root.fields.cameras.indexOf(nodeId), 1 );
 
-		if(app.root.fields.selectedNode)
-			getSelectedNodeChildren();
+		//not sure what this is doing, but the node is gone at this point, you cant get the children
+		//if(app.root.fields.selectedNode)
+		//	getSelectedNodeChildren();
 
 		this.apply();
 	}

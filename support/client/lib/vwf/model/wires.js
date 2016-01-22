@@ -183,7 +183,7 @@ define( [ "module", "vwf/model" ], function( module, model ) {
         // -- settingProperties --------------------------------------------------------------------
 
         settingProperties: function( nodeID, properties ) {
-            return;
+            return properties;
             if ( ! this.objects[nodeID] ) return;  // TODO: patch until full-graph sync is working; drivers should be able to assume that nodeIDs refer to valid objects
 
             var node_properties = this.objects[nodeID].properties;

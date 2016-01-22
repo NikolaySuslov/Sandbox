@@ -915,8 +915,8 @@ function MaterialCache() {
                 }
 
             }
-            if (currentmat.reflectivity && window.vwf_view) {
-                var sky = vwf_view.kernel.kernel.callMethod(Engine.application(), 'getSkyMat')
+            if (currentmat.reflectivity && window.Engine) {
+                var sky = Engine.callMethod(Engine.application(), 'getSkyMat')
                 if (sky) {
                     currentmat.envMap = sky.uniforms.texture.value;
                     currentmat.envMap.mapping = new THREE.CubeReflectionMapping();
@@ -1281,7 +1281,7 @@ function MaterialCache() {
                 g: 0,
                 b: 0
             },
-            reflect: 0.1,
+            reflect: 0.0,
             shadeless: false,
             shadow: true,
             specularColor: {

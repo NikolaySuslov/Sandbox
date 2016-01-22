@@ -10,7 +10,7 @@ define({
 
 		if(_DataManager.getInstanceData().publishSettings.persistence)
 		{
-		 window.onbeforeunload = function(){
+		 window.onbeforeunload += function(){
 			//user must exist
 			if(_UserManager.GetCurrentUserName() && _DataManager.getInstanceData().publishSettings.persistence)
 			{

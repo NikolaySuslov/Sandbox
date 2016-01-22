@@ -192,10 +192,37 @@ function proxyUpload(req, response, URL) {
         }, function(err, xhr, body) {
 
             //looks like post worked, lets get metadata
-            var PID = eval(body);
+            if(err)
+            {
+                response.writeHead(401);
+                //return the PID of the new model to the client
+                response.write(err);
+                response.end();
+                return;
+            }
+            try{
+                var PID = eval(body);    
+            }catch(e)
+            {
+                response.writeHead(401);
+                //return the PID of the new model to the client
+                response.write("Error from 3DR " + e + " " + body);
+                response.end();
+                return;
+            }
+
+            
             var searchstring = Get3DRAPI() + "/" + PID + "/Metadata/json?ID=" + Get3DRAPIKey();
             request['get'](searchstring, function(err2, xhr2, metadata) {
 
+                if(err2)
+                {
+                    response.writeHead(401);
+                    //return the PID of the new model to the client
+                    response.write(err2);
+                    response.end();
+                    return;
+                }
                 metadata = JSON.parse(metadata);
 
                 //set the metadata

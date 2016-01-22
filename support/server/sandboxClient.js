@@ -52,7 +52,10 @@ var sandboxClient = function(socket)
             console.log('Avatar saved');
         })
     }
-
+    this.isAnonymous = function()
+    {
+        return this.loginData.anonymous;
+    }
     var self = this;
     socket.on('authenticate', function(msg)
     {
@@ -77,7 +80,7 @@ var sandboxClient = function(socket)
     //        logger.error(e);
      //   }
     });
-    socket.on('message', function(msg)
+    socket.on('m', function(msg)
     {
         if (self.world)
             self.world.message(msg, self)
@@ -87,6 +90,12 @@ var sandboxClient = function(socket)
     {
         if (self.world)
             self.world.disconnect(self);
+    });
+    //the client signals the server when it has finished loading the state. The simulation manager does not distribute to the client until the client reports ready
+    socket.on('clientReady', function()
+    {
+        console.log('client is ready');
+        self.trigger("ready");
     });
 
 }

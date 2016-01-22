@@ -264,6 +264,13 @@ define(["vwf/view/editorview/Editor"], function(Editor) {
 
                     }, false);
                     xhr.addEventListener("load", function() {
+                        if(xhr.status !== 200)
+                        {
+                            alertify.alert("error uploading moded");
+                            $('#ModelUploadDialog').hide();
+                            return;
+
+                        }
                         var pid = JSON.parse(xhr.responseText);
                         $('#uploadStatus').text("Fetching Metadata");
 

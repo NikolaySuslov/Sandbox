@@ -40,7 +40,7 @@ function PainterTool() {
     this.display.material.opacity = .25;
     this.display.material.transparent = true;
     this.lastNames = [];
-    this.display.material.map = _SceneManager.getTexture('./vwfDataManager.svc/texture?UID=checker.jpg');
+    
     $('#PainterToolGUIChooseBlock').click(function() {
         _MapBrowser.setTexturePickedCallback(function(e) {
             this.nodeProto.properties.materialDef.layers[0].src = e;
@@ -54,6 +54,8 @@ function PainterTool() {
     $('#PainterToolGUIActivteTool').change(function(e) {
 
         var checked = ($(this).next().attr('aria-pressed'));
+        if(!this.display.material.map)
+            this.display.material.map = _SceneManager.getTexture('./vwfDataManager.svc/texture?UID=checker.jpg');
         if (checked == 'true') {
             $(this).next().children().css('background-color', 'red');
             _Editor.addTool('Painter', _PainterTool);

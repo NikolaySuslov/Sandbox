@@ -223,11 +223,18 @@ async.series([
         if (compile)
         {
             //remove these from the command line, so when spawning children, they don't rebuild
+            var buildopts = ['-build','-exit'];
             if (process.argv.indexOf('-build') > -1)
-                process.argv = process.argv.splice(process.argv.indexOf('-build'), 1);
+                process.argv.splice(process.argv.indexOf('-build'), 1);
             if (process.argv.indexOf('-compile') > -1)
-                process.argv = process.argv.splice(process.argv.indexOf('-compile'), 1);
-            var p1 = fork('./app.js', ['-exit'].concat(process.argv),
+                process.argv.splice(process.argv.indexOf('-compile'), 1);
+            if (process.argv.indexOf('-clean') > -1)
+            {
+                process.argv.splice(process.argv.indexOf('-clean'), 1);
+                buildopts.push('-clean');
+            }
+            
+            var p1 = fork('./app.js', buildopts.concat(process.argv),
             {});
             p1.on('close', function()
             {

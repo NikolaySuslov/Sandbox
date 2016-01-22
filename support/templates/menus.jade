@@ -10,9 +10,6 @@ mixin menus_body
 				li(ng-class='{"disabled": loggedIn}'): a#MenuLogIn(ng-click='lookUpHandler($event)')
 					.glyphicon.glyphicon-log-in
 					| Log In
-				li(ng-class='{"disabled": !loggedIn}'): a#MenuLogOut(ng-click='lookUpHandler($event)')
-					.glyphicon.glyphicon-log-out
-					| Log Out
 				li: a#MenuSaveNow(ng-click='lookUpHandler($event)')
 					.glyphicon.glyphicon-floppy-disk
 					| Save Now
@@ -398,6 +395,9 @@ mixin menus_body
 				li: a#MenuPhysicsEditor(title="Open the physics widget in sidebar", ng-click='lookUpHandler($event)')
 					.glyphicon.glyphicon-wrench
 					| Physics Editor
+				li: a#MenuConsole(title="Open the console window", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-wrench
+					| Console
 
 		li
 			a#MenuRendering Rendering

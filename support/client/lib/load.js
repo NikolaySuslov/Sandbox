@@ -43,6 +43,34 @@ if (false) {
     ]);
 }
 
+require.config({
+    waitSeconds: 200,
+    paths: {
+        "vwf": "../vwf"
+    },
+    shim: {
+        'vwf/view/editorview/lib/angular-resource': {
+            deps: ['vwf/view/editorview/lib/angular']
+        },
+        'vwf/view/xapi/xapiwrapper': {
+            deps: ['vwf/view/editorview/sha256', "vwf/view/editorview/_3DRIntegration"],
+            exports: 'XAPIWrapper'
+        },
+        'vwf/model/threejs/GeometryExporter': {
+            deps: ["vwf/model/threejs"]
+        },
+        'vwf/model/threejs/helvetiker_regular.typeface.js': {
+            deps: ["vwf/model/threejs"]
+        },
+        'vwf/view/editorview/lib/html-palette.min':
+        {
+            deps: ['vwf/view/editorview/lib/angular'],
+            exports:"HtmlPalette"
+        }
+    },
+    waitSeconds: 15
+});
+
 //if window.jQuery is defined, than the Require Optimizer has run, and appended it to the top of this file. Thus, we don't need to worry about loading all the dependancy libraries
 if (!window.jQuery) {
 
@@ -62,8 +90,6 @@ if (!window.jQuery) {
                                             window.alertify = require('vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify');
                                             require(["boot"], function(boot) {
                                                 //ok, the loading stage is complete - fire up some initial gui logic
-
-                                                   //localization
                                                 setupLocalization();
                                                 promptTest(boot);
                                             })
@@ -76,7 +102,8 @@ if (!window.jQuery) {
     //so, if window.jQuery is defined, then we don't need to worry about the other libs - they are already loaded. Just fire the startup.
     require(["./enginebuild.js","boot"], function(engine,boot) {
         //note that the boot module returns a function that does all the VWF setup
-        startup(boot);
+        setupLocalization();
+        promptTest(boot);
     })
 }
 
@@ -124,6 +151,20 @@ function promptTest(boot)
 
 }
 
+function setupLocalization(){
+
+    var lang = docCookies.getItem('i18next');
+    var option = {
+        lng: lang,
+        resGetPath: 'vwf/view/localization/locales/__lng__/__ns__.json',
+        useLocalStorage: true,
+        debug: true,
+        getAsync: false
+    };
+    i18n.init(option);
+}
+
+
 //ok, at this point, we have all the libraries. Let's do a bit of gui logic and setup
 function startup(boot) {
     
@@ -154,8 +195,6 @@ function startup(boot) {
     window.Vec4 = goog.vec.Vec4;
     window.Mat4 = goog.vec.Mat4;
     window.Quaternion = goog.vec.Quaternion;
-
-
 
     //start when document is ready
     $(window).ready(function() {

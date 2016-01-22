@@ -189,7 +189,11 @@ MyRTC.prototype.disconnect = function()
 		this.peerConn = null;
 	}
 	if( this.localStream ){
-		this.localStream.stop();
+
+		//this.localStream.stop(); deprecated in chrome 45
+		var tracks =  this.localStream.getTracks();
+		for(var i =0; i < tracks.length; i++)
+			tracks[i].stop();
 		this.localStream = null;
 	}
 	this.initialized = false;
@@ -257,6 +261,7 @@ MyRTC.prototype.receiveMessage = function( msg )
 	else if( msg.type == 'answer' )
 	{
 		// set remote description
+		
 		this.peerConn.setRemoteDescription(
 			new this.RTCSessionDescription(msg), 
 			
@@ -270,7 +275,7 @@ MyRTC.prototype.receiveMessage = function( msg )
 			function(error){
 				console.error('Failed to set remote description from answer', error);
 				this.setStatus( this.statusText.error );
-			}
+			}.bind(this)
 		);
 	}
 	else if( msg.type == 'candidate' ){
@@ -300,12 +305,11 @@ MyRTC.prototype.createPeerConnection = function()
 {
 	// create a new blank peer connection
 	var peerConfig = {'iceServers': [
-		{'url': 'stun:stun.l.google.com:19302'},
-		{'url': 'stun:stun1.l.google.com:19302'}
+		{'urls': ['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']}
 	]};
 	var peerConstraints = {};
-	if( this.detectedBrowser == 'chrome' )
-		peerConstraints['optional'] = [{'DtlsSrtpKeyAgreement': 'true'}];
+	//if( this.detectedBrowser == 'chrome' )
+		//peerConstraints['optional'] = [{'DtlsSrtpKeyAgreement': 'true'}];
 	this.peerConn = new this.RTCPeerConnection(peerConfig, peerConstraints);
 	
 	// add the remote video once it's available
@@ -343,23 +347,21 @@ MyRTC.prototype.makeOffer = function()
 	this.setStatus( this.statusText.connecting );
 
 	var mediaConstraints = {
-		'mandatory': {
-			'OfferToReceiveAudio': true,
-			'OfferToReceiveVideo': true
-		}
+		'offerToReceiveAudio': true,
+		'offerToReceiveVideo': true
 	};
 	if( this.detectedBrowser == 'firefox' )
-		mediaConstraints['mandatory']['MozDontOfferDataChannel'] = true;
+		mediaConstraints.mozDontOfferDataChannel = true;
 	
 	//console.log('Making an offer');
 	
 	this.peerConn.createOffer(
 		bind_safetydance( this, function(desc){
 			// firefox doesn't like using crypto; force it
-			if( desc.sdp.indexOf('a=crypto') == -1 ){
-				var inline = 'a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890abc\r\nc=IN';
-				desc.sdp = desc.sdp.replace(/c=IN/g, inline);
-			}
+			//if( desc.sdp.indexOf('a=crypto') == -1 ){
+			//	var inline = 'a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890abc\r\nc=IN';
+			//	desc.sdp = desc.sdp.replace(/c=IN/g, inline);
+			//}
 			console.log('Making an offer:', desc);
 			this.peerConn.setLocalDescription(desc);
 			this.sendMessage(desc);

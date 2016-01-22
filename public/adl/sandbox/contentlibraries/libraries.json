@@ -30,5 +30,10 @@
 	{
 		"name": "Utilities",
         "url": "./contentlibraries/utils.json"
+    },
+    {
+    	"name": "L-System generator",
+        "url": "./contentlibraries/lsystem.json"
     }
+
 ]

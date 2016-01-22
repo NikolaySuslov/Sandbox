@@ -61,7 +61,7 @@ function _FileCache() {
             async.eachSeries(files,function(filename,nextfile)
             {
                 var file = libpath.join(dir,filename);
-                logger.info(file);
+                //logger.info(file);
                 if(file === 'build')
                 {
                     nextfile();
@@ -190,7 +190,7 @@ function _FileCache() {
         //Find the record
         for (var i = 0; i < this.files.length; i++) {
             if (this.files[i].path == path) {
-                logger.info('serving from cache: ' + path, 2);
+                //logger.info('serving from cache: ' + path, 2);
                 //Callback with the record
                 callback(this.files[i]);
                 return;
@@ -227,11 +227,11 @@ function _FileCache() {
                                 newentry.hash = hash(file);
 
                                 logger.debug(newentry.hash, 2);
-                                logger.info('loading into cache: ' + path, 2);
+                                //logger.info('loading into cache: ' + path, 2);
 
                                 // if enabled, cache in memory
                                 if (FileCache.enabled == true) {
-                                    logger.info('cache ' + path, 2);
+                                    //logger.info('cache ' + path, 2);
                                     FileCache.files.push(newentry);
 
                                     //minify is currently not compatable with auto-watch of files

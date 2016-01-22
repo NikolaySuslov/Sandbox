@@ -31,6 +31,7 @@ properties:
   ___physics_enabled: true
   ___physics_mass: 158.5
   animationPaused: false
+  originalvelocity: [0,0,0]
   jumpcounter: 0
 methods:
   tick:
@@ -64,8 +65,8 @@ scripts:
         this.ku = function(e, d) {
           return self.keyUp(e, d)
         };
-        this.Scene.bind('keyDown', this.kd);
-        this.Scene.bind('keyUp', this.ku);
+        this.Scene.bind('keyDown', this.kd,this);
+        this.Scene.bind('keyUp', this.ku,this);
         this.Scene.avatarCreated(this);
       }
       this.lookat = function(vec)

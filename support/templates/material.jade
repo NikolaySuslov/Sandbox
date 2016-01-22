@@ -27,14 +27,14 @@ block content
 			div(ng-show='materialDef.type === "phong" || materialDef.type === "mix" || !materialDef')
 
 				label.inline Base color:
-					html-palette(rgb-color='materialDef.color', throttle-apply='100', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', use-alpha=true, css='extrawide toplevel')
+					html-palette(color='materialDef.color', color-profile='rgba', throttle-apply='100', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', use-alpha=true, css='extrawide toplevel')
 
 				.inline Ambient color:
 					.verticalLayout(style='align-items: flex-end;')
 						label Linked to base
 							input(type='checkbox', ng-model='ambientLinked', ng-disabled='!materialDef')
 						//color-picker(color-obj='materialDef.ambient', disabled='!materialDef', ng-hide='ambientLinked', sliding='suppressUndo')
-						html-palette(ng-hide='ambientLinked', throttle-apply='100', rgb-color='materialDef.ambient', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', css='toplevel')
+						html-palette(ng-hide='ambientLinked', color-profile='rgb', throttle-apply='100', color='materialDef.ambient', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', css='toplevel')
 
 				label Shininess:
 					br
@@ -42,7 +42,7 @@ block content
 
 				label.inline Specular color:
 					//color-picker(color-obj='materialDef.specularColor', disabled='!materialDef', sliding='suppressUndo')
-					html-palette(rgb-color='materialDef.specularColor', throttle-apply='100', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', use-alpha=true, css='extrawide toplevel')
+					html-palette(color='materialDef.specularColor', color-profile='rgba', throttle-apply='100', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', use-alpha=true, css='extrawide toplevel')
 
 				//label Specular intensity:
 					br
@@ -50,7 +50,7 @@ block content
 
 				label.inline Emissive color:
 					//color-picker(color-obj='materialDef.emit', disabled='!materialDef', sliding='suppressUndo')
-					html-palette(rgb-color='materialDef.emit', throttle-apply='100', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', css='toplevel')
+					html-palette(color='materialDef.emit', color-profile='rgb', throttle-apply='100', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', css='toplevel')
 
 				label Skybox factor:
 					br

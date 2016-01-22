@@ -51,15 +51,16 @@ block content
 	
 	#vwf-template-slider(ng-non-bindable, style='display: none;') 
 		label.vMargin {{displayname}}: 
-			slider(min="min", max="max", step="step || 1", value='vwfNode.properties[vwfProp.property]', sliding='isUpdating', change='onChange()', softlimit="true")
+			slider(min="min", max="max", step="step || 1", value='vwfNode.properties[vwfProp.property]', sliding='isUpdating', change='onChange', softlimit="true")
 	
 	#vwf-template-color(ng-non-bindable, style='display: none;')
 		label.inline {{displayname}}: 
-			color-picker(color-arr='vwfNode.properties[vwfProp.property]', color-obj='{r:0,g:0,b:0}', sliding='isUpdating')
+			html-palette(color='rgbColor', use-alpha="true", popup-edge="sw", on-color-select='colorSelect(color)', radial="true")
+			//color-picker(color-arr='vwfNode.properties[vwfProp.property]', color-obj='{r:0,g:0,b:0}', sliding='isUpdating', change='onChange()')
 		
 	#vwf-template-check(ng-non-bindable, style='display: none;')
 		label.inline {{displayname}}: 
-			input(type='checkbox', ng-model='vwfNode.properties[vwfProp.property]', ng-change='onChange()')
+			input(type='checkbox', ng-model='vwfNode.properties[vwfProp.property]', ng-change='onChange(null, vwfNode.properties[vwfProp.property])')
 		
 	#vwf-template-button(ng-non-bindable, style='display: none;')
 		.method-container
@@ -67,7 +68,7 @@ block content
 		
 	#vwf-template-rangeslider(ng-non-bindable, style='display: none;')
 		label.vMargin {{displayname}}: 
-			slider(min="min", max="max", step="step || 1", value='vwfNode.properties[vwfProp.property[0]]', upper-value='vwfNode.properties[vwfProp.property[1]]', range="true", sliding='isUpdating')
+			slider(min="min", max="max", step="step || 1", value='vwfNode.properties[vwfProp.property[0]]', upper-value='vwfNode.properties[vwfProp.property[1]]', range="true", sliding='isUpdating', change='onChange')
 		
 	#vwf-template-vector(ng-non-bindable, style='display: none;')
 		label {{displayname}}: 

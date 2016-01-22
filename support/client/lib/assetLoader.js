@@ -3,7 +3,7 @@
 //Note that the sim can go forward before the textures are loaded - the scene manager just fills them with blue 
 //textures and replaces them when loaded. So, we don't have to cache texture here, but we do let the scenemanager know to fire up
 //and start loading, just to give the textures a head start.
-define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify", "vwf/model/threejs/BufferGeometryUtils", 'vwf/model/threejs/ColladaLoaderOptimized','progressScreen'],
+define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify", "vwf/model/threejs/BufferGeometryUtils", 'vwf/model/threejs/ColladaLoaderOptimized','progressScreen','vwf/model/threejs/scenemanager/sceneManager'],
         function(backgroundLoader,alertify,BufferGeometryUtils,ColladaLoaderOptimized,progressScreen)
         {
             var assetLoader = {};

@@ -109,7 +109,7 @@
         }
         this.setupGertsnerShadeConstants = function()
         {
-            var Qa = this.uniforms.uChop.value / this.uniforms.uMag.value;
+            var Qa = this.uniforms.uChop.value;
             var L = this.uniforms.L.value;
             var D = this.uniforms.D.value;
             var A = this.uniforms.A.value;
@@ -126,12 +126,12 @@
                 D[i] = new THREE.Vector2(waves[i].y, waves[i].z);
                 D[i].normalize();
                 var w = 2.0 * PI / L[i];
-                A[i] = 0.5 / (w * 2.718281828459045); //for ocean on Earth, A is ususally related to L
+                A[i] =  1.0/(PI*w); //for ocean on Earth, A is ususally related to L
                 
                 //S[i] =     1.0 * uMag; //for ocean on Earth, S is ususally related to L
-                S[i] = .65 * (waves[i].w + 0.5) * Math.sqrt(.98 * (3.0 * PI / w));
+                S[i] =   Math.sqrt(_dOcean.uniforms.W.value[i] * 4);
                 W[i] = w;
-                Q[i] = Qa / (w * A[i] * this.waveNum);
+                Q[i] =  Qa * 1.0/(this.waveNum * _dOcean.uniforms.W.value[i]*_dOcean.uniforms.A.value[i])
             }
         }
         this.nm510C = [3.4,7.3,11.55,13.5,21,33,54,90];

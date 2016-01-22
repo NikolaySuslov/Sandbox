@@ -17,34 +17,12 @@ implements:
 - http://vwf.example.com/xapi.vwf
 properties:
   activeCamera: 
-    set: |
-      if ( this.activeCameraComp ) {
-        if ( this.getChild ) {
-          var cam = this.getChild( value );
-          if ( cam ) {
-             this.activeCameraComp = cam;
-             this.activeCamera = value;
-          }
-        }        
-      } else {
-        if ( this.activeCamera != value ) {
-          this.activeCamera = value;
-          if ( this.getChild ) {
-            var temp = this.getChild( value );
-            if ( temp ) this.activeCameraComp = temp;
-          }
-        }
-      }
-    value: "http-vwf-example-com-camera-vwf-camera"
   fogNear:
   fogFar:
   fogType:
   fogColor:
   fogDensity:  
   ambientColor: 
-    set: |
-      this.ambientColor = value;
-    value: [ .5, .5, .5 ]
   ___traceAPI: true
   ___audioAPI: true
   ___createAPI:
@@ -91,37 +69,3 @@ properties:
 methods:
   findNode:
   findNodeByID:
-scripts:
-- |
-    this.activeCameraComp = undefined;
-    var scene = this;
-    this.initialize = function() {
-      this.activeCamera = "http-vwf-example-com-camera-vwf-camera";
-      this.ambientColor = this.ambientColor;
-    }
-    this.getChild = function( childName ) {
-      for ( var i = 0; i < this.children.length; i++ ) {
-        if ( this.children[i].id == childName ) {
-          return this.children[i];
-        } else if ( this.children[i].name && this.children[i].name == childName ) {
-          return this.children[i];        
-        }
-      }
-      //console.info( "WARNING: SCENE.getChild   CHILD NOT FOUND: " + childName );
-      return undefined;
-    }
-    
-    this.getActiveCamera = function() {
-      if ( !this.activeCameraComp ) {
-        if ( this.getChild ) {
-          this.activeCameraComp = this.getChild( this.activeCamera );
-          if ( !this.activeCameraComp ) {
-             this.activeCameraComp = this.camera;
-          }
-        }
-      }
-      return this.activeCameraComp;
-    }
-    this.load = function( obj, objName ){
-      this.children.create( objName, obj );
-    } //@ sourceURL=scene.vwf

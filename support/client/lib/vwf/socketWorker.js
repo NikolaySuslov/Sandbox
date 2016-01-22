@@ -15,6 +15,28 @@ var socketBytesSentLast = 0;
 var socketBytesSent = 0;
 var socketBytesReceivedLast = 0;
 var socketBytesReceived = 0;
+var totalMessagesDecoded = 0;
+var totalMessagesEncoded = 0;
+var totalEncodeTime = 0;
+var totalDecodeTime = 0;
+
+
+//generate the ticks locally, but not on the main thread - which will suspend the timer if the window minimizes
+var EngineProxy = {
+	time : 0,
+	generateTick : function()
+    {
+    	//this.time += .05;
+        var fields = {
+            time: this.time,
+            action: "tick",
+            parameters:[],
+            origin:"reflector"
+            // callback: callback,  // TODO: provisionally add fields to queue (or a holding queue) then execute callback when received back from reflector
+        };
+        onEvent("message",fields);
+    }	
+}
 
 function getUTF8Length(string)
 {
@@ -54,6 +76,18 @@ function socketMonitorInterval()
 	socketBytesReceivedLast = socketBytesReceived;
 	socketBytesReceived = 0;
 	log(socketBytesSentLast / 10000 + 'KBps up' + socketBytesReceivedLast / 10000 + 'KBps down');
+	log("Encode Average Time: " + (totalEncodeTime / totalMessagesEncoded));
+	log("Decode Average Time: " + (totalDecodeTime / totalMessagesDecoded));
+	log("Message Compression Load: " + ((totalDecodeTime + totalEncodeTime)/10000).toFixed(4) + "%");
+
+	(totalEncodeTime / totalMessagesEncoded)
+	if (totalMessagesDecoded + totalMessagesEncoded > 100)
+	{
+		totalMessagesDecoded = 0;
+		totalMessagesEncoded = 0;
+		totalEncodeTime = 0;
+		totalDecodeTime = 0;
+	}
 }
 
 function onEvent(event, param)
@@ -84,22 +118,36 @@ onmessage = function(e)
 		host = message.host;
 		options = message.options;
 		socket = io(host, options);
-		socket.on("message", function(e)
+		socket.on('compress',function(e)
 		{
-
-			var message = e;
-			socketBytesReceived += 34 + getUTF8Length(message);
-			if(message.constructor == String)
-			{
-				message = JSON.parse(messageCompress.unpack(message));
-			}
-
-			
-			onEvent("message", message);
+			messageCompress.applyLearnedMappings(e)
+			log(e)
 		})
+		socket.on("m", function(e)
+		{
+			var message = e;
+			socketBytesReceived += 28 + getUTF8Length(message);
+			if (message.constructor == String)
+			{
+				var now = performance.now();
+				message = messageCompress.unpack(message);
+				totalDecodeTime += performance.now() - now;
+				totalMessagesDecoded++
+			}
+			if(message)
+				onEvent("message", message);
+		})
+		socket.on("t", function(e)
+		{
+			socketBytesReceived += 16;
+            EngineProxy.time = parseFloat(e);
+            //onEvent("message", tickmessage);
+
+		});
 		socket.on("connect", function(e)
 		{
 			setInterval(socketMonitorInterval, 10000);
+			setInterval(EngineProxy.generateTick.bind(EngineProxy),50);
 			postMessage(
 			{
 				type: ID,
@@ -122,9 +170,16 @@ onmessage = function(e)
 		// Send the message.
 		if (message.message.constructor !== String)
 		{
-			message.message = messageCompress.pack(JSON.stringify(message.message));
+			var now = performance.now();
+			message.message = messageCompress.pack(message.message);
+			totalEncodeTime += performance.now() - now;
+			totalMessagesEncoded++
 		}
 		socketBytesSent += 34 + getUTF8Length(message.message);
-		socket.send(message.message)
+		socket.emit('m',message.message)
+	}
+	if (message.type == EVENT)
+	{
+		socket.emit(message.event.name,message.event.params);
 	}
 }

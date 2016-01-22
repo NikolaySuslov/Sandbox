@@ -189,7 +189,7 @@ function TileCache() {
 
         "void main() {\n" +
         " float z = mix(everyOtherZ,position.z,blendPercent);\n" +
-        " vFogPosition = (modelMatrix * vec4(position.xy,z,1.0)).xyz; \n" +
+        " vFogPosition = (modelMatrix * vec4(position.x,position.y,z,1.0)).xyz; \n" +
         "opos = vec3(position.xy,z);\n" +
         "npos = vFogPosition;\n" +
         //"npos.z += getNoise(vFogPosition.xy*200.0)/50.0; \n"+
@@ -210,7 +210,7 @@ function TileCache() {
 
         
         "wN = mix(everyOtherNormal,ONormal,blendPercent);\n" +
-        "if(edgeblend == 1.0) {z=everyOtherZ;wN = everyOtherNormal; }\n" +
+        //"if(edgeblend == 1.0) {z=everyOtherZ;wN = everyOtherNormal; }\n" +
 
         "n = normalMatrix *  wN\n;" +
 
@@ -224,6 +224,12 @@ function TileCache() {
 
 
         "#extension GL_OES_standard_derivatives : enable\n" +
+        
+        "uniform float coordA;\n" +
+        "uniform float coordB;\n" +
+         "uniform int renderMode;\n" +
+
+
         "#if MAX_DIR_LIGHTS > 0\n" +
 
 
@@ -234,53 +240,9 @@ function TileCache() {
         "uniform vec3 directionalLightDirection[ MAX_DIR_LIGHTS ];\n" +
 
 
-        "uniform vec3 fogColor;" +
-        "uniform int fogType;" +
-        "uniform int renderMode;" +
-
-        "uniform float fogDensity;" +
-        "uniform float fogNear;" +
-        "uniform float fogFar;" +
-        "uniform float vFalloff;" +
-        "uniform float vFalloffStart;" +
-        "uniform vec3 vAtmosphereColor;\n" + //vec3(0.0, 0.02, 0.04);
-        "uniform vec3 vHorizonColor;\n" + //vec3(0.88, 0.94, 0.999);
-        "uniform vec3 vApexColor;\n" + //vec3(0.78, 0.82, 0.999)
-        "uniform float vAtmosphereDensity;\n" + //.0005
-
-
-        "uniform float coordA;\n" +
-        "uniform float coordB;\n" +
-
-        //"horizonColor = fogColor;\n"+
-        //"zenithColor = vec3(0.78, 0.82, 0.999);\n"+
-        //"gl_FragColor.xyz = aerialPerspective(gl_FragColor.xyz, distance(pos,cameraPosition),cameraPosition.xzy, normalize(pos-cameraPosition).xzy);\n"+
-        "vec3 horizonColor = vHorizonColor;\n" +
-        "vec3 zenithColor = vApexColor;\n" +
-
-        "vec3 atmosphereColor(vec3 rayDirection){\n" +
-        "    float a = max(0.0, dot(rayDirection, vec3(0.0, 1.0, 0.0)));\n" +
-        "    vec3 skyColor = mix(horizonColor, zenithColor, a);\n" +
-        "    float sunTheta = max( dot(rayDirection, directionalLightDirection[0].xzy), 0.0 );\n" +
-        "    return skyColor+directionalLightColor[0]*4.0*pow(sunTheta, 16.0)*0.5;\n" +
-        "}\n" +
-
-        "vec3 applyFog(vec3 albedo, float dist, vec3 rayOrigin, vec3 rayDirection){\n" +
-        "    float fogDensityA = fogDensity ;\n" +
-        "    float fog = exp((-rayOrigin.y*vFalloff)*fogDensityA) * (1.0-exp(-dist*rayDirection.y*vFalloff*fogDensityA))/(rayDirection.y*vFalloff);\n" +
-        "    return mix(albedo, fogColor, clamp(fog, 0.0, 1.0));\n" +
-        "}\n" +
-
-        "vec3 aerialPerspective(vec3 albedo, float dist, vec3 rayOrigin, vec3 rayDirection){\n" +
-        " rayOrigin.y += vFalloffStart;\n" +
-        "    vec3 atmosphere = atmosphereColor(rayDirection)+vAtmosphereColor; \n" +
-        "    atmosphere = mix( atmosphere, atmosphere*.75, clamp(1.0-exp(-dist*vAtmosphereDensity), 0.0, 1.0));\n" +
-        "    vec3 color = mix( applyFog(albedo, dist, rayOrigin, rayDirection), atmosphere, clamp(1.0-exp(-dist*vAtmosphereDensity), 0.0, 1.0));\n" +
-        "    return color;\n" +
-        "}						\n" +
-
-
         "#endif\n" +
+
+        THREE.ShaderChunk.fog_pars_fragment +"\n" + 
 
 
         (["const float C1 = 0.429043;",
@@ -360,19 +322,30 @@ function TileCache() {
         "   vec3 vEyeDir = normalize((viewMatrix * vec4(normalize(vFogPosition-cameraPosition ),0.0)).xyz);\n" +
         "   vec3 vReflectDir = normalize(reflect(vLightDir,nn));\n" +
         //"   float phong =pow( min(1.0,max(0.0,dot(vReflectDir,vEyeDir) + .3)),1.0 );\n"+
-        "	light += directionalLightColor[0] * clamp(dot(nn, vLightDir),0.0,1.0);\n" +
+        "	light += directionalLightColor[0] * clamp(dot(normalize(nn), vLightDir),0.0,1.0);\n" +
         "	#endif\n" +
 
 
-        "   gl_FragColor = ambient * diffuse + diffuse * vec4(light.xyz,1.0);\n" +
+        "   gl_FragColor =  ambient * diffuse + vec4(light,1.0) * diffuse;\n" +
+      
         "gl_FragColor.a = 1.0;\n" +
         "#ifdef USE_FOG\n" +
 
+        "#ifdef FOG_EXP2\n" + 
+            "#if MAX_DIR_LIGHTS > 0\n"+
+                "gl_FragColor.xyz = aerialPerspective(gl_FragColor.xyz, distance(vFogPosition,cameraPosition),cameraPosition.xzy, normalize(vFogPosition-cameraPosition).xzy);\n" +
+            "#endif\n" +
+        "#else\n"+
 
-        //"gl_FragColor = mix( gl_FragColor, vec4( fogColor, gl_FragColor.w ), fogFactor );\n"+
+
+
+            "float depth = gl_FragCoord.z / gl_FragCoord.w;\n"+
+            "float fogFactor = smoothstep( fogNear, fogFar, depth );\n"+
+            "gl_FragColor = mix( gl_FragColor, vec4( fogColor, gl_FragColor.w ), fogFactor );\n"+
 
         //"gl_FragColor.xyz = nn;\n"+
-        "gl_FragColor.xyz = aerialPerspective(gl_FragColor.xyz, distance(vFogPosition,cameraPosition),cameraPosition.xzy, normalize(vFogPosition-cameraPosition).xzy);\n" +
+        
+        "#endif\n" +
         "#endif\n" +
         //"gl_FragColor = vec4(nn.rgb,1.0);\n"+
         "}\n";

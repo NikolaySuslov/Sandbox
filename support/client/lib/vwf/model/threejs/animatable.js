@@ -43,6 +43,7 @@
         
         this.backupTransforms =function(time)
         {
+            if(this.backupTime == time) return;
             this.backupTime = time;
             var skins = this.getSkin(this.getRoot(),this.getRoot());
             for (var i = 0; i < skins.length; i++) {
@@ -144,7 +145,8 @@
                      //   if(skins[i].skeleton.bones[j].parent == skins[i])
                       //      skins[i].skeleton.bones[j].updateMatrixWorld(true);
                     //}
-                    skins[i].updateMatrixWorld(true);
+                    //skins[i].updateMatrixWorld(true);
+                    skins[i].matrixWorldNeedsUpdate = true;
 
                     if (updateSceneManager) {
                         var allMeshes = getAllDrawables(skins[i]);

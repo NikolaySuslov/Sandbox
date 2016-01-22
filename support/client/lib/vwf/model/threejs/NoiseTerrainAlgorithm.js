@@ -61,7 +61,7 @@ function NoiseTerrainAlgorithm()
 		"vec4 getGrassDensity(vec3 o, vec3 n, vec2 p) {return vec4(1.0,1.0,1.0,1.0);}" +
 		"vec4 getMix(vec3 norm)" +
 		"{"+
-		"float side = min(1.0,pow(1.0-abs(dot(norm,(viewMatrix * vec4(0.0,0.0,1.0,0.0)).xyz)),3.0) * 10.0);\n"+
+		"float side = min(1.0,pow(1.0-abs(dot(norm,(vec4(0.0,0.0,1.0,0.0)).xyz)),2.0) * 10.0);\n"+
 			"float bottom = 1.0-smoothstep(-20.0,60.0,npos.z);\n"+
 			"float top = clamp(0.0,1.0,(smoothstep(100.0,140.0,npos.z)));\n"+
 			"float middle = clamp(0.0,1.0,(1.0 - bottom - top));\n"+
@@ -73,7 +73,9 @@ function NoiseTerrainAlgorithm()
 		"{"+
 			//"coords /= 100.0;\n"+
 			"vec4 noiseMain = texture2D(noiseSampler,(npos.xy/10.0)/2.0);\n"+
+
 			"vec4 mixvec =  getMix(norm + (noiseMain.rgb - .5)/10.0) ;\n"+
+			
 			"vec2 c0 = (coords.xy/10.0)/2.0 ;\n"+
 			"vec2 c1 = (coords.xy/10.0)/2.0 ;\n"+
 			"c1.y /= .5;\n"+
@@ -100,30 +102,19 @@ function NoiseTerrainAlgorithm()
 		var z = 0;
 		z = this.SimplexNoise.noise2D((vert.x)/10000,(vert.y)/1000) * 15;
 		z = z*z;
-		z += this.SimplexNoise.noise2D((vert.x)/100000,(vert.y)/100000) * 450;
-		z += this.SimplexNoise.noise2D((vert.x)/10000,(vert.y)/100000) * 250;
-		z += this.SimplexNoise.noise2D((vert.x)/1000,(vert.y)/100) * 25;
-		z += this.SimplexNoise.noise2D((vert.x)/1000,(vert.y)/5000) * 50;
-		z += this.SimplexNoise.noise2D((vert.x)/500,(vert.y)/50) * 10;
-		 z += this.SimplexNoise.noise2D((vert.x)/100,(vert.y)/100) * 5.0;
-		 z += this.SimplexNoise.noise2D((vert.x)/20,(vert.y)/20) * 1.5;
-		 z += this.SimplexNoise.noise2D((vert.x)/5,(vert.y)/5) * .25;
-		  
-		var canynon = this.SimplexNoise.noise2D((vert.x)/2000,(vert.y)/10000) * -50;
-			if(canynon < -30)
-			{
-				canynon += 30;
-				canynon *= canynon;
-				}
-			else
-				canynon = 0;
-			z-= canynon;	
-		if(z < 0)  
-		{
-			z/=5;
-			
-		}
-		return z + 30;
+		z += this.SimplexNoise.noise2D((vert.x)/100000,(vert.y)/100000) * 50;
+		z += this.SimplexNoise.noise2D((vert.x)/1000,(vert.y)/1000) * 25;
+		z += this.SimplexNoise.noise2D((vert.x)/5000,(vert.y)/5000) * 50;
+		z += this.SimplexNoise.noise2D((vert.x)/500,(vert.y)/500) * 10;
+		 z += this.SimplexNoise.noise2D((vert.x)/100,(vert.y)/100) * 15.0;
+//		 z += this.SimplexNoise.noise2D((vert.x)/20,(vert.y)/20) * 11.5;
+	//	 z += this.SimplexNoise.noise2D((vert.x)/5,(vert.y)/5) * 1.25;
+		
+		z -= Math.sqrt(vert.x * vert.x + vert.y * vert.y)/ 20;
+		z = z/5 - 1.5;
+		if(z < 1)
+			z = 1;
+		return z;
 	}
 }
 //@ sourceURL=threejs.terrain.NoiseTerrainAlgorithm
