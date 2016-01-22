@@ -96,7 +96,7 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
                     var gram = Engine.getProperty(childID, propName);
 
                     this.makeGrammar(childID, gram, lngName);
-                    Engine.callMethod (childID, 'initGrammar'+lngName);
+                    vwf_view.kernel.callMethod (childID, 'initGrammar'+lngName);
                    
                     
             }
@@ -182,7 +182,7 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
             for (var methodName in methods) {
 
                  if (methodName == methodN) {
-                    Engine.callMethod (nodeID, methodN);
+                    vwf_view.kernel.callMethod (nodeID, methodN);
                     return;
         } 
 }

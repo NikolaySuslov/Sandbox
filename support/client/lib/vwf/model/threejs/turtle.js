@@ -61,7 +61,7 @@
 				if(propertyName == 'iteration' || propertyName == 'rule' ||propertyName == 'angle' || propertyName == 'stepLength' || propertyName == 'axiomF' || propertyName == 'axiomG'){
 
 					this[propertyName] = propertyValue;
-					Engine.callMethod(this.ID, 'generateLSys');
+					vwf_view.kernel.callMethod(this.ID, 'generateLSys');
 					this.dirtyStack(true);
 				}	
 				
@@ -123,7 +123,7 @@
 				Engine.setProperty(this.ID,'ohmLSys',this.ohmLSys);
 				Engine.setProperty(this.ID,'ohmTurtle',this.ohmTurtle);
 				
-				Engine.callMethod(this.ID, 'generateLSys');
+				vwf_view.kernel.callMethod(this.ID, 'generateLSys');
 
 				this.dirtyStack(true);
 
