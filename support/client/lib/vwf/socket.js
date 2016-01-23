@@ -92,6 +92,7 @@ function socketThreadProxy(host, options)
     this.onMessage = function(e)
     {
         var message = e.data;
+       
         if (message.type == EVENT)
         {
             this.trigger(message.event.name, message.event.param);

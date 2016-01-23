@@ -130,25 +130,26 @@
 				}
 				if (newfog)
 				{
+					
 					//get all the fog values from the stored property values
-					newfog.color.r = this.nodes[nodeID].properties["fogColor"] ? this.nodes[nodeID].properties["fogColor"][0] : 1;
-					newfog.color.g = this.nodes[nodeID].properties["fogColor"] ? this.nodes[nodeID].properties["fogColor"][1] : 1;
-					newfog.color.b = this.nodes[nodeID].properties["fogColor"] ? this.nodes[nodeID].properties["fogColor"][2] : 1;
-					newfog.near = this.nodes[nodeID].properties["fogNear"] || 0;
-					newfog.far = this.nodes[nodeID].properties["fogFar"] || 1000;
-					newfog.density = this.nodes[nodeID].properties["fogDensity"] || 0;
-					newfog.vFalloff = this.nodes[nodeID].properties["fogVFalloff"] || 1;
-					newfog.vFalloffStart = this.nodes[nodeID].properties["fogVFalloffStart"] || 0;
-					newfog.vAtmosphereDensity = (this.nodes[nodeID].properties["skyAtmosphereDensity"] || 0) / 500;
+					newfog.color.r = this.properties["fogColor"] ? this.properties["fogColor"][0] : 1;
+					newfog.color.g = this.properties["fogColor"] ? this.properties["fogColor"][1] : 1;
+					newfog.color.b = this.properties["fogColor"] ? this.properties["fogColor"][2] : 1;
+					newfog.near = this.properties["fogNear"] || 0;
+					newfog.far = this.properties["fogFar"] || 1000;
+					newfog.density = this.properties["fogDensity"] || 0;
+					newfog.vFalloff = this.properties["fogVFalloff"] || 1;
+					newfog.vFalloffStart = this.properties["fogVFalloffStart"] || 0;
+					newfog.vAtmosphereDensity = (this.properties["skyAtmosphereDensity"] || 0) / 500;
 					if (!this.getRoot().fog) this.getRoot().fog = newfog;
 					this.getRoot().fog.vHorizonColor = new THREE.Color();
-					this.getRoot().fog.vHorizonColor.r = this.nodes[nodeID].properties["skyApexColor"] ? this.nodes[nodeID].properties["skyHorizonColor"][0] : 1;
-					this.getRoot().fog.vHorizonColor.g = this.nodes[nodeID].properties["skyApexColor"] ? this.nodes[nodeID].properties["skyHorizonColor"][1] : 1;
-					this.getRoot().fog.vHorizonColor.b = this.nodes[nodeID].properties["skyApexColor"] ? this.nodes[nodeID].properties["skyHorizonColor"][2] : 1;
+					this.getRoot().fog.vHorizonColor.r = this.properties["skyApexColor"] ? this.properties["skyHorizonColor"][0] : 1;
+					this.getRoot().fog.vHorizonColor.g = this.properties["skyApexColor"] ? this.properties["skyHorizonColor"][1] : 1;
+					this.getRoot().fog.vHorizonColor.b = this.properties["skyApexColor"] ? this.properties["skyHorizonColor"][2] : 1;
 					this.getRoot().fog.vApexColor = new THREE.Color();
-					this.getRoot().fog.vApexColor.r = this.nodes[nodeID].properties["skyHorizonColor"] ? this.nodes[nodeID].properties["skyHorizonColor"][0] : 1;
-					this.getRoot().fog.vApexColor.g = this.nodes[nodeID].properties["skyHorizonColor"] ? this.nodes[nodeID].properties["skyHorizonColor"][1] : 1;
-					this.getRoot().fog.vApexColor.b = this.nodes[nodeID].properties["skyHorizonColor"] ? this.nodes[nodeID].properties["skyHorizonColor"][2] : 1;
+					this.getRoot().fog.vApexColor.r = this.properties["skyHorizonColor"] ? this.properties["skyHorizonColor"][0] : 1;
+					this.getRoot().fog.vApexColor.g = this.properties["skyHorizonColor"] ? this.properties["skyHorizonColor"][1] : 1;
+					this.getRoot().fog.vApexColor.b = this.properties["skyHorizonColor"] ? this.properties["skyHorizonColor"][2] : 1;
 				}
 				this.getRoot().fog = newfog;
 				rebuildAllMaterials.call(this, this.getRoot());

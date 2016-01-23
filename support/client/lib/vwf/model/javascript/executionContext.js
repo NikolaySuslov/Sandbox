@@ -18,42 +18,47 @@ executionContext.TYPE = {
 }
 executionContext.prototype.setProperty = function(id, name, val)
 {
-	if (!this.touchedProperties[id + name])
-		this.touchedProperties[id + name] = {
+	var idname = id + name;
+	if (!this.touchedProperties[idname])
+		this.touchedProperties[idname] = {
 			id: id,
 			name: name,
 			val: null,
 			originalVal: null
 		}
-	this.touchedProperties[id + name].val = val;
+	this.touchedProperties[idname].val = val;
 }
 executionContext.prototype.getProperty = function(id, name)
 {
-	if (this.touchedProperties[id + name])
-		return this.touchedProperties[id + name].val;
+	var idname = id + name;
+	if (this.touchedProperties[idname])
+		return this.touchedProperties[idname].val;
 	else
 	{
 		if (this.parent && this.parent instanceof executionContext)
 		{
-			var val = this.parent.getProperty(id, name);
-			if (val)
-				return val;
+			var val2 = this.parent.getProperty(id, name);
+			if (val2)
+				return val2;
 		}
+		var val;
 		if (inTick)
-			var val = Engine.getPropertyFast(id, name);
+			val = Engine.getPropertyFast(id, name);
 		else
 			val = Engine.getProperty(id, name);
-		this.touchedProperties[id + name] = {
+
+		var thisprop = this.touchedProperties[idname] = {
 			id: id,
 			name: name,
 			val: val,
 			originalVal: null
 		}
-		if (!(typeof(val) == "string" || typeof(val) == "number" || typeof(val) == "boolean" || val == null || val == undefined))
-			this.touchedProperties[id + name].originalVal = JSON.parse(JSON.stringify(this.touchedProperties[id + name].val));
+		var typeofval = typeof(val);
+		if (!(typeofval == "string" || typeofval == "number" || typeofval == "boolean" || val == null || val == undefined))
+			thisprop.originalVal = JSON.parse(JSON.stringify(val));
 		else
-			this.touchedProperties[id + name].originalVal = val;
-		this.touchedProperties[id + name].val = val;
+			thisprop.originalVal = val;
+		
 		return val;
 	}
 }

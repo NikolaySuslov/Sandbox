@@ -56,7 +56,7 @@ define([], function()
 		{
 			var clients = this.getClients();
 			var ret = [];
-			if (!clients) return null;
+			if (!clients) return ret;
 			for (var i in clients)
 			{
 				if (clients[i].cameraID == id)

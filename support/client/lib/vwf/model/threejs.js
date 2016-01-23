@@ -949,7 +949,10 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
             if (!node) return;
 
             if (node.gettingProperty)
+            {
                 value = node.gettingProperty(propertyName);
+             //   return value; //careful here! this is a slight change. Nodes that implement the Sandbox subdriver mechanism MUST NOT RELY on the old compatibility code
+            }
 
             if (value !== undefined) return value;
             var threeObject = node.threeObject;
@@ -983,7 +986,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                         var z = threeObject.matrixWorld.elements[14];
                         return [x, y, z];
                     }
-                    if (propertyName == 'transform') {
+                    else if (propertyName == 'transform') {
 
                         var value = matCpy(threeObject.matrix.elements);
 
@@ -1001,7 +1004,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
 
 
                     }
-                    if (propertyName == 'worldtransform' || propertyName == 'worldTransform') {
+                    else if (propertyName == 'worldtransform' || propertyName == 'worldTransform') {
                       //this is just not worth the cost. In fact, because of the scene glyph,
                       //it caused a full re-eval of the world transform stack.  
                       //  threeObject.updateMatrixWorld(true);
@@ -1024,16 +1027,16 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
 
 
 
-                    if (propertyName == "boundingbox") {
+                    else if (propertyName == "boundingbox") {
                         value = getBoundingBox.call(this, threeObject, true);
                         return value;
                     }
-                    if (propertyName == "centerOffset") {
+                    else if (propertyName == "centerOffset") {
                         value = getCenterOffset.call(this, threeObject);
                         return value;
                     }
 
-                    if (propertyName == "meshData") {
+                    else if (propertyName == "meshData") {
 
                         var threeObject = node.threeObject;
                         value = [];
@@ -1052,42 +1055,42 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
 
                 }
                 
-                if (threeObject instanceof THREE.Material) {
+                else if (threeObject instanceof THREE.Material) {
                     if (propertyName == "texture") {
                         //debugger;
                         if (threeObject.map && threeObject.map.image)
                             return threeObject.map.image.src;
 
                     }
-                    if (propertyName == "color") {
+                    else if (propertyName == "color") {
 
 
                     }
                 }
 
-                if (threeObject instanceof THREE.Light) {
+                else if (threeObject instanceof THREE.Light) {
                     if (propertyName == "intensity") {
                         return threeObject.intensity;
                     }
-                    if (propertyName == "castShadows") {
+                    else if (propertyName == "castShadows") {
                         return threeObject.castShadows;
                     }
-                    if (propertyName == "spotCosCutOff") {
+                    else if (propertyName == "spotCosCutOff") {
                         return threeObject.exponent;
                     }
-                    if (propertyName == "distance") {
+                    else if (propertyName == "distance") {
                         return threeObject.distance;
                     }
-                    if (propertyName == "color") {
+                    else if (propertyName == "color") {
                         return [threeObject.color.r, threeObject.color.g, threeObject.color.b];
 
                     }
-                    if (propertyName == "lightType") {
+                    else if (propertyName == "lightType") {
                         if (threeObject instanceof THREE.DirectionalLight)
                             return 'directional';
-                        if (threeObject instanceof THREE.SpotLight)
+                        else if (threeObject instanceof THREE.SpotLight)
                             return 'spot';
-                        if (threeObject instanceof THREE.PointLight)
+                        else if (threeObject instanceof THREE.PointLight)
                             return 'point';
 
                     }
