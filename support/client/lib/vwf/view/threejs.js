@@ -207,13 +207,13 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
         },
         updateGlyphs: function(e, viewprojection, wh, ww) {
 
-            if(Engine.getProperty(Engine.application(),'playMode') == 'play') return;
+            if(Engine.getPropertyFast(Engine.application(),'playMode') == 'play') return;
             for (var i = 0; i < this.glyphs.length; i++) {
-                if (Engine.getProperty(this.glyphs[i], 'showGlyph') == false) continue;
+                if (Engine.getPropertyFast(this.glyphs[i], 'showGlyph') == false) continue;
                 var div = $('#glyph' + ToSafeID(this.glyphs[i]))[0];
                 if (!div) continue;
 
-                var trans = Engine.getProperty(this.glyphs[i], 'worldTransform');
+                var trans = Engine.getPropertyFast(this.glyphs[i], 'worldTransform');
 
                 var pos = [trans[12], trans[13], trans[14], 1];
 
@@ -461,11 +461,13 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
         setInterpolatedTransforms: function(deltaTime) {
   			
   			var keys = Object.keys(this.nodes);
+            var now = performance.now();
+            var playmode = Engine.getPropertyFast(Engine.application(),'playmode');
             for (var j = 0; j < keys.length; j++) {
                 var i = keys[j];
                 var node = this.nodes[i];
-                if(!node) return;
-                node.interpolate();
+                if(!node) continue;
+                node.interpolate(now,playmode);
             }
             _dScene.updateMatrixWorld();
         },
@@ -535,7 +537,7 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
             childSource, childType, childURI, childName, callback /* ( ready ) */ ) {
 
             if (childID != 'http-vwf-example-com-camera-vwf-camera')
-                this.nodes[childID] = new viewNode(childID,childExtendsID,this.state.nodes[childID]);
+                this.nodes[childID] = new viewNode(childID,childExtendsID,this.state.nodes[childID],Engine.isSimulating(childID));
 
             /*{
                     id: childID,
@@ -731,6 +733,14 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
                 if (Engine.moniker() == args[0]) {
                     this.setCamera_internal(args[1]);
                 }
+            }
+            if (method == 'startSimulatingNode') {
+               if(this.nodes[args])
+                 this.nodes[args].setSim(true);
+            }
+            if (method == 'stopSimulatingNode') {
+               if(this.nodes[args])
+                 this.nodes[args].setSim(false);
             }
             if (id == Engine.application() && method == 'cameraShareInfo') {
                 if (this.receiveSharedCamera) {
@@ -1015,7 +1025,7 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
             }
             //so, here's what we'll do. Since the sim state cannot advance until tick, we will update on tick. 
             //but, ticks aren't fired when the scene in paused. In that case, we'll do it every frame.
-            var currentState = Engine.getProperty(Engine.application(), 'playMode');
+            var currentState = Engine.getPropertyFast(Engine.application(), 'playMode');
             if (currentState === 'stop') _SceneManager.update();
 
 
@@ -1260,7 +1270,7 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
             }
 
 
-            if (self.selection && Engine.getProperty(self.selection.id, 'type') == 'Camera' && self.cameraID != self.selection.id) {
+            if (self.selection && Engine.getPropertyFast(self.selection.id, 'type') == 'Camera' && self.cameraID != self.selection.id) {
                 var selnode = _Editor.findviewnode(self.selection.id);
                 if (selnode) {
                     selcam = selnode.children[0];

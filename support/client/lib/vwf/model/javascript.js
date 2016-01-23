@@ -1339,6 +1339,11 @@ define(["module", "vwf/model", "vwf/utility","vwf/model/javascript/clientAPI","v
                 }
                 catch (e)
                 {
+                    if(this.getTopContext().type == executionContext.TICK)
+                    {
+                        Engine.setProperty(node.id,'___simulationDisabled',true);
+                        console.error("Disabling" + node.id);
+                    }
                     console.error("Error executing " + node.id, body, args, e)
                     return undefined;
                 }
@@ -1354,7 +1359,7 @@ define(["module", "vwf/model", "vwf/utility","vwf/model/javascript/clientAPI","v
             if(!inContext)
                 this.enterNewContext(node,executionContext.TYPE.CALL_METHOD,method);
 
-			if (body && vwf.isSimulating(node.id)) {
+			if (body && vwf.isSimulating(node.id) && !Engine.getPropertyFast(node.id,'___simulationDisabled')) {
                
                 
                 this.tryExec(node,body,args);
