@@ -24,9 +24,6 @@
 // the License.
 "use strict";
 
-
-
-
 define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
     var self;
@@ -41,9 +38,17 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
     OhmLang.prototype.makeLng = function(src) {
 
         this.grammarSrc = src;
-        this.grammar = ohm.grammar(src);
-        this.semantics = this.grammar.semantics();
 
+        try { 
+            this.grammar = ohm.grammar(src);
+            this.semantics = this.grammar.semantics()
+        } 
+            catch (e) {
+                this.grammar = 'err';
+                this.semantics = '';
+                console.log(e); 
+        }
+        
     }
     // vwf/model/example/scene.js is a demonstration of a scene manager.
 
@@ -69,9 +74,9 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
         // == Model API ============================================================================
 
-        // -- creatingNode -------------------------------------------------------------------------
+// -- creatingNode -------------------------------------------------------------------------
 
-        creatingNode: function( nodeID, childID, childExtendsID, childImplementsIDs,
+         creatingNode: function( nodeID, childID, childExtendsID, childImplementsIDs,
             childSource, childType, childURI, childName, callback /* ( ready ) */ ) {
         },
 
@@ -85,24 +90,19 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
                 if (propName.indexOf("ohm") > -1) {
                     var lngName = propName.slice(3,propName.length);
                     var gram = Engine.getProperty(childID, propName);
-
-
-                    this.makeGrammar(childID, gram, propName);
+               
+                    this.makeGrammar(childID, gram, lngName);
                     this.initGrammar(childID, lngName);
-
+                 
             }
-
         }
-
-    
-
-         },
-
+    },
 
         // -- deletingNode -------------------------------------------------------------------------
 
         deletingNode: function( nodeID ) {
-             //delete this.objects[nodeID];
+
+            delete this.ohmLangs[nodeID];
         },
 
         // -- addingChild --------------------------------------------------------------------------
@@ -148,7 +148,7 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
         // -- initializingProperty -----------------------------------------------------------------
 
         initializingProperty: function( nodeID, propertyName, propertyValue ) {
-            return this.settingProperty( nodeID, propertyName, propertyValue );
+            //return this.settingProperty( nodeID, propertyName, propertyValue );
         },
 
         // TODO: deletingProperty
@@ -162,47 +162,42 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
         
           if (propertyName.indexOf("ohm") > -1)
             {
+
                 var lngName = propertyName.slice(3,propertyName.length);
-                this.makeGrammar(nodeID, propertyValue, propertyName);
+                this.makeGrammar(nodeID, propertyValue, lngName);
                 this.initGrammar(nodeID, lngName);
-
-        //var s = _LangManager.ohmLangs[this.id]["ohmCalc"]["semantics"];
-
-            
-
-            // this.makeGrammar(nodeID, propertyValue, lngName);
-            // Engine.setProperty(nodeID, propertyName, propertyValue);
-
-            
-
-
-            
-//             for (var methodName in methods) {
-
-//                  if (methodName == methodN) {
-//                     vwf_view.kernel.callMethod (nodeID, methodN);
-//                     return;
-//         } 
-// }
-//             var methodBody = '//console.log(\'Init grammar: '  + lngName + '\');';
-//             Engine.createMethod(nodeID, methodN, [], methodBody);
-
-        }
+            }
 
         },
 
         // -- gettingProperty ----------------------------------------------------------------------
 
         gettingProperty: function( nodeID, propertyName, propertyValue ) {
-    
-             // var object = this.objects[nodeID];
-             // return object && object[propertyName];
+            
+            if (propertyName == 'mylangs'){
+                var object = this.ohmLangs[nodeID];
+                return object;
+            }
+             
         },
 
         // -- creatingMethod -----------------------------------------------------------------------
 
         creatingMethod: function( nodeID, methodName, methodParameters, methodBody ) {
 
+            if (methodName.indexOf("initSemantics") > -1)
+            {
+                
+                var lngName = methodName.slice(13,methodName.length);
+
+                 if(this.ohmLangs.hasOwnProperty(nodeID)){
+                    if(this.ohmLangs[nodeID].hasOwnProperty(lngName)){
+                        this.ohmLangs[nodeID][lngName]["semantics"] = this.ohmLangs[nodeID][lngName]["grammar"].semantics();
+                    }
+
+                 } 
+                
+            }
 
         },
 
@@ -210,21 +205,7 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
         // -- callingMethod ------------------------------------------------------------------------
 
-        callingMethod: function( nodeID, methodName, methodParameters ) {
-            
-            // if (methodName.indexOf("ohm") > -1)
-            // {
-
-
-
-
-            // }
-            //  if (name == 'playSound')
-            // {
-            //      var id = params.shift();
-            //     var url = params[0];
-            //     var loop = params[1] || false;
-            // }
+        callingMethod: function( nodeID, methodName, methodParameters ) {   
         },
 
         // -- creatingEvent ------------------------------------------------------------------------
@@ -244,11 +225,10 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
         executing: function( nodeID, scriptText, scriptType ) {
         },
 
-
         makeGrammar(nodeID, propertyValue, propertyName) {
-            debugger;
+            
             var lng = new OhmLang();
-                lng.makeLng(propertyValue);
+            lng.makeLng(propertyValue);
 
             if(this.ohmLangs.hasOwnProperty(nodeID)){
                 this.ohmLangs[nodeID][propertyName] = lng;
@@ -257,7 +237,6 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
                 this.ohmLangs[nodeID] = {};
                 this.ohmLangs[nodeID][propertyName] = lng;
             }
-
 
         },
 
@@ -270,45 +249,7 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
                 var methodBody = '//console.log(\'Init grammar: '  + lngName + '\');';
                 Engine.createMethod(nodeID, methodN, [], methodBody);
             }
-            
-            var res = Engine.callMethod(nodeID, methodN);
-            debugger;
-            console.log(nodeID +"  "+res );
-            //Engine.callMethod(nodeID, methodN);
-
-
-        }
-
-
-        // makeGrammar: function (nodeID, propertyValue, grammarName) {
-
-        //      var semName = 'semantics'+grammarName;
-
-
-
-        //  try  { 
-        //         var gram = ohm.grammar(propertyValue);
-                
-
-        //         //console.log("Grammar OK!");
-        //         Engine.setProperty(nodeID, grammarName, gram);
-
-           
-        //         //function semantics()  Engine.getProperty(nodeID, grammarName).semantics();
-
-
-        //         Engine.setProperty(nodeID, semName, Engine.getProperty(nodeID, grammarName).semantics());
-
-        //         } catch (e) {
-
-        //             console.log(e); 
-        //          Engine.setProperty(nodeID, grammarName, {});
-        //          Engine.setProperty(nodeID, semName, {});
-        //     }
-
-        // }
-
-
+        },
 
     } );
 

@@ -26,6 +26,36 @@
 			this.angle = 60;
 			this.stepLength = 1;
 
+			this.ohmLSys = Engine.getProperties(Engine.prototype(childID))['ohmLSys'];
+			this.ohmTurtle = Engine.getProperties(Engine.prototype(childID))['ohmTurtle'];
+
+			Engine.setProperty(childID,'ohmLSys',this.ohmLSys);
+			Engine.setProperty(childID,'ohmTurtle',this.ohmTurtle);
+
+
+			var methods = Engine.getMethods(childID);
+			var nodeMethods = ['initGrammarLSys', 'genLSys', 'generateLSys', 'initGrammarTurtle', 'makeLSys', 'initSemanticsLSys', 'initSemanticsTurtle', 'initialize'];
+
+			for (var i in nodeMethods) {
+				
+				if (methods[nodeMethods[i]] == undefined) {
+					var methodName = nodeMethods[i];
+					var prot = Engine.getMethods(Engine.prototype(childID))[methodName];
+					Engine.createMethod(childID, methodName, [], prot.body);
+				}
+			}
+
+			var nodeMethodsWithParams = ['turn', 'goForward', 'makeTurtle'];
+
+			for (var i in nodeMethodsWithParams) {
+			
+				if (methods[nodeMethodsWithParams[i]] == undefined) {
+					var methodName = nodeMethodsWithParams[i];
+					var prot = Engine.getMethods(Engine.prototype(childID))[methodName];
+					Engine.createMethod(childID, methodName, prot.parameters, prot.body);
+				}
+			}
+
 
 			this.EditorData = {};
 			this.EditorData.a_radius = {displayname:'Turtle radius',property:'radius',type:'slider',min:0,max:10,step:.01};
@@ -41,98 +71,56 @@
 			this.EditorData.d_axiomG = {displayname:'Axiom G', property:'axiomG',type:'text'};
 
 			this.EditorData.x_generate = {label:'Generate',method:'generateLSys',type:'button'};
-			
-
-
-			this.inherits = ['vwf/model/threejs/prim.js'];
 
 			//vwf_view.kernel.createChild(parent, name, proto, uri, callback);
 
 			//the node constructor
 			this.settingProperty = function(propertyName,propertyValue)
 			{
-				if(propertyName == 'radius' || propertyName == 'rsegs' || propertyName == 'ssegs'
-					|| propertyName == 'ohmLSys' || propertyName == 'ohmTurtle' )
+				if(propertyName == 'radius' || propertyName == 'rsegs' || propertyName == 'ssegs' )
 				{
 					this[propertyName] = propertyValue;
 					this.dirtyStack(true);
 				}
 
+				if(propertyName == 'ohmLSys' || propertyName == 'ohmTurtle' )
+				{
+					
+					this[propertyName] = propertyValue;
+					this.dirtyStack(true);
+				}
+
+
 				if(propertyName == 'iteration' || propertyName == 'rule' ||propertyName == 'angle' || propertyName == 'stepLength' || propertyName == 'axiomF' || propertyName == 'axiomG'){
 
 					this[propertyName] = propertyValue;
-					Engine.callMethod(this.ID, 'generateLSys');
+
+					if (Engine.children(childID).length !== 0){
+						vwf_view.kernel.callMethod(childID, 'generateLSys');
+					}
+					
 					this.dirtyStack(true);
+					
 				}	
-				
-				
-
-
 			}
 			
 			this.gettingProperty = function(propertyName)
 			{
 
 				if(propertyName == 'radius' || propertyName == 'rsegs' || propertyName == 'ssegs'
-					|| propertyName == 'ohmLSys' || propertyName == 'ohmTurtle' || propertyName == 'iteration' ||  propertyName == 'rule' || propertyName == 'axiomF' || propertyName == 'axiomG' || propertyName == 'angle' || propertyName == 'stepLength' 
+					|| propertyName == 'iteration' ||  propertyName == 'rule' || propertyName == 'axiomF' || propertyName == 'axiomG' || propertyName == 'angle' || propertyName == 'stepLength' || propertyName == 'ohmLSys' || propertyName == 'ohmTurtle'
 					|| propertyName == 'EditorData' )
 				{
 					return this[propertyName];
 				}
-			
-				
 
 			}
 			
 			this.initializingNode = function()
 			{
-
-				// console.log(Engine.getMethods(Engine.prototype(this.id))['initGrammarLSys'].body);
-				//Engine.createMethod(this.ID, 'initGrammarLSys', [], Engine.getMethods(Engine.prototype(this.ID))['initGrammarLSys'].body);
-
-
-
-			var methods = Engine.getMethods(this.ID);
-			var nodeMethods = ['initGrammarLSys', 'genLSys', 'generateLSys', 'initGrammarTurtle', 'makeLSys', 'initLSysSemantics', 'initTurtleSemantics'];
-
-			for (var i in nodeMethods) {
-				
-				if (methods[nodeMethods[i]] == undefined) {
-					var methodName = nodeMethods[i];
-					var prot = Engine.getMethods(Engine.prototype(this.ID))[methodName];
-					Engine.createMethod(this.ID, methodName, [], prot.body);
-
-				}
-
-			}
-
-			var nodeMethodsWithParams = ['turn', 'goForward', 'makeTurtle'];
-
-			for (var i in nodeMethodsWithParams) {
-			
-				if (methods[nodeMethodsWithParams[i]] == undefined) {
-					var methodName = nodeMethodsWithParams[i];
-					var prot = Engine.getMethods(Engine.prototype(this.ID))[methodName];
-					Engine.createMethod(this.ID, methodName, prot.parameters, prot.body);
-
-				}
-
-			}
-
-			var ohmL = Engine.getProperties(Engine.prototype(this.ID))['ohmLSys'];
-			var ohmT = Engine.getProperties(Engine.prototype(this.ID))['ohmTurtle'];
-
-				Engine.setProperty(this.ID,'ohmLSys',ohmL);
-				Engine.setProperty(this.ID,'ohmTurtle',ohmT);
-				
-				Engine.callMethod(this.ID, 'generateLSys');
-
 				this.dirtyStack(true);
-
 			}
 
-
-			
 			this.BuildMesh = function(mat)
 			{
 				var mesh=  new THREE.Mesh(new THREE.SphereGeometry(this.radius, this.rsegs*2, this.ssegs), mat);
@@ -146,6 +134,7 @@
 				return this.rootnode;
 			}
 			this.rootnode = new THREE.Object3D();
+			this.inherits = ['vwf/model/threejs/prim.js'];
 			//this.Build();
 		}
 		//default factory code

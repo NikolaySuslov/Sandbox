@@ -49,8 +49,13 @@ properties:
         drawLetter =letter
         turn = "+" | "-" }
 methods:
-  initLSysSemantics: |
-    var s = _LangManager.ohmLangs[this.id]["ohmLSys"]["semantics"];
+  initialize: |
+      //debugger;
+      this.initGrammarLSys();
+      this.initGrammarTurtle();
+      this.generateLSys();
+  initSemanticsLSys: |
+    var s = _LangManager.ohmLangs[this.id]["LSys"]["semantics"];
     s.addOperation('gen(x)',
     {
         Gen: function(e)
@@ -75,9 +80,9 @@ methods:
             return this.interval.contents;
         }
     });
-  initTurtleSemantics: |
+  initSemanticsTurtle: |
     var myID = this.id;
-    var s = _LangManager.ohmLangs[this.id]["ohmTurtle"]["semantics"];
+    var s = _LangManager.ohmLangs[this.id]["Turtle"]["semantics"];
     s.addOperation('draw(x,y)',
     {
         Draw: function(e)
@@ -97,8 +102,8 @@ methods:
            }
       });
   genLSys: |
-    var gram = _LangManager.ohmLangs[this.id]["ohmLSys"]["grammar"];
-    var sem = _LangManager.ohmLangs[this.id]["ohmLSys"]["semantics"];
+    var gram = _LangManager.ohmLangs[this.id]["LSys"]["grammar"];
+    var sem = _LangManager.ohmLangs[this.id]["LSys"]["semantics"];
     var str = this.rule;
     var axioms = {"F": this.axiomF, "G": this.axiomG};
     for (var i = 1; i < this.iteration; i++)
@@ -148,16 +153,16 @@ methods:
       this.transformAPI.setPosition(oldPos);
   initGrammarLSys: |
     console.log('Init grammar: LSys');
-    this.initLSysSemantics();
+    this.initSemanticsLSys();
   initGrammarTurtle: |
     console.log('Init grammar: Turtle');
-    this.initTurtleSemantics();
+    this.initSemanticsTurtle();
   makeTurtle:
     parameters:
       - lsys
     body: |
-      var gram = _LangManager.ohmLangs[this.id]["ohmTurtle"]["grammar"];
-      var sem = _LangManager.ohmLangs[this.id]["ohmTurtle"]["semantics"];
+      var gram = _LangManager.ohmLangs[this.id]["Turtle"]["grammar"];
+      var sem = _LangManager.ohmLangs[this.id]["Turtle"]["semantics"];
       var r = gram.match(lsys);
       var n = sem(r);
       return n;
