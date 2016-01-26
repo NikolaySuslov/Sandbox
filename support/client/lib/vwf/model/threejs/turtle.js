@@ -61,7 +61,7 @@
 				if(propertyName == 'iteration' || propertyName == 'rule' ||propertyName == 'angle' || propertyName == 'stepLength' || propertyName == 'axiomF' || propertyName == 'axiomG'){
 
 					this[propertyName] = propertyValue;
-					vwf_view.kernel.callMethod(this.ID, 'generateLSys');
+					Engine.callMethod(this.ID, 'generateLSys');
 					this.dirtyStack(true);
 				}	
 				
@@ -90,8 +90,10 @@
 				// console.log(Engine.getMethods(Engine.prototype(this.id))['initGrammarLSys'].body);
 				//Engine.createMethod(this.ID, 'initGrammarLSys', [], Engine.getMethods(Engine.prototype(this.ID))['initGrammarLSys'].body);
 
+
+
 			var methods = Engine.getMethods(this.ID);
-			var nodeMethods = ['initGrammarLSys', 'genLSys', 'initLSysSemantics', 'generateLSys', 'initGrammarTurtle', 'makeLSys', 'initTurtleSemantics'];
+			var nodeMethods = ['initGrammarLSys', 'genLSys', 'generateLSys', 'initGrammarTurtle', 'makeLSys', 'initLSysSemantics', 'initTurtleSemantics'];
 
 			for (var i in nodeMethods) {
 				
@@ -117,13 +119,13 @@
 
 			}
 
-			this.ohmLSys = Engine.getProperties(Engine.prototype(this.ID))['ohmLSys'];
-			this.ohmTurtle = Engine.getProperties(Engine.prototype(this.ID))['ohmTurtle'];
+			var ohmL = Engine.getProperties(Engine.prototype(this.ID))['ohmLSys'];
+			var ohmT = Engine.getProperties(Engine.prototype(this.ID))['ohmTurtle'];
 
-				Engine.setProperty(this.ID,'ohmLSys',this.ohmLSys);
-				Engine.setProperty(this.ID,'ohmTurtle',this.ohmTurtle);
+				Engine.setProperty(this.ID,'ohmLSys',ohmL);
+				Engine.setProperty(this.ID,'ohmTurtle',ohmT);
 				
-				vwf_view.kernel.callMethod(this.ID, 'generateLSys');
+				Engine.callMethod(this.ID, 'generateLSys');
 
 				this.dirtyStack(true);
 
