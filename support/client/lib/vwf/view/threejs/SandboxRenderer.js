@@ -1,7 +1,8 @@
-define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
+define(["vwf/view/threejs/screenAlignedQuad",'vwf/utility/eventSource'], function(quad,eventSource)
 {
 	return function SandboxRenderer(r, c)
 	{
+		eventSource.call(this,'Renderer');
 		this.renderer = r;
 		this.canvas = c;
 		this.hilightObjects = [];

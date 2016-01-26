@@ -64,7 +64,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 		var libraries = [];
 
 		libraries.addLibrary = function(name, url)
-		{	
+		{
 			var newLib = {name: name};
 			$http.get(url).success(function(lib){
 				newLib.content = lib;
@@ -86,7 +86,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 	app.controller('EntityLibraryController', ['$scope','LibraryDataManager','AssetDataManager','$http', function($scope, staticLibs, assets, $http)
 	{
 		window._EntityLibrary = $scope;
-		
+
 		$scope.assets = assets;
 		$scope.staticLibs = staticLibs;
 
@@ -170,7 +170,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 
 						if( defs[j].transform )
 							defs[j].transform(dynamicLib[i], libitem);
-							
+
 						combinedLibs[j].content.push(libitem);
 						break;
 					}
@@ -235,6 +235,12 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			//$('#EntityLibraryMain').show();
 			//$('#EntityLibrary').animate({width: '246px'});
 			$('#EntityLibrary').removeClass('hidden', 400);
+
+			//Workaround: refresh accordion after hidden class is removed
+			window.setTimeout(function(){
+				$("#EntityLibraryAccordion").accordion('refresh');
+			}, 425);
+
 			$scope.isOpen = true;
 		}
 
@@ -389,20 +395,20 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			}
 		});
 
-		//when dragging over the 3d view, update the preview positoin	
+		//when dragging over the 3d view, update the preview positoin
 		$("#vwf-root").on('dragover', "#index-vwf", function(evt)
 		{
 			evt.preventDefault();
 			if(!currentDrag) return;
-						
+
 			if (currentDrag.type == 'asset' || currentDrag.type == 'model')
 			{
 				var pos = _Editor.GetInsertPoint(evt.originalEvent);
 				if(currentDrag.snap)
 				{
-					pos[0] = _Editor.SnapTo(pos[0],currentDrag.snap); 
-					pos[1] = _Editor.SnapTo(pos[1],currentDrag.snap); 
-					pos[2] = _Editor.SnapTo(pos[2],currentDrag.snap); 
+					pos[0] = _Editor.SnapTo(pos[0],currentDrag.snap);
+					pos[1] = _Editor.SnapTo(pos[1],currentDrag.snap);
+					pos[2] = _Editor.SnapTo(pos[2],currentDrag.snap);
 				}
 				dropPreview.position.copy( new THREE.Vector3(pos[0], pos[1], pos[2]));
 				dropPreview.updateMatrixWorld();
@@ -476,7 +482,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			proto.properties.transform[12] = pos[0];
 			proto.properties.transform[13] = pos[1];
 			proto.properties.transform[14] = pos[2];
-			proto.properties.___sourceAssetTimestamp = (new Date()).toString();		
+			proto.properties.___sourceAssetTimestamp = (new Date()).toString();
 			if(data.dropOffset)
 			{
 				var dropOffset = new THREE.Matrix4();
@@ -490,7 +496,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			// maintain reference to asset server, if applicable
 			if( data.type === 'asset' )
 				proto.properties.sourceAssetId = data.sourceAssetId;
-			   
+
 			_Editor.createChild('index-vwf', newname, proto);
 			_Editor.SelectOnNextCreate([newname]);
 		}
@@ -501,14 +507,14 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			var pos = _Editor.GetInsertPoint(evt ? evt.originalEvent : null);
 			if(data.snap)
 			{
-				pos[0] = _Editor.SnapTo(pos[0],data.snap); 
-				pos[1] = _Editor.SnapTo(pos[1],data.snap); 
-				pos[2] = _Editor.SnapTo(pos[2],data.snap); 
+				pos[0] = _Editor.SnapTo(pos[0],data.snap);
+				pos[1] = _Editor.SnapTo(pos[1],data.snap);
+				pos[2] = _Editor.SnapTo(pos[2],data.snap);
 			}
 
 			if (data.type == 'asset')
 				$.getJSON(data.url, createProto);
-			else 
+			else
 			{
 				var proto = {
 					"extends": "asset.vwf",
@@ -535,7 +541,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 
 					// maintain reference to asset server, if applicable
 					proto.properties.sourceAssetId = data.sourceAssetId;
-				   
+
 					_Editor.createChild(ID, newname, proto);
 					_Editor.SelectOnNextCreate([newname]);
 
@@ -597,3 +603,4 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 		}
 	};
 });
+

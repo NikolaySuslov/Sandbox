@@ -15,7 +15,7 @@ jQuery.extend(
     }
 });
 define([
-	"module", "version", "vwf/view",
+	"module", "version", "vwf/view",'vwf/utility/eventSource',
 
 	// dependencies
 	"vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify",
@@ -55,7 +55,7 @@ define([
      "vwf/view/localization/translate",
      "vwf/view/editorview/lib/beautify.module.js"
 	//"vwf/view/editorview/panelEditor",
-], function(module, version, view, alertify, angular_app, Menubar,log) {
+], function(module, version, view,eventSource, alertify, angular_app, Menubar,log) {
     return view.load(module, {
         // == Module Definition ====================================================================
         needTools: function()
@@ -68,6 +68,7 @@ define([
         },
         initialize: function() {
             window._EditorView = this;
+            eventSource.call(this,'EditorView');
             //intialize the logger interface
             log.initialize();
             if (!window._EditorInitialized) {

@@ -17,7 +17,7 @@
 /// attaches to the global window object as window.Engine. Nothing else should affect the global
 /// environment.
 "use strict";
-define(['progressScreen','nodeParser'], function(progress,nodeParser)
+define(['progressScreen','nodeParser','vwf/utility/eventSource'], function(progress,nodeParser,eventSource)
 {
     var jQuery = $;
     (function(window)
@@ -26,6 +26,7 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
         var progressScreen = require('progressScreen');
         window.vwf = window.Engine = new function()
         {
+            eventSource.call(this,'Engine');
             window.console && console.debug && console.debug("creating vwf");
             // == Public variables =====================================================================
             /// The runtime environment (production, development, testing) and other configuration
@@ -712,10 +713,10 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
                     {
                         window.setImmediate(function()
                         {
-                            this.localReentryStack++
+                            Engine.localReentryStack++
                                 queue.insert(fields);
-                            if (this.localReentryStack > 2)
-                                this.localReentryStack--;
+                            if (Engine.localReentryStack > 2)
+                                Engine.localReentryStack--;
                         })
                     })(fields);
                 }
@@ -1109,10 +1110,12 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
             this.tick = function()
             {
                 // Call ticking() on each model.
-                if (this.getProperty(vwf.application(), 'playMode') == 'play')
+                this.trigger('tickStart');
+                if (this.getPropertyFast(vwf.application(), 'playMode') == 'play')
                 {
-                    this.models.forEach(function(model)
+                    for(var i =0; i < this.models.length; i++)
                     {
+                        var model = this.models[i];
                         try
                         {
                             model.ticking && model.ticking(this.now); // TODO: maintain a list of tickable models and only call those
@@ -1121,14 +1124,11 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
                         {
                             console.error(e)
                         }
-                    }, this);
-                    // Call tick() on each tickable node.
-                    //    this.tickable.nodeIDs.forEach( function( nodeID ) {
-                    //        this.callMethod( nodeID, "tick", [ this.now ] );
-                    //    }, this );
-                    // Call ticked() on each view.
-                    this.views.forEach(function(view)
+                    }
+                    
+                    for(var i =0; i < this.views.length; i++)
                     {
+                        var view = this.views[i];
                         try
                         {
                             view.ticked && view.ticked(this.now); // TODO: maintain a list of tickable views and only call those
@@ -1137,9 +1137,10 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
                         {
                             console.error(e);
                         }
-                    }, this);
+                    }
                 }
                 this.tickCount++;
+                this.trigger('tickEnd');
                 this.postSimulationStateUpdates(this.tickCount % 20 != 0 ? ['transform', 'animationFrame', 'visible'] : null);
             };
             // -- setState -----------------------------------------------------------------------------

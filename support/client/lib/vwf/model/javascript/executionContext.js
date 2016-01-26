@@ -1,3 +1,4 @@
+"use strict";
 //when a function is called, a context is created to observe changes. When the funtion return, we post changes to Engine.
 function executionContext(parentContext, id, type, member)
 {
@@ -28,6 +29,14 @@ executionContext.prototype.setProperty = function(id, name, val)
 		}
 	this.touchedProperties[idname].val = val;
 }
+
+function touchedProperty(id, name, val)
+{
+	this.id = id;
+	this.name = name;
+	this.val = val;
+	this.originalVal = null;
+}
 executionContext.prototype.getProperty = function(id, name)
 {
 	var idname = id + name;
@@ -46,19 +55,12 @@ executionContext.prototype.getProperty = function(id, name)
 			val = Engine.getPropertyFast(id, name);
 		else
 			val = Engine.getProperty(id, name);
-
-		var thisprop = this.touchedProperties[idname] = {
-			id: id,
-			name: name,
-			val: val,
-			originalVal: null
-		}
+		var thisprop = this.touchedProperties[idname] = new touchedProperty(id,name,val);
 		var typeofval = typeof(val);
 		if (!(typeofval == "string" || typeofval == "number" || typeofval == "boolean" || val == null || val == undefined))
 			thisprop.originalVal = JSON.parse(JSON.stringify(val));
 		else
 			thisprop.originalVal = val;
-		
 		return val;
 	}
 }

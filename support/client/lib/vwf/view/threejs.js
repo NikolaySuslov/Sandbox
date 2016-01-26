@@ -38,7 +38,7 @@ function matset(newv, old) {
 
 var pfx = ["webkit", "moz", "ms", "o", ""];
 
-define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/OculusRiftEffect", "vwf/model/threejs/ThermalCamEffect", "vwf/model/threejs/VRRenderer", "vwf/view/threejs/editorCameraController", "vwf/view/threejs/SandboxRenderer"], function(module, view,viewNode) {
+define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNode", "vwf/model/threejs/OculusRiftEffect", "vwf/model/threejs/ThermalCamEffect", "vwf/model/threejs/VRRenderer", "vwf/view/threejs/editorCameraController", "vwf/view/threejs/SandboxRenderer"], function(module, view,eventSource,viewNode) {
     var stats;
     var NORMALRENDER = 0;
     var STEREORENDER = 1;
@@ -271,6 +271,8 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
         },
         initialize: function(rootSelector) {
 
+            
+            eventSource.call(this,'View');
             this.initHMD();
 
             rootSelector = {
@@ -460,6 +462,7 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
         
         setInterpolatedTransforms: function(deltaTime) {
   			
+            this.trigger('interpStart');
   			var keys = Object.keys(this.nodes);
             var now = performance.now();
             var playmode = Engine.getPropertyFast(Engine.application(),'playmode');
@@ -470,6 +473,7 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
                 node.interpolate(now,playmode);
             }
             _dScene.updateMatrixWorld();
+            this.trigger('interpEnd');
         },
         windowResized: function() {
             //called on window resize by windowresize.js
@@ -484,6 +488,7 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
         },
         restoreTransforms: function() {
 
+            this.trigger('interpRestoreStart');
             var keys = Object.keys(this.nodes);
             for (var j = 0; j < keys.length; j++) {
                 var i = keys[j];
@@ -492,6 +497,7 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
                 node.restore();
             }
             _dScene.updateMatrixWorld();
+            this.trigger('interpRestoreEnd');
         },
         setRenderModeStereo: function() {
             this.renderMode = STEREORENDER;
@@ -837,41 +843,7 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
                     this.renderTargetPasses.splice(i, 1);
             }
         },
-        trigger: function(name, args) {
-            if (!this.args)
-                this.args = [null];
-            for (var i = 0; i < args.length; i++)
-                this.args[i + 1] = args[i];
-
-            var queue = this.events[name];
-            if (!queue) return;
-            for (var i = 0; i < queue.length; i++) {
-                this.events[name][i].apply(this, this.args);
-            }
-
-        },
-        bind: function(name, func) {
-
-            if (!this.events)
-                this.events = {};
-            if (!this.events[name])
-                this.events[name] = [];
-            this.events[name].push(func);
-            return this.events[name].length - 1;
-        },
-        unbind: function(name, func) {
-
-            var queue = this.events[name];
-            if (!queue) return;
-
-            if (func instanceof Number)
-                queue.splice(func, 1);
-            else {
-                func = queue.indexOf(func);
-                if (func != -1)
-                    queue.splice(func, 1);
-            }
-        }
+        
 
 
         // -- gotProperty ------------------------------------------------------------------------------
@@ -1086,6 +1058,8 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
 
             self.trigger('prerender', vpargs);
             self.updateGlyphs(null, vp, wh, ww);
+            if(window._SceneManager)
+                _SceneManager.preRender(cam);
             var keys = Object.keys(Engine.models[0].model.nodes);
             for (var j = 0; j < keys.length; j++) {
                 var i = keys[j];
@@ -1323,6 +1297,8 @@ define(["module", "vwf/view","vwf/view/threejs/viewNode", "vwf/model/threejs/Ocu
                 self.trigger('glyphRender', vpargs);
             }
 
+             if(window._SceneManager)
+                _SceneManager.postRender();
 
             if (stats.domElement.style.display == 'block')
                 stats.update();
