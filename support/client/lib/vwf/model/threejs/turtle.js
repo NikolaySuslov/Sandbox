@@ -26,37 +26,6 @@
 			this.angle = 60;
 			this.stepLength = 1;
 
-			this.ohmLSys = Engine.getProperties(Engine.prototype(childID))['ohmLSys'];
-			this.ohmTurtle = Engine.getProperties(Engine.prototype(childID))['ohmTurtle'];
-
-			Engine.setProperty(childID,'ohmLSys',this.ohmLSys);
-			Engine.setProperty(childID,'ohmTurtle',this.ohmTurtle);
-
-
-			var methods = Engine.getMethods(childID);
-			var nodeMethods = ['initGrammarLSys', 'genLSys', 'generateLSys', 'initGrammarTurtle', 'makeLSys', 'initSemanticsLSys', 'initSemanticsTurtle', 'initialize'];
-
-			for (var i in nodeMethods) {
-				
-				if (methods[nodeMethods[i]] == undefined) {
-					var methodName = nodeMethods[i];
-					var prot = Engine.getMethods(Engine.prototype(childID))[methodName];
-					Engine.createMethod(childID, methodName, [], prot.body);
-				}
-			}
-
-			var nodeMethodsWithParams = ['turn', 'goForward', 'makeTurtle'];
-
-			for (var i in nodeMethodsWithParams) {
-			
-				if (methods[nodeMethodsWithParams[i]] == undefined) {
-					var methodName = nodeMethodsWithParams[i];
-					var prot = Engine.getMethods(Engine.prototype(childID))[methodName];
-					Engine.createMethod(childID, methodName, prot.parameters, prot.body);
-				}
-			}
-
-
 			this.EditorData = {};
 			this.EditorData.a_radius = {displayname:'Turtle radius',property:'radius',type:'slider',min:0,max:10,step:.01};
 			//this.EditorData.rsegs = {displayname:'R Segments',property:'rsegs',type:'slider',min:3,max:16};
@@ -115,9 +84,42 @@
 				}
 
 			}
+
+			this.initalizeFromPrototype = function() {
+
+			this.ohmLSys = Engine.getProperties(Engine.prototype(childID))['ohmLSys'];
+			this.ohmTurtle = Engine.getProperties(Engine.prototype(childID))['ohmTurtle'];
+
+			Engine.setProperty(childID,'ohmLSys',this.ohmLSys);
+			Engine.setProperty(childID,'ohmTurtle',this.ohmTurtle);
+
+			var methods = Engine.getMethods(childID);
+			var nodeMethods = ['initGrammarLSys', 'genLSys', 'generateLSys', 'initGrammarTurtle', 'makeLSys', 'initSemanticsLSys', 'initSemanticsTurtle', 'ready', 'forceUpdate'];
+
+			for (var i in nodeMethods) {
+				
+				if (methods[nodeMethods[i]] == undefined) {
+					var methodName = nodeMethods[i];
+					var prot = Engine.getMethods(Engine.prototype(childID))[methodName];
+					Engine.createMethod(childID, methodName, [], prot.body);
+				}
+			}
+
+			var nodeMethodsWithParams = ['turn', 'goForward', 'makeTurtle'];
+
+			for (var i in nodeMethodsWithParams) {
 			
+				if (methods[nodeMethodsWithParams[i]] == undefined) {
+					var methodName = nodeMethodsWithParams[i];
+					var prot = Engine.getMethods(Engine.prototype(childID))[methodName];
+					Engine.createMethod(childID, methodName, prot.parameters, prot.body);
+				}
+			}
+		}
+		
 			this.initializingNode = function()
 			{
+				this.initalizeFromPrototype();
 				this.dirtyStack(true);
 			}
 
