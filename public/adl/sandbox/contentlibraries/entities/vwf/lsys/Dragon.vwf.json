@@ -1,9 +1,10 @@
 {
     "children": {
-        "N7eb4bf7c": {
+        "Ncb98d29": {
             "extends": "line2.vwf",
             "properties": {
                 "DisplayName": "pen",
+                "___assetServerOriginalID": "Nbf769fac",
                 "materialDef": {
                     "shininess": 15,
                     "alpha": 1,
@@ -582,8 +583,12 @@
     },
     "extends": "turtle2.vwf",
     "methods": {
+        "forceUpdate": {
+            "body": "console.log('Force to update old source code!');\nvar methods = Engine.getMethods(this.id);\nvar nodeMethodsToDel = ['genLSys', 'initGrammarLSys', 'initGrammarTurtle', 'initLSysSemantics', 'initTurtleSemantics'];\nfor (var i in nodeMethodsToDel)\n{\n    if (methods[nodeMethodsToDel[i]] !== undefined)\n    {\n        var methodName = nodeMethodsToDel[i];\n        Engine.deleteMethod(this.id, methodName);\n    }\n}\nvar nodeMethods = ['genLSys', 'initGrammarLSys', 'initGrammarTurtle', 'initSemanticsLSys', 'initSemanticsTurtle'];\nvar methodsNew = Engine.getMethods(this.id);\nfor (var i in nodeMethods)\n{\n    if (methodsNew[nodeMethods[i]] === undefined)\n    {\n        var methodName = nodeMethods[i];\n        var prot = Engine.getMethods(Engine.prototype(this.id))[methodName];\n        Engine.createMethod(this.id, methodName, [], prot.body);\n    }\n}\n        Engine.deleteMethod(this.id, 'makeTurtle');\n        var prot = Engine.getMethods(Engine.prototype(this.id))['makeTurtle'];\n        Engine.createMethod(this.id, 'makeTurtle', prot.parameters, prot.body);\n",
+            "parameters": []
+        },
         "genLSys": {
-            "body": "var sem = Engine.getProperty(this.id, 'semanticsLSys');\nvar str = this.rule;\nvar axioms = {\"F\": this.axiomF, \"G\": this.axiomG};\nfor (var i = 1; i < this.iteration; i++)\n{\n    var r = this.LSys.match(str);\n    var n = sem(r);\n    var res = n.gen(axioms);\n    str = res.join(\"\");\n}\nreturn str;\n",
+            "body": "var gram = _LangManager.ohmLangs[this.id][\"LSys\"][\"grammar\"];\nvar sem = _LangManager.ohmLangs[this.id][\"LSys\"][\"semantics\"];\nvar str = this.rule;\nvar axioms = {\"F\": this.axiomF, \"G\": this.axiomG};\nfor (var i = 1; i < this.iteration; i++)\n{\n    var r = gram.match(str);\n    var n = sem(r);\n    var res = n.gen(axioms);\n    str = res.join(\"\");\n}\nreturn str;\n",
             "parameters": []
         },
         "generateLSys": {
@@ -595,19 +600,19 @@
             "parameters": ["step"]
         },
         "initGrammarLSys": {
-            "body": "console.log('Init grammar: LSys');\nthis.initLSysSemantics();\n",
+            "body": "console.log('Init grammar: LSys');\nthis.initSemanticsLSys();\n",
             "parameters": []
         },
         "initGrammarTurtle": {
-            "body": "console.log('Init grammar: Turtle');\nthis.initTurtleSemantics();\n",
+            "body": "console.log('Init grammar: Turtle');\nthis.initSemanticsTurtle();\n",
             "parameters": []
         },
-        "initLSysSemantics": {
-            "body": "Engine.getProperty(this.id, 'semanticsLSys').addOperation('gen(x)',\n{\n    Gen: function(e)\n    {\n        return e.gen(this.args.x);\n    },\n    ReadRule: function(e)\n    {\n        return e.gen(this.args.x);\n    },\n    letters: function(_)\n    {\n        for (var propName in this.args.x)\n        {\n            if (propName == this.interval.contents)\n                return this.args.x[propName]\n        }\n        return this.interval.contents\n    },\n    symbols: function(_)\n    {\n        return this.interval.contents;\n    }\n});\n",
+        "initSemanticsLSys": {
+            "body": "var s = _LangManager.ohmLangs[this.id][\"LSys\"][\"semantics\"];\ns.addOperation('gen(x)',\n{\n    Gen: function(e)\n    {\n        return e.gen(this.args.x);\n    },\n    ReadRule: function(e)\n    {\n        return e.gen(this.args.x);\n    },\n    letters: function(_)\n    {\n        for (var propName in this.args.x)\n        {\n            if (propName == this.interval.contents)\n                return this.args.x[propName]\n        }\n        return this.interval.contents\n    },\n    symbols: function(_)\n    {\n        return this.interval.contents;\n    }\n});\n",
             "parameters": []
         },
-        "initTurtleSemantics": {
-            "body": "var myID = this.id;\nEngine.getProperty(this.id, 'semanticsTurtle').addOperation('draw(x,y)',\n{\n    Draw: function(e)\n    {\n        e.draw(this.args.x, this.args.y);\n    },\n    drawLetter: function(e)\n    {\n        Engine.callMethod(myID, 'goForward', [this.args.x]);\n    },\n    turn: function(e)\n    {\n        if (this.interval.contents == \"+\")\n            Engine.callMethod(myID, 'turn', [this.args.y]);\n        if (this.interval.contents == \"-\")\n            Engine.callMethod(myID, 'turn', [-1 * this.args.y]);\n       }\n  });\n",
+        "initSemanticsTurtle": {
+            "body": "var myID = this.id;\nvar s = _LangManager.ohmLangs[this.id][\"Turtle\"][\"semantics\"];\ns.addOperation('draw(x,y)',\n{\n    Draw: function(e)\n    {\n        e.draw(this.args.x, this.args.y);\n    },\n    drawLetter: function(e)\n    {\n        Engine.callMethod(myID, 'goForward', [this.args.x]);\n    },\n    turn: function(e)\n    {\n        if (this.interval.contents == \"+\")\n            Engine.callMethod(myID, 'turn', [this.args.y]);\n        if (this.interval.contents == \"-\")\n            Engine.callMethod(myID, 'turn', [-1 * this.args.y]);\n       }\n  });\n",
             "parameters": []
         },
         "makeLSys": {
@@ -615,8 +620,12 @@
             "parameters": []
         },
         "makeTurtle": {
-            "body": "var sem = Engine.getProperty(this.id, 'semanticsTurtle');\nvar r = this.Turtle.match(lsys);\nvar n = sem(r);\nreturn n;",
+            "body": "var gram = _LangManager.ohmLangs[this.id][\"Turtle\"][\"grammar\"];\nvar sem = _LangManager.ohmLangs[this.id][\"Turtle\"][\"semantics\"];\nvar r = gram.match(lsys);\nvar n = sem(r);\nreturn n;",
             "parameters": ["lsys"]
+        },
+        "ready": {
+            "body": "if (this.methods.hasOwnProperty('initLSysSemantics')){\n  this.forceUpdate();\n}\nthis.initGrammarLSys();\nthis.initGrammarTurtle();\nthis.generateLSys();\n",
+            "parameters": []
         },
         "turn": {
             "body": "this.transformAPI.rotateZ(angle, \"local\");\n",
@@ -1338,6 +1347,7 @@
                 "endIdx": 89
             }
         },
+        "___sourceAssetTimestamp": "Wed Jan 27 2016 20:47:44 GMT+0300 (MSK)",
         "angle": 90,
         "axiomF": "F+G+",
         "axiomG": "-F-G",
@@ -1367,7 +1377,8 @@
             "specularColor": {
                 "r": 0.5773502691896258,
                 "g": 0.5773502691896258,
-                "b": 0.5773502691896258
+                "b": 0.5773502691896258,
+                "a": 1
             },
             "specularLevel": 1,
             "layers": [{

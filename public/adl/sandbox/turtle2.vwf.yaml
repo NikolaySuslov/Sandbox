@@ -49,8 +49,42 @@ properties:
         drawLetter =letter
         turn = "+" | "-" }
 methods:
-  initLSysSemantics: |
-    Engine.getProperty(this.id, 'semanticsLSys').addOperation('gen(x)',
+  ready: |
+      if (this.methods.hasOwnProperty('initLSysSemantics')){
+        this.forceUpdate();
+      }
+      this.initGrammarLSys();
+      this.initGrammarTurtle();
+      this.generateLSys();
+  forceUpdate: |
+          console.log('Force to update old source code!');
+          var methods = Engine.getMethods(this.id);
+          var nodeMethodsToDel = ['genLSys', 'initGrammarLSys', 'initGrammarTurtle', 'initLSysSemantics', 'initTurtleSemantics'];
+          for (var i in nodeMethodsToDel)
+          {
+              if (methods[nodeMethodsToDel[i]] !== undefined)
+              {
+                  var methodName = nodeMethodsToDel[i];
+                  Engine.deleteMethod(this.id, methodName);
+              }
+          }
+          var nodeMethods = ['genLSys', 'initGrammarLSys', 'initGrammarTurtle', 'initSemanticsLSys', 'initSemanticsTurtle'];
+          var methodsNew = Engine.getMethods(this.id);
+          for (var i in nodeMethods)
+          {
+              if (methodsNew[nodeMethods[i]] === undefined)
+              {
+                  var methodName = nodeMethods[i];
+                  var prot = Engine.getMethods(Engine.prototype(this.id))[methodName];
+                  Engine.createMethod(this.id, methodName, [], prot.body);
+              }
+          }
+                  Engine.deleteMethod(this.id, 'makeTurtle');
+                  var prot = Engine.getMethods(Engine.prototype(this.id))['makeTurtle'];
+                  Engine.createMethod(this.id, 'makeTurtle', prot.parameters, prot.body);
+  initSemanticsLSys: |
+    var s = _LangManager.ohmLangs[this.id]["LSys"]["semantics"];
+    s.addOperation('gen(x)',
     {
         Gen: function(e)
         {
@@ -74,9 +108,10 @@ methods:
             return this.interval.contents;
         }
     });
-  initTurtleSemantics: |
+  initSemanticsTurtle: |
     var myID = this.id;
-    Engine.getProperty(this.id, 'semanticsTurtle').addOperation('draw(x,y)',
+    var s = _LangManager.ohmLangs[this.id]["Turtle"]["semantics"];
+    s.addOperation('draw(x,y)',
     {
         Draw: function(e)
         {
@@ -95,12 +130,13 @@ methods:
            }
       });
   genLSys: |
-    var sem = Engine.getProperty(this.id, 'semanticsLSys');
+    var gram = _LangManager.ohmLangs[this.id]["LSys"]["grammar"];
+    var sem = _LangManager.ohmLangs[this.id]["LSys"]["semantics"];
     var str = this.rule;
     var axioms = {"F": this.axiomF, "G": this.axiomG};
     for (var i = 1; i < this.iteration; i++)
     {
-        var r = this.LSys.match(str);
+        var r = gram.match(str);
         var n = sem(r);
         var res = n.gen(axioms);
         str = res.join("");
@@ -145,15 +181,16 @@ methods:
       this.transformAPI.setPosition(oldPos);
   initGrammarLSys: |
     console.log('Init grammar: LSys');
-    this.initLSysSemantics();
+    this.initSemanticsLSys();
   initGrammarTurtle: |
     console.log('Init grammar: Turtle');
-    this.initTurtleSemantics();
+    this.initSemanticsTurtle();
   makeTurtle:
     parameters:
       - lsys
     body: |
-      var sem = Engine.getProperty(this.id, 'semanticsTurtle');
-      var r = this.Turtle.match(lsys);
+      var gram = _LangManager.ohmLangs[this.id]["Turtle"]["grammar"];
+      var sem = _LangManager.ohmLangs[this.id]["Turtle"]["semantics"];
+      var r = gram.match(lsys);
       var n = sem(r);
       return n;
