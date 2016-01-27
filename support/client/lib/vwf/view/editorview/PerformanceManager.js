@@ -53,7 +53,7 @@ define(["vwf/utility/eventSource"], function(eventSource)
         this.samples = [];
         this.startTime = 0;
         this.averageTime = 0;
-        this.maxSamples = maxSamples;
+        this.maxSamples = 2;
         this.func = func;
         this.startSample = function()
         {
@@ -269,7 +269,7 @@ define(["vwf/utility/eventSource"], function(eventSource)
         this.tracks["MessageQueued"] = new recordTrack(this.counters.MessageQueued, "Message Queued /s", false);
         this.tracks["Geometry"] = new recordTrack(this.counters.Geometry, "Geometries", false);
         this.tracks["Textures"] = new recordTrack(this.counters.Textures, "Textures", false);
-        this.tracks["Verts"] = new recordTrack(this.counters.Verts, "verticies", false);
+        this.tracks["Verts"] = new recordTrack(this.counters.Verts, "Verticies", false);
         this.tracks["Memory"] = new recordTrack(this.counters.Memory, "Memory", false);
         this.tracks["Nodes"] = new recordTrack(this.counters.Nodes, "Nodes", false);
         window.setInterval(function()
@@ -334,6 +334,10 @@ define(["vwf/utility/eventSource"], function(eventSource)
         {
             $('#statsPanel').remove();
             this.context = null;
+        }
+        this.isOpen = function()
+        {
+            return !!this.context;
         }
         this.draw = function()
         {

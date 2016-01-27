@@ -487,6 +487,10 @@
 			{
 				return this.skyTexture;
 			}
+			if (propertyName == "getGroundPlane")
+			{
+				return this.groundplane;
+			}
 		}
 		this.getRoot = function()
 		{

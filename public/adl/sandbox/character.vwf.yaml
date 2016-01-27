@@ -223,7 +223,10 @@ scripts:
         this.Scene.unbind('keyUp', this.ku);
 
       }
-      this.placeNameTag = function(e, viewprojection, wh, ww) {
+      this.placeNameTag = function(e) {
+        var viewprojection = e[0];
+        var wh = e[1];  
+        var ww =e [2];
         if (this.id == 'character-vwf') return;
         if (!this.ownerClientID)
           return;

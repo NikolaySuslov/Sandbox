@@ -292,7 +292,9 @@ viewInterpolationNode.prototype.interpolate = function(now, playmode)
 	
 	this.totalTime += now - (this.lastTime ? this.lastTime : now);
 	this.lastTime = now;
-	if (!this.enabled) return;
+	if (!this.enabled){
+		this.totalTime = 0;
+	} return;
 	var viewnode = this.threejsNode;
 	if (!viewnode) return;
 	var simulating = this.isSimulating();
