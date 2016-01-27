@@ -987,8 +987,9 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
         function renderScene(time) {
 
 
+        	self.trigger('preFrame');	
             requestAnimFrame(renderScene);
-            _PerformanceManager.preFrame();
+            
             
             //lets not render when the quere is not ready. This prevents rendering of meshes that must have their children
             //loaded before they can render
@@ -1078,11 +1079,11 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
 
                 sceneNode.frameCount = 0;
 
-
+                self.trigger('pickStart');	
                 var newPick = ThreeJSPick.call(self, sceneNode, cam, ww, wh);
 
                 var newPickId = newPick ? getPickObjectID.call(view, newPick.object) : view.state.sceneRootID;
-
+                self.trigger('pickEnd');	
 
                 if (self.lastPickId != newPickId && self.lastEventData) {
 
@@ -1316,7 +1317,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
                 glext_ft.frameTerminator();
             }
 
-            _PerformanceManager.postFrame();
+            self.trigger('postFrame');
 
         };
 

@@ -299,7 +299,7 @@ viewInterpolationNode.prototype.interpolate = function(now, playmode)
 	var queuetime = this.positionQueue.xQueue.times[4];
 
 	var sti = viewnode.setTransformInternal;
-	var qt = simulating && (playmode != 'play' && now - queuetime > .05);
+	var qt = simulating && (playmode != 'play' && now - queuetime > 50);
 	while (this.totalTime > 0)
 	{
 		this.totalTime -= 16;

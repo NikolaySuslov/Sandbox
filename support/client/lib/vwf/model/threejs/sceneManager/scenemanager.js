@@ -353,7 +353,7 @@ SceneManager.prototype.update = function(dt) {
    
 
 
-   
+    this.trigger('updateStart');
     //first, we sort all dirty objects into their new regions
     for (var i = 0; i < this.dirtyObjects.length; i++) {
         this.dirtyObjects[i].sceneManagerUpdate();
@@ -403,6 +403,7 @@ SceneManager.prototype.update = function(dt) {
         this.particleSystemList[i].update(dt);
     }
 
+    this.trigger('updateEnd');
 
 
 }

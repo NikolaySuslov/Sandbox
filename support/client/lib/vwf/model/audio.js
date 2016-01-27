@@ -3,7 +3,7 @@
  * WebRTC.js : Behaves as a wrapper for vwf/view/rtcObject
  * Maps simple 1:1 signal model to a broadcast model using target and sender ids
  */
-define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, model, buzz)
+define(["module", "vwf/model", "vwf/model/buzz/buzz.min","vwf/utility/eventSource"], function(module, model, buzz,eventSource)
 {
     //a simple structure to hold the BUZZ sound reference and position data
     function SoundSource()
@@ -84,6 +84,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
     {
         initialize: function()
         {
+            eventSource.call(this,"Audio");
             this.buzz = buzz;
             window._buzz = this.buzz;
             this.sounds = {};
@@ -293,6 +294,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
         //Update the sound volume based on the position of the camera and the position of the object
         ticking: function()
         {
+            this.trigger("tickStart")
             try
             {
                 var campos = [_dView.getCamera().matrixWorld.elements[12], _dView.getCamera().matrixWorld.elements[13], _dView.getCamera().matrixWorld.elements[14]];
@@ -304,6 +306,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
             }
             catch (e)
             {}
+            this.trigger("tickEnd");
         },
         deletingNode: function(id)
         {

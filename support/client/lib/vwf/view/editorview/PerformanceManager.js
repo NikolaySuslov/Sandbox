@@ -1,4 +1,4 @@
-define([], function() {
+define(["vwf/utility/eventSource"], function(eventSource) {
     var Performance = {};
     var isInitialized = false;
     return {
@@ -38,7 +38,8 @@ define([], function() {
             return this.averageTime;
         }
     }
-    function TriggerTimer(maxSamples,symbol,startTrigger,endTrigger)
+   
+    function  TriggerTimer(maxSamples,symbol,startTrigger,endTrigger)
     {
         
        TimeCounter.call(this,maxSamples);
@@ -106,18 +107,34 @@ define([], function() {
             return this.average;
         }
     }
-    function recordTrack(counter,label)
+    function EventsPerSecondTimer (symbol,eventTrigger)
+    {
+       QuantityCounter.call(this,2);
+      
+       this.oneSample = function()
+       {
+            this.addQuantity(1);
+       }
+       this.oneSecond = function()
+       {
+            this.endSample();
+            this.startSample();
+       }
+       eventSource.live(symbol,eventTrigger,this.oneSample.bind(this));
+       eventSource.live("PerformanceManager","oneSecond",this.oneSecond.bind(this));
+    }
+    function recordTrack(counter,label,active)
     {
         this.counter = counter;
         this.track = [];
         this.min = 0;
         this.max = 1;
         this.label = label;
-        this.active = true;
+        this.active = active;
         
         this.randomColor = function()
         {
-            return Math.floor(Math.random() * 155 + 100);
+            return Math.floor(Math.random() * 200 + 55);
         }
         this.color = 'rgb(' + this.randomColor() +','+ this.randomColor() +','+ this.randomColor() +')';
         this.scale = function(val)
@@ -137,7 +154,8 @@ define([], function() {
             context.strokeStyle = this.color;
             if(this.track.length > 300)
                 this.track.shift();
-            context.fillText(this.label + ":" + this.min.toFixed(2) + "-" +this.max.toFixed(2),10,290-i*10);
+            context.fillText(this.track[this.track.length-1].toFixed(2),10,290-i*10);
+            context.fillText(this.label + ":" + this.min.toFixed(2) + "-" +this.max.toFixed(2),50,290-i*10);
             for(var j =1; j < this.track.length; j++)
             {
                 context.beginPath();
@@ -151,6 +169,7 @@ define([], function() {
         }
     }
     function initialize() {
+        eventSource.call(this,"PerformanceManager");
         var FRAME_ROLLING_AVERAGE_LENGTH = 20;
         var TICK_ROLLING_AVERAGE_LENGTH = 20;
         var FPS_GOAL_NUMBER = 20;
@@ -170,15 +189,35 @@ define([], function() {
         this.resizeCounter = 0;
         this.counters = {};
 
+        
+
         this.originalResScale = _SettingsManager.getKey('resolutionScale');;
 
-        this.counters.RenderTime = new TimeCounter(FRAME_ROLLING_AVERAGE_LENGTH);
-        this.counters.FPS = new TimeCounter(FRAME_ROLLING_AVERAGE_LENGTH);
-        this.counters.TickTime = new TriggerTimer(TICK_ROLLING_AVERAGE_LENGTH,'Engine','tickStart','tickEnd');
-        this.counters.DrawCalls = new FuncCounter(TICK_ROLLING_AVERAGE_LENGTH,function(){return _dRenderer.info.render.calls});
-        this.counters.Cull = new TriggerTimer(TICK_ROLLING_AVERAGE_LENGTH,'SceneManager','cullStart','cullEnd');
-        this.counters.Interp = new TriggerTimer(TICK_ROLLING_AVERAGE_LENGTH,'View','interpStart','interpEnd');
-        this.counters.InterpRestore = new TriggerTimer(TICK_ROLLING_AVERAGE_LENGTH,'View','interpRestoreStart','interpRestoreEnd');
+        var TRL = TICK_ROLLING_AVERAGE_LENGTH;
+        this.counters.RenderTime = new TimeCounter(TRL);
+        this.counters.FPS = new TimeCounter(TRL);
+
+        this.counters.TickTime = new TriggerTimer(TRL,'Engine','tickStart','tickEnd');
+        this.counters.DrawCalls = new FuncCounter(TRL,function(){return _dRenderer.info.render.calls});
+        this.counters.Cull = new TriggerTimer(TRL,'SceneManager','cullStart','cullEnd');
+        this.counters.Interp = new TriggerTimer(TRL,'View','interpStart','interpEnd');
+        this.counters.InterpRestore = new TriggerTimer(TRL,'View','interpRestoreStart','interpRestoreEnd');
+
+        this.counters.Perf = new TriggerTimer(TRL,'PerformanceManager','drawGraphStart','drawGraphEnd');
+        this.counters.SceneManager = new TriggerTimer(TRL,'SceneManager','updateStart','updateEnd');
+        this.counters.Script = new TriggerTimer(TRL,'JavaScript','tickStart','tickEnd');
+        this.counters.Physics = new TriggerTimer(TRL,'Physics','tickStart','tickEnd');
+        this.counters.Audio = new TriggerTimer(TRL,'Audio','tickStart','tickEnd');
+        this.counters.Pick = new TriggerTimer(TRL,'View','pickStart','pickEnd');
+
+        this.counters.MessageReceive = new EventsPerSecondTimer("Engine","messageReceived");
+        this.counters.MessageProcessed = new EventsPerSecondTimer("Engine","messageProcessed");
+        this.counters.MessageSent = new EventsPerSecondTimer("Engine","messageSent");
+        this.counters.MessageLoopback = new EventsPerSecondTimer("Engine","messageLoopback");
+
+        this.counters.MessageQueued = new FuncCounter(TRL,function(){return Engine.private.queue.queue.length});
+        
+
 
         this.counters.FPS.value=function()
         {
@@ -186,12 +225,32 @@ define([], function() {
         }
 
         this.tracks = {};
-        this.tracks["Render"] = new recordTrack(this.counters.RenderTime,"Render");
-        this.tracks["FPS"] = new recordTrack(this.counters.FPS,"FPS");
-        this.tracks["Tick"] = new recordTrack(this.counters.TickTime,"Tick");
-        this.tracks["Calls"] = new recordTrack(this.counters.DrawCalls,"Calls");
-        this.tracks["Cull"] = new recordTrack(this.counters.Cull,"Cull");
-        this.tracks["Interp"] = new recordTrack(this.counters.Interp,"Interp");
+        this.tracks["Render"] = new recordTrack(this.counters.RenderTime,"Render",false);
+        this.tracks["FPS"] = new recordTrack(this.counters.FPS,"FPS",true);
+        this.tracks["Tick"] = new recordTrack(this.counters.TickTime,"Tick",true);
+        this.tracks["Calls"] = new recordTrack(this.counters.DrawCalls,"Calls",false);
+        this.tracks["Cull"] = new recordTrack(this.counters.Cull,"Cull",false);
+        this.tracks["Interp"] = new recordTrack(this.counters.Interp,"Interp",false);
+
+        this.tracks["Perf"] = new recordTrack(this.counters.Perf,"Perf",false);
+        this.tracks["SceneManager"] = new recordTrack(this.counters.SceneManager,"SceneManager",false);
+        this.tracks["Script"] = new recordTrack(this.counters.Script,"Script",false);
+        this.tracks["Physics"] = new recordTrack(this.counters.Physics,"Physics",false);
+        this.tracks["Audio"] = new recordTrack(this.counters.Audio,"Audio",false);
+        this.tracks["Pick"] = new recordTrack(this.counters.Pick,"Pick",false);
+
+        this.tracks["MessageReceive"] = new recordTrack(this.counters.MessageReceive,"Message Received /s",true);
+        this.tracks["MessageProcessed"] = new recordTrack(this.counters.MessageProcessed,"Message Processed /s",true);
+        this.tracks["MessageSent"] = new recordTrack(this.counters.MessageSent,"Message Sent /s",true);
+        this.tracks["MessageLoopback"] = new recordTrack(this.counters.MessageLoopback,"Message Loopback /s",true);
+        this.tracks["MessageQueued"] = new recordTrack(this.counters.MessageQueued,"Message Queued /s",true);
+
+        
+        window.setInterval(function()
+        {
+            this.trigger('oneSecond');
+        }.bind(this),1000);
+
         this.show = function()
         {
             $(document.body).append("<canvas id='statsViewer' />");
@@ -205,26 +264,38 @@ define([], function() {
             $('#statsViewer').css("left","0px");
             $('#statsViewer').css("background",'black');
             this.context  = document.getElementById('statsViewer').getContext("2d");
-
+            $('#statsViewer').draggable();
+            requestAnimationFrame(this.draw);
+        }
+        this.hide =function()
+        {
+            $('#statsViewer').remove();
+            this.context = null;
         }
         this.draw = function()
         {
-            this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
-            var j = 0;
-            for(var i in this.tracks)
+            if(this.context)
             {
-                this.tracks[i].draw(this.context,j);
-                j++;
+                
+                requestAnimationFrame(this.draw);
+                this.trigger('drawGraphStart');
+                this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
+                var j = 0;
+                for(var i in this.tracks)
+                {
+                    this.tracks[i].draw(this.context,j);
+                    if(this.tracks[i].active) 
+                        j++;
+                }
+                this.trigger('drawGraphEnd');
             }
-        }
+        }.bind(this);
         this.preFrame = function() {
             
+
             this.counters.RenderTime.startSample();
-            if(this.context)
-                this.draw();
-
-
             this.counters.DrawCalls.endSample();
+            this.counters.MessageQueued.endSample();
 
             //loop back around, for total time between frames
             this.counters.FPS.endSample();
@@ -259,7 +330,8 @@ define([], function() {
                 }
             }
 
-        }
+        }.bind(this);
+        eventSource.live("View","preFrame",this.preFrame);
         this.scaleDisplayResolution = function()
         {
 			window._resizeCanvas();
@@ -289,7 +361,8 @@ define([], function() {
         }
         this.postFrame = function() {
             this.counters.RenderTime.endSample();
-        }
+        }.bind(this);
+        eventSource.live("View","postFrame",this.postFrame);
         this.ticked = function() {
 
         

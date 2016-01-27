@@ -564,7 +564,8 @@ define(['progressScreen','nodeParser','vwf/utility/eventSource'], function(progr
                     {
                         // Engine.logger.debugx( "-socket", "message", message );
                         try
-                        {
+                        {   
+                            Engine.trigger('messageReceived');
                             var fields = message;
                             if (fields.action == 'goOffline')
                             {
@@ -697,6 +698,7 @@ define(['progressScreen','nodeParser','vwf/utility/eventSource'], function(progr
                         }
                     }
                     socket.send(fields);
+                    Engine.trigger('messageSent');
                 }
                 else
                 {
@@ -711,6 +713,7 @@ define(['progressScreen','nodeParser','vwf/utility/eventSource'], function(progr
                     //must be careful that we do this actually async, or logic that expects async operation will fail
                     (function(fields)
                     {
+                        Engine.trigger('messageLoopback');
                         window.setImmediate(function()
                         {
                             Engine.localReentryStack++
@@ -1068,8 +1071,8 @@ define(['progressScreen','nodeParser','vwf/utility/eventSource'], function(progr
             };
             this.processMessage = function(fields)
                 {
-                     if(fields.rnd)
-                        console.log(fields.rnd);
+                    
+
                     this.message = fields;
                     // Advance the time.
                     if (this.now < fields.time && fields.action == "tick")
@@ -1083,6 +1086,7 @@ define(['progressScreen','nodeParser','vwf/utility/eventSource'], function(progr
                         this.sequence_ = fields.sequence; // note the message's queue sequence number for the duration of the action
                         this.client_ = fields.client; // ... and note the originating client
                         this.receive(fields.node, fields.action, fields.member, fields.parameters, fields.respond, fields.origin);
+                        Engine.trigger('messageProcessed');
                     }
                     // Advance time to the most recent time received from the server. Tick if the time
                     // changed.
