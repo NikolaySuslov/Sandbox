@@ -464,6 +464,7 @@
 			if (!this.skycube)
 			{
 				this.skycube = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 20), this.skymaterial);
+				this.skycube.frustumCulled = false;
 				this.skycube.name = "SkyCube";
 				this.skycube.renderDepth = -Infinity;
 				this.skycube.InvisibleToCPUPick = true;
@@ -485,6 +486,10 @@
 			if (propertyName == "skyTexture")
 			{
 				return this.skyTexture;
+			}
+			if (propertyName == "getGroundPlane")
+			{
+				return this.groundplane;
 			}
 		}
 		this.getRoot = function()

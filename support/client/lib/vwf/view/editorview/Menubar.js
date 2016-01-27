@@ -452,10 +452,10 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				_SceneManager.setShowRegions(!_SceneManager.getShowRegions());
 			},
 			MenuViewStats: function(e) {
-				if (window.stats.domElement.style.display == 'none')
-					window.stats.domElement.style.display = 'block';
+				if (_PerformanceManager.isOpen())
+					_PerformanceManager.hide()
 				else
-					window.stats.domElement.style.display = 'none';
+					_PerformanceManager.show()
 			},
 			MenuViewShadows: function(e) {
 				var val = !_Editor.findscene().children[1].castShadows;

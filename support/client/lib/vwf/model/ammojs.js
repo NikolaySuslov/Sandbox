@@ -34,7 +34,7 @@ require.config(
         {}
     }
 })
-define(["module", "vwf/model", "vwf/configuration", "vwf/model/ammo.js/ammo",
+define(["module", "vwf/model", "vwf/configuration","vwf/utility/eventSource", "vwf/model/ammo.js/ammo",
     "vwf/model/ammo.js/phyAsset",
     "vwf/model/ammo.js/phyBox",
     "vwf/model/ammo.js/phyCone",
@@ -47,7 +47,7 @@ define(["module", "vwf/model", "vwf/configuration", "vwf/model/ammo.js/ammo",
     "vwf/model/ammo.js/phyHingeJoint",
     "vwf/model/ammo.js/phySliderJoint",
     "vwf/model/ammo.js/phyFixedJoint"
-], function(module, model, configuration, ammo,phyAsset, phyBox, phyCone, phyCylinder, phyObject, phyPlane, phySphere,phyJoint,phyPointToPointJoint,phyHingeJoint,phySliderJoint,phyFixedJoint)
+], function(module, model, configuration,eventSource, ammo,phyAsset, phyBox, phyCone, phyCylinder, phyObject, phyPlane, phySphere,phyJoint,phyPointToPointJoint,phyHingeJoint,phySliderJoint,phyFixedJoint)
 {
 
     return model.load(module,
@@ -57,6 +57,7 @@ define(["module", "vwf/model", "vwf/configuration", "vwf/model/ammo.js/ammo",
         reEntry: false,
         initialize: function()
         {
+            eventSource.call(this,"Physics");
             this.nodes = {};
             this.allNodes = {};
             this.bodiesToID = {};
@@ -261,6 +262,7 @@ define(["module", "vwf/model", "vwf/configuration", "vwf/model/ammo.js/ammo",
         },
         ticking: function()
         {
+            this.trigger('tickStart');
             delete this.pendingReset;
             if (this.nodes[Engine.application()] && this.nodes[Engine.application()].active === true)
             {
@@ -313,6 +315,7 @@ define(["module", "vwf/model", "vwf/configuration", "vwf/model/ammo.js/ammo",
                     this.reEntry = false;
                 }
             }
+            this.trigger('tickEnd');
         },
         // -- initializingNode ---------------------------------------------------------------------
         initializingNode: function(nodeID, childID, childExtendsID, childImplementsIDs, childSource, childType, childIndex, childName)

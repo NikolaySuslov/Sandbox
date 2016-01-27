@@ -23,7 +23,7 @@ function argumentsToArray(arg)
     return ret;
 }
 
-define(["module", "vwf/model", "vwf/utility","vwf/model/javascript/clientAPI","vwf/model/javascript/defaultContext","vwf/model/javascript/executionContext"], function(module, model, utility,APIModules,defaultContext,executionContext)
+define(["module", "vwf/model", "vwf/utility","vwf/model/javascript/clientAPI","vwf/model/javascript/defaultContext","vwf/model/javascript/executionContext","vwf/utility/eventSource"], function(module, model, utility,APIModules,defaultContext,executionContext,eventSource)
 {
     // vwf/model/javascript.js is a placeholder for the JavaScript object interface to the
     // simulation.
@@ -52,6 +52,7 @@ define(["module", "vwf/model", "vwf/utility","vwf/model/javascript/clientAPI","v
         initialize: function()
         {
             jsDriverSelf = this;
+            eventSource.call(this,"JavaScript");
             this.nodes = {}; // maps id => new type()
             this.creatingNode(undefined, 0); // global root  // TODO: to allow vwf.children( 0 ), vwf.getNode( 0 ); is this the best way, or should the kernel createNode( global-root-id /* 0 */ )?
             this.test = function()
@@ -1375,6 +1376,7 @@ define(["module", "vwf/model", "vwf/utility","vwf/model/javascript/clientAPI","v
         },
         ticking: function()
         {
+            this.trigger('tickStart');
             inTick = true;
             var now = performance.now();
             this.enterNewContext(null,executionContext.TYPE.TICK,null);
@@ -1382,6 +1384,7 @@ define(["module", "vwf/model", "vwf/utility","vwf/model/javascript/clientAPI","v
             this.exitContext();
             //console.log("Tick View: " + (performance.now() - now))
             inTick = false;
+            this.trigger('tickEnd');
         },
         isBehavior: function(node)
         {

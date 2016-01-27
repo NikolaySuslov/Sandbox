@@ -17,7 +17,7 @@
 /// attaches to the global window object as window.Engine. Nothing else should affect the global
 /// environment.
 "use strict";
-define(['progressScreen','nodeParser'], function(progress,nodeParser)
+define(['progressScreen','nodeParser','vwf/utility/eventSource'], function(progress,nodeParser,eventSource)
 {
     var jQuery = $;
     (function(window)
@@ -26,6 +26,7 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
         var progressScreen = require('progressScreen');
         window.vwf = window.Engine = new function()
         {
+            eventSource.call(this,'Engine');
             window.console && console.debug && console.debug("creating vwf");
             // == Public variables =====================================================================
             /// The runtime environment (production, development, testing) and other configuration
@@ -563,7 +564,8 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
                     {
                         // Engine.logger.debugx( "-socket", "message", message );
                         try
-                        {
+                        {   
+                            Engine.trigger('messageReceived');
                             var fields = message;
                             if (fields.action == 'goOffline')
                             {
@@ -696,6 +698,7 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
                         }
                     }
                     socket.send(fields);
+                    Engine.trigger('messageSent');
                 }
                 else
                 {
@@ -710,12 +713,13 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
                     //must be careful that we do this actually async, or logic that expects async operation will fail
                     (function(fields)
                     {
+                        Engine.trigger('messageLoopback');
                         window.setImmediate(function()
                         {
-                            this.localReentryStack++
+                            Engine.localReentryStack++
                                 queue.insert(fields);
-                            if (this.localReentryStack > 2)
-                                this.localReentryStack--;
+                            if (Engine.localReentryStack > 2)
+                                Engine.localReentryStack--;
                         })
                     })(fields);
                 }
@@ -1067,8 +1071,8 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
             };
             this.processMessage = function(fields)
                 {
-                     if(fields.rnd)
-                        console.log(fields.rnd);
+                    
+
                     this.message = fields;
                     // Advance the time.
                     if (this.now < fields.time && fields.action == "tick")
@@ -1082,6 +1086,7 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
                         this.sequence_ = fields.sequence; // note the message's queue sequence number for the duration of the action
                         this.client_ = fields.client; // ... and note the originating client
                         this.receive(fields.node, fields.action, fields.member, fields.parameters, fields.respond, fields.origin);
+                        Engine.trigger('messageProcessed');
                     }
                     // Advance time to the most recent time received from the server. Tick if the time
                     // changed.
@@ -1109,10 +1114,12 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
             this.tick = function()
             {
                 // Call ticking() on each model.
-                if (this.getProperty(vwf.application(), 'playMode') == 'play')
+                this.trigger('tickStart');
+                if (this.getPropertyFast(vwf.application(), 'playMode') == 'play')
                 {
-                    this.models.forEach(function(model)
+                    for(var i =0; i < this.models.length; i++)
                     {
+                        var model = this.models[i];
                         try
                         {
                             model.ticking && model.ticking(this.now); // TODO: maintain a list of tickable models and only call those
@@ -1121,14 +1128,11 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
                         {
                             console.error(e)
                         }
-                    }, this);
-                    // Call tick() on each tickable node.
-                    //    this.tickable.nodeIDs.forEach( function( nodeID ) {
-                    //        this.callMethod( nodeID, "tick", [ this.now ] );
-                    //    }, this );
-                    // Call ticked() on each view.
-                    this.views.forEach(function(view)
+                    }
+                    
+                    for(var i =0; i < this.views.length; i++)
                     {
+                        var view = this.views[i];
                         try
                         {
                             view.ticked && view.ticked(this.now); // TODO: maintain a list of tickable views and only call those
@@ -1137,9 +1141,10 @@ define(['progressScreen','nodeParser'], function(progress,nodeParser)
                         {
                             console.error(e);
                         }
-                    }, this);
+                    }
                 }
                 this.tickCount++;
+                this.trigger('tickEnd');
                 this.postSimulationStateUpdates(this.tickCount % 20 != 0 ? ['transform', 'animationFrame', 'visible'] : null);
             };
             // -- setState -----------------------------------------------------------------------------

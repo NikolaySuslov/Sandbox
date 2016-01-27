@@ -657,10 +657,14 @@ function BoundingBoxRTAS(min, max)
     this.max = [-Infinity, -Infinity, -Infinity];
     this.min = [Infinity, Infinity, Infinity];
     this.faces = [];
+    this.center = [0,0,0];
     if (min)
         this.min = [min[0], min[1], min[2]];
     if (max)
         this.max = [max[0], max[1], max[2]];;
+    this.center[0] =( this.min[0] + this.max[0])/2;
+    this.center[1] =( this.min[1] + this.max[1])/2;
+    this.center[2] =( this.min[2] + this.max[2])/2;
 }
 var cache_BoundingBoxRTAS = [];
 

@@ -79,18 +79,20 @@ function interpolationQueue(length, default_val, id)
 	this.id = id;
 	for (var i = 0; i < this.length; i++)
 	{
-		this.values.push(default_val);
+		var df = JSON.parse(JSON.stringify(default_val));
+		this.values.push(df);
 		this.times.push(0);
-		this.interpolatedValues.push(default_val);
+		this.interpolatedValues.push(df);
 	}
 }
 interpolationQueue.prototype.push = function(val)
 {
-	this.values.shift();
+	var oldval = this.values.shift();
 	this.times.shift();
 	this.values.push(val);
 	this.times.push(performance.now());
 	this.setCount++;
+	return oldval;
 }
 interpolationQueue.prototype.interpolate = function(time, sim)
 {
@@ -132,10 +134,20 @@ VectorQueue.prototype._interpolate = function(time, sim)
 }
 VectorQueue.prototype.push = function(val)
 {
+
+	var oldval = this.values.shift();
+	this.times.shift();
+	this.values.push(val);
+	this.times.push(performance.now());
+	
+	
+
 	this.xQueue.push(val[0]);
 	this.yQueue.push(val[1]);
 	this.zQueue.push(val[2]);
 	this.setCount++;
+
+	return oldval;
 }
 
 function QuaternionQueue(length, id)
@@ -161,16 +173,23 @@ function viewInterpolationNode(id, childExtendsID, threejsNode, sim)
 	this.id = id;
 	this.threejsNode = threejsNode;
 	this.childExtendsID = childExtendsID;
+	this.extends = childExtendsID;
 	this.properties = {};
 	this.positionQueue = new VectorQueue(5, id);
 	this.scaleQueue = new VectorQueue(5, id);
 	this.quaternionQueue = new QuaternionQueue(5, id);
 	this.animationFrameQueue = new floatQueue(5, id);
 	this.enabled = true;
+	this.lastUpdate = performance.now();
 	this.totalTime = 0;
 	this.lastTime = 0;
 	this.simulating = sim;
 	this.tempmat = new THREE.Matrix4();
+
+	this.oldPos = [0,0,0];
+	this.oldScale = [0,0,0];
+	this.oldQuat = [0,0,0,0];
+
 }
 viewInterpolationNode.prototype.setSim = function(v)
 {
@@ -178,6 +197,9 @@ viewInterpolationNode.prototype.setSim = function(v)
 }
 viewInterpolationNode.prototype.tick = function()
 {
+	
+	if(this.enabled == false)
+		return;
 	if (Engine.getPropertyFast(Engine.application(), 'playMode') == 'play' && this.isSimulating())
 	{
 		var viewnode = this.threejsNode;
@@ -197,17 +219,35 @@ viewInterpolationNode.prototype.tick = function()
 }
 viewInterpolationNode.prototype.pushTransform = function(newTransform)
 {
-	var mat = new THREE.Matrix4();
+	var mat = viewInterpolationNode.tempmat;
 	mat.elements.set(newTransform);
-	var position = new THREE.Vector3();
-	var scale = new THREE.Vector3();
-	var rotation = new THREE.Quaternion();
-	mat.decompose(position, rotation, scale);
-	this.positionQueue.push([position.x, position.y, position.z]);
-	this.scaleQueue.push([scale.x, scale.y, scale.z]);
-	this.quaternionQueue.push([rotation.x, rotation.y, rotation.z, rotation.w]);
-	//get quat
-	//push quat
+	
+	var  tempvec1 = viewInterpolationNode.tempvec1;
+	var  tempvec2 = viewInterpolationNode.tempvec2;
+	var  tempquat = viewInterpolationNode.tempquat;
+
+	mat.decompose(tempvec1, tempquat, tempvec2);
+
+	this.oldPos[0] = tempvec1.x;
+	this.oldPos[1] = tempvec1.y;
+	this.oldPos[2] = tempvec1.z;
+
+	this.oldScale[0] = tempvec2.x;
+	this.oldScale[1] = tempvec2.y;
+	this.oldScale[2] = tempvec2.z;
+
+	this.oldQuat[0] = tempquat.x;
+	this.oldQuat[1] = tempquat.y;
+	this.oldQuat[2] = tempquat.z;
+	this.oldQuat[3] = tempquat.w;
+
+	var oldPos = this.positionQueue.push(this.oldPos);
+	var oldScale = this.scaleQueue.push(this.oldScale);
+	var oldQuat = this.quaternionQueue.push(this.oldQuat);
+	
+	this.oldPos = oldPos;
+	this.oldScale = oldScale;
+	this.oldQuat = oldQuat;
 }
 viewInterpolationNode.prototype.setProperty = function(propertyName, propertyValue)
 {
@@ -218,6 +258,8 @@ viewInterpolationNode.prototype.setProperty = function(propertyName, propertyVal
 	if (propertyName == 'transform' && propertyValue)
 	{
 		this.properties[propertyName] = matCpy(propertyValue);
+		this.enabled = true;
+		this.lastUpdate = performance.now();
 		if (!this.isSimulating())
 		{
 			this.pushTransform(matCpy(propertyValue));
@@ -240,25 +282,34 @@ viewInterpolationNode.prototype.getProperty = function(propertyName)
 {
 	return this.properties[propertyName];
 }
+
 viewInterpolationNode.prototype.interpolate = function(now, playmode)
 {
 	//framerate independant smoothing
 	
+	if(performance.now() - this.lastUpdate > 1500)
+		this.enabled = false;
+	
 	this.totalTime += now - (this.lastTime ? this.lastTime : now);
 	this.lastTime = now;
-	if (!this.enabled) return;
+	if (!this.enabled){
+		this.totalTime = 0;
+	} return;
 	var viewnode = this.threejsNode;
 	if (!viewnode) return;
 	var simulating = this.isSimulating();
 	var queuetime = this.positionQueue.xQueue.times[4];
+
+	var sti = viewnode.setTransformInternal;
+	var qt = simulating && (playmode != 'play' && now - queuetime > 50);
 	while (this.totalTime > 0)
 	{
 		this.totalTime -= 16;
 		//	if(_Editor.isSelected(this.id))
 		//		return;
-		if (viewnode.setTransformInternal)
+		if (sti)
 		{
-			if (simulating && (playmode != 'play' && now - queuetime > .05))
+			if (qt)
 			{
 				var oldTransform = this.getProperty('transform');
 				if (oldTransform)
@@ -270,14 +321,14 @@ viewInterpolationNode.prototype.interpolate = function(now, playmode)
 			var position = this.positionQueue.interpolate(now, simulating);
 			var rotation = this.quaternionQueue.interpolate(now, simulating);
 			var scale = this.scaleQueue.interpolate(now, simulating);
-			this.tempmat.compose(new THREE.Vector3(position[0], position[1], position[2]), new THREE.Quaternion(rotation[0], rotation[1], rotation[2], rotation[3]), new THREE.Vector3(scale[0], scale[1], scale[2]))
+			this.tempmat.compose(viewInterpolationNode.tempvec1.set(position[0], position[1], position[2]), viewInterpolationNode.tempquat.set(rotation[0], rotation[1], rotation[2], rotation[3]), viewInterpolationNode.tempvec2.set(scale[0], scale[1], scale[2]))
 			viewnode.setTransformInternal(this.tempmat.elements, false);
 		}
 		if (viewnode.setAnimationFrameInternal)
 		{
 			//so, given that we don't have to have determinism, do we really need to backup and restore?
 			//viewnode.backupTransforms(this.getProperty('animationFrame'));
-			if (simulating && (playmode != 'play' && now - queuetime > .05))
+			if (qt)
 			{
 				this.animationFrameQueue.push(this.getProperty('animationFrame'));
 			}
@@ -285,6 +336,10 @@ viewInterpolationNode.prototype.interpolate = function(now, playmode)
 		}
 	}
 }
+viewInterpolationNode.tempvec1 = new THREE.Vector3();
+viewInterpolationNode.tempvec2 = new THREE.Vector3();
+viewInterpolationNode.tempquat = new THREE.Quaternion();
+viewInterpolationNode.tempmat = new THREE.Matrix4();
 viewInterpolationNode.prototype.restore = function()
 {
 	if (!this.enabled) return;

@@ -744,7 +744,7 @@ color: #fff;
 }
 
 .ui-slider-horizontal .ui-slider-handle {
-    top:-.1em;
+    top:-1px;
     margin-left:-.6em
 }
 

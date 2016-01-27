@@ -23,7 +23,7 @@ define(
 					this.popup = null;
 					return false;
 				}
-				else if (this.popup.location.toString() !== window.location + "/vwf/view/editorview/logger.html")
+				else if ( this.popup.location.toString() !="about:blank" && this.popup.location.toString() !== window.location + "/vwf/view/editorview/logger.html")
 				{
 					this.popup = null;
 					return false;
