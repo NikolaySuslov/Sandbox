@@ -1,9 +1,5 @@
 [
 	{
-    	"name": "L-System generator",
-        "url": "./contentlibraries/lsystem.json"
-    },
-	{
 		"name": "Demo Entities",
         "url": "./contentlibraries/entities.json"
     },
