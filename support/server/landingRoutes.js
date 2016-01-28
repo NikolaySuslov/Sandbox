@@ -532,7 +532,8 @@ exports.world = function(req, res, next) {
 function NotHidden(inst){
 
     if(inst.publishSettings !== undefined)
-        if(inst.publishSettings.hidden)
+       if(inst.publishSettings !== null) 
+            if(inst.publishSettings.hidden)
             return false
     return true
 };
