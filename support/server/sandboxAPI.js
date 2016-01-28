@@ -881,6 +881,7 @@ function Publish(URL, SID, publishdata, response)
 			var allowAnonymous = publishdata.allowAnonymous;
 			var createAvatar = publishdata.createAvatar;
 			var allowTools = publishdata.allowTools;
+			var hidden = publishdata.hidden;
 			var persistence = publishdata.persistence;
 			publishSettings = {
 				singlePlayer: singlePlayer,
@@ -888,6 +889,7 @@ function Publish(URL, SID, publishdata, response)
 				allowAnonymous: allowAnonymous,
 				createAvatar: createAvatar,
 				allowTools: allowTools,
+				hidden: hidden,
 				persistence: persistence,
 			};
 		}
