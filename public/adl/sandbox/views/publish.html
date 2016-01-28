@@ -70,6 +70,7 @@ color: lightgray;
 					$('#chkAllowTools').prop('disabled', false);
 					$('#chkAllowAnonymous').prop('disabled', false);
 					$('#chkCreateAvatar').prop('disabled', false);
+					$('#chkHidden').prop('disabled', false);
 
 					
 
@@ -83,6 +84,8 @@ color: lightgray;
 						$('#chkSinglePlayer')[0].checked = true;
 					if(data.publishSettings.createAvatar)
 						$('#chkCreateAvatar')[0].checked = true;
+					if(data.publishSettings.hidden)
+						$('#chkHidden')[0].checked = true;
 					if(data.publishSettings.camera)
 					{
 						lastActiveCamera = data.publishSettings.camera;
@@ -130,6 +133,7 @@ color: lightgray;
 		$('#chkAllowTools').prop('disabled', true);
 		$('#chkAllowAnonymous').prop('disabled', true);
 		$('#chkCreateAvatar').prop('disabled', true);
+		$('#chkHidden').prop('disabled', true);
 
 		$('#chkSinglePlayer').click(
 		 function(e){
@@ -173,6 +177,7 @@ color: lightgray;
 			statedata.allowAnonymous = $('#chkAllowAnonymous')[0].checked;
 			statedata.createAvatar = $('#chkCreateAvatar')[0].checked;
 			statedata.allowTools = $('#chkAllowTools')[0].checked;
+			statedata.hidden = $('#chkHidden')[0].checked;
 			statedata.persistence = $('#chkPersistence')[0].checked;
 		
 		
@@ -227,6 +232,8 @@ color: lightgray;
 				<input type='checkbox' id='chkAllowAnonymous'  name='AllowAnonymous'></input><label for='AllowAnonymous'>Allow Anonymous Users</label>
 				<br/>
 				<input type='checkbox' id='chkCreateAvatar' name='CreateAvatar'></input><label for='CreateAvatar'>Create Avatar for Each User</label>
+				<br/>
+				<input type='checkbox' id='chkHidden' name='Hidden'></input><label for='Hidden'>Hidden world</label>
 				<br/><br/>
 				<label for='Camera'>Choose Camera</label>
 				<br/>
