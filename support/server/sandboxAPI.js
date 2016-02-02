@@ -4,7 +4,10 @@ var libpath = require('path'),
 	url = require("url"),
 	mime = require('mime'),
 	sio = require('socket.io'),
-	YAML = require('js-yaml');
+	YAML = require('js-yaml'),
+	sass = require('node-sass'),
+	async = require('async'),
+	imgSize = require('image-size');
 
 require('./hash.js');
 var _3DR_proxy = require('./3dr_proxy.js');
@@ -1759,31 +1762,118 @@ function serve(request, response)
 					break;
 				case "textures":
 					{
+						// sort function
+						function azFolderFile(a, b)
+						{
+							function isFolder(x){
+								return !!x.name && !!x.contents;
+							}
+
+							if( isFolder(a) === isFolder(b) ){
+								return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+							}
+							else if( isFolder(a) && !isFolder(b) ){
+								return -1;
+							}
+							else if( !isFolder(a) && isFolder(b) ){
+								return 1;
+							}
+							else {
+								return 0;
+							}
+						}
+
+						// enumerate folder contents recursively
+						function getFiles(path, callback)
+						{
+							// get direct dir contents
+							fs.readdir(path, function(err, files)
+							{
+								// if it's actually a texture, return
+								if(err && err.code === 'ENOTDIR' && /\.(?:bmp|jpg|png|gif|dds|tiff)$/.test(path))
+								{
+									var UID = libpath.relative(libpath.join(basedir, 'Textures'), path);
+									var ret = {
+										name: libpath.basename(path),
+										url: './vwfdatamanager.svc/texture?UID='+UID
+									};
+
+									fs.stat( libpath.join(basedir,'Thumbnails',UID), function(err){
+										if(!err){
+											ret.thumbnail = './vwfdatamanager.svc/texturethumbnail?UID='+UID;
+										}
+										else {
+											ret.thumbnail = null;
+										}
+
+										if(ret.width !== undefined && ret.height !== undefined)
+											callback(null, ret);
+									});
+
+									imgSize(path, function(err, dimensions)
+									{
+										if(!err && dimensions){
+											ret.width = dimensions.width;
+											ret.height = dimensions.height;
+										}
+										else {
+											ret.width = ret.height = null;
+										}
+
+										if(ret.thumbnail !== undefined)
+											callback(null, ret);
+									});
+								}
+								// if it's some other error, return
+								else if(err){
+									callback(err);
+								}
+								// if it's a dir
+								else
+								{
+									var ret = {name: libpath.basename(path), contents: []};
+									var childrenFinished = 0; // keep track of how many children are still pending
+
+									// loop over children
+									for(var i=0; i<files.length; i++)
+									{
+										// recurse
+										getFiles(libpath.join(path, files[i]), function(err, item)
+										{
+											// fail silently, append result to parent otherwise
+											if(!err){
+												ret.contents.push(item);
+											}
+
+											// call callback when last child finishes
+											if(++childrenFinished === files.length){
+												ret.contents.sort(azFolderFile);
+												callback(null, ret);
+											}
+										});
+									}
+								}
+							});
+						}
+
 						if (global.textures)
 						{
 							ServeJSON(global.textures, response, URL);
-							return;
 						}
-						fs.readdir(basedir + "Textures" + libpath.sep, function(err, files)
+						else
 						{
-							RecurseDirs(basedir + "Textures" + libpath.sep, "", files);
-							files.sort(function(a, b)
+							getFiles( libpath.join(basedir, 'Textures'), function(err, files)
 							{
-								if (typeof a == "string" && typeof b == "string") return (a < b ? -1 : 1);
-								if (typeof a == "object" && typeof b == "string") return 1;
-								if (typeof a == "string" && typeof b == "object") return -1;
-								return -1;
+								if(err){
+									console.error(err);
+								}
+								else {
+									global.textures = files.contents;
+									ServeJSON(files.contents, response, URL);
+								}
 							});
-							var o = {};
-							o.GetTexturesResult = JSON.stringify(
-								{
-									root: files
-								})
-								.replace(/\\\\/g, "\\")
-								.replace(/\/\//g, '/');
-							global.textures = o;
-							ServeJSON(o, response, URL);
-						});
+						}
+
 					}
 					break;
 				case "globalassets":

@@ -117,20 +117,27 @@
 
 	#propertyBrowser
 	{
-		margin-left: 2px;
+		margin: 0 8px;
 
 		.scrollArea
 		{
 			overflow: auto;
 
 			& > * {
-				margin: 2px 0;
+				margin: 4px 0;
 			}
 		}
 
 		hr {
 			@include flex-shrink(0);
 			margin: 2px 0;
+		}
+
+		.texnotice {
+			background-color: #7D1E1E;
+			&.istex {
+				background-color: forestgreen;
+			}
 		}
 
 		input[type=text], textarea
@@ -151,6 +158,7 @@
 		{
 			&.seclabel {
 				text-align: center;
+				margin: 0;
 			}
 
 			&.fixed-height
@@ -180,6 +188,9 @@
 			p#filename
 			{
 				font-size: 16px;
+				overflow-wrap: break-word;
+				max-width: 90%;
+				text-align: center;
 			}
 
 			input#fileInput

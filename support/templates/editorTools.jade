@@ -6,6 +6,7 @@ include ./toolbar
 include ./EntityLibrary
 include ./scripteditor
 include ./sidepanel
+include ./mapbrowser
 
 mixin editorTools_head
 	+menus_head
@@ -16,6 +17,7 @@ mixin editorTools_head
 	+EntityLibrary_head
 	+scripteditor_head
 	+sidepanel_head
+	+mapbrowser_head
 
 mixin editorTools_body
 
@@ -37,3 +39,4 @@ mixin editorTools_body
 		
 	+3DRIntegration_body
 	+manageAssets_body
+	+mapbrowser_body

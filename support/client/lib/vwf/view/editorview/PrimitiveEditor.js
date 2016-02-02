@@ -1,4 +1,4 @@
-'use strict';
+
 
 define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor'], function(app, baseClass){
     var primEditor = {};

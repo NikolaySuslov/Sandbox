@@ -1,0 +1,197 @@
+@import 'polyfill';
+
+#MapBrowser
+{
+	$lightside: #383838;
+	$darkside: #272727;
+	$border: #525252;
+
+	padding: 8px 6px;
+	@include display-flex();
+	@include flex-direction(column);
+
+	.toolbar
+	{
+		@include display-flex();
+		@include justify-content(space-between);
+		@include flex-shrink(0);
+		margin-bottom: 8px;
+
+		.button, .crumb
+		{
+			box-sizing: border-box;
+			padding: 6px 8px;
+			border: outset $border 1px;
+
+			cursor: pointer;
+			@include flex-shrink(0);
+
+			&:first-child {
+				margin-left: 0;
+			}
+			&:last-child {
+				margin-right: 0;
+			}
+
+			background-image: linear-gradient(to bottom, $lightside, $darkside);
+
+			&:hover {
+				background-image: none;
+				background-color: #555;
+			}
+
+			&.active, &:active {
+				background-image: linear-gradient(to top, $lightside, $darkside);
+				border-style: inset;
+			}
+		}
+
+		.buttongroup {
+			@include display-flex();
+		}
+
+		.button
+		{
+			border-radius: 3px;
+			margin: 0 8px;
+			& + .button {
+				margin-left: 0;
+			}
+		}
+
+		.breadcrumbs {
+			overflow: hidden;
+			@include justify-content(flex-end);
+			margin-right: 8px;
+		}
+
+		.crumb
+		{
+			margin: 0 -1px;
+
+			&.first {
+				border-top-left-radius: 3px;
+				border-bottom-left-radius: 3px;
+			}
+			&.last {
+				border-top-right-radius: 3px;
+				border-bottom-right-radius: 3px;
+			}
+		}
+
+		input.searchbox
+		{
+			position: absolute;
+			right: 0px;
+			top: 45px;
+			opacity: 0.9;
+			color: black;
+			z-index: 1;
+			border-width: 2px;
+			display: none;
+
+			&.visible {
+				display: block;
+			}
+		}
+	}
+
+	// these styles always apply regardless of view mode
+	.folderview
+	{
+		/*width: 100%;
+		height: 100%;*/
+		@include flex-grow(1);
+		background-color: #1b1b1b;
+		border: outset $border 1px;
+		overflow: auto;
+		border-radius: 3px;
+
+		.viewitem
+		{
+			cursor: pointer;
+
+			&:hover {
+				background-color: #445D80;
+			}
+
+			.thumb
+			{
+				@include display-flex();
+				@include align-items(center);
+				@include justify-content(center);
+
+				img, .fakethumb {
+					max-width: 100%;
+					max-height: 100%;
+					width: 100%;
+					text-align: center;
+				}
+			}
+		}
+	}
+
+	// these are all view-dependent styles
+	.folderview.thumbnails
+	{
+		@include display-flex();
+		@include flex-wrap(wrap);
+		@include align-items(flex-start);
+		align-content: flex-start;
+		padding: 0 5px;
+		box-sizing: border-box;
+
+		.viewitem
+		{
+			width: 80px;
+			padding: 5px;
+
+			.thumb
+			{
+				width: 80px;
+				height: 80px;
+
+				img, .fakethumb {
+					font-size: 40px;
+				}
+			}
+
+			.nameplate {
+				text-align: center;
+				overflow-wrap: break-word;
+			}
+
+		}
+	}
+
+	.folderview.list
+	{
+		@include display-flex();
+		@include flex-direction(column);
+		@include flex-wrap(wrap);
+		@include align-items(stretch);
+
+		.viewitem
+		{
+			@include display-flex();
+			@include align-items(center);
+			padding: 3px;
+
+			.thumb
+			{
+				width: 35px;
+				height: 35px;
+
+				img, .fakethumb {
+					font-size: 20px;
+				}
+			}
+
+			.nameplate {
+				max-width: 120px;
+				overflow-wrap: break-word;
+				margin-left: 3px;
+			}
+		}
+	}
+}

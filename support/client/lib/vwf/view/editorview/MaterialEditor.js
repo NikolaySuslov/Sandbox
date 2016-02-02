@@ -6,10 +6,8 @@ if( !Math.log10 ){
 	}
 }
 
-define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], function(app, mapbrowser)
+define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], function(app, browseTextures)
 {
-	window._MapBrowser = mapbrowser.getSingleton();
-
 	app.controller('MaterialController', ['$scope','$timeout', function($scope, $timeout)
 	{
 		/*
@@ -226,19 +224,10 @@ define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], fu
 		// open the texture browser, and apply the selection to the layer at the given index
 		$scope.browseForTexture = function(index)
 		{
-			if( window._MapBrowser ){
-				window._MapBrowser.setTexturePickedCallback(function(url){
+			browseTextures(function(url){
+				if(url)
 					$scope.materialDef.layers[index].src = url;
-					$scope.$apply();
-
-					window._MapBrowser.hide();
-				});
-
-				window._MapBrowser.show();
-			}
-			else {
-				console.log('Texture browser is unavailable');
-			}
+			});
 		}
 
 		window._MaterialEditor = $scope;

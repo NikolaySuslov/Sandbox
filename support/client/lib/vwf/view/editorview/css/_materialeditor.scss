@@ -119,6 +119,12 @@
 				border: solid grey 1px;
 				cursor: pointer;
 			}
+
+			.url {
+				max-width: 100%;
+				overflow-wrap: break-word;
+				text-align: center;
+			}
 		}
 	}
 }

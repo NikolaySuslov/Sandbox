@@ -140,10 +140,10 @@ define([
                 $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/sha256.js"></script>');
                 $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/lib/jquery.ui.touch-punch.min.js"></script>');
                 require("vwf/view/editorview/WindowResize").initialize();
-                $('input[type="text"]').keypress(function(e)
+                /*$('input[type="text"]').keypress(function(e)
                 {
                     e.stopImmediatePropagation();
-                });
+                });*/
                 this.addManager(_UserManager);
                 this.addManager(_DataManager);
                 this.addManager(_Editor);

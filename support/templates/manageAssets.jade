@@ -64,6 +64,10 @@ mixin manageAssets_body
 					label#gltfBuffer.horizontalLayout(ng-repeat='(bufName,def) in selected.doc.buffers')
 						| {{bufName}}
 						input(type='text', ng-model='def.path', ng-change='selected._dirty = true')
+				
+				.texnotice(ng-show='selected.type.slice(0,6) === "image/"', ng-class='{istex: selected.isTexture}')
+					strong Note:
+					|  Textures must be square with dimensions a power of two to be available in the texture browser.
 
 				hr
 

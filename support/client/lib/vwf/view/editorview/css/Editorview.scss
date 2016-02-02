@@ -11,6 +11,7 @@
 @import 'primitive';
 @import 'materialeditor';
 @import 'logger';
+@import 'mapbrowser';
 
 @-webkit-keyframes pulsing {
 	0% {
@@ -254,7 +255,7 @@ input[type="text"]:focus, input[type="password"]:focus {
 	margin-bottom: 5px;
 }
 
-.BigTextureThumb {
+/*.BigTextureThumb {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
@@ -273,7 +274,7 @@ input[type="text"]:focus, input[type="password"]:focus {
 	margin-bottom: 10px;
 	cursor: pointer;
 	word-break: break-all;
-}
+}*/
 
 #ContextMenu {
 	position: fixed;
@@ -322,7 +323,7 @@ input[type="text"]:focus, input[type="password"]:focus {
 	background: #4040A0;
 }
 
-.textureChoice {
+/*.textureChoice {
 	width: 50px;
 	cursor: pointer;
 	height: 50px;
@@ -335,7 +336,7 @@ input[type="text"]:focus, input[type="password"]:focus {
 	text-overflow: ellipsis;
 	color: black;
 	text-shadow: 1px 1px 3px white;
-}
+}*/
 
 .editorCheck {
 	margin: 0px 2px 0px 0px;
@@ -389,12 +390,12 @@ input[type="text"]:focus, input[type="password"]:focus {
 	right: 0px;
 }
 
-.textureChoice:hover {
+/*.textureChoice:hover {
 	background: #4040A0;
 	border: 1px inset blue;
 	width: 48px;
 	height: 48px;
-}
+}*/
 
 .TransformEditorInput {
 	width: 4em;
