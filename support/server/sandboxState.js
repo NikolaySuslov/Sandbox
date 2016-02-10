@@ -181,7 +181,7 @@ function DBstateToVWFDef(state, instanceData, cb)
                 }
                 //don't allow the clients to persist between a save/load cycle
                 blankscene.properties['clients'] = null;
-                if (instanceData && instanceData.publishSettings && instanceData.publishSettings.allowTools == false)
+                if (instanceData && instanceData.publishSettings && instanceData.publishSettings.startPaused == false)
                 {
                     blankscene.properties['playMode'] = 'play';
                 }
@@ -211,7 +211,7 @@ var sandboxState = function(id, metadata, world)
         this.metadata.publishSettings = {
             allowAnonymous: false,
             createAvatar: true,
-            SinglePlayer: false,
+            singlePlayer: false,
             persistence: true,
             camera: null
         }
@@ -730,6 +730,13 @@ var sandboxState = function(id, metadata, world)
                 
 
             }
+        }
+        if(id == 'index-vwf' && name == "setClientCamera")
+        {
+            var clients = this.getProperty(id,"clients");
+            if(clients && clients[args[0][0]])
+                clients[args[0][0]].cameraID = args[0][1];
+            console.log(clients,args);
         }
     }
     this.simulationStateUpdate = function(updates)

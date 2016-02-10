@@ -38,21 +38,43 @@ function GetAllLeafMeshes(threeObject, list) {
     }
 }
 
-SceneManager.prototype.traverse = function(cb,node)
+SceneManager.prototype.traverse = function(cb, node)
 {
-    if(!node)
-        node = this.root;
-    if(cb.call(this,node)) //CB must return true to keep walking down
+    if (!node)
     {
-        for(var i in node.childRegions)
+        node = this.root;
+        if (cb.call(this, node)) //CB must return true to keep walking down
         {
-            this.traverse(cb,node.childRegions[i]);
+            for (var i in node.childRegions)
+            {
+                this.traverse(cb, node.childRegions[i]);
+            }
+        }
+        node = this.staticRoot;
+        if (cb.call(this, node)) //CB must return true to keep walking down
+        {
+            for (var i in node.childRegions)
+            {
+                this.traverse(cb, node.childRegions[i]);
+            }
+        }
+        
+    }
+    else
+    {
+        if (cb.call(this, node)) //CB must return true to keep walking down
+        {
+            for (var i in node.childRegions)
+            {
+                this.traverse(cb, node.childRegions[i]);
+            }
         }
     }
 }
 SceneManager.tempmat = new THREE.Matrix4();
 SceneManager.prototype.preRender = function(camera)
 {
+
     this.trigger('cullStart');
     var fov_adj = camera.fov/60;
     var cameraPos = [camera.matrixWorld.elements[12],camera.matrixWorld.elements[13],camera.matrixWorld.elements[14]]

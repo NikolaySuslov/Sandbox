@@ -21,6 +21,7 @@ define([
 	"vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify",
 	"vwf/view/editorview/angular-app",
 	"vwf/view/editorview/Menubar",
+    "vwf/view/editorview/avatarTools",
     "vwf/view/editorview/log",
 
 	// other things that need to be loaded first
@@ -55,7 +56,7 @@ define([
      "vwf/view/localization/translate",
      "vwf/view/editorview/lib/beautify.module.js"
 	//"vwf/view/editorview/panelEditor",
-], function(module, version, view,eventSource, alertify, angular_app, Menubar,log) {
+], function(module, version, view,eventSource, alertify, angular_app, Menubar,avatarTools,log) {
     return view.load(module, {
         // == Module Definition ====================================================================
         needTools: function()
@@ -98,12 +99,16 @@ define([
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/lib/ddsmoothmenu.js"></script>');
 
                     window._PhysicsEditor = require("vwf/view/editorview/PhysicsEditor").getSingleton();
-                    //window._MaterialEditor.hide();
+                   // window._MaterialEditor.hide();
 
                     window._Notifier = require("vwf/view/editorview/Notifier").getSingleton();
                     require('vwf/view/editorview/ScriptEditor').initialize();
                     window._ModelLibrary = require("vwf/view/editorview/_3DRIntegration").getSingleton();
-                    window._Publisher = require("vwf/view/editorview/Publisher").getSingleton();
+                    
+                    //the publisher is only loaded if the world settings allow it
+                    if(window._DataManager.getInstanceData().publishSettings.allowPlayPause)
+                        window._Publisher = require("vwf/view/editorview/Publisher").getSingleton();
+                    
                     window._PermissionsManager = require("vwf/view/editorview/_PermissionsManager").getSingleton();
                     window._WireEditor = require("vwf/view/editorview/wireeditor").getSingleton();
                     window._UndoManager = require("vwf/view/editorview/UndoManager").getSingleton();
@@ -119,8 +124,12 @@ define([
                     //this.addManager(_PrimitiveEditor);
                     this.addManager(_PermissionsManager);
                     this.addManager(_WireEditor);
-                    this.addManager(_Publisher);
+                   //the publisher is only loaded if the world settings allow it
+                    if(window._DataManager.getInstanceData().publishSettings.allowPlayPause)
+                        this.addManager(_Publisher);
                     this.addManager(_PhysicsEditor);
+
+                    window.avatarTools = avatarTools;
 
                 }
                 window._LocationTools = require("vwf/view/editorview/LocationTools").getSingleton();
@@ -202,7 +211,9 @@ define([
         {
 
             //only pass messages to the editor components if the world is stopped, or if the messages are necessary to handle the play pause logic
-            if (Engine.models.object.gettingProperty(Engine.application(), 'playMode') !== 'play'||
+            if (
+                !_DataManager.getInstanceData().publishSettings.allowPlayPause ||
+                Engine.models.object.gettingProperty(Engine.application(), 'playMode') !== 'play'||
                 data[1] =='playMode' ||data[1] =='playBackup' || data[1] == 'restoreState' || data[1] == 'postWorldRestore' || data[1] == 'preWorldPlay'
                 )
             {

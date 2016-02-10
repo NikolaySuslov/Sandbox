@@ -42,7 +42,7 @@ function linearExtrapolation(x, X, Y, arr)
 function exponentialInterpolation(x, X, Y, sm1)
 {
 	var len = Y.length - 1;
-	var a = .1;
+	var a = .5;
 	if (Math.abs(Y[len] - Y[len - 1]) > DISCONTINUITY_THRESHOLD)
 		return Y[len];
 	return a * (Y[len]) + (1 - a) * sm1[sm1.length - 1];
@@ -112,7 +112,7 @@ floatQueue.prototype = new interpolationQueue();
 floatQueue.prototype._interpolate = function(time, sim)
 {
 	if (sim)
-		return exponentialInterpolationLinearExtrapolation(time, this.times, this.values, this.interpolatedValues);
+		return exponentialInterpolation(time, this.times, this.values, this.interpolatedValues);
 	else
 		return exponentialInterpolation(time, this.times, this.values, this.interpolatedValues);
 }
@@ -164,7 +164,7 @@ QuaternionQueue.prototype._interpolate = function(time, sim)
 	var slope = Quaternion.scale(Quaternion.add(Y[len], Quaternion.negate(Y[len - 1], []), []), 1 / (X[len] - X[len - 1]), []); //(Y[len] - Y[len-1])/(X[len] - X[len-1]);
 	var dist = x - X[len];
 	var extrapolated = Quaternion.add(Y[len], Quaternion.scale(slope, dist, []), []);
-	var ret = Quaternion.slerp(this.interpolatedValues[len] || [0, 0, 0, 1], extrapolated, .9, []);
+	var ret = Quaternion.slerp(this.interpolatedValues[len] || [0, 0, 0, 1], Y[len], .5, []);
 	return Quaternion.normalize(ret, []);
 }
 

@@ -49,7 +49,7 @@ define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview
 		angular.bootstrap( document.body, ['SandboxEditor'] );
 	}
 	app.apply = debounce(function(){
-		if(!playing) app.root.$apply();
+		if(!playing || !_DataManager.getInstanceData().publishSettings.allowPlayPause) app.root.$apply();
 	},200);
 
 	UndoManager = UndoManager.getSingleton();
@@ -194,6 +194,8 @@ define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview
 		if( id === 'index-vwf' && prop === 'playMode' ){
 			playing = val === 'play';
 			if( !playing ) apply = true;
+			if(!_DataManager.getInstanceData().publishSettings.allowPlayPause)
+				apply = true;
 		}
 
 		if( selectedNode && id === selectedNode.id )

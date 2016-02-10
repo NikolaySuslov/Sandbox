@@ -364,7 +364,8 @@ scripts:
     }
     this.setClientCamera = function(id,cameraID)
     {
-        
+        if(this.clients[id])
+        this.clients[id].cameraID = cameraID;
     }
     
 

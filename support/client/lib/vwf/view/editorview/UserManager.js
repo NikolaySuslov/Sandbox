@@ -98,6 +98,11 @@ define(function() {
             });
         });
 
+        //ping the server every minute to keep session alive
+        window.setInterval(function()
+        {
+            $.get("./vwfDataManager.svc/logindata");
+        },1000 * 60)
         this.GetNextAnonName = function(clients)
         {
             return "Anonymous_" + Engine.moniker();

@@ -875,16 +875,18 @@ function Publish(URL, SID, publishdata, response)
 		var publishSettings = null;
 		//The settings  for the published state. 
 		//have to handle these in the client side code, with some enforcement at the server
-		logger.debug(publishdata, 2);
+		logger.info(publishdata, 2);
 		if (publishdata)
 		{
-			var singlePlayer = publishdata.SinglePlayer;
+			var singlePlayer = publishdata.singlePlayer;
 			var camera = publishdata.camera;
 			var allowAnonymous = publishdata.allowAnonymous;
 			var createAvatar = publishdata.createAvatar;
 			var allowTools = publishdata.allowTools;
 			var hidden = publishdata.hidden;
 			var persistence = publishdata.persistence;
+			var startPaused = publishdata.startPaused;
+			var allowPlayPause = publishdata.allowPlayPause;
 			publishSettings = {
 				singlePlayer: singlePlayer,
 				camera: camera,
@@ -893,6 +895,8 @@ function Publish(URL, SID, publishdata, response)
 				allowTools: allowTools,
 				hidden: hidden,
 				persistence: persistence,
+				allowPlayPause:allowPlayPause,
+				startPaused:startPaused
 			};
 		}
 		require('./reflector.js').closeInstance(SID);
@@ -915,8 +919,10 @@ function Publish(URL, SID, publishdata, response)
 				}
 				if (publishdata)
 				{
-					statedata.title = publishdata.title;
-					statedata.description = publishdata.description;
+					if(publishdata.title)
+						statedata.title = publishdata.title;
+					if(publishdata.description)
+						statedata.description = publishdata.description;
 					//Should not need to check permission again
 					DAL.updateInstance(newId, statedata, function()
 					{
@@ -1287,7 +1293,35 @@ function setState(URL, data, response)
 	});
 }
 
-
+function postAvatar(URL,body,response)
+{
+	if (!URL.loginData)
+	{
+		respond(response, 401, 'Anonymous users cannot post avatars');
+		return;
+	}
+	
+	var newDef = JSON.parse(body);
+	
+	DAL.updateUser(URL.loginData.UID,{avatarDef:newDef},function()
+    {
+        console.log('Avatar saved');
+        respond(response, 200, 'OK');
+        for(var i in global.instances.instances)
+        {
+        	
+        	for(var j in global.instances.instances[i].clients)
+        	{
+        		var client  = global.instances.instances[i].clients[j];
+        		
+        		if(client.loginData.UID == URL.loginData.UID)
+        		{
+        			client.trigger("avatarUpdated");
+        		}
+        	}
+        }
+    })
+}
 function setStateData(URL, data, response)
 {
 	if (!URL.loginData)
@@ -2037,6 +2071,11 @@ function serve(request, response)
 						Publish(URL, SID, body, response);
 					}
 					break;
+				case "avatar":
+					{
+						postAvatar(URL, body, response);
+					}
+					break;	
 				case "3drupload":
 					{
 						_3DR_proxy.proxyUpload(request, response, URL);

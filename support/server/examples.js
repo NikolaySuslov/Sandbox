@@ -64,12 +64,12 @@ exports.getExampleMetadata = function(name,cb)
 	fs.readFile(path ,'utf8',function(err,data)
 	{
 		try{
-			cb(JSON.parse(data));
+			cb(require("./DAL").DAL.normalizePublishSettings(JSON.parse(data)));
 		}catch(e)
 		{
 			//we don't want to generate default values here because the lack of this data is used to inform the system 
 			//that this is a bad url
-			cb(null);
+			cb(require("./DAL").DAL.normalizePublishSettings(null));
 			//cb({title:"",description:"",isExample:true,publishSettings:{allowAnonymous:true,persistence:false,allowTools:true,createAvatar:true,singlePlayer:true}});
 		}
 	});

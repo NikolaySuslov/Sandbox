@@ -188,10 +188,14 @@ define(function ()
 		this.getSaveStateData = function()
 		{
 
-			if(vwf.getProperty(vwf.application(),'playMode') !== 'stop')
+			if(_DataManager.getInstanceData().publishSettings.allowPlayPause)
 			{
-				console.error("Can't save while scene is playing");
-				return;
+				//only require save while stopped if play/pause is enabled
+				if(vwf.getProperty(vwf.application(),'playMode') !== 'stop')
+				{
+					console.error("Can't save while scene is playing");
+					return;
+				}
 			}
 
 			var scene = _Editor.getNode(Engine.application());
@@ -229,18 +233,9 @@ define(function ()
 			//published states are never saved. 
 			if(_DataManager.instanceData.publishSettings.persistence === false)
 			{
-				console.log('State settings prevent persistence, cannot save');
+				console.error('State settings prevent persistence, cannot save');
 				return;
 			}
-			
-			
-
-			//if the editor is playing the scene, save the backup from before play was hit
-		//	if(vwf.getProperty(vwf.application(),'playMode') != 'stop')
-		//	{
-		//		console.log('Skipping save because scene is playing.');
-		//		return;
-		//	}
 			
 			
 			var data = JSON.stringify(this.getSaveStateData());

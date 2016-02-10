@@ -250,7 +250,12 @@ function sandboxWorld(id, metadata)
     }
     this.addClient = function(socket)
     {
+        var self = this;
         this.clients[socket.id] = socket;
+        socket.on("avatarUpdated", function()
+        {
+            self.avatarUpdated(socket);
+        });
     }
     this.removeClient = function(socket)
     {
@@ -565,6 +570,20 @@ function sandboxWorld(id, metadata)
                 "time": this.time()
             }));
         }
+    }
+    this.avatarUpdated = function(client)
+    {
+        var avatar = this.state.getAvatarForClient(client.loginData.UID);
+        if (!avatar) return; // this world does not contain the avatar, so we don't have to do anything;
+        var avatarID = 'character-vwf-' + client.loginData.UID;
+        this.state.deletedNode(avatarID); //delete from server record
+        this.messageClients(
+        {
+            "action": "deleteNode",
+            "node": avatarID,
+            "time": this.time
+        });
+        this.state.createAvatar(client.loginData.UID, client.id); //recreate the avatar
     }
     this.clientConnected = function(client)
     {

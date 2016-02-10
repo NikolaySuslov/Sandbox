@@ -468,21 +468,22 @@ function deleteUser(id, cb)
             });
     });
 };
-
-function getInstance(id, cb)
+function normalizePublishSettings(doc)
 {
-    DB.get(id, function(err, doc, key)
-    {
-        //sanitize the metadata. Used to be that doc.publishSettings could be null. Now these are manditory, and 
-        //filled with default values on load
-        if (doc) {
-            if (!doc.publishSettings)
+    if(!doc) doc = {};
+    if (!doc.publishSettings)
                 doc.publishSettings = {};
             if (doc.publishSettings.allowAnonymous === undefined)
                 doc.publishSettings.allowAnonymous = false;
 
-            if (doc.publishSettings.SinglePlayer === undefined)
-                doc.publishSettings.SinglePlayer = false;
+            if (doc.publishSettings.allowPlayPause === undefined)
+                doc.publishSettings.allowPlayPause = true;
+
+            if (doc.publishSettings.startPaused === undefined)
+                doc.publishSettings.startPaused = true;
+
+            if (doc.publishSettings.singlePlayer === undefined)
+                doc.publishSettings.singlePlayer = false;
 
             if (doc.publishSettings.camera === undefined)
                 doc.publishSettings.camera = null;
@@ -498,6 +499,16 @@ function getInstance(id, cb)
 
             if (doc.publishSettings.persistence === undefined)
                 doc.publishSettings.persistence = true;
+    return doc;        
+}
+function getInstance(id, cb)
+{
+    DB.get(id, function(err, doc, key)
+    {
+        //sanitize the metadata. Used to be that doc.publishSettings could be null. Now these are manditory, and 
+        //filled with default values on load
+        if (doc) {
+            doc = normalizePublishSettings(doc);
         }
         cb(doc);
     });
@@ -1782,6 +1793,7 @@ function startup(callback)
             DAL_Singleton.searchInventory = searchInventory;
             DAL_Singleton.getHistory = getHistory;
             DAL_Singleton.getStats = getStats;
+            DAL_Singleton.normalizePublishSettings = normalizePublishSettings;
             cb();
         }
     ],function(err)

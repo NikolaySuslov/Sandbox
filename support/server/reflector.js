@@ -121,6 +121,18 @@ function ServeSinglePlayer(socket, namespace, instancedata)
                 node: "index-vwf",
                 "time": 0
             });
+
+            var clients = {};
+            clients[socket.id] = {cid:socket.id,name:socket.loginData.Username,UID:socket.loginData.UID,cameraID:null,focusID:'index-vwf'};
+            
+            var setMessage = {
+                "action": "setProperty",
+                "member": "clients",
+                "parameters":[clients],
+                node: "index-vwf",
+                "time": .1
+            };
+            socket.emit('m', setMessage);
             socket.emit('m', joinMessage);
 			socket.emit('m', messageCompress.pack(
             {

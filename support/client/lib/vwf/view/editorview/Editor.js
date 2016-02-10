@@ -155,12 +155,15 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             $('#statusbar').css('display', 'block');
 
             $('#playButton').click(function() {
+                if(window._Publisher)
                 _Publisher.playWorld();
             });
             $('#pauseButton').click(function() {
+                if(window._Publisher)
                 _Publisher.togglePauseWorld();
             });
             $('#stopButton').click(function() {
+                if(window._Publisher)
                 _Publisher.stopWorld();
             });
 
@@ -642,7 +645,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         //	$('#vwf-root').keyup(function(e){
         this.keyup_Gizmo = function(e) {
 
-            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
+            if (_Editor.disableDueToWorldState()) return;
             if (e.keyCode == 17) {
                 this.PickMod = NewSelect;
                 console.log(this.PickMod);
@@ -666,7 +669,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             },10);
         }
         this.keydown_Gizmo = function(e) {
-            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
+            if (_Editor.disableDueToWorldState()) return;
             if (e.keyCode == 17) {
                 this.PickMod = Add;
                 console.log(this.PickMod);
@@ -718,11 +721,13 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 e.preventDefault();
             }
             if (e.keyCode == 48 && e.ctrlKey) {
+                if(window._Publisher)
                 _Publisher.testPublish();
                 e.preventDefault();
                 return false;
             }
             if (e.keyCode == 57 && e.ctrlKey) {
+                if(window._Publisher)
                 _Publisher.show();
                 e.preventDefault();
                 return false;
@@ -3011,39 +3016,48 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         this.mousedown = function(e) {
             if (this.activeTool && this.activeTool.mousedown) this.activeTool.mousedown(e);
         }
+        this.disableDueToWorldState =function()
+        {
+            if(_DataManager.getInstanceData().publishSettings.allowPlayPause)
+            {
+                if (Engine.getProperty(Engine.application(), 'playMode') == 'play')
+                    return true;
+            }
+            false;
+        }
         this.mouseup = function(e) {
             if (!toolsOpen()) return;
-            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
+            if (_Editor.disableDueToWorldState()) return;
             if (this.activeTool && this.activeTool.mouseup) this.activeTool.mouseup(e);
         }
         this.click = function(e) {
             if (!toolsOpen()) return;
-            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
+            if (_Editor.disableDueToWorldState()) return;
             if (this.activeTool && this.activeTool.click) this.activeTool.click(e);
         }
         this.dblclick = function(e) {
             if (!toolsOpen()) return;
-            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
+            if (_Editor.disableDueToWorldState()) return;
             if (this.activeTool && this.activeTool.dblclick) this.activeTool.dblclick(e);
         }
         this.mousemove = function(e) {
             if (!toolsOpen()) return;
-            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
+            if (_Editor.disableDueToWorldState()) return;
             if (this.activeTool && this.activeTool.mousemove) this.activeTool.mousemove(e);
         }
         this.mousewheel = function(e) {
             if (!toolsOpen()) return;
-            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
+            if (_Editor.disableDueToWorldState()) return;
             if (this.activeTool && this.activeTool.mousewheel) this.activeTool.mousewheel(e);
         }
         this.keyup = function(e) {
             if (!toolsOpen()) return;
-            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
+            if (_Editor.disableDueToWorldState()) return;
             if (this.activeTool && this.activeTool.keyup) this.activeTool.keyup(e);
         }
         this.keydown = function(e) {
             if (!toolsOpen()) return;
-            if (Engine.getProperty(Engine.application(), 'playMode') == 'play') return;
+            if (_Editor.disableDueToWorldState()) return;
             if (this.activeTool && this.activeTool.keydown) this.activeTool.keydown(e);
         }
         this.createdNode = function(nodeID,childID) {

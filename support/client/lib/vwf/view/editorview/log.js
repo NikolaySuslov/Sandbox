@@ -70,7 +70,8 @@ define(
 		window.logger = this;
 		$(window).unload(function()
 		{
-			window.logger.popup.close();
+			if(window.logger.popup)
+				window.logger.popup.close();
 		});
 	}
 });

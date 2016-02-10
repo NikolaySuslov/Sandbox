@@ -130,7 +130,6 @@
 				}
 				if (newfog)
 				{
-					
 					//get all the fog values from the stored property values
 					newfog.color.r = this.properties["fogColor"] ? this.properties["fogColor"][0] : 1;
 					newfog.color.g = this.properties["fogColor"] ? this.properties["fogColor"][1] : 1;
@@ -488,6 +487,13 @@
 				return this.skyTexture;
 			}
 			if (propertyName == "getGroundPlane")
+			{
+				return this.groundplane;
+			}
+		}
+		this.callingMethod = function(methodName, methodArgs)
+		{
+			if (methodName == "getGroundPlane")
 			{
 				return this.groundplane;
 			}

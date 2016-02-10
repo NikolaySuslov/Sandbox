@@ -1,0 +1,15 @@
+{
+    "description": "testing the ability to serve the examples", 
+    "isExample": true, 
+    "publishSettings": {
+        "allowAnonymous": true, 
+        "allowTools": true, 
+        "createAvatar": true, 
+        "published": true, 
+        "singlePlayer": false,
+        "allowPlayPause":false,
+        "startPaused":false
+
+    }, 
+    "title": "Example Scene"
+}

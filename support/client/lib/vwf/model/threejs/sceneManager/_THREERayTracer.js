@@ -688,6 +688,18 @@ function clean_BoundingBoxRTAS(box, min, max)
         box.max[1] = max[1];
         box.max[2] = max[2];
     }
+    if(min && max)
+    {
+    box.center[0] = (min[0] + max[0])/2;
+    box.center[1] = (min[1] + max[1])/2;
+    box.center[2] = (min[2] + max[2])/2;
+    }else
+    {
+        box.center[0] = 0;
+        box.center[1] = 0;
+        box.center[2] = 0;
+    }
+
     box.faces.length = 0;
 }
 
