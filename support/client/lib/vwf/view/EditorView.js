@@ -51,7 +51,8 @@ define([
 	"vwf/view/editorview/EntityLibrary",
 	"vwf/view/editorview/PhysicsEditor",
 	"vwf/view/editorview/PerformanceManager",
-	"vwf/view/editorview/JSONPrompt"
+	"vwf/view/editorview/JSONPrompt",
+    "vwf/view/localization/translate"
 	//"vwf/view/editorview/panelEditor",
 ], function(module, version, view, alertify, angular_app, Menubar,avatarTools) {
     return view.load(module, {
@@ -322,8 +323,8 @@ function InitializeEditor() {
         //require("vwf/view/editorview/SideTabs").initialize();
 
 		$('#toolbarLevel').show();
-        $(document.head).append('<script type="text/javascript" src="vwf/view/localization/translate.js"></script>');
-        translateMenu();
+        require("vwf/view/localization/translate").initialize();
+        window.translateMenu();
         //default to select mode
         _Editor.SetSelectMode('Pick');
     }
