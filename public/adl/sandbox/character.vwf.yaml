@@ -47,6 +47,7 @@ methods:
   simulation: 
   addControllingClient: 
   initialize:
+  deinitialize:
 events:
   pointerOver:
   pointerOut:
