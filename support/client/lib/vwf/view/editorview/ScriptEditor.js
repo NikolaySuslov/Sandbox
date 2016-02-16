@@ -544,6 +544,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 			{
 				var editor = document.querySelector('ace-code-editor')._editor;
 				var s = annotations;
+				var fieldName = $.trim($scope.selectedField.name);
 				var errors = "";
 				for (var i = 0; i < s.length; i++) {
 					if (s[i].type == 'error') errors += "<br/> line: " + s[i].row + "-" + s[i].text;
