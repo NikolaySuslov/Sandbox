@@ -1,7 +1,8 @@
-define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
+define(["vwf/view/threejs/screenAlignedQuad",'vwf/utility/eventSource'], function(quad,eventSource)
 {
 	return function SandboxRenderer(r, c)
 	{
+		eventSource.call(this,'Renderer');
 		this.renderer = r;
 		this.canvas = c;
 		this.hilightObjects = [];
@@ -93,7 +94,10 @@ define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
 				if (_Editor.GetSelectedVWFID())
 					for (var i = 0; i < _Editor.getSelectionCount(); i++)
 						if(Engine.parent(_Editor.GetSelectedVWFID(i)) == Engine.application())
-							this.renderObject(findviewnode(_Editor.GetSelectedVWFID(i)), scene, camera, this.overrideMaterial);
+							if(Engine.isSimulating(_Editor.GetSelectedVWFID(i)))
+								this.renderObject(findviewnode(_Editor.GetSelectedVWFID(i)), scene, camera, this.overrideMaterial);
+							else
+								this.renderObject(findviewnode(_Editor.GetSelectedVWFID(i)), scene, camera, this.overrideMaterial3);
 				//render to the screen
 				quad.material = quad.dialateMaterial;
 				quad.material.uniforms.tDiffuse.value = this.rtt;
@@ -114,7 +118,12 @@ define(["vwf/view/threejs/screenAlignedQuad"], function(quad)
 				if (_Editor.GetSelectedVWFID())
 					for (var i = 0; i < _Editor.getSelectionCount(); i++)
 						if(Engine.parent(_Editor.GetSelectedVWFID(i)) != Engine.application())
-							this.renderObject(findviewnode(_Editor.GetSelectedVWFID(i)), scene, camera, this.overrideMaterial2);
+						{
+							if(Engine.isSimulating(_Editor.GetSelectedVWFID(i)))
+								this.renderObject(findviewnode(_Editor.GetSelectedVWFID(i)), scene, camera, this.overrideMaterial2);
+							else
+								this.renderObject(findviewnode(_Editor.GetSelectedVWFID(i)), scene, camera, this.overrideMaterial3);
+						}
 				if (this.hilightMouseOver)
 				{
 					if (Engine.views[0].lastPickId && findviewnode(Engine.views[0].lastPickId))

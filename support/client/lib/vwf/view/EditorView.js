@@ -15,13 +15,14 @@ jQuery.extend(
     }
 });
 define([
-	"module", "version", "vwf/view",
+	"module", "version", "vwf/view",'vwf/utility/eventSource',
 
 	// dependencies
 	"vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify",
 	"vwf/view/editorview/angular-app",
 	"vwf/view/editorview/Menubar",
     "vwf/view/editorview/avatarTools",
+    "vwf/view/editorview/log",
 
 	// other things that need to be loaded first
 	"touch.js",
@@ -51,9 +52,11 @@ define([
 	"vwf/view/editorview/EntityLibrary",
 	"vwf/view/editorview/PhysicsEditor",
 	"vwf/view/editorview/PerformanceManager",
-	"vwf/view/editorview/JSONPrompt"
+	"vwf/view/editorview/JSONPrompt",
+     "vwf/view/localization/translate",
+     "vwf/view/editorview/lib/beautify.module.js"
 	//"vwf/view/editorview/panelEditor",
-], function(module, version, view, alertify, angular_app, Menubar,avatarTools) {
+], function(module, version, view,eventSource, alertify, angular_app, Menubar,avatarTools,log) {
     return view.load(module, {
         // == Module Definition ====================================================================
         needTools: function()
@@ -66,6 +69,9 @@ define([
         },
         initialize: function() {
             window._EditorView = this;
+            eventSource.call(this,'EditorView');
+            //intialize the logger interface
+            log.initialize();
             if (!window._EditorInitialized) {
 
 				$(document).keydown(function(e){
@@ -93,12 +99,16 @@ define([
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/lib/ddsmoothmenu.js"></script>');
 
                     window._PhysicsEditor = require("vwf/view/editorview/PhysicsEditor").getSingleton();
-                    //window._MaterialEditor.hide();
+                   // window._MaterialEditor.hide();
 
                     window._Notifier = require("vwf/view/editorview/Notifier").getSingleton();
                     require('vwf/view/editorview/ScriptEditor').initialize();
                     window._ModelLibrary = require("vwf/view/editorview/_3DRIntegration").getSingleton();
-                    window._Publisher = require("vwf/view/editorview/Publisher").getSingleton();
+                    
+                    //the publisher is only loaded if the world settings allow it
+                    if(window._DataManager.getInstanceData().publishSettings.allowPlayPause)
+                        window._Publisher = require("vwf/view/editorview/Publisher").getSingleton();
+                    
                     window._PermissionsManager = require("vwf/view/editorview/_PermissionsManager").getSingleton();
                     window._WireEditor = require("vwf/view/editorview/wireeditor").getSingleton();
                     window._UndoManager = require("vwf/view/editorview/UndoManager").getSingleton();
@@ -112,7 +122,9 @@ define([
                     //this.addManager(_PrimitiveEditor);
                     this.addManager(_PermissionsManager);
                     this.addManager(_WireEditor);
-                    this.addManager(_Publisher);
+                   //the publisher is only loaded if the world settings allow it
+                    if(window._DataManager.getInstanceData().publishSettings.allowPlayPause)
+                        this.addManager(_Publisher);
                     this.addManager(_PhysicsEditor);
                     window.avatarTools = avatarTools;
                 }
@@ -128,15 +140,15 @@ define([
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/SplineTool.js"></script>');
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/TerrainTool.js"></script>');
                     $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/lib/jquery.qtip-1.0.0-rc3.min.js"></script>');
-                    $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/lib/beautify.module.js"></script>');
+                    
                 }
                 $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/sha256.js"></script>');
                 $(document.head).append('<script type="text/javascript" src="vwf/view/editorview/lib/jquery.ui.touch-punch.min.js"></script>');
                 require("vwf/view/editorview/WindowResize").initialize();
-                $('input[type="text"]').keypress(function(e)
+                /*$('input[type="text"]').keypress(function(e)
                 {
                     e.stopImmediatePropagation();
-                });
+                });*/
                 this.addManager(_UserManager);
                 this.addManager(_DataManager);
                 this.addManager(_Editor);
@@ -193,8 +205,11 @@ define([
         // send the VWF events down to all registered objects
         viewAPINotify: function(functionName, data)
         {
+
             //only pass messages to the editor components if the world is stopped, or if the messages are necessary to handle the play pause logic
-            if (Engine.models.object.gettingProperty(Engine.application(), 'playMode') !== 'play'||
+            if (
+                !_DataManager.getInstanceData().publishSettings.allowPlayPause ||
+                Engine.models.object.gettingProperty(Engine.application(), 'playMode') !== 'play'||
                 data[1] =='playMode' ||data[1] =='playBackup' || data[1] == 'restoreState' || data[1] == 'postWorldRestore' || data[1] == 'preWorldPlay'
                 )
             {
@@ -203,7 +218,12 @@ define([
                     var manager = this.managers[i];
                     if (manager[functionName])
                     {
+                        try{
                         manager[functionName].apply(manager, data)
+                        }catch(e)
+                        {
+                            console.error('error processing view api message ' + functionName)
+                        }
                     }
                 }
             }
@@ -222,9 +242,9 @@ define([
                     _Editor.initialize();
                     InitializeEditor();
                     //disable text selection on the entire page, except for input elements and draggables
-                    $('body *').not(':has(input)').not('[draggable]').not('input').disableSelection();
+              //      $('body *').not(':has(input)').not('[draggable]').not('input').disableSelection();
                     //enable selection on the ancestors of all draggables, to make drag work in FF
-                    $('[draggable]').parentsUntil().enableSelection();
+              //      $('[draggable]').parentsUntil().enableSelection();
                 }
                 //make sure to setup the view correctly
                 _resizeCanvas();
@@ -322,8 +342,8 @@ function InitializeEditor() {
         //require("vwf/view/editorview/SideTabs").initialize();
 
 		$('#toolbarLevel').show();
-        $(document.head).append('<script type="text/javascript" src="vwf/view/localization/translate.js"></script>');
-        translateMenu();
+        require("vwf/view/localization/translate").initialize();
+        window.translateMenu();
         //default to select mode
         _Editor.SetSelectMode('Pick');
     }

@@ -22,7 +22,7 @@ properties:
   terrainType: 
   terrainParams:
   tileRes:
-  maxTileSize:
-  minTileSize:
-  Extents:
+  maxTileSize: 512
+  minTileSize: 64
+  Extents: 1024
   

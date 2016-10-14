@@ -1,0 +1,996 @@
+{
+    "children": {
+        "N1d9e1c2": {
+            "extends": "line2.vwf",
+            "properties": {
+                "DisplayName": "pen",
+                "materialDef": {
+                    "shininess": 15,
+                    "alpha": 1,
+                    "ambient": {
+                        "r": 1,
+                        "g": 1,
+                        "b": 1
+                    },
+                    "color": {
+                        "r": 1,
+                        "g": 1,
+                        "b": 1,
+                        "a": 1
+                    },
+                    "emit": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "reflect": 0.8,
+                    "shadeless": false,
+                    "shadow": true,
+                    "specularColor": {
+                        "r": 0.5773502691896258,
+                        "g": 0.5773502691896258,
+                        "b": 0.5773502691896258
+                    },
+                    "specularLevel": 1,
+                    "layers": [{
+                            "alpha": 1,
+                            "blendMode": 0,
+                            "mapInput": 0,
+                            "mapTo": 1,
+                            "offsetx": 0,
+                            "offsety": 0,
+                            "rot": 0,
+                            "scalex": 1,
+                            "scaley": 1,
+                            "src": "checker.jpg"
+                        }
+                    ]
+                },
+                "owner": "admin",
+                "points": [
+                    [1, 0, 0],
+                    [1.4999999997929279, 0.8660254039039917, 0],
+                    [0.9999999993787837, 1.7320508074493244, 0],
+                    [1.499999999171712, 2.598076211353316, 0],
+                    [2.4999999991717123, 2.598076211353316, 0],
+                    [2.99999999896464, 1.732050807449324, 0],
+                    [2.499999998550496, 0.8660254039039914, 0],
+                    [2.999999998343424, -6.661338147750939e-16, 0],
+                    [3.999999998343424, -7.771561172376096e-16, 0],
+                    [4.499999998136352, 0.8660254039039912, 0],
+                    [5.499999998136352, 0.8660254039039911, 0],
+                    [5.99999999792928, -8.881784197001252e-16, 0],
+                    [6.99999999792928, -9.992007221626409e-16, 0],
+                    [7.499999997722209, 0.866025403903991, 0],
+                    [6.999999997308064, 1.7320508074493237, 0],
+                    [5.999999997308064, 1.7320508067320053, 0],
+                    [5.49999999689392, 2.598076210277338, 0],
+                    [5.9999999966868485, 3.46410161418133, 0],
+                    [5.499999996272704, 4.330127017726663, 0],
+                    [4.499999996272704, 4.330127017009344, 0],
+                    [3.9999999971009923, 3.464101612746693, 0],
+                    [2.999999997100992, 3.464101612029374, 0],
+                    [2.4999999966868476, 4.330127015574707, 0],
+                    [2.999999996479776, 5.1961524194786985, 0],
+                    [3.999999996479776, 5.1961524194786985, 0],
+                    [4.499999996272704, 6.06217782338269, 0],
+                    [3.99999999585856, 6.928203226928023, 0],
+                    [4.499999995651488, 7.794228630832015, 0],
+                    [5.499999995651488, 7.794228630832015, 0],
+                    [5.9999999954444165, 6.928203226928023, 0],
+                    [6.9999999954444165, 6.928203226928023, 0],
+                    [7.499999995237345, 7.794228630832015, 0],
+                    [6.999999994823201, 8.660254034377347, 0],
+                    [5.999999994823201, 8.66025403366003, 0],
+                    [5.499999994409056, 9.526279437205362, 0],
+                    [5.999999994201985, 10.392304841109354, 0],
+                    [6.999999994201985, 10.392304841109354, 0],
+                    [7.499999993994913, 11.258330245013346, 0],
+                    [6.999999993580769, 12.124355648558678, 0],
+                    [7.499999993373697, 12.99038105246267, 0],
+                    [8.499999993373697, 12.99038105246267, 0],
+                    [8.999999993166625, 12.124355648558678, 0],
+                    [8.499999992752482, 11.258330245013346, 0],
+                    [8.99999999254541, 10.392304841109354, 0],
+                    [9.99999999254541, 10.392304841109354, 0],
+                    [10.499999992338338, 9.526279437205362, 0],
+                    [9.999999991924195, 8.66025403366003, 0],
+                    [8.999999991924195, 8.660254034377349, 0],
+                    [8.499999991510052, 7.794228630832016, 0],
+                    [8.99999999130298, 6.928203226928025, 0],
+                    [9.99999999130298, 6.928203226928025, 0],
+                    [10.499999991095908, 7.794228630832016, 0],
+                    [11.499999991095908, 7.794228630832016, 0],
+                    [11.999999990888837, 6.928203226928025, 0],
+                    [11.499999990474691, 6.062177823382692, 0],
+                    [11.99999999026762, 5.1961524194787, 0],
+                    [12.99999999026762, 5.1961524194787, 0],
+                    [13.499999990060548, 4.330127015574709, 0],
+                    [12.999999989646405, 3.464101612029376, 0],
+                    [11.999999989646405, 3.4641016127466946, 0],
+                    [11.499999990474693, 4.330127017009346, 0],
+                    [10.499999990474693, 4.330127017726665, 0],
+                    [9.999999990060548, 3.464101614181332, 0],
+                    [10.499999989853476, 2.59807621027734, 0],
+                    [9.999999989439331, 1.7320508067320073, 0],
+                    [8.999999989439331, 1.732050807449326, 0],
+                    [8.499999989025188, 0.8660254039039933, 0],
+                    [8.999999988818116, 1.3322676295501878e-15, 0],
+                    [9.999999988818116, 1.27675647831893e-15, 0],
+                    [10.499999988611044, 0.8660254039039932, 0],
+                    [11.499999988611044, 0.8660254039039932, 0],
+                    [11.999999988403973, 1.2212453270876722e-15, 0],
+                    [12.999999988403973, 1.1657341758564144e-15, 0],
+                    [13.499999988196901, 0.8660254039039932, 0],
+                    [12.999999987782758, 1.732050807449326, 0],
+                    [13.499999987575686, 2.598076211353318, 0],
+                    [14.499999987575686, 2.598076211353318, 0],
+                    [14.999999987368614, 1.7320508074493257, 0],
+                    [14.499999986954471, 0.8660254039039932, 0],
+                    [14.9999999867474, 1.1102230246251565e-15, 0],
+                    [15.9999999867474, 9.992007221626409e-16, 0]
+                ],
+                "rotation": [0, 0, 1, 0],
+                "scale": [1, 1, 1],
+                "size": [1, 1, 1],
+                "tempid": "Nb29c957d",
+                "texture": "checker.jpg",
+                "transform": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.0010000000474974513, 1],
+                "type": "Spline"
+            },
+            "random": {
+                "c": 1,
+                "s0": 0.199712321395054,
+                "s1": 0.0619459894951433,
+                "s2": 0.732675907667726
+            },
+            "sequence": 0,
+            "source": "vwf/model/threejs/line.js",
+            "type": "subDriver/threejs"
+        }
+    },
+    "extends": "turtle2.vwf",
+    "methods": {
+        "forceUpdate": {
+            "body": "console.log('Force to update old source code!');\nvar methods = Engine.getMethods(this.id);\nvar nodeMethodsToDel = ['genLSys', 'initGrammarLSys', 'initGrammarTurtle', 'initLSysSemantics', 'initTurtleSemantics'];\nfor (var i in nodeMethodsToDel)\n{\n    if (methods[nodeMethodsToDel[i]] !== undefined)\n    {\n        var methodName = nodeMethodsToDel[i];\n        Engine.deleteMethod(this.id, methodName);\n    }\n}\nvar nodeMethods = ['genLSys', 'initGrammarLSys', 'initGrammarTurtle', 'initSemanticsLSys', 'initSemanticsTurtle'];\nvar methodsNew = Engine.getMethods(this.id);\nfor (var i in nodeMethods)\n{\n    if (methodsNew[nodeMethods[i]] === undefined)\n    {\n        var methodName = nodeMethods[i];\n        var prot = Engine.getMethods(Engine.prototype(this.id))[methodName];\n        Engine.createMethod(this.id, methodName, [], prot.body);\n    }\n}\n        Engine.deleteMethod(this.id, 'makeTurtle');\n        var prot = Engine.getMethods(Engine.prototype(this.id))['makeTurtle'];\n        Engine.createMethod(this.id, 'makeTurtle', prot.parameters, prot.body);\n",
+            "parameters": []
+        },
+        "genLSys": {
+            "body": "var gram = _LangManager.ohmLangs[this.id][\"LSys\"][\"grammar\"];\nvar sem = _LangManager.ohmLangs[this.id][\"LSys\"][\"semantics\"];\nvar str = this.rule;\nvar axioms = {\"F\": this.axiomF, \"G\": this.axiomG};\nfor (var i = 1; i < this.iteration; i++)\n{\n    var r = gram.match(str);\n    var n = sem(r);\n    var res = n.gen(axioms);\n    str = res.join(\"\");\n}\nreturn str;\n",
+            "parameters": []
+        },
+        "generateLSys": {
+            "body": "if (this.children_by_name.pen !== undefined)\n  {\n  this.resetLS();\n  var oldPos = this.transformAPI.getWorldPosition();\n  var oldRot = this.transformAPI.getRotation();\n  this.transformAPI.setPosition(0, 0, 0);\n  this.transformAPI.setRotation(0, 0, 0);\n  var lsys = this.genLSys();\n  var turtle = this.makeTurtle(lsys);\n  turtle.draw(this.stepLength, this.angle);\n  this.transformAPI.setPosition(oldPos);\n  this.transformAPI.setRotation(oldRot);\n  }\n",
+            "parameters": []
+        },
+        "goForward": {
+            "body": "this.transformAPI.move(step, 0, 0, \"local\");\nvar pos = this.transformAPI.getPosition();\npos = new THREE.Vector3(pos[0], pos[1], pos[2]);\nthis.children_by_name.pen.points.push([pos.x, pos.y, pos.z]);\n",
+            "parameters": ["step"]
+        },
+        "initGrammarLSys": {
+            "body": "console.log('Init grammar: LSys');\nthis.initSemanticsLSys();\n",
+            "parameters": []
+        },
+        "initGrammarTurtle": {
+            "body": "console.log('Init grammar: Turtle');\nthis.initSemanticsTurtle();\n",
+            "parameters": []
+        },
+        "initSemanticsLSys": {
+            "body": "var s = _LangManager.ohmLangs[this.id][\"LSys\"][\"semantics\"];\ns.addOperation('gen(x)',\n{\n    Gen: function(e)\n    {\n        return e.gen(this.args.x);\n    },\n    ReadRule: function(e)\n    {\n        return e.gen(this.args.x);\n    },\n    letters: function(_)\n    {\n        for (var propName in this.args.x)\n        {\n            if (propName == this.interval.contents)\n                return this.args.x[propName]\n        }\n        return this.interval.contents\n    },\n    symbols: function(_)\n    {\n        return this.interval.contents;\n    }\n});\n",
+            "parameters": []
+        },
+        "initSemanticsTurtle": {
+            "body": "var myID = this.id;\nvar s = _LangManager.ohmLangs[this.id][\"Turtle\"][\"semantics\"];\ns.addOperation('draw(x,y)',\n{\n    Draw: function(e)\n    {\n        e.draw(this.args.x, this.args.y);\n    },\n    drawLetter: function(e)\n    {\n        Engine.callMethod(myID, 'goForward', [this.args.x]);\n    },\n    turn: function(e)\n    {\n        if (this.interval.contents == \"+\")\n            Engine.callMethod(myID, 'turn', [this.args.y]);\n        if (this.interval.contents == \"-\")\n            Engine.callMethod(myID, 'turn', [-1 * this.args.y]);\n       }\n  });\n",
+            "parameters": []
+        },
+        "makeLSys": {
+            "body": "var lsys = this.genLSys();\nvar turtle = this.makeTurtle(lsys);\nthis.resetLS();\nvar oldPos = this.transformAPI.getWorldPosition();\nthis.transformAPI.setPosition(0, 0, 0);\nturtle.draw(this.stepLength, this.angle);\nthis.transformAPI.setPosition(oldPos);\n",
+            "parameters": []
+        },
+        "makeTurtle": {
+            "body": "var gram = _LangManager.ohmLangs[this.id][\"Turtle\"][\"grammar\"];\nvar sem = _LangManager.ohmLangs[this.id][\"Turtle\"][\"semantics\"];\nvar r = gram.match(lsys);\nvar n = sem(r);\nreturn n;",
+            "parameters": ["lsys"]
+        },
+        "ready": {
+            "body": "if (this.methods.hasOwnProperty('initLSysSemantics')){\n  this.forceUpdate();\n}\nthis.initGrammarLSys();\nthis.initGrammarTurtle();\nthis.generateLSys();\n",
+            "parameters": []
+        },
+        "turn": {
+            "body": "this.transformAPI.rotateZ(angle, \"local\");\n",
+            "parameters": ["angle"]
+        }
+    },
+    "properties": {
+        "DisplayName": "turtle1",
+        "LSys": {
+            "name": "LSys",
+            "superGrammar": {
+                "name": "BuiltInRules",
+                "superGrammar": {
+                    "name": "ProtoBuiltInRules",
+                    "ruleBodies": {
+                        "any": {},
+                        "end": {},
+                        "spaces_": {
+                            "expr": {
+                                "ruleName": "space",
+                                "params": []
+                            }
+                        },
+                        "space": {
+                            "from": "\u0000",
+                            "to": " "
+                        },
+                        "lower": {
+                            "category": "Ll",
+                            "pattern": {}
+                        },
+                        "upper": {
+                            "category": "Lu",
+                            "pattern": {}
+                        },
+                        "unicodeLtmo": {
+                            "category": "Ltmo",
+                            "pattern": {}
+                        }
+                    },
+                    "ruleFormals": {
+                        "any": [],
+                        "end": [],
+                        "spaces_": [],
+                        "space": [],
+                        "lower": [],
+                        "upper": [],
+                        "unicodeLtmo": []
+                    },
+                    "ruleDescriptions": {
+                        "any": "any object",
+                        "end": "end of input",
+                        "space": "a space",
+                        "lower": "a lowercase letter",
+                        "upper": "an uppercase letter"
+                    },
+                    "ctors": {},
+                    "constructors": {}
+                },
+                "ruleBodies": {
+                    "alnum": {
+                        "terms": [{
+                                "ruleName": "letter",
+                                "params": []
+                            }, {
+                                "ruleName": "digit",
+                                "params": []
+                            }
+                        ]
+                    },
+                    "letter": {
+                        "terms": [{
+                                "ruleName": "lower",
+                                "params": []
+                            }, {
+                                "ruleName": "upper",
+                                "params": []
+                            }, {
+                                "ruleName": "unicodeLtmo",
+                                "params": []
+                            }
+                        ]
+                    },
+                    "digit": {
+                        "from": "0",
+                        "to": "9"
+                    },
+                    "hexDigit": {
+                        "terms": [{
+                                "ruleName": "digit",
+                                "params": []
+                            }, {
+                                "from": "a",
+                                "to": "f"
+                            }, {
+                                "from": "A",
+                                "to": "F"
+                            }
+                        ]
+                    },
+                    "ListOf_some": {
+                        "factors": [{
+                                "index": 0
+                            }, {
+                                "expr": {
+                                    "factors": [{
+                                            "index": 1
+                                        }, {
+                                            "index": 0
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "ListOf_none": {
+                        "factors": []
+                    },
+                    "ListOf": {
+                        "terms": [{
+                                "ruleName": "ListOf_some",
+                                "params": [{
+                                        "index": 0
+                                    }, {
+                                        "index": 1
+                                    }
+                                ]
+                            }, {
+                                "ruleName": "ListOf_none",
+                                "params": [{
+                                        "index": 0
+                                    }, {
+                                        "index": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "listOf_some": {
+                        "factors": [{
+                                "index": 0
+                            }, {
+                                "expr": {
+                                    "factors": [{
+                                            "index": 1
+                                        }, {
+                                            "index": 0
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "listOf_none": {
+                        "factors": []
+                    },
+                    "listOf": {
+                        "terms": [{
+                                "ruleName": "listOf_some",
+                                "params": [{
+                                        "index": 0
+                                    }, {
+                                        "index": 1
+                                    }
+                                ]
+                            }, {
+                                "ruleName": "listOf_none",
+                                "params": [{
+                                        "index": 0
+                                    }, {
+                                        "index": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "ruleFormals": {
+                    "alnum": [],
+                    "letter": [],
+                    "digit": [],
+                    "hexDigit": [],
+                    "ListOf_some": ["elem", "sep"],
+                    "ListOf_none": ["elem", "sep"],
+                    "ListOf": ["elem", "sep"],
+                    "listOf_some": ["elem", "sep"],
+                    "listOf_none": ["elem", "sep"],
+                    "listOf": ["elem", "sep"]
+                },
+                "ruleDescriptions": {
+                    "alnum": "an alpha-numeric character",
+                    "letter": "a letter",
+                    "digit": "a digit",
+                    "hexDigit": "a hexadecimal digit"
+                },
+                "ctors": {},
+                "constructors": {}
+            },
+            "ruleBodies": {
+                "Gen": {
+                    "expr": {
+                        "ruleName": "ReadRule",
+                        "params": [],
+                        "interval": {
+                            "inputStream": {
+                                "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                                "pos": 117,
+                                "posInfos": []
+                            },
+                            "startIdx": 22,
+                            "endIdx": 30
+                        }
+                    },
+                    "interval": {
+                        "inputStream": {
+                            "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                            "pos": 117,
+                            "posInfos": []
+                        },
+                        "startIdx": 22,
+                        "endIdx": 31
+                    },
+                    "definitionInterval": {
+                        "inputStream": {
+                            "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                            "pos": 117,
+                            "posInfos": []
+                        },
+                        "startIdx": 7,
+                        "endIdx": 31
+                    }
+                },
+                "ReadRule": {
+                    "terms": [{
+                            "ruleName": "letters",
+                            "params": [],
+                            "interval": {
+                                "inputStream": {
+                                    "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                                    "pos": 117,
+                                    "posInfos": []
+                                },
+                                "startIdx": 50,
+                                "endIdx": 57
+                            }
+                        }, {
+                            "ruleName": "symbols",
+                            "params": [],
+                            "interval": {
+                                "inputStream": {
+                                    "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                                    "pos": 117,
+                                    "posInfos": []
+                                },
+                                "startIdx": 60,
+                                "endIdx": 67
+                            }
+                        }
+                    ],
+                    "interval": {
+                        "inputStream": {
+                            "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                            "pos": 117,
+                            "posInfos": []
+                        },
+                        "startIdx": 50,
+                        "endIdx": 67
+                    },
+                    "definitionInterval": {
+                        "inputStream": {
+                            "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                            "pos": 117,
+                            "posInfos": []
+                        },
+                        "startIdx": 35,
+                        "endIdx": 67
+                    }
+                },
+                "letters": {
+                    "terms": [{
+                            "obj": "F",
+                            "interval": {
+                                "inputStream": {
+                                    "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                                    "pos": 117,
+                                    "posInfos": []
+                                },
+                                "startIdx": 81,
+                                "endIdx": 84
+                            }
+                        }, {
+                            "obj": "G",
+                            "interval": {
+                                "inputStream": {
+                                    "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                                    "pos": 117,
+                                    "posInfos": []
+                                },
+                                "startIdx": 87,
+                                "endIdx": 90
+                            }
+                        }
+                    ],
+                    "interval": {
+                        "inputStream": {
+                            "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                            "pos": 117,
+                            "posInfos": []
+                        },
+                        "startIdx": 81,
+                        "endIdx": 90
+                    },
+                    "definitionInterval": {
+                        "inputStream": {
+                            "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                            "pos": 117,
+                            "posInfos": []
+                        },
+                        "startIdx": 70,
+                        "endIdx": 90
+                    }
+                },
+                "symbols": {
+                    "terms": [{
+                            "obj": "-",
+                            "interval": {
+                                "inputStream": {
+                                    "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                                    "pos": 117,
+                                    "posInfos": []
+                                },
+                                "startIdx": 105,
+                                "endIdx": 108
+                            }
+                        }, {
+                            "obj": "+",
+                            "interval": {
+                                "inputStream": {
+                                    "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                                    "pos": 117,
+                                    "posInfos": []
+                                },
+                                "startIdx": 111,
+                                "endIdx": 114
+                            }
+                        }
+                    ],
+                    "interval": {
+                        "inputStream": {
+                            "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                            "pos": 117,
+                            "posInfos": []
+                        },
+                        "startIdx": 105,
+                        "endIdx": 114
+                    },
+                    "definitionInterval": {
+                        "inputStream": {
+                            "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                            "pos": 117,
+                            "posInfos": []
+                        },
+                        "startIdx": 94,
+                        "endIdx": 114
+                    }
+                }
+            },
+            "ruleFormals": {
+                "Gen": ["x", "y"],
+                "ReadRule": [],
+                "letters": [],
+                "symbols": []
+            },
+            "ruleDescriptions": {},
+            "defaultStartRule": "Gen",
+            "ctors": {},
+            "constructors": {},
+            "definitionInterval": {
+                "inputStream": {
+                    "source": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+                    "pos": 117,
+                    "posInfos": []
+                },
+                "startIdx": 0,
+                "endIdx": 116
+            }
+        },
+        "Turtle": {
+            "name": "Turtle",
+            "superGrammar": {
+                "name": "BuiltInRules",
+                "superGrammar": {
+                    "name": "ProtoBuiltInRules",
+                    "ruleBodies": {
+                        "any": {},
+                        "end": {},
+                        "spaces_": {
+                            "expr": {
+                                "ruleName": "space",
+                                "params": []
+                            }
+                        },
+                        "space": {
+                            "from": "\u0000",
+                            "to": " "
+                        },
+                        "lower": {
+                            "category": "Ll",
+                            "pattern": {}
+                        },
+                        "upper": {
+                            "category": "Lu",
+                            "pattern": {}
+                        },
+                        "unicodeLtmo": {
+                            "category": "Ltmo",
+                            "pattern": {}
+                        }
+                    },
+                    "ruleFormals": {
+                        "any": [],
+                        "end": [],
+                        "spaces_": [],
+                        "space": [],
+                        "lower": [],
+                        "upper": [],
+                        "unicodeLtmo": []
+                    },
+                    "ruleDescriptions": {
+                        "any": "any object",
+                        "end": "end of input",
+                        "space": "a space",
+                        "lower": "a lowercase letter",
+                        "upper": "an uppercase letter"
+                    },
+                    "ctors": {},
+                    "constructors": {}
+                },
+                "ruleBodies": {
+                    "alnum": {
+                        "terms": [{
+                                "ruleName": "letter",
+                                "params": []
+                            }, {
+                                "ruleName": "digit",
+                                "params": []
+                            }
+                        ]
+                    },
+                    "letter": {
+                        "terms": [{
+                                "ruleName": "lower",
+                                "params": []
+                            }, {
+                                "ruleName": "upper",
+                                "params": []
+                            }, {
+                                "ruleName": "unicodeLtmo",
+                                "params": []
+                            }
+                        ]
+                    },
+                    "digit": {
+                        "from": "0",
+                        "to": "9"
+                    },
+                    "hexDigit": {
+                        "terms": [{
+                                "ruleName": "digit",
+                                "params": []
+                            }, {
+                                "from": "a",
+                                "to": "f"
+                            }, {
+                                "from": "A",
+                                "to": "F"
+                            }
+                        ]
+                    },
+                    "ListOf_some": {
+                        "factors": [{
+                                "index": 0
+                            }, {
+                                "expr": {
+                                    "factors": [{
+                                            "index": 1
+                                        }, {
+                                            "index": 0
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "ListOf_none": {
+                        "factors": []
+                    },
+                    "ListOf": {
+                        "terms": [{
+                                "ruleName": "ListOf_some",
+                                "params": [{
+                                        "index": 0
+                                    }, {
+                                        "index": 1
+                                    }
+                                ]
+                            }, {
+                                "ruleName": "ListOf_none",
+                                "params": [{
+                                        "index": 0
+                                    }, {
+                                        "index": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "listOf_some": {
+                        "factors": [{
+                                "index": 0
+                            }, {
+                                "expr": {
+                                    "factors": [{
+                                            "index": 1
+                                        }, {
+                                            "index": 0
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "listOf_none": {
+                        "factors": []
+                    },
+                    "listOf": {
+                        "terms": [{
+                                "ruleName": "listOf_some",
+                                "params": [{
+                                        "index": 0
+                                    }, {
+                                        "index": 1
+                                    }
+                                ]
+                            }, {
+                                "ruleName": "listOf_none",
+                                "params": [{
+                                        "index": 0
+                                    }, {
+                                        "index": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "ruleFormals": {
+                    "alnum": [],
+                    "letter": [],
+                    "digit": [],
+                    "hexDigit": [],
+                    "ListOf_some": ["elem", "sep"],
+                    "ListOf_none": ["elem", "sep"],
+                    "ListOf": ["elem", "sep"],
+                    "listOf_some": ["elem", "sep"],
+                    "listOf_none": ["elem", "sep"],
+                    "listOf": ["elem", "sep"]
+                },
+                "ruleDescriptions": {
+                    "alnum": "an alpha-numeric character",
+                    "letter": "a letter",
+                    "digit": "a digit",
+                    "hexDigit": "a hexadecimal digit"
+                },
+                "ctors": {},
+                "constructors": {}
+            },
+            "ruleBodies": {
+                "Draw": {
+                    "expr": {
+                        "terms": [{
+                                "ruleName": "drawLetter",
+                                "params": [],
+                                "interval": {
+                                    "inputStream": {
+                                        "source": "Turtle {\n Draw<x, y> \n  = (drawLetter | turn)+ \n  drawLetter =letter\n  turn = \"+\" | \"-\" }\n",
+                                        "pos": 90,
+                                        "posInfos": []
+                                    },
+                                    "startIdx": 27,
+                                    "endIdx": 37
+                                }
+                            }, {
+                                "ruleName": "turn",
+                                "params": [],
+                                "interval": {
+                                    "inputStream": {
+                                        "source": "Turtle {\n Draw<x, y> \n  = (drawLetter | turn)+ \n  drawLetter =letter\n  turn = \"+\" | \"-\" }\n",
+                                        "pos": 90,
+                                        "posInfos": []
+                                    },
+                                    "startIdx": 40,
+                                    "endIdx": 44
+                                }
+                            }
+                        ],
+                        "interval": {
+                            "inputStream": {
+                                "source": "Turtle {\n Draw<x, y> \n  = (drawLetter | turn)+ \n  drawLetter =letter\n  turn = \"+\" | \"-\" }\n",
+                                "pos": 90,
+                                "posInfos": []
+                            },
+                            "startIdx": 27,
+                            "endIdx": 44
+                        }
+                    },
+                    "interval": {
+                        "inputStream": {
+                            "source": "Turtle {\n Draw<x, y> \n  = (drawLetter | turn)+ \n  drawLetter =letter\n  turn = \"+\" | \"-\" }\n",
+                            "pos": 90,
+                            "posInfos": []
+                        },
+                        "startIdx": 26,
+                        "endIdx": 46
+                    },
+                    "definitionInterval": {
+                        "inputStream": {
+                            "source": "Turtle {\n Draw<x, y> \n  = (drawLetter | turn)+ \n  drawLetter =letter\n  turn = \"+\" | \"-\" }\n",
+                            "pos": 90,
+                            "posInfos": []
+                        },
+                        "startIdx": 10,
+                        "endIdx": 46
+                    }
+                },
+                "drawLetter": {
+                    "ruleName": "letter",
+                    "params": [],
+                    "interval": {
+                        "inputStream": {
+                            "source": "Turtle {\n Draw<x, y> \n  = (drawLetter | turn)+ \n  drawLetter =letter\n  turn = \"+\" | \"-\" }\n",
+                            "pos": 90,
+                            "posInfos": []
+                        },
+                        "startIdx": 62,
+                        "endIdx": 68
+                    },
+                    "definitionInterval": {
+                        "inputStream": {
+                            "source": "Turtle {\n Draw<x, y> \n  = (drawLetter | turn)+ \n  drawLetter =letter\n  turn = \"+\" | \"-\" }\n",
+                            "pos": 90,
+                            "posInfos": []
+                        },
+                        "startIdx": 50,
+                        "endIdx": 68
+                    }
+                },
+                "turn": {
+                    "terms": [{
+                            "obj": "+",
+                            "interval": {
+                                "inputStream": {
+                                    "source": "Turtle {\n Draw<x, y> \n  = (drawLetter | turn)+ \n  drawLetter =letter\n  turn = \"+\" | \"-\" }\n",
+                                    "pos": 90,
+                                    "posInfos": []
+                                },
+                                "startIdx": 78,
+                                "endIdx": 81
+                            }
+                        }, {
+                            "obj": "-",
+                            "interval": {
+                                "inputStream": {
+                                    "source": "Turtle {\n Draw<x, y> \n  = (drawLetter | turn)+ \n  drawLetter =letter\n  turn = \"+\" | \"-\" }\n",
+                                    "pos": 90,
+                                    "posInfos": []
+                                },
+                                "startIdx": 84,
+                                "endIdx": 87
+                            }
+                        }
+                    ],
+                    "interval": {
+                        "inputStream": {
+                            "source": "Turtle {\n Draw<x, y> \n  = (drawLetter | turn)+ \n  drawLetter =letter\n  turn = \"+\" | \"-\" }\n",
+                            "pos": 90,
+                            "posInfos": []
+                        },
+                        "startIdx": 78,
+                        "endIdx": 87
+                    },
+                    "definitionInterval": {
+                        "inputStream": {
+                            "source": "Turtle {\n Draw<x, y> \n  = (drawLetter | turn)+ \n  drawLetter =letter\n  turn = \"+\" | \"-\" }\n",
+                            "pos": 90,
+                            "posInfos": []
+                        },
+                        "startIdx": 71,
+                        "endIdx": 87
+                    }
+                }
+            },
+            "ruleFormals": {
+                "Draw": ["x", "y"],
+                "drawLetter": [],
+                "turn": []
+            },
+            "ruleDescriptions": {},
+            "defaultStartRule": "Draw",
+            "ctors": {},
+            "constructors": {},
+            "definitionInterval": {
+                "inputStream": {
+                    "source": "Turtle {\n Draw<x, y> \n  = (drawLetter | turn)+ \n  drawLetter =letter\n  turn = \"+\" | \"-\" }\n",
+                    "pos": 90,
+                    "posInfos": []
+                },
+                "startIdx": 0,
+                "endIdx": 89
+            }
+        },
+        "___sourceAssetTimestamp": "Wed Jan 27 2016 20:55:25 GMT+0300 (MSK)",
+        "angle": 60,
+        "axiomF": "G-F-G",
+        "axiomG": "F+G+F",
+        "iteration": 5,
+        "materialDef": {
+            "shininess": 15,
+            "alpha": 1,
+            "ambient": {
+                "r": 1,
+                "g": 1,
+                "b": 1
+            },
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "emit": {
+                "r": 0,
+                "g": 0,
+                "b": 0
+            },
+            "reflect": 0.8,
+            "shadeless": false,
+            "shadow": true,
+            "specularColor": {
+                "r": 0.5773502691896258,
+                "g": 0.5773502691896258,
+                "b": 0.5773502691896258
+            },
+            "specularLevel": 1,
+            "layers": [{
+                    "alpha": 1,
+                    "blendMode": 0,
+                    "mapInput": 0,
+                    "mapTo": 1,
+                    "offsetx": 0,
+                    "offsety": 0,
+                    "rot": 0,
+                    "scalex": 1,
+                    "scaley": 1,
+                    "src": "checker.jpg"
+                }
+            ],
+            "type": "phong",
+            "side": 0,
+            "blendMode": 1,
+            "fog": true,
+            "shading": true,
+            "metal": false,
+            "wireframe": false,
+            "depthtest": true,
+            "depthwrite": true,
+            "vertexColors": false
+        },
+        "ohmLSys": "LSys { Gen<x, y> \n  = ReadRule+ \n  ReadRule \n   = letters | symbols\n  letters  = \"F\" | \"G\" \n  symbols  = \"-\" | \"+\" }\n",
+        "ohmTurtle": "Turtle {\n Draw<x, y> \n  = (drawLetter | turn)+ \n  drawLetter =letter\n  turn = \"+\" | \"-\" }\n",
+        "owner": "admin",
+        "rotation": [0, 0, 1, 0],
+        "rule": "F",
+        "scale": [1, 1, 1],
+        "size": [1, 1, 1],
+        "tempid": "",
+        "texture": "checker.jpg",
+        "transform": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -1, -0.75, 0, 1],
+        "type": "Primitive"
+    },
+    "random": {
+        "c": 1,
+        "s0": 0.123107210965827,
+        "s1": 0.233153729932383,
+        "s2": 0.156422814819962
+    },
+    "sequence": 0,
+    "source": "vwf/model/threejs/turtle.js",
+    "type": "subDriver/threejs"
+}

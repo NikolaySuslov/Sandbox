@@ -134,9 +134,14 @@ define({
 	            _dView.getCamera().aspect = w/h;
 	            _dView.getCamera().updateProjectionMatrix()
 	            _dView.windowResized();
-
-				var evt = new Event('viewportresize');
-				document.dispatchEvent(evt);
+                try{
+                    var evt = new Event('viewportresize');
+                    document.dispatchEvent(evt);    
+                }catch(e)
+                {
+                    $(document).trigger('viewportresize');
+                }
+				
 
 			}, 80);
 		};

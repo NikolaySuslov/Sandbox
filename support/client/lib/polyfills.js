@@ -41,26 +41,20 @@ var fills = {
         }
         window.RunPrefixMethod = RunPrefixMethod;
         //force the developer to opt-in to see console.log messages
-        var saveLog = window.console.log;
+      
         fills.enableLog = function()
         {
-            window.console.log = saveLog.bind(window.console);
-            window.console.log.disable = fills.disableLog;
         }
         fills.disableLog = function()
         {
-            window.console.log = function() {};
-            window.console.log.enable = function()
-            {
-                fills.enableLog();
-            }
+           
         }
         Math.sign = function(a)
         {
             if (a >= 0) return 1;
             return -1;
         }
-        fills.disableLog();
+       
     },
     debounce: function()
     {
@@ -438,6 +432,14 @@ var fills = {
             {
                 return Date.now() - nowOffset;
             }
+        }
+        if (!window.performance.memory)
+        {
+           
+                window.performance.memory = {};
+                window.performance.memory.usedJSHeapSize = 0;
+                window.performance.memory.jsHeapSizeLimit = 0;
+                window.performance.memory.totalJSHeapSize = 0;
         }
     },
     localStorage: function()

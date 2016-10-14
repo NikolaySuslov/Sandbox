@@ -6,11 +6,11 @@ var libpath = require('path'),
     fs = require('fs-extra'),
     url = require("url"),
     mime = require('mime'),
-    YAML = require('js-yaml'),
-	sass = require('node-sass');
+    YAML = require('js-yaml')
 var logger = require('./logger');
 var requestProxy = require('express-request-proxy');
 
+var sass = null;
 
 
 var SandboxAPI = require('./sandboxAPI'),
@@ -155,8 +155,7 @@ function startVWF() {
                 datapath = libpath.resolve(datapath,'.');
                 global.datapath = datapath;
                 global.configuration.datapath = datapath;
-                console.log(datapath);
-                logger.initFileOutput(datapath);
+               
 
                 p = process.argv.indexOf('-ls');
                 global.latencySim = p >= 0 ? parseInt(process.argv[p + 1]) : (global.configuration.latencySim ? global.configuration.latencySim : 0);
@@ -260,6 +259,7 @@ function startVWF() {
 						}
 						catch(e){
 							logger.error('Failed to start the asset server! Did it install correctly?');
+                            logger.error(e);
 							app.all(global.configuration.assetAppPath+'/*', function(req,res){
 								res.status(500).send('Asset server not available');
 							});
@@ -323,6 +323,16 @@ function startVWF() {
                     RegisterWithLoadBalancer();
                 cb();
             },
+            function loadSass(cb)
+            {
+                try{
+                sass = require('node-sass');
+                }catch(e)
+                {
+                    console.error('Sass is not installed. CSS will be served from the static build.css')
+                }
+                cb();
+            },
             function compileCSSIfDefined(cb) {
                 if (!compile) {
                     cb();
@@ -346,25 +356,36 @@ function startVWF() {
                         var path2 = libpath.normalize('../../support/client/lib/index.css'); //trick the filecache
                         path2 = libpath.resolve(__dirname, path2);
 
-						sass.render({
-							file: libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/Editorview.scss'),
-							includePaths: [libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/')],
-							outputStyle: 'compressed',
-							functions: {
-								'getImgPath()': function(){
-									return new sass.types.String('vwf/view/editorview');
-								}
-							}
-						}, function(err,result){
-							if(err){
-								logger.error('Error compiling sass:', err);
-	                        	FileCache.insertFile([path, path2], contents, fs.statSync(buildname), "utf8", cb);
-							}
-							else {
-								var scss = result.css.toString('utf8');
-	                        	FileCache.insertFile([path, path2], contents+scss, fs.statSync(buildname), "utf8", cb);
-							}
-						});
+                        if(sass)
+                        {
+
+                           
+
+    						sass.render({
+    							file: libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/Editorview.scss'),
+    							includePaths: [libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/')],
+    							outputStyle: 'compressed',
+    							functions: {
+    								'getImgPath()': function(){
+    									return new sass.types.String('../vwf/view/editorview');
+    								}
+    							}
+    						}, function(err,result){
+    							if(err){
+    								logger.error('Error compiling sass:', err);
+    	                        	FileCache.insertFile([path, path2], contents, fs.statSync(buildname), "utf8", cb);
+    							}
+    							else {
+    								var scss = result.css.toString('utf8');
+    	                        	FileCache.insertFile([path, path2], contents+scss, fs.statSync(buildname), "utf8", cb);
+    							}
+    						});
+                        }else
+                        {
+                            var buildScssName = libpath.resolve(libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/built.css'));
+                            var scssContents = fs.readFileSync(buildScssName);
+                            FileCache.insertFile([path, path2], contents+scssContents, fs.statSync(buildname), "utf8", cb);
+                        }
                     }
                     //first, check if the build file already exists. if so, skip this step
                     if (fs.existsSync(libpath.resolve(libpath.join(__dirname, '..', '..', 'build', 'index.css')))) {
@@ -636,6 +657,54 @@ function startVWF() {
                 else
                     cb();
             },
+            function buildCSS(cb)
+            {
+                
+
+                
+                if(sass)
+                {
+                    logger.warn("Building CSS. SASS is installed, so the CSS will be rebuilt on each request");
+                    sass.render(
+                    {
+
+                        /*file: libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/Editorview.scss'),
+                                includePaths: [libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/')],
+                                sourceComments: true,
+                                functions: {
+                                    'getImgPath()': function(){
+                                        return new sass.types.String('../vwf/view/editorview');
+                                    }
+                                }*/
+
+                        file: libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/Editorview.scss'),
+                        includePaths: [libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/')],
+                        outputStyle: 'compressed',
+                        functions:
+                        {
+                            'getImgPath()': function()
+                            {
+                                return new sass.types.String('./vwf/view/editorview');
+                            }
+                        }
+                    }, function(err, result)
+                    {
+                        if (err)
+                        {
+                            cb();
+                        }
+                        else
+                        {
+                            var scss = result.css.toString('utf8');
+                            fs.writeFileSync(libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/built.css'),scss,'utf8');
+                            cb();
+                        }
+                    });
+                }else
+                {
+                    cb();
+                }
+            },
             function startupDAL(cb) {
                 DAL.setDataPath(datapath);
                 SandboxAPI.setDataPath(datapath);
@@ -643,7 +712,13 @@ function startVWF() {
                 logger.info('DAL Startup');
                 DAL.startup(cb);
             },
+            function startLogging(cb)
+            {
+                logger.initFileOutput(global.configuration.datapath);
+                cb();
+            },
             function setSession(cb) {
+                
                 logger.info('Session Startup');
                 require('./sessions.js').sessionStartup(cb);
             },
@@ -668,7 +743,7 @@ function startVWF() {
                     return;
                 }
                 app.set('layout', 'layout');
-                app.set('views', __dirname + '/../../public/adl/sandbox/views');
+                app.set('views', __dirname + '/views');
                 app.set('view engine', 'html');
                 app.engine('.html', require('hogan-express'));
 
@@ -716,7 +791,6 @@ function startVWF() {
                     
                     secret: global.configuration.sessionSecret ? global.configuration.sessionSecret : 'unsecure cookie secret',
                     cookie: {
-                        maxAge: global.configuration.sessionTimeoutMs ? global.configuration.sessionTimeoutMs : 10000000,
                         httpOnly: !!global.configuration.hostAssets
                     },
                      cookieName: 'session', // cookie name dictates the key name added to the request object
@@ -724,6 +798,24 @@ function startVWF() {
                      duration: 24 * 60 * 60 * 1000, // how long the session will stay valid in ms
                      activeDuration: 24*60*60*1000 //
                 }));
+
+
+                //Wow... so this is amazing. The session middleware we use has some un-documented features. 
+                //We've been messing with the maxage of the cookie and the duration flags above, and still 
+                //always seem to have strange behavior where we are logged out. 
+                //Turns out that there is some interaction between the duration and maxage. Not setting the max age 
+                //is better. Also, the session cookie will not be reset or resent unless you leave max-age blank and 
+                //touch the session. The code below will resend the cookie with a new 24 hour window if the previous request is
+                //more than half an hour old. This should help keep people logged in properly.
+                //previous behavior created a fixed window that never updated, so no matter how long the timeout was, you would
+                //eventually hit it, even when activly using the site.
+                app.use(function(req,res,next){
+                    if(!req.session.lastRequest)
+                        req.session.lastRequest = parseInt(Date.now().toString());
+                    if(parseInt(Date.now().toString()) - req.session.lastRequest > 1000*60*30)
+                        req.session.lastRequest = parseInt(Date.now().toString());
+                    next();
+                });
 
                 app.use(passport.initialize());
                 app.use(passport.session());
@@ -801,6 +893,7 @@ function startVWF() {
                 app.get("/adl/sandbox" + '/newWorlds', Landing.newWorlds);
                 app.get("/adl/sandbox" + '/allWorlds/:page([0-9]+)', Landing.allWorlds);
                 app.get("/adl/sandbox" + '/myWorlds/:page([0-9]+)', Landing.myWorlds);
+                app.get("/adl/sandbox" + '/hidden/:page([0-9]+)', Landing.hidden);
                 app.get("/adl/sandbox" + '/featuredWorlds/:page([0-9]+)', Landing.featuredWorlds);
                 app.get("/adl/sandbox" + '/activeWorlds/:page([0-9]+)', Landing.activeWorlds);
                 app.get("/adl/sandbox", Landing.generalHandler);
@@ -814,6 +907,8 @@ function startVWF() {
                 app.post("/adl/sandbox" + '/admin/:page([a-zA-Z]+)', Landing.handlePostRequest);
                 app.post("/adl/sandbox" + '/data/:action([a-zA-Z_]+)', Landing.handlePostRequest);
 
+                require('./admin').hookupRoutes(app);
+                
                 app.use(appserver.admin_instances);
                 app.use(appserver.routeToAPI);
                 //The file handleing logic for vwf engine files

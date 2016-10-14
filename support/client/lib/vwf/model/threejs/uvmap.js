@@ -3,9 +3,9 @@
         this._length = 1;
         this.width = 1;
         this.height = 1;
-        this.mode = 'sphere';
+        this.mode = 'box';
         this.plane = 'z';
-        this.rotate = 1;
+        this.rotate = 0;
         this.tilex = 2;
         this.tiley = 2;
         this.xaxis = new THREE.Vector3(1, 0, 0);
@@ -15,6 +15,7 @@
         this.voffset = 0;
         this.outputType = "Primitive";
         this.inputType = "Primitive";
+        this.active = true;
         this.projectToSphere = function(vert) {
             var x = vert.x * this._length;
             var y = vert.z * this.width;
@@ -73,6 +74,7 @@
         }
         this.updateSelf = function() {
 
+            if(!this.active) return;
             var mesh = this.GetMesh();
             if (!mesh) return;
             var geo = mesh.geometry;
@@ -219,6 +221,11 @@
                     },
                 }
             }
+        }
+        this.deletingNode = function()
+        {
+            this.active = false;
+            this.dirtyStack();
         }
         this.inherits = ['vwf/model/threejs/modifier.js'];
     }

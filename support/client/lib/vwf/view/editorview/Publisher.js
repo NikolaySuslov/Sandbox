@@ -196,6 +196,7 @@ define([], function() {
             if (!s) return;
             Engine.private.queue.suspend();
             Engine.models.kernel.disable();
+           
             var currentState = _Editor.getNode(Engine.application(),true);
 
             //find a node from one state in another
@@ -284,6 +285,7 @@ define([], function() {
                 Engine.models.kernel.enable();
 
                 Engine.callMethod(Engine.application(), 'postWorldRestore');
+                Engine.markAllPropsCurrent();
                 Engine.private.queue.resume();
 
             });
@@ -328,10 +330,12 @@ define([], function() {
             }
             var currentState = Engine.getProperty(Engine.application(), 'playMode');
             if (currentState === 'stop') return;
+           
+            vwf_view.kernel.callMethod(Engine.application(), 'preWorldStop');
+            vwf_view.kernel.setProperty(Engine.application(), 'playMode', 'stop');
             this.restoreState();
             this.stateBackup = null;
-            vwf_view.kernel.callMethod(Engine.application(), 'preWorldStop');
-            vwf_view.kernel.setProperty(Engine.application(), 'playMode', 'stop')
+             vwf_view.kernel.callMethod(Engine.application(), 'postWorldStop');
 
         }
 

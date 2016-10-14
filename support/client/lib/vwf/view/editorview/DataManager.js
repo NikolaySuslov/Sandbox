@@ -187,11 +187,23 @@ define(function ()
 		}
 		this.getSaveStateData = function()
 		{
-			var scene = _Editor.getNode(vwf.application());
+
+			if(_DataManager.getInstanceData().publishSettings.allowPlayPause)
+			{
+				//only require save while stopped if play/pause is enabled
+				if(vwf.getProperty(vwf.application(),'playMode') !== 'stop')
+				{
+					console.error("Can't save while scene is playing");
+					return;
+				}
+			}
+
+			var scene = _Editor.getNode(Engine.application());
+			
 			var nodes = [];
 			for (var i in scene.children)
 			{
-				var node = this.getSaveNodePrototype(scene.children[i].id);
+				var node = this.getSaveNodePrototype(scene.children[i]);
 				if (node.extends != "character.vwf" && node.extends != 'http://vwf.example.com/camera.vwf') nodes.push(node);
 				
 			}
@@ -221,22 +233,14 @@ define(function ()
 			//published states are never saved. 
 			if(_DataManager.instanceData.publishSettings.persistence === false)
 			{
-				console.log('State settings prevent persistence, cannot save');
-				return;
-			}
-			
-			
-
-			//if the editor is playing the scene, save the backup from before play was hit
-			if(vwf.getProperty(vwf.application(),'playMode') == 'play')
-			{
-				console.log('Skipping save because scene is playing.');
+				console.error('State settings prevent persistence, cannot save');
 				return;
 			}
 			
 			
 			var data = JSON.stringify(this.getSaveStateData());
-			vwf.saveState(data);
+			if(data)
+					vwf.saveState(data);
 			$('#SceneSaved').text(new Date());
 		}
 		this.getInstances = function ()

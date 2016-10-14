@@ -1,4 +1,4 @@
-define(function()
+define(["./vwf/view/editorview/lib/jquery-2.0.3.min.js","./vwf/view/editorview/lib/jquery-ui-1.10.3.custom.min.js"],function()
 {
     var names = {};
     function progressScreen(){

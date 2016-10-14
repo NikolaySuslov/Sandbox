@@ -14,7 +14,7 @@ function download(filename, text)
 	// Remove anchor from body
 	document.body.removeChild(a)
 }
-define(
+define(["./lib/ace/ace.js"],
 	function()
 	{
 		var self = null;

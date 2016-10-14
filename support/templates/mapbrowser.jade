@@ -1,0 +1,44 @@
+mixin mapbrowser_head
+	block
+
+mixin mapbrowser_body
+
+	#MapBrowser(ng-controller='MapBrowserController')
+
+		.toolbar
+
+			.buttongroup(style='min-width: 175px;')
+				.button.back(title='Up one level', ng-click='breadcrumbs.splice(-1, 1)')
+					.glyphicon.glyphicon-arrow-left
+
+				.buttongroup.breadcrumbs
+					.crumb.first(title='Home', ng-click='breadcrumbs = []'
+						ng-class='{active: !breadcrumbs.length}')
+						.glyphicon.glyphicon-home
+					.crumb(ng-repeat='crumb in breadcrumbs track by $index', title='{{crumb}}'
+						ng-class='{last: $last, active: $last}', ng-click='breadcrumbs.splice($index+1, breadcrumbs.length)')
+						| {{crumb}}
+
+			.buttongroup
+				.button.addByUrl(title='By URL', ng-click='loadByURL()')
+					.glyphicon.glyphicon-plus
+				.button.search(title='Search', ng-click='toggleSearchbox()')
+					.glyphicon.glyphicon-search
+				input.searchbox(type='text', ng-keyup='handleSearchInput($event)')
+
+				.crumb.first.tiles(title='Thumbnails', ng-class='{active: view === "thumbnails"}', ng-click='view = "thumbnails"')
+					.glyphicon.glyphicon-th-large
+				.crumb.last.list(title='List', ng-class='{active: view === "list"}', ng-click='view = "list"')
+					.glyphicon.glyphicon-th-list
+
+
+
+		.folderview(ng-class='{thumbnails: view === "thumbnails", list: view === "list"}', redirect-scroll='view === "list"')
+
+			.viewitem(ng-repeat='item in followPath(breadcrumbs)', ng-click='itemClicked(item, breadcrumbs)', title='{{item.url}}')
+				.thumb
+					.glyphicon.glyphicon-folder-open.fakethumb(ng-show='item.contents')
+					img(ng-if='item.thumbnail', ng-src='{{item.thumbnail}}')
+					.glyphicon.glyphicon-picture.fakethumb(ng-hide='item.contents || item.thumbnail')
+				.nameplate {{item.name}}
+					span.size(ng-show='item.width && item.height')  ({{item.width}}x{{item.height}})

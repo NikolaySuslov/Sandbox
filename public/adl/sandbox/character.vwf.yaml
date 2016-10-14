@@ -31,6 +31,7 @@ properties:
   ___physics_enabled: true
   ___physics_mass: 158.5
   animationPaused: false
+  originalvelocity: [0,0,0]
   jumpcounter: 0
   originalvelocity: 
   standing: 0
@@ -67,8 +68,8 @@ scripts:
         this.ku = function(e, d) {
           return self.keyUp(e, d)
         };
-        this.Scene.bind('keyDown', this.kd);
-        this.Scene.bind('keyUp', this.ku);
+        this.Scene.bind('keyDown', this.kd,this);
+        this.Scene.bind('keyUp', this.ku,this);
         this.Scene.avatarCreated(this);
       }
       this.lookat = function(vec)
@@ -225,7 +226,10 @@ scripts:
         this.Scene.unbind('keyUp', this.ku);
 
       }
-      this.placeNameTag = function(e, viewprojection, wh, ww) {
+      this.placeNameTag = function(e) {
+        var viewprojection = e[0];
+        var wh = e[1];  
+        var ww =e [2];
         if (this.id == 'character-vwf') return;
         if (!this.ownerClientID)
           return;
@@ -391,7 +395,7 @@ scripts:
 
       this.recordStandingOn = function(intersect) {
 
-
+        return;
         this.standingOnID = null;
         this.standingOnOffset = null
         if (!intersect) return;

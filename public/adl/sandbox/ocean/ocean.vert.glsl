@@ -121,22 +121,22 @@ void main() {
                   float st = t;
 
                   float w = W[i];
-                  float q = S[i] * w;
+                  float q = 3.0 ;
                   float Ai = A[i] * smoothstep(1.0, 0.0, pow(camDist, 1.3) / (uHalfGrid * L[i]));
 
                   if (Ai < .001) continue;
-                  vec2 xy = vec2(x , y);
+                  vec2 xy = vec2(x , y/2.0);
 
                   float Qi = Q[i]; // *numWaves?
                   float xi = Qi * Ai * D[i].x * cos( dot(w * D[i], xy) + q * st);
                   float yi = Qi * Ai * D[i].y * cos( dot(w * D[i], xy) + q * st);
                   float hi =  Ai * sin( dot(w * D[i], xy) + q * st );
 
-                  tPos.x += xi * gA*gB[i];
-                  tPos.y += yi * gA*gB[i];
-                  tPos.z += hi * gA*gB[i];
+                  tPos.x += xi;// * gA;//gB[i];
+                  tPos.y += yi;// * gA;//*gB[i];
+                  tPos.z += hi * gA *gB[i];
 
-                  float WA = w * Ai * gA *gB[i];
+                  float WA = w * Ai * gA ;//*gB[i];
                   float S0 = sin(w * dot(D[i], tPos.xy) + q * st);
                   float C0 = cos(w * dot(D[i], tPos.xy) + q * st);
 

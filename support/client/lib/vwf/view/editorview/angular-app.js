@@ -1,6 +1,6 @@
 
 
-define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview/lib/html-palette.min'], function(angular, UndoManager)
+define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview/lib/html-palette'], function(angular, UndoManager)
 {
 	var app = angular.module('SandboxEditor', ['html-palette']);
 	var playing = false;
@@ -49,7 +49,7 @@ define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview
 		angular.bootstrap( document.body, ['SandboxEditor'] );
 	}
 	app.apply = debounce(function(){
-		if(!playing) app.root.$apply();
+		if(!playing || !_DataManager.getInstanceData().publishSettings.allowPlayPause) app.root.$apply();
 	},200);
 
 	UndoManager = UndoManager.getSingleton();
@@ -194,6 +194,8 @@ define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview
 		if( id === 'index-vwf' && prop === 'playMode' ){
 			playing = val === 'play';
 			if( !playing ) apply = true;
+			if(!_DataManager.getInstanceData().publishSettings.allowPlayPause)
+				apply = true;
 		}
 
 		if( selectedNode && id === selectedNode.id )
@@ -293,8 +295,9 @@ define(['vwf/view/editorview/lib/angular', './UndoManager', 'vwf/view/editorview
 		if( app.root.fields.cameras.indexOf(nodeId) > -1 )
 			app.root.fields.cameras.splice( app.root.fields.cameras.indexOf(nodeId), 1 );
 
-		if(app.root.fields.selectedNode)
-			getSelectedNodeChildren();
+		//not sure what this is doing, but the node is gone at this point, you cant get the children
+		//if(app.root.fields.selectedNode)
+		//	getSelectedNodeChildren();
 
 		this.apply();
 	}

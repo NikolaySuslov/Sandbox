@@ -54,76 +54,9 @@ function setMeshStatic(node, val) {
         setMeshStatic(node.children[i], val);
 }
 
-define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/threejs/backgroundLoader", "vwf/model/threejs/glTFCloner", "vwf/model/threejs/glTFLoaderUtils", "vwf/model/threejs/glTFLoader", "vwf/model/threejs/glTFAnimation", "vwf/model/threejs/glTFAnimation", "vwf/model/threejs/materialCache", "vwf/model/threejs/assetRegistry","vwf/model/threejs/RMXLoader"], function(module, model, utility, Color, backgroundLoader) {
+define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/threejs/backgroundLoader", "vwf/model/threejs/subDriverFactory","vwf/model/threejs/sceneManager/sceneManager", "vwf/model/threejs/glTFCloner", "vwf/model/threejs/glTFLoaderUtils", "vwf/model/threejs/glTFLoader", "vwf/model/threejs/glTFAnimation", "vwf/model/threejs/glTFAnimation", "vwf/model/threejs/materialCache", "vwf/model/threejs/assetRegistry","vwf/model/threejs/RMXLoader"], function(module, model, utility, Color, backgroundLoader,subDriverFactory,SceneManager) {
 
 
-
-    THREE.Matrix4.prototype.lookAt = function(eye, target, up, axis) {
-
-        var te = this.elements;
-        if (axis === undefined)
-            axis = 2;
-        var x = new THREE.Vector3();
-        var y = new THREE.Vector3();
-        var z = new THREE.Vector3();
-        z.subVectors(eye, target).normalize();
-
-        if (z.length() === 0) {
-
-            z.z = 1;
-
-        }
-
-        x.crossVectors(up, z).normalize();
-
-        if (x.length() === 0) {
-
-            z.x += 0.0001;
-            x.crossVectors(up, z).normalize();
-
-        }
-
-        y.crossVectors(z, x);
-
-
-        if (axis == 2) {
-
-            te[0] = x.x;
-            te[4] = y.x;
-            te[8] = z.x;
-            te[1] = x.y;
-            te[5] = y.y;
-            te[9] = z.y;
-            te[2] = x.z;
-            te[6] = y.z;
-            te[10] = z.z;
-        }
-        if (axis == 1) {
-            te[0] = x.x;
-            te[4] = z.x;
-            te[8] = y.x;
-            te[1] = x.y;
-            te[5] = z.y;
-            te[9] = y.y;
-            te[2] = x.z;
-            te[6] = z.z;
-            te[10] = y.z;
-        }
-        if (axis == 0) {
-            te[0] = z.x;
-            te[4] = x.x;
-            te[8] = y.x;
-            te[1] = z.y;
-            te[5] = x.y;
-            te[9] = y.y;
-            te[2] = z.z;
-            te[6] = x.z;
-            te[10] = y.z;
-        }
-
-        return this;
-
-    }
 
 
 
@@ -143,7 +76,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
             window.backgroundLoader = backgroundLoader;
 
             this.delayedProperties = {};
-            this.subDriverFactory = new SubDriverFactory();
+            this.subDriverFactory = new subDriverFactory();
 
 
 
@@ -209,32 +142,12 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
 
             var protos = getPrototypes.call(this, kernel, childExtendsID);
             if (isSceneDefinition.call(this, protos) && childID == this.state.sceneRootID) {
-                var sceneNode = CreateThreeJSSceneNode(nodeID, childID, childExtendsID);
+                var sceneNode = CreateThreeJSSceneNode.call(this,nodeID, childID, childExtendsID);
+                //window._SceneManager = new SceneManager();
                 _SceneManager.initialize(sceneNode.threeScene);
                 this.state.scenes[childID] = sceneNode;
 
-                var cam = CreateThreeCamera();
-                sceneNode.camera.threeJScameras[sceneNode.camera.defaultCamID] = cam;
-                sceneNode.camera.ID = sceneNode.camera.defaultCamID;
-
-                var ambient = new THREE.AmbientLight();
-                ambient.color.r = .5;
-                ambient.color.g = .5;
-                ambient.color.b = .5;
-                sceneNode.threeScene.add(ambient);
-                sceneNode.threeScene.add(cam);
-
-
-
-
-                /* this is very old and OBE
-                cam.name = 'camera';
-                this.state.cameraInUse = cam;
-                var camType = "http://vwf.example.com/camera.vwf";
-
-                Engine.createChild(childID, "camera", {
-                    "extends": camType
-                });*/
+                
             }
 
             if (!nodeID) {
@@ -382,17 +295,14 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                     //we need to mark this node - because the VWF node is layered onto a GLGE node loaded from the art asset, deleteing the VWF node should not
                     //delete the GLGE node. This should probably undo any changes made to the GLGE node by the Engine. This is tricky. I'm going to backup the matrix, and reset it
                     //when deleting the VWF node.
-                    if (node.threeObject) {
+                  
                         node.threeObject.initializedFromAsset = true;
                         node.threeObject.backupMatrix = [];
                         node.threeObject.vwfID = node.ID;
+                        node.threeObject.originalVisible = node.threeObject.visible;
                         for (var u = 0; u < 16; u++)
                             node.threeObject.backupMatrix.push(node.threeObject.matrix.elements[u]);
-                    } else {
-                        console.log("failed to find view node for " + childSource);
-                        node.threeObject = new THREE.Object3D();
-                        node.threeObject.vwfID = node.ID;
-                    }
+                    
                     callback(true);
                 }
                 //use a pluggable model for createing nodes. This should make it easier to develop a driver that is not one long
@@ -442,7 +352,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                     node.threeObject.add(node.getRoot());
                     threeParent.add(node.threeObject);
                 } 
-                else if (childType == "subDriver/threejs/asset/vnd.raw-morphttarget" ||childType == "subDriver/threejs/asset/vnd.collada+xml" || childType == "subDriver/threejs/asset/vnd.osgjs+json+compressed" || childType == "subDriver/threejs/asset/vnd.collada+xml+optimized" || childType == "subDriver/threejs/asset/vnd.gltf+json" || childType == "subDriver/threejs/asset/vnd.three.js+json" || childType == "subDriver/threejs/asset/vnd.rmx+json") {
+                else if (childType == 'subDriver/threejs/asset/vnd.wavefront-obj' || childType == "subDriver/threejs/asset/vnd.raw-morphttarget" ||childType == "subDriver/threejs/asset/vnd.collada+xml" || childType == "subDriver/threejs/asset/vnd.osgjs+json+compressed" || childType == "subDriver/threejs/asset/vnd.collada+xml+optimized" || childType == "subDriver/threejs/asset/vnd.gltf+json" || childType == "subDriver/threejs/asset/vnd.three.js+json" || childType == "subDriver/threejs/asset/vnd.rmx+json") {
 
                     node = this.state.nodes[childID] = this.subDriverFactory.createNode(childID, 'vwf/model/threejs/asset.js', childName, childType, childSource, callback);
 
@@ -1036,7 +946,10 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
             if (!node) return;
 
             if (node.gettingProperty)
+            {
                 value = node.gettingProperty(propertyName);
+             //   return value; //careful here! this is a slight change. Nodes that implement the Sandbox subdriver mechanism MUST NOT RELY on the old compatibility code
+            }
 
             if (value !== undefined) return value;
             var threeObject = node.threeObject;
@@ -1070,7 +983,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                         var z = threeObject.matrixWorld.elements[14];
                         return [x, y, z];
                     }
-                    if (propertyName == 'transform') {
+                    else if (propertyName == 'transform') {
 
                         var value = matCpy(threeObject.matrix.elements);
 
@@ -1088,7 +1001,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
 
 
                     }
-                    if (propertyName == 'worldtransform' || propertyName == 'worldTransform') {
+                    else if (propertyName == 'worldtransform' || propertyName == 'worldTransform') {
                       //this is just not worth the cost. In fact, because of the scene glyph,
                       //it caused a full re-eval of the world transform stack.  
                       //  threeObject.updateMatrixWorld(true);
@@ -1111,16 +1024,16 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
 
 
 
-                    if (propertyName == "boundingbox") {
+                    else if (propertyName == "boundingbox") {
                         value = getBoundingBox.call(this, threeObject, true);
                         return value;
                     }
-                    if (propertyName == "centerOffset") {
+                    else if (propertyName == "centerOffset") {
                         value = getCenterOffset.call(this, threeObject);
                         return value;
                     }
 
-                    if (propertyName == "meshData") {
+                    else if (propertyName == "meshData") {
 
                         var threeObject = node.threeObject;
                         value = [];
@@ -1139,42 +1052,42 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
 
                 }
                 
-                if (threeObject instanceof THREE.Material) {
+                else if (threeObject instanceof THREE.Material) {
                     if (propertyName == "texture") {
                         //debugger;
                         if (threeObject.map && threeObject.map.image)
                             return threeObject.map.image.src;
 
                     }
-                    if (propertyName == "color") {
+                    else if (propertyName == "color") {
 
 
                     }
                 }
 
-                if (threeObject instanceof THREE.Light) {
+                else if (threeObject instanceof THREE.Light) {
                     if (propertyName == "intensity") {
                         return threeObject.intensity;
                     }
-                    if (propertyName == "castShadows") {
+                    else if (propertyName == "castShadows") {
                         return threeObject.castShadows;
                     }
-                    if (propertyName == "spotCosCutOff") {
+                    else if (propertyName == "spotCosCutOff") {
                         return threeObject.exponent;
                     }
-                    if (propertyName == "distance") {
+                    else if (propertyName == "distance") {
                         return threeObject.distance;
                     }
-                    if (propertyName == "color") {
+                    else if (propertyName == "color") {
                         return [threeObject.color.r, threeObject.color.g, threeObject.color.b];
 
                     }
-                    if (propertyName == "lightType") {
+                    else if (propertyName == "lightType") {
                         if (threeObject instanceof THREE.DirectionalLight)
                             return 'directional';
-                        if (threeObject instanceof THREE.SpotLight)
+                        else if (threeObject instanceof THREE.SpotLight)
                             return 'spot';
-                        if (threeObject instanceof THREE.PointLight)
+                        else if (threeObject instanceof THREE.PointLight)
                             return 'point';
 
                     }
@@ -1226,6 +1139,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                     node.ticking();
                 }
             }
+            _dScene.updateMatrixWorld();
         }
 
     });
@@ -1319,29 +1233,17 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
     }
 
     function CreateThreeJSSceneNode(parentID, thisID, extendsID) {
-        var node = {};
-        node.camera = {};
-        node.camera.ID = undefined;
-        node.camera.defaultCamID = "http-vwf-example-com-camera-vwf-camera";
-        node.camera.threeJScameras = {};
-        node.ID = thisID;
+        var node = this.subDriverFactory.createNode(thisID, 'vwf/model/threejs/scene.js', vwf.application(), extendsID, null, null);
         node.parentID = parentID;
         node.type = extendsID;
-        node.viewInited = false;
-        node.modelInited = false;
-        node.threeScene = new THREE.Scene();
-        node.threeScene.autoUpdate = false;
-        node.pendingLoads = 0;
-        node.srcAssetObjects = [];
-        node.delayedProperties = {};
-
         return node;
     }
     //changing this function significantly from the GLGE code. Will search heirarchy down until encountering a matching chile
     //will look into nodes that don't match.... this might not be desirable
     function FindChildByName(obj, childName, childType) {
 
-
+        if(!obj)
+            return null;
         if (obj.name == childName) {
             return obj;
         } else if (obj.children && obj.children.length > 0) {
@@ -1412,19 +1314,6 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
     }
 
 
-    function findAllMeshes(threeObject, list) {
-
-        if (!threeObject) return;
-        if (!list) list = [];
-        if (threeObject instanceof THREE.Mesh)
-            list.push(threeObject);
-        if (threeObject.children) {
-            for (var i = 0; i < threeObject.children.length; i++) {
-                findAllMeshes(threeObject.children[i], list);
-            }
-        }
-        return list;
-    }
 
     function getMeshVertexIndices(mesh) {
 
@@ -1876,6 +1765,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
             node.material = node.originalMaterial;
         if (node.backupMatrix)
             node.matrix.elements = node.backupMatrix;
+        node.visible = node.originalVisible;
 
         geometry.verticesNeedUpdate = true;
         geometry.normalsNeedUpdate = true;
@@ -1891,6 +1781,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
         delete node.originalUV2;
         delete node.originalMaterial;
         delete node.backupMatrix;
+        delete node.originalVisible;
 
         if (node.geometry)
             restoreObject(geometry);
@@ -2083,99 +1974,5 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
 
 
 
-    function SubDriverFactory() {
-        this.factories = {};
-        this.loadSubDriver = function(source) {
 
-            var script = $.ajax({
-                url: source,
-                async: false
-            }).responseText;
-            if (!script) return null;
-            var factory = eval(script);
-            if (!factory) return null;
-            if (factory.constructor != Function) return null;
-            return factory;
-
-        }
-        this.createNode = function(childID, childSource, childName, sourceType, assetSource, asyncCallback) {
-
-            var APINames = ['callingMethod', 'settingProperty', 'gettingProperty', 'initializingNode', 'addingChild', 'deletingNode', 'ticking'];
-            var node = null;
-            if (this.factories[childSource])
-                node = this.factories[childSource](childID, childSource, childName, sourceType, assetSource, asyncCallback);
-            else {
-                this.factories[childSource] = this.loadSubDriver(childSource);
-                node = this.factories[childSource](childID, childSource, childName, sourceType, assetSource, asyncCallback);
-            }
-
-            if (node.inherits)
-                if (node.inherits.constructor == Array) {
-                    for (var i = 0; i < node.inherits.length; i++) {
-                        var proto = null;
-                        if(node.inheritFullBase)  //does the node do full construction for the base, or partial
-                          proto = this.createNode(childID, node.inherits[i], childName, sourceType, assetSource, asyncCallback);
-                        else
-                          proto = this.createNode('', node.inherits[i], '');
-
-                        for (var j = 0; j < APINames.length; j++) {
-                            var api = APINames[j];
-                            if (!node[api + 'Internal']) {
-
-                                var capi = api + "";
-                                node[capi + 'Internal'] = [];
-                                if (node[capi])
-                                    node[capi + 'Internal'].push(node[capi]);
-                                node[capi] = new Function(["arg0","arg1","arg2","arg3","arg4","arg5"],
-                                    
-                                    "var ret = undefined;\n" +
-                                    "for(var i =0; i < this['" + capi + 'Internal' + "'].length; i++)\n" +
-                                    "	ret = ret !== undefined ? ret : (this['" + capi + 'Internal' + "'][i] && this['" + capi + 'Internal' + "'][i].call(this,arg0,arg1,arg2,arg3,arg4,arg5));\n" +
-                                    "return ret;"
-                                    
-                                );
-                                if (!proto[api + 'Internal']) {
-                                    if (proto[capi])
-                                        node[capi + 'Internal'].push(proto[capi]);
-                                } else {
-                                    for (var n = 0; n < proto[api + 'Internal'].length; n++) {
-                                        node[api + 'Internal'].push(proto[api + 'Internal'][n]);
-                                    }
-                                }
-                            } else {
-                                node[api + 'Internal'].push(proto[api]);
-                                //node[capi] = node[capi].bind(node);
-                            }
-
-                        }
-                        var keys = Object.keys(proto);
-                        for (var k = 0; k < keys.length; k++) {
-                            var key = keys[k];
-                            if (APINames.indexOf(key) == -1)
-                                if (!node.hasOwnProperty(key)) {
-                                    if (proto[key].constructor == Function)
-                                        node[key] = proto[key];
-                                    else
-                                        node[key] = proto[key];
-                                }
-                        }
-                    }
-                }
-            if(node.initialize)
-                node.initialize();    
-            return node;
-
-        }
-        //preload common drivers
-
-        this.factories['vwf/model/threejs/cylinder.js'] = this.loadSubDriver('vwf/model/threejs/cylinder.js');
-        this.factories['vwf/model/threejs/box.js'] = this.loadSubDriver('vwf/model/threejs/box.js');
-        this.factories['vwf/model/threejs/sphere.js'] = this.loadSubDriver('vwf/model/threejs/sphere.js');
-        this.factories['vwf/model/threejs/cone.js'] = this.loadSubDriver('vwf/model/threejs/cone.js');
-        this.factories['vwf/model/threejs/plane.js'] = this.loadSubDriver('vwf/model/threejs/plane.js');
-
-        this.factories['vwf/model/threejs/prim.js'] = this.loadSubDriver('vwf/model/threejs/prim.js');
-        this.factories['vwf/model/threejs/modifier.js'] = this.loadSubDriver('vwf/model/threejs/modifier.js');
-        this.factories['vwf/model/threejs/materialDef.js'] = this.loadSubDriver('vwf/model/threejs/materialDef.js');
-    }
 });

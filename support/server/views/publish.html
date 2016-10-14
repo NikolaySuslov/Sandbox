@@ -1,0 +1,341 @@
+<style>
+
+.searchresult{
+display: inline-block;
+width: 400px;
+height: 200px;
+opacity:1;
+}
+.searchresult img{
+width: 360px;
+height: 186px;
+border-radius: 5px;
+box-shadow: 0px 0px 5px #DDD;
+background: white;
+
+}	
+.worldtitle{
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+}
+.count{
+	font-size: 10px;
+font-weight: bold;
+color: lightgray;
+}
+.explanation
+{
+    color: grey;
+    border-left: 5px solid lightgray;
+    padding-left: 2em;
+    background: #eee;
+}
+
+@media (max-width: 607px){
+			.searchresult{
+			height: 120px;
+			
+			}
+		}	
+		@media (max-width: 407px){
+			.searchresult{
+			height: 100px;
+			width: 150px;
+			
+			}
+			.searchresult img{
+			width: 140px;
+			height: 73px;
+
+}	
+		}		
+
+</style>
+
+<script type="text/javascript">
+	var sid = '{{sid}}'; 
+	var lastActiveCamera = "";
+
+	function getCameraList()
+	{
+		var data = $.ajax(root + '/vwfDataManager.svc/cameras?SID=' + sid, {
+			cache: false,
+			async:false
+		});
+		data = data.responseJSON || [];
+		data.unshift({id: "", name: "Editor Camera"});
+		return data;
+	}	
+	
+	var explanations = {
+		singlePlayer:"Each user will have an independant session of the world. This settings is not compatible with perisitance or access control. The world will allow anonymous users.",
+		allowTools:"The editing user interface will be available. Ability to actually use the tools depends on whether or not the user is logged in and the Allow Anonymous settings.",
+		createAvatar:"An avatar will be created to represent each user who logs in.",
+		perisitance:"The world will be saved to the database whenever anyone joins or leaves, when the 'save now' button is clicked in the editor interface, or every few minutes. If this is disabled, no method can save the current state, and the world will reset to the last saved state when the last client disconnects.",
+		allowAnonymous:"Anonymous users will be able to edit the world with the editor tools if they are available, the anonymous users will have an avatar, and be able to interact with any game logic.",
+		hidden:"This world will be hidden from search results.",
+		allowPlayPause:"The world will be able to play and pause. Stopping the world will reset it to the last state created by the editor tools. This is only available if the editor tools are enabled. When disabled, the world will be editable while playing, and function more like a virtual world, and less like a game editor.",
+		startPaused:"The world will start in the paused state. If the tools are enabled and allowPlayPause is enabled, this is always true."
+	}
+	function setting(key,description,defaultval,disabledVal,disabledBy)
+	{
+		this.key = key;
+		this.value = defaultval;
+		this.description = description;
+		this.disabledVal = disabledVal;
+		this.disabledBy = disabledBy;
+		this.init = function(settings)
+		{
+			this.value = settings[this.key];
+			this.settings = settings;
+		}
+		this.render = function(div)
+		{
+			
+		}
+		this.renderExplanation = function(div)
+		{
+			return; // this does not work all that well.
+			//this.explanation = $("<div class='explanation'></div>").appendTo(div);
+			//$(this.explanation).text(explanations[this.key]);
+			$(div).prop('title',explanations[this.key])
+			$(div).tooltip({ track: true});
+		}
+		this.val = function()
+		{
+			return this.value;
+		}
+		this.disabled = function()
+		{
+			for(var i in this.disabledBy)
+			{
+				if(this.disabledBy[i].val())
+					return true;
+			}
+		}
+		this.dirty = function()
+		{
+			this.settings[this.key] = this.value = this.val();
+			rebuildSettings(this.settings);
+		}
+	}
+	function boolSetting(key,description,defaultval,disabledVal,disabledBy)
+	{
+		setting.call(this,key,description,defaultval,disabledVal,disabledBy);
+		this.render = function(div)
+		{
+			if(this.div)
+				$(this.div).remove();
+
+			this.div = $("<div ></div>").appendTo(div);
+			this.renderExplanation(this.div);
+			if(this.disabled())
+			{
+				this.value = this.disabledVal;
+				this.settings[this.key] = this.disabledVal;
+				$(this.div).prop('disabled',true);
+				$(this.div).css('opacity',.35);
+				$(this.div).css('pointer-events','none');
+			}
+			this.input = $("<input type='checkbox'>"+this.description+"</input>").appendTo(this.div);
+			if(this.value === true)
+			{
+				$(this.input).prop('checked',true);
+			}	
+			$(this.input).click(function()
+			{
+				this.value = !this.value;
+				this.settings[this.key] = this.value;
+				this.dirty();
+			}.bind(this))
+		}
+		this.val = function()
+		{
+			return $(this.input).prop('checked') == true;
+		}
+	}
+	function choiceSetting(key,description,defaultval,disabledVal,disabledBy,choices)
+	{
+		setting.call(this,key,description,defaultval,disabledVal,disabledBy);
+		this.choices = choices;
+		this.render = function(div)
+		{
+			if(this.div)
+				$(this.div).remove();
+					$('#chkHidden').prop('disabled', false);
+
+			this.div = $("<div></div>").appendTo(div);
+			if(this.disabled())
+			{
+				this.value = this.disabledVal;
+				this.settings[this.key] = this.disabledVal;
+				$(this.div).prop('disabled',true);
+				$(this.div).css('opacity',.35);
+				$(this.div).css('pointer-events','none');
+			}
+			$(this.div).append("</br><div>"+this.description+"</div>")
+			this.input = $("<select></select>").appendTo(this.div);
+			for(var i in this.choices)
+			{
+				$('<option value="'+this.choices[i].id+'">' + this.choices[i].name +'</option>').appendTo(this.input);
+			}
+			
+			$(this.input).val(this.value);
+
+			$(this.input).change(function()
+			{
+				this.value = this.val();
+				this.settings[this.key] = this.value;
+				this.dirty();
+			}.bind(this))	
+			
+			
+		}
+		this.val = function()
+		{
+			return $(this.input).children("option:selected").prop('value');
+		}
+	}
+
+	var settingsList = {};
+	Object.defineProperty(settingsList,"push",{
+			enumerable:false,
+			value:function(i)
+			{
+				this[i.key] = i;
+			}
+	})
+	function rebuildSettings(data)
+	{
+		for(var i in settingsList)
+		{
+			settingsList[i].init(data);
+		}
+		for(var i in settingsList)
+		{
+			settingsList[i].render($('#form fieldset')[0]);
+		}
+	}
+	function not(setting)
+	{
+		return {
+			val:function()
+			{
+				return !setting.val();
+			}
+		}
+	}
+	function and(setting1,setting2)
+	{
+		return {
+			val:function()
+			{
+				return setting.val() && setting2.val();
+			}
+		}
+	}
+
+	settingsList.push(new boolSetting('singlePlayer',"Single player",true,false,[]));
+	settingsList.push(new boolSetting('allowTools',"Allow Tools",true,false,[]));
+	settingsList.push(new boolSetting('createAvatar',"Create Avatars",true,false,[]));
+	settingsList.push(new boolSetting('persistence',"Enable Persistance",true,false,[settingsList["singlePlayer"]]));
+	settingsList.push(new boolSetting('allowAnonymous',"Allow Anonymous",false,true,[settingsList["singlePlayer"]]));
+	settingsList.push(new boolSetting('hidden',"Hide in search results",false,false,[]));
+	settingsList.push(new boolSetting('allowPlayPause',"Allow Play, Pause and Stop editing commands",true,false,[not(settingsList.allowTools)]));
+	settingsList.push(new boolSetting('startPaused',"Start the world in the stopped state",true,false,[not(settingsList["allowPlayPause"])]));
+	settingsList.push(new choiceSetting('camera',"Choose the default camera",true,false,[],getCameraList()));
+
+	var stateData;
+	$(document).ready(function()
+	{
+		
+		$.ajax(root + '/vwfDataManager.svc/statedata?SID=' + sid,
+		{
+			cache:false,
+			success:function(data,status,xhr)
+			{
+				stateData = JSON.parse(xhr.responseText).publishSettings;
+				
+				rebuildSettings(stateData);
+				center();
+
+
+			},
+			error:function(xhr,status,err)
+			{
+				$('#error').text("Error: " + xhr.responseText);
+			}
+		});
+
+		
+		$('#chkHidden').prop('disabled', true);
+	
+		function redirect()
+		{
+			window.location = root + '/world/' + sid.substr(sid.length-17, 16);
+		}
+	
+		function handleEditButton (o, e){
+		
+			
+			
+			
+			jQuery.ajax(
+			{
+				type: 'POST',
+				url: root + '/vwfDataManager.svc/publish?SID='+sid,
+				data: JSON.stringify(stateData),
+				contentType: stateData ? "application/json; charset=utf-8" : "application/text; charset=utf-8",
+				success:function(data,status,xhr)
+				{
+					redirect();
+				},
+				error:function(xhr,status,err)
+				{
+					
+					$('#error').text("Error: " + xhr.responseText);
+				},
+				dataType: "text"
+			});	
+			
+			
+		}
+
+		$('#submit').click(function()
+		{
+			handleEditButton();
+		})
+	});	
+
+
+
+</script>
+
+<div id="content" class="row" style="margin:10px auto;float:none;text-align:center;">
+	<div class="col-md-5" style="margin:10px auto;float:none;text-align:center;">
+		
+
+		<div class='searchresult'>
+			
+			<div class='worldtitle'> {{title}} </div>
+			<div> <img src="./vwfdatamanager.svc/thumbnail?SID={{sid}}" onerror = "this.src = '/adl/sandbox/img/thumbnotfound.png'"></img> </div>
+			
+			</div>
+
+
+		<form id="form">
+
+			<legend> <span id="worldtitle"></span> World Settings</legend>
+			<fieldset style="width: 75%;text-align: left;margin-left: auto;margin-right: auto;">
+				
+
+			
+				
+			</fieldset>
+			<legend> </legend>
+			<input id="submit" type="button" class='btn btn-default' style="margin-top:7px;"  value="Save"/>
+		</form>
+	</div>
+</div>
+

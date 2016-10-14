@@ -1,0 +1,196 @@
+# Copyright 2014 Nikolai Suslov, Krestianstvo.org project
+# 
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+# in compliance with the License. You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software distributed under the License
+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied. See the License for the specific language governing permissions and limitations under
+# the License.
+#
+# Copyright 2012 United States Government, as represented by the Secretary of Defense, Under
+# Secretary of Defense (Personnel & Readiness).
+# 
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+# in compliance with the License. You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software distributed under the License
+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied. See the License for the specific language governing permissions and limitations under
+# the License.
+---
+
+extends: prim2.vwf
+properties:
+  radius: 1
+  rsegs: 10
+  ssegs: 10
+  iteration: 3
+  angle: 60
+  stepLength: 1
+  rule: 'F-F++F-F'
+  axiomF: 'F-F++F-F'
+  axiomG: ''
+  ohmLSys: |
+      LSys { Gen<x, y> 
+        = ReadRule+ 
+        ReadRule 
+         = letters | symbols
+        letters  = "F" | "G" 
+        symbols  = "-" | "+" }
+  ohmTurtle: |
+      Turtle {
+       Draw<x, y> 
+        = (drawLetter | turn)+ 
+        drawLetter =letter
+        turn = "+" | "-" }
+methods:
+  ready: |
+      if (this.methods.hasOwnProperty('initLSysSemantics')){
+        this.forceUpdate();
+      }
+      this.initGrammarLSys();
+      this.initGrammarTurtle();
+      this.generateLSys();
+  forceUpdate: |
+          console.log('Force to update old source code!');
+          var methods = Engine.getMethods(this.id);
+          var nodeMethodsToDel = ['genLSys', 'initGrammarLSys', 'initGrammarTurtle', 'initLSysSemantics', 'initTurtleSemantics'];
+          for (var i in nodeMethodsToDel)
+          {
+              if (methods[nodeMethodsToDel[i]] !== undefined)
+              {
+                  var methodName = nodeMethodsToDel[i];
+                  Engine.deleteMethod(this.id, methodName);
+              }
+          }
+          var nodeMethods = ['genLSys', 'initGrammarLSys', 'initGrammarTurtle', 'initSemanticsLSys', 'initSemanticsTurtle'];
+          var methodsNew = Engine.getMethods(this.id);
+          for (var i in nodeMethods)
+          {
+              if (methodsNew[nodeMethods[i]] === undefined)
+              {
+                  var methodName = nodeMethods[i];
+                  var prot = Engine.getMethods(Engine.prototype(this.id))[methodName];
+                  Engine.createMethod(this.id, methodName, [], prot.body);
+              }
+          }
+                  Engine.deleteMethod(this.id, 'makeTurtle');
+                  var prot = Engine.getMethods(Engine.prototype(this.id))['makeTurtle'];
+                  Engine.createMethod(this.id, 'makeTurtle', prot.parameters, prot.body);
+  initSemanticsLSys: |
+    var s = _LangManager.ohmLangs[this.id]["LSys"]["semantics"];
+    s.addOperation('gen(x)',
+    {
+        Gen: function(e)
+        {
+            return e.gen(this.args.x);
+        },
+        ReadRule: function(e)
+        {
+            return e.gen(this.args.x);
+        },
+        letters: function(_)
+        {
+            for (var propName in this.args.x)
+            {
+                if (propName == this.interval.contents)
+                    return this.args.x[propName]
+            }
+            return this.interval.contents
+        },
+        symbols: function(_)
+        {
+            return this.interval.contents;
+        }
+    });
+  initSemanticsTurtle: |
+    var myID = this.id;
+    var s = _LangManager.ohmLangs[this.id]["Turtle"]["semantics"];
+    s.addOperation('draw(x,y)',
+    {
+        Draw: function(e)
+        {
+            e.draw(this.args.x, this.args.y);
+        },
+        drawLetter: function(e)
+        {
+            Engine.callMethod(myID, 'goForward', [this.args.x]);
+        },
+        turn: function(e)
+        {
+            if (this.interval.contents == "+")
+                Engine.callMethod(myID, 'turn', [this.args.y]);
+            if (this.interval.contents == "-")
+                Engine.callMethod(myID, 'turn', [-1 * this.args.y]);
+           }
+      });
+  genLSys: |
+    var gram = _LangManager.ohmLangs[this.id]["LSys"]["grammar"];
+    var sem = _LangManager.ohmLangs[this.id]["LSys"]["semantics"];
+    var str = this.rule;
+    var axioms = {"F": this.axiomF, "G": this.axiomG};
+    for (var i = 1; i < this.iteration; i++)
+    {
+        var r = gram.match(str);
+        var n = sem(r);
+        var res = n.gen(axioms);
+        str = res.join("");
+    }
+    return str;
+  resetLS: |
+    this.children_by_name.pen.points = [];
+  goForward:
+    parameters:
+      - step
+    body: |
+      this.transformAPI.move(step, 0, 0, "local");
+      var pos = this.transformAPI.getPosition();
+      pos = new THREE.Vector3(pos[0], pos[1], pos[2]);
+      this.children_by_name.pen.points.push([pos.x, pos.y, pos.z]);
+  turn: 
+    parameters:
+      - angle
+    body: |
+      this.transformAPI.rotateZ(angle, "local");
+  generateLSys: |
+    if (this.children_by_name.pen !== undefined)
+      {
+      this.resetLS();
+      var oldPos = this.transformAPI.getWorldPosition();
+      var oldRot = this.transformAPI.getRotation();
+      this.transformAPI.setPosition(0, 0, 0);
+      this.transformAPI.setRotation(0, 0, 0);
+      var lsys = this.genLSys();
+      var turtle = this.makeTurtle(lsys);
+      turtle.draw(this.stepLength, this.angle);
+      this.transformAPI.setPosition(oldPos);
+      this.transformAPI.setRotation(oldRot);
+      }
+  makeLSys: |
+      var lsys = this.genLSys();
+      var turtle = this.makeTurtle(lsys);
+      this.resetLS();
+      var oldPos = this.transformAPI.getWorldPosition();
+      this.transformAPI.setPosition(0, 0, 0);
+      turtle.draw(this.stepLength, this.angle);
+      this.transformAPI.setPosition(oldPos);
+  initGrammarLSys: |
+    console.log('Init grammar: LSys');
+    this.initSemanticsLSys();
+  initGrammarTurtle: |
+    console.log('Init grammar: Turtle');
+    this.initSemanticsTurtle();
+  makeTurtle:
+    parameters:
+      - lsys
+    body: |
+      var gram = _LangManager.ohmLangs[this.id]["Turtle"]["grammar"];
+      var sem = _LangManager.ohmLangs[this.id]["Turtle"]["semantics"];
+      var r = gram.match(lsys);
+      var n = sem(r);
+      return n;

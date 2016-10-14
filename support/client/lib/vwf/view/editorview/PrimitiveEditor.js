@@ -1,4 +1,4 @@
-'use strict';
+
 
 define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor'], function(app, baseClass){
     var primEditor = {};
@@ -349,49 +349,6 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
     }]);
 
     app.directive('vwfEditorProperty', ['$compile', function($compile){
-        var lastValue = null;
-        var valueBeforeSliding;
-
-        function updateSliderValue(node, prop, isUpdating){
-            if(Array.isArray(prop)){
-
-                if(!valueBeforeSliding) valueBeforeSliding = [];
-                for(var i = 0; i < prop.length; i++){
-                    var sliderValue = node.properties[prop[i]];
-
-                    if(isUpdating) valueBeforeSliding[i] = sliderValue;
-
-                    //The assumption here is only one property can change at a time...
-                    else if(sliderValue !== valueBeforeSliding[i]){
-                        pushUndoEvent(node, prop[i], sliderValue, valueBeforeSliding[i]);
-                        break;
-                    }
-                }
-            }
-            else{
-                var sliderValue = node.properties[prop];
-
-                //On initial slide, save value before slide occurred
-                //Once done sliding, push value onto undo stack
-                if(isUpdating) valueBeforeSliding = sliderValue;
-                else pushUndoEvent(node, prop, sliderValue, valueBeforeSliding);
-
-                console.log("Change in isUpdating!", prop, isUpdating, sliderValue, valueBeforeSliding);
-            }
-        }
-
-        function delayedUpdate(node, prop, value){
-            if(lastValue === null){
-                window.setTimeout(function(){
-                    console.log("delayedUpdate", value);
-
-                    setProperty(node, prop, lastValue);
-                    lastValue = null;
-                }, 75);
-            }
-
-            lastValue = value;
-        }
 
 		function pickNode(vwfNode, vwfProp){
             _Editor.TempPickCallback = function(node) {
@@ -419,20 +376,75 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
 
         function linkFn(scope, elem, attr){
             scope.isUpdating = false;
-            scope.onChange = function(index){
-                //setTimeout is necessary because the model is not up-to-date when this event is fired
-                window.setTimeout(function(){
-                    var node = scope.vwfNode, prop = scope.property, value;
-                    if(Array.isArray(prop)) prop = prop[index];
+            var valueBeforeSliding;
 
-                    value = node.properties[prop];
+            //Necessary because color array references are shared internally and by the Sandbox
+            var colorCopyArr;
 
-                    if(value !== Engine.getProperty(node.id, prop)){
-                        pushUndoEvent(node, prop, value);
-                        setProperty(node, prop, value);
+            function updateSliderValue(node, prop, isUpdating){
+                if(Array.isArray(prop)){
+
+                    if(!valueBeforeSliding) valueBeforeSliding = [];
+                    for(var i = 0; i < prop.length; i++){
+                        var sliderValue = node.properties[prop[i]];
+
+                        if(isUpdating) valueBeforeSliding[i] = sliderValue;
+
+                        //The assumption here is only one property can change at a time...
+                        else if(sliderValue !== valueBeforeSliding[i]){
+                            pushUndoEvent(node, prop[i], sliderValue, valueBeforeSliding[i]);
+                            break;
+                        }
                     }
+                }
+                else{
+                    var sliderValue = node.properties[prop];
 
-                }, 50);
+                    //On initial slide, save value before slide occurred
+                    //Once done sliding, push value onto undo stack
+                    if(isUpdating){
+                        //if array, shallow copy
+                        if(Array.isArray(sliderValue)){
+                            valueBeforeSliding = [];
+                            for(var i = 0; i < sliderValue.length; i++){
+                                valueBeforeSliding.push(sliderValue[i]);
+                            }
+                        }
+                        else{
+                            valueBeforeSliding = sliderValue;
+                        }
+                    }
+                    else pushUndoEvent(node, prop, sliderValue, valueBeforeSliding);
+                }
+            }
+
+            scope.onChange = function(index, override){
+                  var node = scope.vwfNode, prop = scope.property, value;
+
+                  //Some props are actually arrays (!), use index to get real property name
+                  if(Array.isArray(prop)) prop = prop[index];
+
+                  //Override is necessary to deal with cases where the model is not up to date
+                  if(override != undefined) node.properties[prop] = override;
+                  value = node.properties[prop];
+
+                  //If property type is color, assign by value and not reference
+                  if(scope.type == "color"){
+                      if(!value) value = [0, 0, 0, 1];
+                      if(!scope.isUpdating) pushUndoEvent(node, prop, colorCopyArr, value);
+
+                      value[0] = colorCopyArr[0];
+                      value[1] = colorCopyArr[1];
+                      value[2] = colorCopyArr[2];
+                      value[3] = colorCopyArr[3];
+
+                      setProperty(node, prop, value);
+                  }
+
+                  else if(value !== Engine.getProperty(node.id, prop)){
+                      if(!scope.isUpdating) pushUndoEvent(node, prop, value);
+                      setProperty(node, prop, value);
+                  }
             };
 
             if(scope.vwfProp){
@@ -464,12 +476,6 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
                                     }
                                 }
                             }
-                            else if(scope.type === "rangeslider"){
-                                //Update occasionally only while user is sliding
-                                if(newVal !== oldVal && scope.isUpdating){
-                                    delayedUpdate(scope.vwfNode, scope.property[propIndex], newVal);
-                                }
-                            }
                             else if(newVal !== oldVal){
                                 //scope.vwfNode[scope.property[propIndex]] = newVal;
                                 setProperty(scope.vwfNode, scope.property[propIndex], newVal);
@@ -485,33 +491,63 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
                         }
                     }
                     else{
-                        for (var i = 0; i < uniques.length; i++) {
-                            //The assumption here is that these properties are min, max pairs pointed
-                            //at primitive values (numbers). Thus they shouldn't be need "watchCollection"
-                            //getWatchFn simply creates a closure so we know which property has changed.
-                            scope.$watch(uniques[i], getWatchFn(i));
-                        }
-
                         if(scope.type === "rangeslider"){
                             scope.$watch('isUpdating', function(newVal, oldVal){
                                 if(newVal !== oldVal) updateSliderValue(scope.vwfNode, scope.property, newVal);
                             });
                         }
+
+                        else{
+                            for (var i = 0; i < uniques.length; i++) {
+                                //The assumption here is that these properties are min, max pairs pointed
+                                //at primitive values (numbers). Thus, they shouldn't need "watchCollection"
+                                //getWatchFn simply creates a closure so we know which property has changed.
+                                scope.$watch(uniques[i], getWatchFn(i));
+                            }
+                        }
                     }
                 }
-                else if(scope.type.indexOf("slider") > -1 || scope.type == "color"){
-                    scope.$watch('vwfNode.properties[property]', function(newVal, oldVal){
-                        console.log(scope.vwfProp, scope.vwfNode.id, newVal);
-
-                        //Update occasionally only while user is sliding
-                        if(newVal !== oldVal && scope.isUpdating){
-                            delayedUpdate(scope.vwfNode, scope.property, newVal);
-                        }
-                    }, true);
-
+                else if(scope.type.indexOf("slider") > -1){
                     scope.$watch('isUpdating', function(newVal, oldVal){
                         if(newVal !== oldVal) updateSliderValue(scope.vwfNode, scope.property, newVal);
                     });
+                }
+                else if(scope.type == 'color'){
+                    //Interface with updated color picker
+                    //if a color is already set, use it...
+                    colorCopyArr = [];
+
+
+                    var value = scope.vwfNode.properties[scope.property];
+                    updateColor(value ? value : [0, 0, 0, 1], null, true);
+
+                    scope.rgbColor = rgbaArrToObj(colorCopyArr, {});
+                    scope.$watch('rgbColor', updateColor, true);
+                    scope.$watch('vwfNode.properties.' + scope.property, function(newVal, oldVal){
+                        if(newVal) rgbaArrToObj(newVal, scope.rgbColor);
+                    }, true);
+
+                    scope.colorSelect = function(a, b, c){
+                        scope.isUpdating = false;
+                        updateSliderValue(scope.vwfNode, scope.property, scope.isUpdating);
+                    }
+
+                    function updateColor(newVal, oldVal, skipChange){
+                        console.log("Color updated");
+                        if(newVal !== oldVal){
+
+                            if(!scope.isUpdating){
+                                scope.isUpdating = true;
+                                updateSliderValue(scope.vwfNode, scope.property, scope.isUpdating);
+                            }
+
+                            if(skipChange !== true){
+                                rgbaObjToArr(newVal, colorCopyArr);
+                                scope.onChange();
+                            }
+                            else colorCopyArr = newVal.slice();
+                        }
+                    }
                 }
                 else if(scope.type === "nodeid") scope.pickNode = pickNode;
                 else if(scope.type === "prompt") scope.showPrompt = showPrompt;
@@ -571,7 +607,21 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
     }
 
     function pushUndoEvent(node, prop, newVal, oldVal){
+        //Ensure arrays are actually different (by value)
+        if(Array.isArray(oldVal) && Array.isArray(oldVal) && newVal.length === oldVal.length){
+            var isDiff = false;
+            for(var i = 0; i < newVal.length; i++){
+                if(oldVal[i] != newVal[i]){
+                    isDiff = true;
+                    break;
+                }
+            }
+
+            if(!isDiff) return;
+        }
+
         console.log("New undo event!", prop, newVal, oldVal);
+
         if(oldVal != undefined)
             _UndoManager.pushEvent( new _UndoManager.SetPropertyEvent(node.id, prop, newVal, oldVal) );
         else
@@ -620,6 +670,22 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
                 uniques.push(arr[i]);
         }
         return uniques;
+    }
+
+    function rgbaObjToArr(colorObj, colorArr){
+        colorArr[0] = colorObj.r;
+        colorArr[1] = colorObj.g;
+        colorArr[2] = colorObj.b;
+        colorArr[3] = colorObj.a;
+        return colorArr;
+    }
+
+    function rgbaArrToObj(colorArr, colorObj){
+        colorObj.r = colorArr[0];
+        colorObj.g = colorArr[1];
+        colorObj.b = colorArr[2];
+        colorObj.a = colorArr[3];
+        return colorObj;
     }
 
     return window._PrimitiveEditor;

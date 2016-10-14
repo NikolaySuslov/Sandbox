@@ -5,10 +5,11 @@ THREE.VRRenderer = function(renderer, hmd) {
     var self = this;
 
     self.initialize = function() {
-        var et = hmd.getEyeTranslation("left");
+		
+        var et = hmd.getEyeParameters('left').eyeTranslation;
         self.halfIPD = new THREE.Vector3(et.x, et.y, et.z).length();
-        self.fovLeft = hmd.getRecommendedEyeFieldOfView("left");
-        self.fovRight = hmd.getRecommendedEyeFieldOfView("right");
+        self.fovLeft = hmd.getEyeParameters('left').recommendedFieldOfView;
+        self.fovRight = hmd.getEyeParameters('right').recommendedFieldOfView;
         renderer.autoClear = true;
     }
 

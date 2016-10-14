@@ -6,10 +6,8 @@ if( !Math.log10 ){
 	}
 }
 
-define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], function(app, mapbrowser)
+define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], function(app, browseTextures)
 {
-	window._MapBrowser = mapbrowser.getSingleton();
-
 	app.controller('MaterialController', ['$scope','$timeout', function($scope, $timeout)
 	{
 		/*
@@ -226,19 +224,10 @@ define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], fu
 		// open the texture browser, and apply the selection to the layer at the given index
 		$scope.browseForTexture = function(index)
 		{
-			if( window._MapBrowser ){
-				window._MapBrowser.setTexturePickedCallback(function(url){
+			browseTextures(function(url){
+				if(url)
 					$scope.materialDef.layers[index].src = url;
-					$scope.$apply();
-
-					window._MapBrowser.hide();
-				});
-
-				window._MapBrowser.show();
-			}
-			else {
-				console.log('Texture browser is unavailable');
-			}
+			});
 		}
 
 		window._MaterialEditor = $scope;
@@ -256,12 +245,19 @@ define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], fu
 			template: [
 				'<div class="mantissa">',
 					'<div class="slider"></div>',
-					'<input type="number" min="{{min}}" max="{{max}}" step="{{step}}" ng-model="value" ng-disabled="disabled || softLimit" ng-hide="range || softLimit" ng-change="change()" ng-model-options="{updateOn: \'blur click change\'}" />',
-					'<input type="number" step="{{step}}" ng-model="value" ng-disabled="disabled || !softLimit" ng-hide="range || !softLimit" ng-change="change()" ng-model-options="{updateOn: \'blur click change\'}" />',
+
+					'<input type="number" min="{{min}}" max="{{max}}" step="{{step}}" ng-model="value" ' +
+					'ng-disabled="disabled || softLimit" ng-hide="range || softLimit" ng-change="update(value)"' +
+					' ng-model-options="{updateOn: \'blur click change\'}" />',
+
+					'<input type="number" step="{{step}}" ng-model="value" ' +
+					'ng-disabled="disabled || !softLimit" ng-hide="range || !softLimit" ng-change="update(value)"' +
+					' ng-model-options="{updateOn: \'blur click change\'}" />',
+
 				'</div>',
 				'<div class="exponent" ng-show="useExponent">',
 					'Exponent: ',
-					'<input type="number" min="0" step="1" ng-model="exponent" ng-disabled="disabled" ng-change="change()"></input>',
+					'<input type="number" min="0" step="1" ng-model="exponent" ng-disabled="disabled" ng-change="update(exponent)"></input>',
 				'</div>',
 			].join(''),
 			scope: {
@@ -285,7 +281,12 @@ define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], fu
 				$scope.softLimit = attrs.softlimit ? true : false;
 				$scope.mantissa = !isNaN($scope.value) ? $scope.value : $scope.min;
 				$scope.exponent = 0;
-				$scope.change = $scope.change || $.noop;
+
+				$scope.update = function(value){
+					var fn = $scope.change();
+					if(fn) fn(null, value);
+				}
+
 				var opts = {
 					min: $scope.min,
 					max: $scope.max,
@@ -312,12 +313,18 @@ define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], fu
 
 				// update the value when sliding
 				slider.on('slide', function(evt, ui){
+					var fn = $scope.change && $scope.change(); //in somecases, there is not this func
+					var changedIndex = undefined;
+
 					if(rangeMode){
+						changedIndex = $scope.value !== ui.values[0] ? 0 : 1;
 						$scope.value = ui.values[0];
 						$scope.upperValue = ui.values[1];
 					}
 					else $scope.mantissa = ui.value;
 					$scope.$apply();
+
+					if(fn) fn(changedIndex);
 				});
 
 				// update sliding status
@@ -399,14 +406,14 @@ define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], fu
 			elem.prepend($compile('<img src="{{value}}"/>')(scope));
 
 			scope.showPicker = function() {
-				_MapBrowser.setTexturePickedCallback(function(e) {
+				browseTextures(function(e) {
 					scope.value = e;
 					scope.$apply();
 
 					scope.change();
 				}.bind(elem.get(0)));
 
-				_MapBrowser.show();
+				
 			}
 		}
 		return {
@@ -431,28 +438,34 @@ define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], fu
 				colorArr: '=',
 				colorObj: '=',
 				disabled: '=',
-				sliding: '='
+				sliding: '=',
+				change: '&?'
 			},
 			link: function($scope, elem, attrs)
 			{
+				$scope.change = $scope.change || $.noop;
 				$scope.colorObj = $scope.colorObj || {r:0, g:0, b:0};
 
-				$scope.$watch('colorArr[0] + colorArr[1] + colorArr[2]', function(newVal){
+				$scope.$watch('colorArr[0] + colorArr[1] + colorArr[2]', function(newVal, oldVal){
 					 if(newVal){
 					 	$scope.colorObj.r = $scope.colorArr[0];
 					 	$scope.colorObj.g = $scope.colorArr[1];
 					 	$scope.colorObj.b = $scope.colorArr[2];
+
+						if(newVal != oldVal) $scope.change();
 					 }
 				});
 
 				// set color of icon when upstream color changes
-				$scope.$watch('colorObj.r + colorObj.b + colorObj.g', function(newVal){
+				$scope.$watch('colorObj.r + colorObj.b + colorObj.g', function(newVal, oldVal){
 					$('.colorPickerIcon', elem).css('background-color', '#'+color());
 
 					if($scope.colorArr){
 					 	$scope.colorArr[0] = $scope.colorObj.r;
 					 	$scope.colorArr[1] = $scope.colorObj.g;
 					 	$scope.colorArr[2] = $scope.colorObj.b;
+
+						if(newVal != oldVal) $scope.change();
 					}
 				});
 
@@ -501,9 +514,13 @@ define(['./angular-app', './mapbrowser', './colorpicker', './EntityLibrary'], fu
 					},
 					// set upstream color when new color is picked
 					onChange: function(hsb, hex, rgb, el){
-						$scope.sliding = true;
-						color(hex);
+						//This ensures that watches on $scope.sliding are fired BEFORE the color is updated
+						if(!$scope.sliding){
+							$scope.sliding = true;
+							$scope.$apply();
+						}
 
+						color(hex);
 						if(handle) $timeout.cancel(handle);
 
 						//500ms isn't enough time to determine whether or not sliding has actually "stopped"

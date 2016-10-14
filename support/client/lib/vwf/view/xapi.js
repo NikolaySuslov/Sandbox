@@ -83,7 +83,7 @@ define( ["module", "vwf/view", "vwf/view/xapi/xapiwrapper.min"], function( modul
 				
 				var firstId = clients[Object.keys(clients)[0]].cid;
 				var clientId = Engine.moniker();
-				if( /^send/.test(method) && !(
+				if( Engine.isCoSimulating() && /^send/.test(method) && !(
 					Engine.client() == Engine.moniker() ||
 					Engine.client() == null && clientId == firstId)
 				){

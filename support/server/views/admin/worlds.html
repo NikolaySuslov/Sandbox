@@ -21,6 +21,7 @@
 							<th style="border:none; background:#FFF">Objects</th>
 							<th style="border:none; background:#FFF">Featured</th>
 							<th style="border:none; background:#FFF"></th>
+							<th></th>
 						</tr>
 						<tbody data-bind="foreach:adminDisplayList, style:{border:'none'}">
 							
@@ -39,6 +40,9 @@
 										<a class="editstatedata icon-pencil" data-bind="attr:{href:'{{root}}/'+'edit?id='+id}"></a>	
 									<!-- /ko -->
 								</div>
+							</td>
+							<td style="height:70px;">
+								<a href="" data-bind="attr:{href:'{{root}}/createNew2/'+id+''}">Duplicate</a>
 							</td>
 						</tbody>
 					</table>
@@ -62,6 +66,9 @@
 					<span>Change description:</span>
 					<textarea style="float:right;width:60%;" data-bind="value:description" class="form-control"></textarea><br/>
 				</div>
+
+
+
 				<div>
 					<span>Feature this?</span>
 					<input style="float:right;" type="checkbox" id="featuredCheckBox" data-bind="click:$root.handleFeatureClick, checked:$root.isCurrentChecked" /><br/>
@@ -175,6 +182,6 @@
 			
 			window.setInterval(function(){
 				showStates();
-			},5000);
+			},50000);
 		});
 	</script>

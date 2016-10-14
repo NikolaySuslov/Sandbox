@@ -17,10 +17,10 @@ mixin EntityLibrary_body
 					span.ui-icon.ui-icon-closethick close
 
 			#EntityLibraryAccordion(vws-accordion='combinedLibs')
-				h3.modifiersection(ng-repeat-start='lib in combinedLibs')
+				h3.modifiersection(ng-repeat-start='lib in combinedLibs' )
 					a(href="#"): strong {{lib.name}}
 					.glyphicon.glyphicon-minus(title='Remove Library', ng-show='lib.userAdded', ng-click='promptRemoveLibrary($index, $event)')
-				.modifiersection(ng-repeat-end)
+				.modifiersection(ng-repeat-end style='width:210px')
 					.libraryAsset(ng-repeat='asset in lib.content | orderBy : "name.toLowerCase()"', ng-click='create(asset)', draggable-asset='asset')
 						lazy-img(src='asset.preview', load-when='isOpen')
 						div {{asset.name}}

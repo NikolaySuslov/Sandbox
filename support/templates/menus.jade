@@ -10,9 +10,6 @@ mixin menus_body
 				li(ng-class='{"disabled": loggedIn}'): a#MenuLogIn(ng-click='lookUpHandler($event)')
 					.glyphicon.glyphicon-log-in
 					| Log In
-				li(ng-class='{"disabled": !loggedIn}'): a#MenuLogOut(ng-click='lookUpHandler($event)')
-					.glyphicon.glyphicon-log-out
-					| Log Out
 				li: a#MenuSaveNow(ng-click='lookUpHandler($event)')
 					.glyphicon.glyphicon-floppy-disk
 					| Save Now
@@ -24,11 +21,11 @@ mixin menus_body
 					a#SetThumbnail(title="Take a screenshot and designate it as the public thumbnail", ng-click='lookUpHandler($event)')
 						.glyphicon.glyphicon-picture
 						| Set World Thumbnail
-				li(ng-class='{"disabled": isExample || !userIsOwner}')
+				li(ng-class='{"disabled": allowPlayPause && (isExample || !userIsOwner)}')
 					a#TestSettings(title="Change the publish settings of this world", ng-click='lookUpHandler($event)')
 						.glyphicon.glyphicon-globe
 						| World Settings (ctrl+9)
-				li(ng-class='{"disabled": worldIsNotLaunchable}')
+				li(ng-class='{"disabled": worldIsNotLaunchable && allowPlayPause}')
 					a#TestLaunch(title="Load the world as if it were published", ng-click='lookUpHandler($event)')
 						.glyphicon.glyphicon-play
 						| Play World (ctrl+0)
@@ -202,6 +199,8 @@ mixin menus_body
 						li: a#MenuCreateCone(title="Create a cone", ng-click='lookUpHandler($event)') Cone
 						li: a#MenuCreateText(title="Create customizable text", ng-click='lookUpHandler($event)') Text
 						li: a#MenuCreateTorus(title="Create a donut shape", ng-click='lookUpHandler($event)') Torus
+						li: a#MenuCreateText2D(title="Create a 2D text panel", ng-click='lookUpHandler($event)') Text2D
+						
 				li
 					a#MenuShapes Shapes
 					ul
@@ -211,6 +210,7 @@ mixin menus_body
 						li: a#MenuCreateRectangle(title="Create a rectangle", ng-click='lookUpHandler($event)') Rectangle
 						li: a#MenuCreateLSection(title="Create an L-shaped section", ng-click='lookUpHandler($event)') L Section
 						li: a#MenuCreateTSection(title="Create a T-shaped section", ng-click='lookUpHandler($event)') T Section
+						li: a#MenuCreateTurtle(title="Create an L-System turtle", ng-click='lookUpHandler($event)') L-system
 				li
 					a#MenuModifiers Modifiers
 					ul
@@ -401,6 +401,9 @@ mixin menus_body
 				li: a#MenuPhysicsEditor(title="Open the physics widget in sidebar", ng-click='lookUpHandler($event)')
 					.glyphicon.glyphicon-wrench
 					| Physics Editor
+				li: a#MenuConsole(title="Open the console window", ng-click='lookUpHandler($event)')
+					.glyphicon.glyphicon-wrench
+					| Console
 
 		li
 			a#MenuRendering Rendering

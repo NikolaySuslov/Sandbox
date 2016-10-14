@@ -35,10 +35,17 @@ function matset(newv, old) {
     return newv;
 }
 
+function disregardMouseInputsToSim() {
+    if (window._Editor && (window._Editor.GetSelectMode() == 'Pick' || window._Editor.GetSelectMode() == 'TempPick')) {
+        return true;
+    }
+    return false;
+}
+
 
 var pfx = ["webkit", "moz", "ms", "o", ""];
 
-define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/threejs/ThermalCamEffect", "vwf/model/threejs/VRRenderer", "vwf/view/threejs/editorCameraController", "vwf/view/threejs/SandboxRenderer"], function(module, view) {
+define(["module", "vwf/view", 'vwf/utility/eventSource', "vwf/view/threejs/viewNode", "vwf/model/threejs/OculusRiftEffect", "vwf/model/threejs/ThermalCamEffect", "vwf/model/threejs/VRRenderer", "vwf/view/threejs/editorCameraController", "vwf/view/threejs/SandboxRenderer"], function(module, view, eventSource, viewNode) {
     var stats;
     var NORMALRENDER = 0;
     var STEREORENDER = 1;
@@ -161,12 +168,12 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             $('#glyphOverlay').append(newdiv);
             $(newdiv).disableSelection();
             $(newdiv).mousedown(function(e) {
-				console.log('glyph mousedown');
+                console.log('glyph mousedown');
                 $('#index-vwf').focus();
                 if (_Editor.GetSelectMode() == "None" || e.which != 1) $('#index-vwf').trigger(e)
             });
             $(newdiv).mouseup(function(e) {
-				console.log('glyph mouseup');
+                console.log('glyph mouseup');
                 $('#index-vwf').focus();
                 $('#index-vwf').trigger(e)
             });
@@ -174,7 +181,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 $('#index-vwf').trigger(e)
             });
             $(newdiv).click(function(e) {
-				console.log('glyph click');
+                console.log('glyph click');
                 $('#index-vwf').focus();
                 if (_Editor.GetSelectMode() != "None") _Editor.SelectObjectPublic(id)
             });
@@ -207,13 +214,13 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         },
         updateGlyphs: function(e, viewprojection, wh, ww) {
 
-            if(Engine.getProperty(Engine.application(),'playMode') == 'play') return;
+            if (Engine.getPropertyFast(Engine.application(), 'playMode') == 'play' && (_DataManager.getInstanceData().publishSettings.allowPlayPause === true || _DataManager.getInstanceData().publishSettings.allowPlayPause === undefined)) return;
             for (var i = 0; i < this.glyphs.length; i++) {
-                if (Engine.getProperty(this.glyphs[i], 'showGlyph') == false) continue;
+                if (Engine.getPropertyFast(this.glyphs[i], 'showGlyph') == false) continue;
                 var div = $('#glyph' + ToSafeID(this.glyphs[i]))[0];
                 if (!div) continue;
 
-                var trans = Engine.getProperty(this.glyphs[i], 'worldTransform');
+                var trans = Engine.getPropertyFast(this.glyphs[i], 'worldTransform');
 
                 var pos = [trans[12], trans[13], trans[14], 1];
 
@@ -271,6 +278,8 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         },
         initialize: function(rootSelector) {
 
+
+            eventSource.call(this, 'View');
             this.initHMD();
 
             rootSelector = {
@@ -326,7 +335,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             this.leftover = 0;
             this.future = 0;
 
-           
+
 
         },
         lerp: function(a, b, l, c) {
@@ -416,177 +425,53 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
             return nqm;
         },
-        viewTransformOverrides:{},
-        setViewTransformOverride : function(nodeID,transform)
-        {
-            if(transform)
-            {
+        viewTransformOverrides: {},
+        setViewTransformOverride: function(nodeID, transform) {
+            if (transform) {
                 this.viewTransformOverrides[nodeID] = {
-                    override:transform,
-                    original:null,
+                    override: transform,
+                    original: null,
                 };
-            }else
-            {
+            } else {
                 delete this.viewTransformOverrides[nodeID];
             }
 
         },
-        applyViewTransformOverrides: function()
-        {
-            for( var i in this.viewTransformOverrides)
-            {
+        applyViewTransformOverrides: function() {
+            for (var i in this.viewTransformOverrides) {
                 var node = findviewnode(i);
-                if(node)
-                {
+                if (node) {
                     var original = (new THREE.Matrix4()).copy(node.matrix);
                     this.viewTransformOverrides[i].original = original;
-                    node.matrix.elements = (this.viewTransformOverrides[i].override)   
+                    node.matrix.elements = (this.viewTransformOverrides[i].override)
                     node.updateMatrixWorld(true);
                 }
             }
         },
-        restoreViewTransformOverrides: function()
-        {
-            for( var i in this.viewTransformOverrides)
-            {
+        restoreViewTransformOverrides: function() {
+            for (var i in this.viewTransformOverrides) {
                 var node = findviewnode(i);
-                if(node)
-                {
+                if (node) {
                     node.matrix.copy(this.viewTransformOverrides[i].original)
                     node.updateMatrixWorld(true);
                 }
             }
         },
-        resetInterpolation: function()
-        {
-            if (_Editor.GetMoveGizmo().getGizmoHead().matrix) {
-                    this.gizmoLastTickTransform = this.gizmoThisTickTransform;
-                    this.gizmoThisTickTransform = _Editor.GetMoveGizmo().getGizmoHead().matrix.clone();
-                }
 
-                var keys = Object.keys(this.nodes);
-
-                for (var j = 0; j < keys.length; j++) {
-                    var i = keys[j];
-                    //don't do interpolation for static objects
-                    if (this.nodes[i].isStatic) continue;
-                    if (this.nodes[i].lastTransformStep + 1 < Engine.time()) {
-                        this.nodes[i].lastTickTransform = null;
-                        this.nodes[i].lastFrameInterp = null;
-                        this.nodes[i].thisTickTransform = null;
-                    } else if (this.state.nodes[i] && this.state.nodes[i].gettingProperty) {
-                        this.nodes[i].lastTickTransform = matset(this.nodes[i].lastTickTransform, this.nodes[i].thisTickTransform);
-                        this.nodes[i].thisTickTransform = matset(this.nodes[i].thisTickTransform, this.state.nodes[i].gettingProperty('transform'));
-                    }
-                    if (this.state.nodes[i] && this.state.nodes[i].gettingProperty) {
-                        if (this.nodes[i].lastAnimationStep + 1 < Engine.time()) {
-                            this.nodes[i].lastAnimationFrame = null;
-                            this.nodes[i].thisAnimationFrame = null;
-                        } else {
-                            this.nodes[i].lastAnimationFrame = this.nodes[i].thisAnimationFrame;
-                            this.nodes[i].thisAnimationFrame = this.state.nodes[i].gettingProperty('animationFrame');
-                        }
-
-                    }
-                    if(window._Editor && this.nodes[i] && window._Editor.isSelected(i))
-                    {
-                        this.nodes[i].lastAnimationFrame = null;
-                        this.nodes[i].thisAnimationFrame = null;
-                        this.nodes[i].lastTickTransform = null;
-                        this.nodes[i].lastFrameInterp = null;
-                        this.nodes[i].thisTickTransform = null;
-                    }
-                }
-
-
-        },
-        interpolatOneNode:function(i,lerpStep,step)
-        {
-
-
-             //don't do interpolation for static objects
-                if (this.nodes[i].isStatic) return;
-
-                var interp = null;
-                var last = this.nodes[i].lastTickTransform;
-                var now = this.nodes[i].thisTickTransform;
-                if (last && now) {
-
-                    interp = matset(interp, last);
-                    interp = this.matrixLerp(last, now, step, interp);
-
-                    this.nodes[i].currentTickTransform = matset(this.nodes[i].currentTickTransform, this.state.nodes[i].gettingProperty('transform'));
-                    if (this.state.nodes[i].setTransformInternal) {
-
-
-                        if (this.nodes[i].lastFrameInterp)
-                            interp = this.matrixLerp(this.nodes[i].lastFrameInterp, now, lerpStep, interp);
-                        this.state.nodes[i].setTransformInternal(interp, false);
-                        this.nodes[i].lastFrameInterp = matset(this.nodes[i].lastFrameInterp || [], interp);
-                    }
-
-
-                }
-
-                last = this.nodes[i].lastAnimationFrame;
-                now = this.nodes[i].thisAnimationFrame;
-                if (last && now && Math.abs(now - last) < 3) {
-
-                    var interpA = 0;
-
-
-                    interpA = this.lerp(last, now, step);
-
-
-                    this.nodes[i].currentAnimationFrame = this.state.nodes[i].gettingProperty('animationFrame');
-                    if (this.state.nodes[i].setAnimationFrameInternal) {
-                        if (this.state.nodes[i].lastAnimationInterp)
-                            interpA = this.lerp(this.state.nodes[i].lastAnimationInterp, now, lerpStep);
-                        
-                        this.state.nodes[i].backupTransforms(this.nodes[i].currentAnimationFrame);
-                        this.state.nodes[i].setAnimationFrameInternal(interpA, false);
-                        this.state.nodes[i].lastAnimationInterp = interpA || 0;
-                    }
-
-
-                } else if (this.state.nodes[i]) {
-                    this.state.nodes[i].lastAnimationInterp = null;
-                }
-
-        },
         setInterpolatedTransforms: function(deltaTime) {
 
-
-            //deltaTime = Math.min(deltaTime,this.realTickDif)
-            this.tickTime += deltaTime || 0;
-
-
-            var hit = 0;
-            while (this.tickTime > 50) {
-                hit++;
-                this.tickTime -= 50;
-            }
-            var step = (this.tickTime) / (50);
-            if (hit === 1) {
-
-
-                this.resetInterpolation();
-
-
-            }
-
-            var lerpStep = Math.min(1, .2 * (deltaTime / 16.6)); //the slower the frames ,the more we have to move per frame. Should feel the same at 60 0r 20
+            this.trigger('interpStart');
             var keys = Object.keys(this.nodes);
-            
+            var now = performance.now();
+            var playmode = Engine.getPropertyFast(Engine.application(), 'playmode');
             for (var j = 0; j < keys.length; j++) {
                 var i = keys[j];
-
-                this.interpolatOneNode(i,lerpStep,step);
-
-
+                var node = this.nodes[i];
+                if (!node) continue;
+                node.interpolate(now, playmode);
             }
-
-
+            _dScene.updateMatrixWorld();
+            this.trigger('interpEnd');
         },
         windowResized: function() {
             //called on window resize by windowresize.js
@@ -601,39 +486,16 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         },
         restoreTransforms: function() {
 
-            /*if (this.currentGizmoTransform) {
-                _Editor.GetMoveGizmo().parent.matrix = this.currentGizmoTransform;
-                _Editor.GetMoveGizmo().parent.updateMatrixWorld(true);
-            }*/
-
+            this.trigger('interpRestoreStart');
             var keys = Object.keys(this.nodes);
-
             for (var j = 0; j < keys.length; j++) {
                 var i = keys[j];
-                //don't do interpolation for static objects
-                if (this.nodes[i].isStatic) continue;
-
-                var now = this.nodes[i].currentTickTransform;
-                this.nodes[i].currentTickTransform = null;
-                if (now) {
-
-                    if (this.state.nodes[i].setTransformInternal)
-                        this.state.nodes[i].setTransformInternal(now, false);
-                }
-
-                now = this.nodes[i].currentAnimationFrame;
-                this.nodes[i].currentAnimationFrame = null;
-                if (now != null) {
-                    if (this.state.nodes[i].setAnimationFrameInternal)
-                    {
-                        
-                        //this.state.nodes[i].restoreTransforms();
-                        this.state.nodes[i].setAnimationFrameInternal(now, false);
-                    }
-
-                }
-
+                var node = this.nodes[i];
+                if (!node) return;
+                node.restore();
             }
+            _dScene.updateMatrixWorld();
+            this.trigger('interpRestoreEnd');
         },
         setRenderModeStereo: function() {
             this.renderMode = STEREORENDER;
@@ -658,6 +520,13 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             //so, here's what we'll do. Since the sim state cannot advance until tick, we will update on tick. 
             //but, ticks aren't fired when the scene in paused. In that case, we'll do it every frame.
             _SceneManager.update();
+            var keys = Object.keys(this.nodes);
+            for (var j = 0; j < keys.length; j++) {
+                var i = keys[j];
+                var node = this.nodes[i];
+                if (!node) return;
+                node.tick();
+            }
         },
         deletedNode: function(childID) {
             delete this.nodes[childID];
@@ -672,13 +541,15 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             childSource, childType, childURI, childName, callback /* ( ready ) */ ) {
 
             if (childID != 'http-vwf-example-com-camera-vwf-camera')
-                this.nodes[childID] = {
+                this.nodes[childID] = new viewNode(childID, childExtendsID, this.state.nodes[childID], Engine.isSimulating(childID));
+
+            /*{
                     id: childID,
                     extends: childExtendsID,
                     properties: {},
                     lastTransformStep: 0,
                     lastAnimationStep: 0
-                };
+                };*/
 
             //man VWF makes this stuff so hard. Why must we deal with this? Who though that a game engine needed prototypical inheritance?
             //why must every driver deal with this crap? The design of this thing is ridiculous.
@@ -702,16 +573,16 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
 
                 //this.canvasQuery = jQuery(this.rootSelector["application-root"]).append("<canvas id='" + 'index-vwf' + "' width='" + this.width + "' height='" + this.height + "' class='vwf-scene'/>").children(":last");
-				this.canvasQuery = jQuery('canvas#index-vwf');
+                this.canvasQuery = jQuery('canvas#index-vwf');
                 this.canvasQuery.css('display', 'none');
                 this.canvasQuery.css('box-sizing', 'border-box');
                 initScene.call(this, this.state.scenes[childID]);
                 require("vwf/view/threejs/editorCameraController").initialize(this.editorCamera);
 
                 var instanceData = _DataManager.getInstanceData();
-                var    publishSettings = instanceData.publishSettings;
-                if(publishSettings)
-                this.cameraID = publishSettings.camera;
+                var publishSettings = instanceData.publishSettings;
+                if (publishSettings)
+                    this.cameraID = publishSettings.camera;
                 this.setCamera(this.cameraID);
             }
         },
@@ -772,7 +643,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 var i = keys[j];
                 if (this.nodes[i].extends == 'SandboxCamera-vwf') {
                     idlist.push(i);
-                    namelist.push(Engine.getProperty(i, 'DisplayName') + "   (" + namelist.length +')');
+                    namelist.push(Engine.getProperty(i, 'DisplayName') + "   (" + namelist.length + ')');
                 }
             }
 
@@ -808,6 +679,9 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         },
         setCamera: function(camID) {
             vwf_view.kernel.callMethod(Engine.application(), 'setClientCamera', [Engine.moniker(), camID]);
+            if (camID) {
+                Engine.requestControl(camID);
+            }
         },
         setCamera_internal: function(camID) {
 
@@ -817,19 +691,19 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
             if (publishSettings) defaultCameraID = publishSettings.camera;
 
-            this.cameraID = camID  || defaultCameraID;
+            this.cameraID = camID || defaultCameraID;
 
             //allow the default 
-            if(publishSettings)
-            if(!camID && publishSettings.allowTools)
-                this.cameraID = null;
+            if (publishSettings)
+                if (!camID && publishSettings.allowTools)
+                    this.cameraID = null;
 
             var cam = this.editorCamera;
 
             if (camID === 'top')
                 cam = this.topCamera;
             if (this.cameraID) {
-                
+
                 cam = null;
                 if (this.state.nodes[this.cameraID])
                     if (this.state.nodes[this.cameraID].getRoot && this.state.nodes[this.cameraID].getRoot()) {
@@ -863,7 +737,20 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     this.setCamera_internal(args[1]);
                 }
             }
-            if (id == Engine.application() && method == 'cameraShareInfo') {
+            else if (method == 'ready' || method == 'reset_interp') {
+                var node = this.nodes[id];
+                if (!node) return;
+                node.reset_interp();
+            }
+            else if (method == 'startSimulatingNode') {
+                if (this.nodes[args])
+                    this.nodes[args].setSim(true);
+            }
+            else if (method == 'stopSimulatingNode') {
+                if (this.nodes[args])
+                    this.nodes[args].setSim(false);
+            }
+            else if (id == Engine.application() && method == 'cameraShareInfo') {
                 if (this.receiveSharedCamera) {
                     this.setCamera();
                     this.getCamera().matrixAutoUpdate = false;
@@ -872,7 +759,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
                 }
             }
-            if (id == Engine.application() && method == 'startCameraShare') {
+            else if (id == Engine.application() && method == 'startCameraShare') {
                 if (!this.receiveSharedCamera && Engine.moniker() !== args[0]) {
                     var self = this;
                     alertify.confirm('A user would like to share their camera view. Accept?', function(ok) {
@@ -882,7 +769,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     })
                 }
             }
-            if (id == Engine.application() && method == 'stopCameraShare') {
+            else if (id == Engine.application() && method == 'stopCameraShare') {
                 this.receiveSharedCamera = false;
                 //   require("vwf/view/threejs/editorCameraController").getController('Orbit').orbitPoint(newintersectxy);
                 require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
@@ -906,13 +793,10 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             if (!node) return;
 
             var value = undefined;
-            if (this.nodes[nodeID])
-                this.nodes[nodeID].properties[propertyName] = propertyValue;
+            if (this.nodes)
+                this.nodes[nodeID].setProperty(propertyName, propertyValue);
 
-            if (propertyName == 'transform')
-                this.nodes[nodeID].lastTransformStep = Engine.time();
-            if (propertyName == 'animationFrame')
-                this.nodes[nodeID].lastAnimationStep = Engine.time();
+
 
             node[propertyName] = propertyValue;
 
@@ -937,186 +821,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     this.hideGlyph(nodeID);
             }
             if (node && threeObject && propertyValue !== undefined) {
-                if (threeObject instanceof THREE.Scene) {
-                    if (propertyName == 'skyColorBlend') {
-                        if (window._dSky && _dSky.material)
-                        {
-                        
-                            _dSky.material.uniforms.colorBlend.value = propertyValue;
-                        }
-                    }
-                    if (propertyName == 'skyFogBlend') {
-                        if (window._dSky && _dSky.material)
-                            _dSky.material.uniforms.fogBlend.value = propertyValue;
-                    }
-                    if (propertyName == 'skyApexColor') {
-                        if (window._dSky && _dSky.material) {
-                            _dSky.material.uniforms.ApexColor.value.r = propertyValue[0];
-                            _dSky.material.uniforms.ApexColor.value.g = propertyValue[1];
-                            _dSky.material.uniforms.ApexColor.value.b = propertyValue[2];
-                        }
-                    }
-                    if (propertyName == 'skyHorizonColor') {
-                        if (window._dSky && _dSky.material) {
-                            _dSky.material.uniforms.HorizonColor.value.r = propertyValue[0];
-                            _dSky.material.uniforms.HorizonColor.value.g = propertyValue[1];
-                            _dSky.material.uniforms.HorizonColor.value.b = propertyValue[2];
-                        }
-                    }
 
-                    if (propertyName == 'skyApexColor') {
-                        if (!threeObject.fog)
-                            threeObject.fog = new THREE.Fog();
-
-                        if (!threeObject.fog.vApexColor)
-                            threeObject.fog.vApexColor = new THREE.Color();
-
-                        threeObject.fog.vApexColor.r = propertyValue[0];
-                        threeObject.fog.vApexColor.g = propertyValue[1];
-                        threeObject.fog.vApexColor.b = propertyValue[2];
-                    }
-                    if (propertyName == 'skyHorizonColor') {
-                        if (!threeObject.fog)
-                            threeObject.fog = new THREE.Fog();
-
-                        if (!threeObject.fog.vHorizonColor)
-                            threeObject.fog.vHorizonColor = new THREE.Color();
-
-                        threeObject.fog.vHorizonColor.r = propertyValue[0];
-                        threeObject.fog.vHorizonColor.g = propertyValue[1];
-                        threeObject.fog.vHorizonColor.b = propertyValue[2];
-
-                    }
-                    if (propertyName == 'skyAtmosphereDensity') {
-                        if (!threeObject.fog)
-                            threeObject.fog = new THREE.Fog();
-
-                        threeObject.fog.vAtmosphereDensity = propertyValue / 500;
-                    }
-                    if (propertyName == 'fogType') {
-
-
-                        var newfog;
-                        if (propertyValue == 'exp') {
-                            newfog = new THREE.FogExp2();
-                        }
-                        if (propertyValue == 'linear') {
-                            newfog = new THREE.Fog();
-                        }
-                        if (propertyValue == 'none') {
-                            newfog = null;
-                        }
-                        if (newfog) {
-
-                            //get all the fog values from the stored property values
-                            newfog.color.r = this.nodes[nodeID].properties["fogColor"] ? this.nodes[nodeID].properties["fogColor"][0] : 1;
-                            newfog.color.g = this.nodes[nodeID].properties["fogColor"] ? this.nodes[nodeID].properties["fogColor"][1] : 1;
-                            newfog.color.b = this.nodes[nodeID].properties["fogColor"] ? this.nodes[nodeID].properties["fogColor"][2] : 1;
-                            newfog.near = this.nodes[nodeID].properties["fogNear"] || 0;
-                            newfog.far = this.nodes[nodeID].properties["fogFar"] || 1000;
-                            newfog.density = this.nodes[nodeID].properties["fogDensity"] || 0;
-                            newfog.vFalloff = this.nodes[nodeID].properties["fogVFalloff"] || 1;
-                            newfog.vFalloffStart = this.nodes[nodeID].properties["fogVFalloffStart"] || 0;
-                            newfog.vAtmosphereDensity = (this.nodes[nodeID].properties["skyAtmosphereDensity"] || 0) / 500;
-
-                            if (!threeObject.fog) threeObject.fog = newfog;
-                            threeObject.fog.vHorizonColor = new THREE.Color();
-
-                            threeObject.fog.vHorizonColor.r = this.nodes[nodeID].properties["skyApexColor"] ? this.nodes[nodeID].properties["skyHorizonColor"][0] : 1;
-                            threeObject.fog.vHorizonColor.g = this.nodes[nodeID].properties["skyApexColor"] ? this.nodes[nodeID].properties["skyHorizonColor"][1] : 1;
-                            threeObject.fog.vHorizonColor.b = this.nodes[nodeID].properties["skyApexColor"] ? this.nodes[nodeID].properties["skyHorizonColor"][2] : 1;
-
-                            threeObject.fog.vApexColor = new THREE.Color();
-
-                            threeObject.fog.vApexColor.r = this.nodes[nodeID].properties["skyHorizonColor"] ? this.nodes[nodeID].properties["skyHorizonColor"][0] : 1;
-                            threeObject.fog.vApexColor.g = this.nodes[nodeID].properties["skyHorizonColor"] ? this.nodes[nodeID].properties["skyHorizonColor"][1] : 1;
-                            threeObject.fog.vApexColor.b = this.nodes[nodeID].properties["skyHorizonColor"] ? this.nodes[nodeID].properties["skyHorizonColor"][2] : 1;
-
-                        }
-                        threeObject.fog = newfog;
-                        rebuildAllMaterials.call(this, threeObject);
-                    }
-                    if (propertyName == 'fogColor') {
-
-                        if (!threeObject.fog)
-                            threeObject.fog = new THREE.Fog();
-
-                        threeObject.fog.color.r = propertyValue[0];
-                        threeObject.fog.color.g = propertyValue[1];
-                        threeObject.fog.color.b = propertyValue[2];
-                        rebuildAllMaterials.call(this, threeObject);
-                    }
-                    if (propertyName == 'fogNear') {
-
-                        if (!threeObject.fog)
-                            threeObject.fog = new THREE.Fog();
-                        threeObject.fog.near = propertyValue;
-                        rebuildAllMaterials.call(this, threeObject);
-                    }
-                    if (propertyName == 'fogDensity') {
-
-                        if (!threeObject.fog)
-                            threeObject.fog = new THREE.Fog();
-
-                        threeObject.fog.density = propertyValue;
-                        rebuildAllMaterials.call(this, threeObject);
-                    }
-                    if (propertyName == 'fogVFalloff') {
-
-                        if (!threeObject.fog)
-                            threeObject.fog = new THREE.Fog();
-
-                        threeObject.fog.vFalloff = propertyValue;
-                        rebuildAllMaterials.call(this, threeObject);
-                    }
-                    if (propertyName == 'fogVFalloffStart') {
-
-                        if (!threeObject.fog)
-                            threeObject.fog = new THREE.Fog();
-
-                        threeObject.fog.vFalloffStart = propertyValue;
-                        rebuildAllMaterials.call(this, threeObject);
-                    }
-                    if (propertyName == 'fogFar') {
-
-                        if (!threeObject.fog)
-                            threeObject.fog = new THREE.Fog();
-                        threeObject.fog.far = propertyValue;
-                        rebuildAllMaterials.call(this, threeObject);
-                    }
-                    if (propertyName == 'ambientColor') {
-                        var lightsFound = 0;
-                        //this prop really should be a color array
-                        if (propertyValue.constructor != Array) return;
-
-                        if (propertyValue[0] > 1 && propertyValue[1] > 1 && propertyValue[2] > 1) {
-                            propertyValue[0] /= 255;
-                            propertyValue[1] /= 255;
-                            propertyValue[2] /= 255;
-
-                        }
-
-                        for (var i = 0; i < threeObject.__lights.length; i++) {
-                            if (threeObject.__lights[i] instanceof THREE.AmbientLight) {
-                                threeObject.__lights[i].color.setRGB(propertyValue[0], propertyValue[1], propertyValue[2]);
-                                //SetMaterialAmbients.call(this);
-                                lightsFound++;
-                            } else {
-                                //threeObject.__lights[i].shadowDarkness = MATH.lengthVec3(propertyValue)/2.7320508075688772;
-                            }
-
-                        }
-                        if (lightsFound == 0) {
-
-
-                            var ambientlight = new THREE.AmbientLight('#000000');
-                            ambientlight.color.setRGB(propertyValue[0], propertyValue[1], propertyValue[2]);
-                            node.threeScene.add(ambientlight);
-                            //SetMaterialAmbients.call(this);                            
-                        }
-
-                    }
-                }
             }
 
 
@@ -1140,41 +845,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     this.renderTargetPasses.splice(i, 1);
             }
         },
-        trigger: function(name, args) {
-            if (!this.args)
-                this.args = [null];
-            for (var i = 0; i < args.length; i++)
-                this.args[i + 1] = args[i];
 
-            var queue = this.events[name];
-            if (!queue) return;
-            for (var i = 0; i < queue.length; i++) {
-                this.events[name][i].apply(this, this.args);
-            }
-
-        },
-        bind: function(name, func) {
-
-            if (!this.events)
-                this.events = {};
-            if (!this.events[name])
-                this.events[name] = [];
-            this.events[name].push(func);
-            return this.events[name].length - 1;
-        },
-        unbind: function(name, func) {
-
-            var queue = this.events[name];
-            if (!queue) return;
-
-            if (func instanceof Number)
-                queue.splice(func, 1);
-            else {
-                func = queue.indexOf(func);
-                if (func != -1)
-                    queue.splice(func, 1);
-            }
-        }
 
 
         // -- gotProperty ------------------------------------------------------------------------------
@@ -1318,8 +989,10 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         function renderScene(time) {
 
 
+            self.trigger('preFrame');
             requestAnimFrame(renderScene);
-            _PerformanceManager.preFrame();
+
+
             //lets not render when the quere is not ready. This prevents rendering of meshes that must have their children
             //loaded before they can render
             if (!window._dRenderer) {
@@ -1327,7 +1000,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             }
             //so, here's what we'll do. Since the sim state cannot advance until tick, we will update on tick. 
             //but, ticks aren't fired when the scene in paused. In that case, we'll do it every frame.
-            var currentState = Engine.getProperty(Engine.application(), 'playMode');
+            var currentState = Engine.getPropertyFast(Engine.application(), 'playMode');
             if (currentState === 'stop') _SceneManager.update();
 
 
@@ -1388,6 +1061,8 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
             self.trigger('prerender', vpargs);
             self.updateGlyphs(null, vp, wh, ww);
+            if (window._SceneManager)
+                _SceneManager.preRender(cam,ww);
             var keys = Object.keys(Engine.models[0].model.nodes);
             for (var j = 0; j < keys.length; j++) {
                 var i = keys[j];
@@ -1406,11 +1081,11 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
                 sceneNode.frameCount = 0;
 
-
+                self.trigger('pickStart');
                 var newPick = ThreeJSPick.call(self, sceneNode, cam, ww, wh);
 
                 var newPickId = newPick ? getPickObjectID.call(view, newPick.object) : view.state.sceneRootID;
-
+                self.trigger('pickEnd');
 
                 if (self.lastPickId != newPickId && self.lastEventData) {
 
@@ -1572,7 +1247,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             }
 
 
-            if (self.selection && Engine.getProperty(self.selection.id, 'type') == 'Camera' && self.cameraID != self.selection.id) {
+            if (self.selection && Engine.getPropertyFast(self.selection.id, 'type') == 'Camera' && self.cameraID != self.selection.id) {
                 var selnode = _Editor.findviewnode(self.selection.id);
                 if (selnode) {
                     selcam = selnode.children[0];
@@ -1585,10 +1260,10 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     w = parseInt($('#index-vwf').attr('width') / 3);
                     h = parseInt($('#index-vwf').attr('height') / 3);
 
-
-                    renderer.setViewport(0, 0, w, w);
+                    var dpr = _dRenderer.devicePixelRatio;
+                    renderer.setViewport(0, 0, w / dpr, w / dpr);
                     _Editor.hideMoveGizmo();
-                    _dRenderer.setScissor(0, 0, w, w);
+                    _dRenderer.setScissor(0, 0, w / dpr, w / dpr);
                     renderer.enableScissorTest(true);
 
 
@@ -1602,15 +1277,15 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     insetvp = MATH.transposeMat4(_viewProjectionMatrix.toArray(temparray));
 
 
-                    self.trigger('postprerender', [insetvp, w, w]);
+                    self.trigger('postprerender', [insetvp, w / dpr, w / dpr]);
 
                     renderer.clear(true, true, true);
                     renderer.render(scene, selcam);
 
                     self.cameraID = camback;
                     _Editor.showMoveGizmo();
-                    _dRenderer.setViewport(0, 0, parseInt($('#index-vwf').attr('width')), parseInt($('#index-vwf').attr('height')));
-                    _dRenderer.setScissor(0, 0, parseInt($('#index-vwf').attr('width')), parseInt($('#index-vwf').attr('height')));
+                    _dRenderer.setViewport(0, 0, parseInt($('#index-vwf').attr('width')) / dpr, parseInt($('#index-vwf').attr('height')) / dpr);
+                    _dRenderer.setScissor(0, 0, parseInt($('#index-vwf').attr('width')) / dpr, parseInt($('#index-vwf').attr('height')) / dpr);
                     renderer.enableScissorTest(false);
                     selcam.aspect = oldaspect;
                     selcam.updateProjectionMatrix();
@@ -1625,12 +1300,16 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 self.trigger('glyphRender', vpargs);
             }
 
+            if (window._SceneManager)
+                _SceneManager.postRender();
 
             if (stats.domElement.style.display == 'block')
                 stats.update();
 
             if (self.interpolateTransforms)
                 self.restoreTransforms();
+            else
+                _dScene.updateMatrixWorld();
 
             self.restoreViewTransformOverrides(timepassed);
 
@@ -1642,7 +1321,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                 glext_ft.frameTerminator();
             }
 
-            _PerformanceManager.postFrame();
+            self.trigger('postFrame');
 
         };
 
@@ -1902,38 +1581,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         }
     }
 
-    function rebuildAllMaterials(start) {
-        //update 2/15 - walk all objects registered with renderer, not just objects currently in scence
-        //previous code missed objects cached in engine in various places.
-        //This probably misses some cached materials, however
-        if (!window._dScene) return;
-        for (var i in _dScene.__webglObjects)
-            for (var j in _dScene.__webglObjects[i])
-                if (_dScene.__webglObjects[i][j].material) _dScene.__webglObjects[i][j].material.needsUpdate = true;
-        if (window._dTerrain)
-            _dTerrain.TileCache.rebuildAllMaterials();
-    }
-    //necessary when settign the amibent color to match MATH behavior
-    //Three js mults scene ambient by material ambient
-    function SetMaterialAmbients(start) {
 
-        if (!start) {
-            for (var i in this.state.scenes) {
-                SetMaterialAmbients(this.state.scenes[i].threeScene);
-            }
-        } else {
-            if (start && start.material) {
-                //.005 chosen to make the 255 range for the ambient light mult to values that look like MATH values.
-                //this will override any ambient colors set in materials.
-                if (start.material.ambient)
-                    start.material.ambient.setRGB(1, 1, 1);
-            }
-            if (start && start.children) {
-                for (var i in start.children)
-                    SetMaterialAmbients(start.children[i]);
-            }
-        }
-    }
     // -- initInputEvents ------------------------------------------------------------------------
 
 
@@ -2101,9 +1749,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
 
         canvas.onmousedown = function(e) {
 
-            if (window._Editor && (window._Editor.GetSelectMode() == 'Pick' || window._Editor.GetSelectMode() == 'TempPick') && e.button == 0) {
-                return;
-            }
+            if (disregardMouseInputsToSim()) return;
 
             switch (e.button) {
                 case 2:
@@ -2118,7 +1764,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
             };
 
             e.preventDefault();
-            
+
             var event = getEventData(e, false);
             if (event) {
                 pointerDownID = pointerPickID ? pointerPickID : sceneID;
@@ -2127,6 +1773,9 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         }
 
         canvas.onmouseup = function(e) {
+
+            if (disregardMouseInputsToSim()) return;
+
             var ctrlDown = e.ctrlKey;
             var atlDown = e.altKey;
             var ctrlAndAltDown = ctrlDown && atlDown;
@@ -2166,6 +1815,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         }
 
         canvas.onmouseover = function(e) {
+            if (disregardMouseInputsToSim()) return;
             self.mouseOverCanvas = true;
             var eData = getEventData(e, false);
             if (eData) {
@@ -2176,36 +1826,37 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         var lastpoll = performance.now();
         canvas.onmousemove = function(e) {
 
-           
+
 
             //can we bail out of this before calling getEventData? this might have a small performance boost
             if (mouseLeftDown || mouseRightDown || mouseMiddleDown) {
-                    // lets begin filtering this - it should be possible to only send the data when the change is greater than some value
-                    if (pointerDownID) {
+                // lets begin filtering this - it should be possible to only send the data when the change is greater than some value
+                if (pointerDownID) {
 
-                        var now = performance.now();
-                        var timediff = (now - lastpoll);
-                        if (timediff < 50) //condition for filter
-                        {
-                            return;
-                        }
+                    var now = performance.now();
+                    var timediff = (now - lastpoll);
+                    if (timediff < 50) //condition for filter
+                    {
+                        return;
                     }
+                }
             }
             lastpoll = now;
-             var eData = getEventData(e, false);
+            var eData = getEventData(e, false);
 
-
+            if (disregardMouseInputsToSim()) return;
             if (eData) {
                 if (mouseLeftDown || mouseRightDown || mouseMiddleDown) {
                     // lets begin filtering this - it should be possible to only send the data when the change is greater than some value
-                    if (pointerDownID) {
+                    if (pointerDownID && pointerDownID != vwf.application()) { //don't allow sending of mouse motion on whole scene
+                        //this is too much data, and can't be efficiently routed by the server since the scene is co-simulated
 
-                        
-                            
-                            sceneView.lastData = eData;
-                            sceneView.kernel.dispatchEvent(pointerDownID, "pointerMove", eData.eventData, eData.eventNodeData);
-                           
-                        
+
+
+                        sceneView.lastData = eData;
+                        sceneView.kernel.dispatchEvent(pointerDownID, "pointerMove", eData.eventData, eData.eventNodeData);
+
+
                     }
                 } else {
                     if (pointerPickID) {
@@ -2234,6 +1885,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
         }
 
         canvas.onmouseout = function(e) {
+            if (disregardMouseInputsToSim()) return;
             if (pointerOverID) {
                 sceneView.kernel.dispatchEvent(pointerOverID, "pointerLeave");
                 pointerOverID = undefined;
@@ -2288,7 +1940,7 @@ define(["module", "vwf/view", "vwf/model/threejs/OculusRiftEffect", "vwf/model/t
                     sceneView.keyStates.key = key;
                     if (sceneNode) sceneView.kernel.dispatchEvent(getClientFocusNode(Engine.moniker()), "keyUp", [sceneView.keyStates]);
                 }
-               
+
                 for (var i in sceneView.keyStates.keysUp) {
 
                     delete sceneView.keyStates.keysUp[i];

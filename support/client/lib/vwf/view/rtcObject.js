@@ -305,12 +305,11 @@ MyRTC.prototype.createPeerConnection = function()
 {
 	// create a new blank peer connection
 	var peerConfig = {'iceServers': [
-		{'url': 'stun:stun.l.google.com:19302'},
-		{'url': 'stun:stun1.l.google.com:19302'}
+		{'urls': ['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']}
 	]};
 	var peerConstraints = {};
-	if( this.detectedBrowser == 'chrome' )
-		peerConstraints['optional'] = [{'DtlsSrtpKeyAgreement': 'true'}];
+	//if( this.detectedBrowser == 'chrome' )
+		//peerConstraints['optional'] = [{'DtlsSrtpKeyAgreement': 'true'}];
 	this.peerConn = new this.RTCPeerConnection(peerConfig, peerConstraints);
 	
 	// add the remote video once it's available
@@ -348,13 +347,11 @@ MyRTC.prototype.makeOffer = function()
 	this.setStatus( this.statusText.connecting );
 
 	var mediaConstraints = {
-		'mandatory': {
-			'OfferToReceiveAudio': true,
-			'OfferToReceiveVideo': true
-		}
+		'offerToReceiveAudio': true,
+		'offerToReceiveVideo': true
 	};
 	if( this.detectedBrowser == 'firefox' )
-		mediaConstraints['mandatory']['MozDontOfferDataChannel'] = true;
+		mediaConstraints.mozDontOfferDataChannel = true;
 	
 	//console.log('Making an offer');
 	

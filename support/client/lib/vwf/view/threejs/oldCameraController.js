@@ -51,6 +51,10 @@
          this.ctrlDown = false;
          this.shiftDown = false;
          this.updateCallbacks = [];
+         this.last_y_rot = 0.0;
+         this.last_x_rot = 0.0;
+         this.last_zoom = 4;
+         this.last_center = [0,0,0];
          //  this.PickOptions = new MATH.CPUPickOptions();
          //  this.PickOptions.UserRenderBatches = true;
      }
@@ -135,24 +139,7 @@
      }
      this.followObject = function(value)
      {
-         if (this.objectFollowed)
-         {
-             if (this.objectFollowed.updateCallbacks)
-             {
-                 this.objectFollowed.updateCallbacks.splice(this.followcallbacknum, 1);
-             }
-         }
-         if (value)
-         {
-             if (value.updateCallbacks)
-             {
-                 value.updateCallbacks.push(this.updateCamera.bind(this));
-                 this.followcallbacknum = value.updateCallbacks.length;
-             }
-         }
-         this.objectFollowed = value;
-         //if(this.objectFollowed)
-         //this.oldRotZ = Engine.getProperty(this.objectFollowed.id,'rotZ');
+     
      }
      this.targetUpdated = function(obj)
      {
@@ -524,12 +511,7 @@
          }
          if ((this.rightdown == true && this.middledown == false))
          {
-             if (this.objectFollowed)
-             {
-                 var rz = this.lastRotZ || 0;
-                 this.lastRotZ = (rz + (this.rel_x * 5 || 0)) || 0;
-                 vwf_view.kernel.setProperty(this.objectFollowed.id, 'rotZ', this.lastRotZ);
-             }
+             
              this.x_rot += this.rel_x;
              this.y_rot += this.rel_y;
          }
@@ -619,20 +601,20 @@
          if(!this.active) return
          if (!_dView.inDefaultCamera()) return;
          this.keyboardControl();
-         try
-         {
-             if (this.objectFollowed != null)
-                 this.targetUpdated(this.objectFollowed);
-         }
-         catch (e)
-         {
-             this.objectFollowed = null;
-             console.error(e)
-         }
+         
          if (this.cameramode == 'None' || this.cameramode == 'DeviceOrientation')
          {
              return;
          }
+
+        this.last_y_rot += this.y_rot/5;
+        this.last_x_rot += this.x_rot/5;
+        this.last_zoom += (this.zoom - this.last_zoom) * .094;
+        this.last_y_rot*= .8;
+        this.last_x_rot*= .8;
+
+      
+
          if (this.cameramode == 'Navigate' && this.navpoint)
          {
              var offset = MATH.subVec3(this.navpoint, this.center)
@@ -643,93 +625,33 @@
                  this.center = MATH.addVec3(this.center, offset);
              }
          }
+        this.last_center[0] += (this.center[0] - this.last_center[0]) * .098;
+        this.last_center[1] += (this.center[1] - this.last_center[1]) * .098;
+        this.last_center[2] += (this.center[2] - this.last_center[2]) * .098;
          if (this.cameramode != '3RDPerson' && this.cameramode != 'FirstPerson')
          {
              if (this.x_rot == undefined) return;
-             var xmatrix = MATH.angleAxis(this.x_rot * 10, ZAXIS, txmatrix);
+             var xmatrix = MATH.angleAxis(this.last_x_rot * 10, ZAXIS, txmatrix);
              var offset = MATH.mulMat4Vec3(xmatrix, XAXIS, toffset);
              offset = Vec3.scale(offset, 1 / MATH.lengthVec3(offset), offset);
              tside = Vec3.cross([0, 0, 1], offset, tside);
-             if (this.y_rot < .479) this.y_rot = .479;
-             if (this.y_rot > .783 && (this.cameramode != 'Free' && this.cameramode != 'Fly')) this.y_rot = .783;
-             if (this.y_rot > .783 && (this.cameramode == 'Free' || this.cameramode == 'Fly')) this.y_rot = .783;
-             var crossmatrix = MATH.angleAxis(this.y_rot * 10, tside, tcrossmatrix);
+             if (this.last_y_rot < .479) this.last_y_rot = .479;
+             if (this.last_y_rot > .783 && (this.cameramode != 'Free' && this.cameramode != 'Fly')) this.last_y_rot = .783;
+             if (this.last_y_rot > .783 && (this.cameramode == 'Free' || this.cameramode == 'Fly')) this.last_y_rot = .783;
+             var crossmatrix = MATH.angleAxis(this.last_y_rot * 10, tside, tcrossmatrix);
              var stage2offset = MATH.mulMat4Vec3(crossmatrix, offset, tstage2offset);
              stage2offset = Vec3.scale(stage2offset, 1 / MATH.lengthVec3(stage2offset), stage2offset);
-             tfinaloffset = Vec3.scale(stage2offset, this.zoom, tfinaloffset);
-             if (this.center[2] < .05)
-                 this.center[2] = .05;
-             tfinalpos = Vec3.add(tfinaloffset, this.center, tfinalpos);
+             tfinaloffset = Vec3.scale(stage2offset, this.last_zoom, tfinaloffset);
+             if (this.last_center[2] < .05)
+                 this.last_center[2] = .05;
+             tfinalpos = Vec3.add(tfinaloffset, this.last_center, tfinalpos);
              this.camera.position.x = tfinalpos[0];
              this.camera.position.y = tfinalpos[1];
              this.camera.position.z = tfinalpos[2];
-             this.camera.lookAt(TempVec3(this.center));
+             this.camera.lookAt(TempVec3(this.last_center));
          }
-         else if (this.cameramode == 'FirstPerson')
-         {
-             try
-             {
-                 //this.oldRotZ var xmatrix = MATH.angleAxis(this.x_rot*10,[0,0,1]);
-                 var rotation = this.objectFollowed.rotation;
-                 var offset = this.objectFollowed.transformAPI.localToGlobalRotation([0, 1.5, .5]);
-                 offset = MATH.scaleVec3(offset, 1 / MATH.lengthVec3(offset));
-                 var side = MATH.crossVec3([0, 0, 1], offset);
-                 if (this.y_rot < .479) this.y_rot = .479;
-                 if (this.y_rot > .783) this.y_rot = .783;
-                 var crossmatrix = MATH.angleAxis(this.y_rot * 10, side);
-                 var stage2offset = MATH.mulMat4Vec3(crossmatrix, offset);
-                 stage2offset = MATH.scaleVec3(stage2offset, 1 / MATH.lengthVec3(stage2offset));
-                 var finaloffset = MATH.scaleVec3(stage2offset, this.zoom);
-                 if (this.center[2] < .05)
-                     this.center[2] = .05;
-                 var finalpos = MATH.addVec3(finaloffset, this.center);
-                 //this.camera.translation = finalpos;
-                 this.camera.position.x = finalpos[0];
-                 this.camera.position.y = finalpos[1];
-                 this.camera.position.z = finalpos[2];
-                 this.camera.lookAt(TempVec3(this.center));
-                 this.camera.updateProjectionMatrix(true);
-                 this.zoom = .0001;
-             }
-             catch (e)
-             {
-                 console.error(e);
-             }
-         }
-         else if (this.cameramode == '3RDPerson')
-         {
-             try
-             {
-                 var offset = this.objectFollowed.transformAPI.localToGlobalRotation([0, 1.5, .5]);
-                 var finaldist = MATH.lengthVec3(offset);
-                 offset = MATH.scaleVec3(offset, 1 / finaldist);
-                 var start = MATH.addVec3(this.center, MATH.scaleVec3(offset, .3));
-                 var oldpickstate = findviewnode(this.objectFollowed.id).PickPriority;
-                 var hit = _Editor.ThreeJSPick(start, MATH.scaleVec3(offset, 1),
-                 {
-                     filter: function(o)
-                     {
-                         if (o instanceof THREE.Line) return false;
-                         return !(o.isAvatar === true || o.passable === true)
-                     }
-                 });
-                 if (hit)
-                 {
-                     finaldist = Math.min(finaldist, hit.distance - .2);
-                 }
-                 findviewnode(this.objectFollowed.id).PickPriority = oldpickstate;
-                 offset = MATH.scaleVec3(offset, finaldist);
-                 var finalpos = MATH.addVec3(offset, start);
-                 this.camera.position.x = finalpos[0];
-                 this.camera.position.y = finalpos[1];
-                 this.camera.position.z = finalpos[2];
-                 this.camera.lookAt(TempVec3(this.center));
-             }
-             catch (e)
-             {
-                 console.error(e)
-             }
-         }
+         
+         
          this.callUpdateCallbacks();
          this.camera.updateMatrixWorld();
          this.camera.updateMatrix();
@@ -791,7 +713,7 @@
          //this.offset = diff;
          this.zoom = length;
          this.center = point;
-         this.objectFollowed = null;
+         
      }
      this.ReprojectCameraCenter = function(dist)
      {
@@ -862,23 +784,31 @@
              this.cameramode = 'FirstPerson';
          }
      }
+     this.totalTime = 0;
      this.prerender = function()
      {
-         if (this.cameramode == 'Fly')
+         var now = performance.now();
+         this.totalTime += now - (this.lastTime ? this.lastTime : now);
+         this.lastTime = now;
+         while(this.totalTime > 0)
          {
-             var dist = window.deltaTime / (this.flyspeed * 30.0);
-             var forward = new THREE.Vector3(0, 0, -1);
-             var center = new THREE.Vector3(0, 0, 0);
-             var cam = this.camera;
-             forward.applyMatrix4(cam.matrixWorld);
-             center.applyMatrix4(cam.matrixWorld);
-             var offset = forward.sub(center);
-             offset.setLength(.400 + dist);
-             center.add(offset);
-             this.center = [center.x, center.y, center.z];
-             this.camera.position.copy(center);
-         }
-         this.updateCamera();
+            this.totalTime -= 16;
+             if (this.cameramode == 'Fly')
+             {
+                 var dist = window.deltaTime / (this.flyspeed * 30.0);
+                 var forward = new THREE.Vector3(0, 0, -1);
+                 var center = new THREE.Vector3(0, 0, 0);
+                 var cam = this.camera;
+                 forward.applyMatrix4(cam.matrixWorld);
+                 center.applyMatrix4(cam.matrixWorld);
+                 var offset = forward.sub(center);
+                 offset.setLength(.400 + dist);
+                 center.add(offset);
+                 this.center = [center.x, center.y, center.z];
+                 this.camera.position.copy(center);
+             }
+             this.updateCamera();
+        }
      }
      //zoom the camera to orbit around a given THREE.js node
      this.zoomToThreeNode = function(node)

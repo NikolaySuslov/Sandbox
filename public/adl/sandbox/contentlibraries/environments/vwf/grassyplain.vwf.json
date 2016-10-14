@@ -1,24 +1,27 @@
 {
     "properties": {
 
-        "sunColor": [1, 1, 1],
-        "sunDirection": [0.5, 0.4, 1],
-        "sunIntensity": 0.8,
-        "ambientColor": [0.35, 0.35, 0.35],
-        "fogColor": [1, 1, 1],
+        "sunColor": [1, 1, 1, 1],
+        "sunDirection": [0.9, 0.4, 1],
+        "sunIntensity": 1,
+        "shadowDarkness": 0.65,
+        "ambientColor": [0, 0, 0, 1],
+        "fogColor": [1, 1, 1, 1],
         "fogNear": 0,
         "fogFar": 50,
         "fogType": "exp",
-        "fogDensity": 0.01,
+        "fogDensity": 0.001,
         "fogVFalloff": 0.539,
         "fogVFalloffStart": 22.6,
-        "skyColorBlend": 0.26,
-        "skyFogBlend": 0.16,
-        "skyApexColor": [0.3058823529411765, 0.6039215686274509, 0.9490196078431372],
-        "skyHorizonColor": [0.792156862745098, 0.9490196078431372, 0.9882352941176471],
+        "skyColorBlend": 0.55,
+        "skyFogBlend": 0.25,
+        "skyApexColor": [0.305882352941176, 0.603921568627451, 0.949019607843137, 1],
+        "skyHorizonColor": [0.792156862745098, 0.949019607843137, 0.988235294117647, 1],
         "vAtmosphereDensity": 0.0005,
-        "skyTexture": "bright",
-        "shadowDarkness": 0.65,
+        
+        "octreeObjects": 5,
+        "octreeDepth": 16,
+        "octreeExtents": 640,
         "materialDef": {
             "shininess": 4,
             "alpha": 1,
@@ -44,25 +47,36 @@
             "specularColor": {
                 "r": 0.4,
                 "g": 0.6784313725490196,
-                "b": 0.47058823529411764
+                "b": 0.47058823529411764,
+                "a": 1
             },
-            "specularLevel": 3.05,
+            "specularLevel": 1,
             "layers": [{
-                "alpha": 1,
-                "blendMode": 0,
-                "mapInput": 0,
-                "mapTo": 1,
-                "offsetx": 0.11,
-                "offsety": 0.11,
-                "rot": 0,
-                "scalex": "100",
-                "scaley": "100",
-                "src": "./contentlibraries/environments/assets/grass.jpg"
-            }],
+                    "alpha": 1,
+                    "blendMode": 0,
+                    "mapInput": 0,
+                    "mapTo": 1,
+                    "offsetx": 0.11,
+                    "offsety": 0.11,
+                    "rot": 0,
+                    "scalex": 100,
+                    "scaley": 100,
+                    "src": "./contentlibraries/environments/assets/grass.jpg"
+                }
+            ],
             "type": "phong",
             "side": 2,
-			"wireframe": false
+            "wireframe": false,
+            "metal": false,
+            "combine": 0,
+            "depthtest": true,
+            "depthwrite": true,
+            "blendMode": 1,
+            "fog": true,
+            "shading": true,
+            "vertexColors": false
         },
-        "skyAtmosphereDensity": 5
+        "skyTexture": "bright",
+        "skyAtmosphereDensity": 1.1
     }
 }

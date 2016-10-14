@@ -226,7 +226,19 @@
     cursor:pointer;
     vertical-align:middle;
     text-align:center;
-    overflow:visible
+    overflow:visible;
+    background: rgb(75, 83, 95);
+    margin: 3px;
+    border: 2px outset rgb(89, 91, 93);
+}
+
+.ui-button:hover {
+    background: rgb(66, 107, 160)
+    border: 2px outset rgb(66, 107, 160);
+}
+.ui-button:active {
+    background: rgb(58, 143, 255);
+    border: 2px inset rgb(58, 143, 255);
 }
 
 .ui-button,.ui-button:link,.ui-button:visited,.ui-button:hover,.ui-button:active {
@@ -539,7 +551,11 @@ color: #fff;
     width:20px;
     margin:-10px 0 0;
     padding:1px;
-    height:20px
+    height:20px;
+    overflow: hidden;
+    background: none;
+    border: none;
+    color:rgba(0,0,0,0);
 }
 
 .ui-dialog .ui-dialog-content {
@@ -563,8 +579,10 @@ color: #fff;
 }
 
 .ui-dialog .ui-dialog-buttonpane button {
-    margin:.5em .4em .5em 0;
-    cursor:pointer
+    margin: .5em .4em .5em 0;
+    cursor: pointer;
+    padding: 5px;
+    color: black;
 }
 
 .ui-dialog .ui-resizable-se {
@@ -815,7 +833,7 @@ color: #fff;
     cursor:default;
     display:block;
     overflow:hidden;
-    right:0
+    right:0;
 }
 
 .ui-spinner a.ui-spinner-button {
@@ -840,7 +858,7 @@ color: #fff;
 }
 
 .ui-spinner .ui-icon-triangle-1-s {
-    background-position:-65px -16px
+    background-position: -61px -16px;
 }
 
 .ui-tabs {
@@ -911,7 +929,7 @@ body .ui-tooltip {
 }
 
 .ui-widget .ui-widget {
-    font-size:1em
+    font-size:1em;
 }
 
 .ui-widget input,.ui-widget select,.ui-widget textarea,.ui-widget button {
@@ -1109,7 +1127,7 @@ background: #3a8fff url("images/ui-bg_glass_20_3a8fff_1x400.png") 50% 50% repeat
 }
 
 .ui-icon-triangle-1-n {
-    background-position:0 -16px
+    background-position: 4px -16px;
 }
 
 .ui-icon-triangle-1-ne {
@@ -1125,7 +1143,7 @@ background: #3a8fff url("images/ui-bg_glass_20_3a8fff_1x400.png") 50% 50% repeat
 }
 
 .ui-icon-triangle-1-s {
-    background-position:-64px -16px
+    background-position: -64px -16px;
 }
 
 .ui-icon-triangle-1-sw {

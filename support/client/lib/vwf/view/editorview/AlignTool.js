@@ -1,53 +1,11 @@
 function AlignTool() {
 	this.buildGUI = function() {
-		$(document.body).append("<div id='AlignToolGUI'/>");
-		$('#AlignToolGUI').append("<div id='AlignToolGUI_PickTarget'/>");
-		$('#AlignToolGUI').append("<div id='AlignToolGUI_PickTargetID' style='display: inline;margin-left: 10px;'/>");
-		$('#AlignToolGUI').append("<div style='width:400px'>" +
-			"<input type='checkbox' id='AlignX' /><label for='AlignX'>X</label>" +
-			"<div id='XFrom' style='display: inline;margin-left: 10px;'>" +
-			"  <input type='radio' id='xFromMin' name='XFrom'/><label for='xFromMin'>Min</label>" +
-			"  <input type='radio' id='xFromMax' name='XFrom'/><label for='xFromMax'>Max</label>" +
-			"  <input type='radio' id='xFromCenter' name='XFrom' checked=checked/><label for='xFromCenter'>Center</label>" +
-			"</div>" +
-			"<div id='XTo' style='display: inline;margin-left: 10px;'>" +
-			"  <input type='radio' id='xToMin' name='XTo'/><label for='xToMin'>Min</label>" +
-			"  <input type='radio' id='xToMax' name='XTo'/><label for='xToMax'>Max</label>" +
-			"  <input type='radio' id='xToCenter' name='XTo' checked=checked/><label for='xToCenter'>Center</label>" +
-			"</div>" +
-			"</div>"
-		);
+		
+		
+		var template = $.ajax({url:"../vwf/view/editorView/templates/alignTool.html",async:false}).responseText;
 
-		$('#AlignToolGUI').append("<div style='width:400px'>" +
-			"<input type='checkbox' id='AlignY' /><label for='AlignY'>Y</label>" +
-			"<div id='YFrom' style='display: inline;margin-left: 10px;'>" +
-			"  <input type='radio' id='yFromMin' name='YFrom'/><label for='yFromMin'>Min</label>" +
-			"  <input type='radio' id='yFromMax' name='YFrom'/><label for='yFromMax'>Max</label>" +
-			"  <input type='radio' id='yFromCenter' name='YFrom' checked=checked/><label for='yFromCenter'>Center</label>" +
-			"</div>" +
-			"<div id='YTo' style='display: inline;margin-left: 10px;'>" +
-			"  <input type='radio' id='yToMin' name='YTo'/><label for='yToMin'>Min</label>" +
-			"  <input type='radio' id='yToMax' name='YTo'/><label for='yToMax'>Max</label>" +
-			"  <input type='radio' id='yToCenter' name='YTo' checked=checked/><label for='yToCenter'>Center</label>" +
-			"</div>" +
-			"</div>"
-		);
+		$(document.body).append(template);
 
-
-		$('#AlignToolGUI').append("<div style='width:400px'>" +
-			"<input type='checkbox' id='AlignZ' /><label for='AlignZ'>Z</label>" +
-			"<div id='ZFrom' style='display: inline;margin-left: 10px;'>" +
-			"  <input type='radio' id='zFromMin' name='ZFrom'/><label for='zFromMin'>Min</label>" +
-			"  <input type='radio' id='zFromMax' name='ZFrom'/><label for='zFromMax'>Max</label>" +
-			"  <input type='radio' id='zFromCenter' name='ZFrom' checked=checked/><label for='zFromCenter'>Center</label>" +
-			"</div>" +
-			"<div id='ZTo' style='display: inline;margin-left: 10px;'>" +
-			"  <input type='radio' id='zToMin' name='ZTo'/><label for='zToMin'>Min</label>" +
-			"  <input type='radio' id='zToMax' name='ZTo'/><label for='zToMax'>Max</label>" +
-			"  <input type='radio' id='zToCenter' name='ZTo' checked=checked/><label for='zToCenter'>Center</label>" +
-			"</div>" +
-			"</div>"
-		);
 
 		this.xDisplay = new THREE.Mesh(new THREE.PlaneGeometry(10, 10, 10, 10), new THREE.MeshPhongMaterial());
 		this.yDisplay = new THREE.Mesh(new THREE.PlaneGeometry(10, 10, 10, 10), new THREE.MeshPhongMaterial());
@@ -67,9 +25,7 @@ function AlignTool() {
 		this.xDisplay.material.color.b = 0;
 		this.xDisplay.material.color.r = 1;
 		this.xDisplay.material.needsUpdate = true
-		this.xDisplay.material.ambient.g = 0;
-		this.xDisplay.material.ambient.b = 0;
-		this.xDisplay.material.ambient.r = 1;
+		
 		this.xDisplay.material.wireframe = true;
 
 		this.yDisplay.material.side = 2
@@ -79,9 +35,7 @@ function AlignTool() {
 		this.yDisplay.material.color.b = 0;
 		this.yDisplay.material.color.r = 0;
 		this.yDisplay.material.needsUpdate = true
-		this.yDisplay.material.ambient.g = 1;
-		this.yDisplay.material.ambient.b = 0;
-		this.yDisplay.material.ambient.r = 0;
+	
 		this.yDisplay.material.wireframe = true;
 
 		this.zDisplay.material.side = 2
@@ -91,9 +45,7 @@ function AlignTool() {
 		this.zDisplay.material.color.b = 1;
 		this.zDisplay.material.color.r = 0;
 		this.zDisplay.material.needsUpdate = true
-		this.zDisplay.material.ambient.g = 0;
-		this.zDisplay.material.ambient.b = 1;
-		this.zDisplay.material.ambient.r = 0;
+		
 		this.zDisplay.material.wireframe = true;
 
 		this.xDisplay.material.map = THREE.ImageUtils.loadTexture('./textures/grid2.gif');
@@ -119,15 +71,15 @@ function AlignTool() {
 		$('#AlignToolGUI_PickTarget').click(function() {
 			_AlignTool.PickTarget()
 		});
-		$("#AlignX").button();
-		$("#XFrom").buttonset();
-		$("#XTo").buttonset();
-		$("#AlignY").button();
-		$("#YFrom").buttonset();
-		$("#YTo").buttonset();
-		$("#AlignZ").button();
-		$("#ZFrom").buttonset();
-		$("#ZTo").buttonset();
+		//$("#AlignX").checkboxradio();
+		//$("#XFrom").controlgroup();
+		//$("#XTo").buttonset();
+		//$("#AlignY").checkboxradio();
+		//$("#YFrom").buttonset();
+		//$("#YTo").buttonset();
+		//$("#AlignZ").checkboxradio();
+		//$("#ZFrom").buttonset();
+		//$("#ZTo").buttonset();
 		$('#AlignToolGUI').dialog({
 
 
@@ -155,20 +107,23 @@ function AlignTool() {
 				_AlignTool.hide();
 			},
 			autoOpen: false,
-			width: 'auto'
+			width: 'auto',
+			title:"Align"
 
 		});
 	}
 	this.OK = function() {
-
+		//need to do undo work here
 
 	}
 	this.Cancel = function() {
 
-
+		_UndoManager.startCompoundEvent();
 		for (var i = 0; i < this.sourceNodeIDs.length; i++) {
-			vwf_view.kernel.setProperty(this.sourceNodeIDs[i], 'transform', this.sourceBackupTransform[this.sourceNodeIDs[i]]);
+			_UndoManager.recordSetProperty(this.sourceNodeIDs[i], 'transform',  this.sourceBackupTransform[this.sourceNodeIDs[i]]);
+			_Editor.setProperty(this.sourceNodeIDs[i], 'transform', this.sourceBackupTransform[this.sourceNodeIDs[i]]);
 		}
+		_UndoManager.stopCompoundEvent();
 
 	}
 	this.updateDisplay = function() {
@@ -197,6 +152,7 @@ function AlignTool() {
 		var alignY = $("#AlignY").is(':checked');
 		var alignZ = $("#AlignZ").is(':checked');
 
+		_UndoManager.startCompoundEvent();
 		for (var i = 0; i < this.sourceNodeIDs.length; i++) {
 			var source = _Editor.findviewnode(this.sourceNodeIDs[i])
 			var sbounds = source.GetBoundingBox(true);
@@ -344,8 +300,10 @@ function AlignTool() {
 			trans[12] = spos.x;
 			trans[13] = spos.y;
 			trans[14] = spos.z;
- 			vwf_view.kernel.setProperty(this.sourceNodeIDs[i], 'transform', trans);
+ 			_UndoManager.recordSetProperty(this.sourceNodeIDs[i], 'transform', trans);
+ 			_Editor.setProperty(this.sourceNodeIDs[i], 'transform', trans);
 		}
+		_UndoManager.stopCompoundEvent();
 		
 		var xCenter = (tbounds.min[0] + tbounds.max[0]) / 2;
 		var yCenter = (tbounds.min[1] + tbounds.max[1]) / 2;
@@ -387,8 +345,6 @@ function AlignTool() {
 		this.backcolor = $('#AlignToolGUI_PickTarget').css('background');
 		$('#AlignToolGUI_PickTarget').addClass('ui-state-active')
 		this.pickMode = 'Pick';
-
-
 	}
 	this.show = function() {
 

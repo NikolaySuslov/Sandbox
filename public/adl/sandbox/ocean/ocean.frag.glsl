@@ -261,7 +261,7 @@ void main() {
 
 	float dist = 0.3;
 	vec3 ref_vec = -reflect(-camdir, texNormal);
-	//ref_vec = mix(-ref_vec, ref_vec, sign(ref_vec.z));
+	ref_vec.z = abs(ref_vec.z);
 	sky = uReflectPow * .333 * pow(textureCube(texture, ref_vec).xyz,vec3(2.2));
 	
 	#ifdef useReflections
@@ -279,7 +279,7 @@ void main() {
 
 
 	float cosT  = -dot(vNormal, refract(nnvCamDir, normalize(vNormal), .66));
-	float cosT2  = -dot(vNormal, refract(nnvCamDir, normalize(vNormal), 1.03));
+	
 	//cosT = max(.001,cosT);
 	cosT = -cosT;
 
@@ -363,6 +363,6 @@ void main() {
         	#endif
 		#endif
 	#endif	
-	//gl_FragColor.xyz = vec3(planerMix);
+	//gl_FragColor.xyz = normalize(ref_vec);
           		
 }

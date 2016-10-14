@@ -186,6 +186,15 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 	{
 		window._AssetManager = $scope;
 
+		var input = $('#manageAssetsDialog #fileInput');
+		input.on('dragover',function(e){
+			    e.stopPropagation();
+            e.preventDefault();
+		})
+		input.on('drop',function(e){
+			  
+		})
+
 		var fileData = {};
 		$scope.assets = assets;
 		$scope.selectedAsset = null;
@@ -306,7 +315,10 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 					}
 
 					// attempt to determine image resolution
-					if ($scope.selected.type.slice(0, 6) === 'image/')
+					if ($scope.selected.type === 'image/x-dds')
+						$scope.selected.isTexture = true;
+
+					else if ($scope.selected.type.slice(0, 6) === 'image/')
 					{
 						// get data url from buffer
 						var dataStr = '', buffer = fileData[$scope.selected.id];
@@ -335,7 +347,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 								};
 
 								var exp = log2($scope.selected.width);
-								if ($scope.selected.width === $scope.selected.height && exp === Math.floor(exp) && exp >= 8)
+								if ($scope.selected.width === $scope.selected.height && exp === Math.floor(exp) && exp >= 6)
 									$scope.selected.isTexture = true;
 								else
 									$scope.selected.isTexture = null;

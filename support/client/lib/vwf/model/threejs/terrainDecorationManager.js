@@ -7,13 +7,21 @@
         this.generator = null;
         this.lastCameraPosition = new THREE.Vector3(0, 0, 0);
         this.grassMeshes = [];
+        this.wind = true;
+        this.dim = 8;
+        this.tileW = 24;
+        this.grassDensity = .3;
+        this.grassWidth = 1.5;
+        this.grassHeight = 1;
+        this.queues = {};
+        this.meshCache = {};
         this.positions = [
             [0, 0, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0]
         ]
-
+        this.lastTime = 0;
         this.setRoot = function(r) {
             if (r instanceof THREE.Object3D)
                 this.root = r;
@@ -37,8 +45,7 @@
             _dView.unbind('postprerender', this.renderHeightMap);
 
         }
-        this.dim = 8;
-        this.tileW = 8;
+       
         this.update = function(cameraPosition, force) {
 
 
@@ -137,15 +144,16 @@
             this.RandomCount++;
             return this.entroySample(this.RandomCount);
         }
-        this.wind = true;
+        
         this.renderHeightMap = function() {
 
             if (!this.counter) this.counter = 0;
             this.counter++;
             if (this.wind)
-                this.mat.uniforms.time.value += deltaTime * (1.5 + Math.sin(this.counter / 100)) * (1.5 + Math.sin(this.counter / 500)) * (1.5 + Math.sin(this.counter / 1000)) || 1;
+                this.mat.uniforms.time.value += (performance.now() - this.lastTime) * (1.5 + Math.sin(this.counter / 100)) * (1.5 + Math.sin(this.counter / 500)) * (1.5 + Math.sin(this.counter / 1000)) || 1;
             else
                 this.mat.uniforms.time.value = 1;
+            this.lastTime = performance.now();
             if (!this.needReRender) return;
             this.needReRender = false;
             var oldparent = this.TerrainRoot.parent;
@@ -249,7 +257,7 @@
                         },
                         diffuseTex: {
                             type: "t",
-                            value: _SceneManager.getTexture(this.texture || './terrain/Grass.png')
+                            value: _SceneManager.getTexture(this.texture || './terrain/sprieters_zps269d2607.png')
                         },
                         projection: {
                             type: "m4",
@@ -262,6 +270,17 @@
                         time: {
                             type: "f",
                             value: 0
+                        },
+                        alphaTest: {
+                            type: "f",
+                            value: .8
+                        },
+                        thresholdMatrix: {
+                            type: "m4",
+                            value: new THREE.Matrix4(  1.0 / 17.0,  9.0 / 17.0,  3.0 / 17.0, 11.0 / 17.0,
+                                      13.0 / 17.0,  5.0 / 17.0, 15.0 / 17.0,  7.0 / 17.0,
+                                       4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0,
+                                      16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0)
                         }
                     },
                     attributes: {},
@@ -271,6 +290,8 @@
                         "uniform lowp vec3 campos;" +
                         "uniform lowp sampler2D heightMap;" +
                         "uniform lowp float time;" +
+                        "varying vec3 vFogPosition;" + 
+                        
                         "attribute lowp float random;" +
                         "varying lowp float ar;" +
                         "varying lowp float rand;" +
@@ -291,10 +312,11 @@
                         "    modMat[3][2] =0.0;" +
                         "  wind = vec2(sin(position.x/2.0 + time/1900.0)+cos(position.y/2.0 + time/1900.0),0.0);\n" +
                         "wind = (wind + 1.0) / 4.0;\n" +
-                        "    gl_Position = modMat * vec4( position.xy + wind * uv.y,position.z+z-0.45, 1.0 );\n" +
+                        "    gl_Position = modMat * vec4( position.xy + wind * uv.y,position.z+z, 1.0 );\n" +
                  //   /*debug render target*/    "    gl_Position = modelMatrix * vec4( position,1.0);\n"+
                         "    ar = length(gl_Position.xyz - cameraPosition)/20.0;\n" +
                     //"    gl_Position.z = z;"+
+                    "    vFogPosition = gl_Position.xyz;\n" + 
                     "    gl_Position = viewMatrix * gl_Position;\n" +
 
                     "    gl_Position = projectionMatrix * gl_Position;\n" +
@@ -308,7 +330,12 @@
                         "varying lowp vec2 tc;" +
                         "varying lowp float rand;" +
                         "varying lowp vec2 wind;" +
+                        "varying vec3 vFogPosition;" + 
+                        "uniform mat4 thresholdMatrix;" +
+                        "float random( vec2 p ){const vec2 r = vec2( 23.1406926327792690,  2.6651441426902251); return fract( cos( mod( 123456789., 1e-7 + 256. * dot(p,r) ) ) );  }"+
+                       
                         "varying lowp float ar;" +
+                         "uniform float alphaTest;"+"\n" + THREE.ShaderChunk.lights_phong_pars_fragment + "\n" + THREE.ShaderChunk.fog_pars_fragment +"\n"+ 
                         "void main() { " +
                         
                         "lowp vec4 color1 = texture2D(diffuseTex,tc);" +
@@ -316,11 +343,15 @@
                        
                         "lowp float light =  gb.a;" +
                         "lowp float density =  gb.g;" +
-
-                    "if ( color1.a < ar * ar ) discard;\n" +
+                        "if ( color1.a * density < alphaTest ) discard;\n" +
+                        //"for ( int i = 0; i < 4; i++) for(int j = 0; j < 4; j++){ if(int(mod(gl_FragCoord.x + rand, 4.0)) == i) if(int(mod(gl_FragCoord.y+ rand, 4.0)) == j) color1.a = max(0.0,thresholdMatrix[i][j]);} " +
+                   // " if(random(gl_FragCoord.xy * vec2(rand,-rand) + progtc) > color1.a) discard;"    +  
+                    "if ( color1.a  < 0.1 * ar*ar) discard;\n" +
+                  //  "color1.r = abs(mod(gl_FragCoord.x, 4.0)); color1.g =0.0;color1.b=0.0;"+
+                    //"color1.a =  1.0 ;"+
                        // "if ( color1.a * density < .5) discard;\n" +
                         "gl_FragColor = color1;" +
-                        "gl_FragColor.xyz *= (light +.15*rand) + wind.x * wind.x * tc.y* tc.y;\n" +
+                        "gl_FragColor.xyz *= (light +.15*rand) + wind.x * wind.x * tc.y* tc.y;\n" + THREE.ShaderChunk.fog_fragment +"\n" +
 
                     "}"
 
@@ -341,13 +372,18 @@
                 this.mat.uniforms.diffuseTex.value.wrapS = THREE.ClampToEdgeWrapping;
                 this.mat.uniforms.diffuseTex.value.wrapT = THREE.ClampToEdgeWrapping;
                 this.mat.uniforms.diffuseTex.anisotropy = 1;
+                this.mat.fog = true;
+                this.mat.lights = true;
+                for(var i in THREE.UniformsLib.fog)
+                    this.mat.uniforms[i] = THREE.UniformsLib.fog[i];
+                for(var i in THREE.UniformsLib.lights)
+                    this.mat.uniforms[i] = THREE.UniformsLib.lights[i];
+                
             }
             return this.mat;
 
         }
-        this.grassDensity = 3;
-        this.grassWidth = 1.5;
-        this.grassHeight = 1;
+       
         this.buildGeometry = function() {
             var geo = new THREE.Geometry();
             geo.faces = [];
@@ -362,7 +398,8 @@
             geo.faceVertexUvs[0] = [];
             for (var x = -this.tileW / 2; x < this.tileW / 2; x += .5)
                 for (var y = -this.tileW / 2; y < this.tileW / 2; y += .5) {
-                    for (var i = 0; i < grassDensity; i++) {
+                    for (var i = 0; i < Math.max(1,grassDensity); i++) {
+                        if(Math.random() > grassDensity+.001) continue;
                         grassHeight = this.grassHeight + Math.SecureRandom(); //careful with random!!!! this one is only useful because you cannot ever make a model decision based on it
                         var centerRnd = new THREE.Vector3((Math.SecureRandom() - .5) * 2, (Math.SecureRandom() - .5) * 2, 0);
                         var center = new THREE.Vector3(x + grassWidth + centerRnd.x, y + grassWidth + centerRnd.y, 0);
@@ -417,7 +454,7 @@
                             var newmesh = new THREE.Mesh(this.geo, oldmat);
                             oldmesh.parent.add(newmesh);
                             oldmesh.parent.remove(oldmesh);
-                            newmesh.position.set(oldmesh.position);
+                            newmesh.position.copy(oldmesh.position);
                             newmesh.rotation.set(oldmesh.rotation.x, oldmesh.rotation.y, oldmesh.rotation.z, oldmesh.rotation.order);
                             newmesh.vwfID = oldmesh.vwfID;
                             newmesh.InvisibleToCPUPick = true;
@@ -441,8 +478,7 @@
             return (new THREE.Mesh(this.geo, this.getGrassMat(this.geo.vertices.length)));
 
         }
-        this.queues = {};
-        this.meshCache = {};
+        
         this.settingProperty = function(name, val) {
             if (name == 'texture' && this.texture != val) {
                 this.texture = val;

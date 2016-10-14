@@ -67,6 +67,17 @@ function socketThreadProxy(host, options)
             lastTime = now;
         }
     }
+    this.EVENTS = {
+        READY:"clientReady"
+    }
+    this.event = function(message,param)
+    {
+        this.postMessage(
+        {
+            type: EVENT,
+            event:{name:message,param:param}
+        });
+    }
     this.ping = function(message)
     {
         this.postMessage(
@@ -81,6 +92,7 @@ function socketThreadProxy(host, options)
     this.onMessage = function(e)
     {
         var message = e.data;
+       
         if (message.type == EVENT)
         {
             this.trigger(message.event.name, message.event.param);
@@ -97,8 +109,6 @@ function socketThreadProxy(host, options)
         {
             console.log(message.message);
         }
-
-
     }
     this.postMessage = function(message)
     {

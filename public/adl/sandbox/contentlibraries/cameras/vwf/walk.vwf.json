@@ -1,4 +1,70 @@
 {
+    "children": {
+        "Nc64c896c": {
+            "extends": "sphere2.vwf",
+            "properties": {
+                "DisplayName": "sphere1",
+                "___physics_activation_state": 1,
+                "___physics_deactivation_time": 0,
+                "___physics_velocity_angular": [0, 0, 0],
+                "___physics_velocity_linear": [0, 0, 0],
+                "materialDef": {
+                    "alpha": 1,
+                    "ambient": {
+                        "b": 1,
+                        "g": 1,
+                        "r": 1
+                    },
+                    "blendMode": 1,
+                    "color": {
+                        "a": 1,
+                        "b": 1,
+                        "g": 1,
+                        "r": 1
+                    },
+                    "depthtest": true,
+                    "depthwrite": true,
+                    "emit": {
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fog": true,
+                    "layers": [],
+                    "metal": false,
+                    "reflect": 0,
+                    "shadeless": false,
+                    "shading": true,
+                    "shadow": true,
+                    "shininess": 15,
+                    "side": 0,
+                    "specularColor": {
+                        "a": 1,
+                        "b": 0.577350269189626,
+                        "g": 0.577350269189626,
+                        "r": 0.577350269189626
+                    },
+                    "specularLevel": 1,
+                    "type": "phong",
+                    "vertexColors": false,
+                    "wireframe": false
+                },
+                "owner": "Anonymous_r1peHPMzEUkgn8YkAAAG",
+                "transform": [0.10463298857212067, 0.894764244556427, 0.43640565872192383, 0, -0.9955164194107056, 0.09404350817203522, 0.04586808383464813, 0, 0, -0.43968626856803894, 0.9014904499053955, 0, 0, 0, 0, 1],
+                "type": "Primitive",
+                "visible": false
+            },
+            "random": {
+                "c": 1,
+                "s0": 0.770544941071421,
+                "s1": 0.010315710445866,
+                "s2": 0.377006342168897
+            },
+            "sequence": 0,
+            "source": "vwf/model/threejs/sphere.js",
+            "type": "subDriver/threejs"
+        }
+    },
     "extends": "SandboxCamera.vwf",
     "methods": {
         "deinitialize": {
@@ -6,7 +72,7 @@
             "parameters": []
         },
         "ready": {
-            "body": "this.Scene.unbind('pointerMove', this.mousemove);\n    this.Scene.unbind('pointerDown', this.mousepress);\n    this.Scene.unbind('pointerUp', this.mouseup);\n    this.Scene.unbind('pointerWheel', this.mousewheel);\n    this.Scene.unbind('keyDown', this.keydown);\n    this.Scene.unbind('keyUp', this.keyup);\n    var self = this;\n    this.mousemove = function(e, d)\n    {\n\n        var rel_x = self.last_x - e.position[0];\n        var rel_y = self.last_y - e.position[1];\n        self.rotateCam(rel_x * 3, rel_y * 3);\n        self.last_x = e.position[0];\n        self.last_y = e.position[1];\n    }\n    this.mousewheel = function(e, d)\n    {\n        self.zoom += e.wheelDelta;\n    }\n    this.mousepress = function(e, d)\n    {\n\n        self.mousedown = true;\n        self.last_x = e.position[0];\n        self.last_y = e.position[1];\n    }\n    this.mouseup = function(e, d)\n    {\n        self.mousedown = false;\n    }\n    this.keydown = function(e, d)\n    {\n        if (e.key.key == 'W')\n            self.movement = Vec3.add(self.movement, [0, 1, 0], []);\n        if (e.key.key == 'S')\n            self.movement = Vec3.add(self.movement, [0, -1, 0], []);\n        if (e.key.key == 'D')\n            self.movement = Vec3.add(self.movement, [1, 0, 0], []);\n        if (e.key.key == 'A')\n            self.movement = Vec3.add(self.movement, [-1, 0, 0], []);\n    }\n    this.keyup = function(e, d)\n    {\n        console.log(e);\n        if (e.key.key == 'W')\n            self.movement = Vec3.add(self.movement, [0, -1, 0], []);\n        if (e.key.key == 'S')\n            self.movement = Vec3.add(self.movement, [0, 1, 0], []);\n        if (e.key.key == 'D')\n            self.movement = Vec3.add(self.movement, [-1, 0, 0], []);\n        if (e.key.key == 'A')\n            self.movement = Vec3.add(self.movement, [1, 0, 0], []);\n    }\n\n    this.Scene.bind('pointerMove', this.mousemove);\n    this.Scene.bind('pointerDown', this.mousepress);\n    this.Scene.bind('pointerUp', this.mouseup);\n    this.Scene.bind('pointerWheel', this.mousewheel);\n    this.Scene.bind('keyDown', this.keydown);\n    this.Scene.bind('keyUp', this.keyup);\n    //This function was created for you by the system. \n    //The scene is now completely loaded. This will fire on each client when the client joins, so it`s not a great place to create objects",
+            "body": "this.Scene.unbind('pointerMove', this.mousemove);\n    this.Scene.unbind('pointerDown', this.mousepress);\n    this.Scene.unbind('pointerUp', this.mouseup);\n    this.Scene.unbind('pointerWheel', this.mousewheel);\n    this.Scene.unbind('keyDown', this.keydown);\n    this.Scene.unbind('keyUp', this.keyup);\n    var self = this;\n    this.mousemove = function(e, d)\n    {\n\n        var rel_x = self.last_x - e.position[0];\n        var rel_y = self.last_y - e.position[1];\n        self.rotateCam(rel_x * 3, rel_y * 3);\n        self.last_x = e.position[0];\n        self.last_y = e.position[1];\n    }\n    this.mousewheel = function(e, d)\n    {\n        self.zoom += e.wheelDelta;\n    }\n    this.mousepress = function(e, d)\n    {\n\n        self.mousedown = true;\n        self.last_x = e.position[0];\n        self.last_y = e.position[1];\n    }\n    this.mouseup = function(e, d)\n    {\n        self.mousedown = false;\n    }\n    this.keydown = function(e, d)\n    {\n        if (e.key.key == 'W')\n            self.movement = Vec3.add(self.movement, [0, 1, 0], []);\n        if (e.key.key == 'S')\n            self.movement = Vec3.add(self.movement, [0, -1, 0], []);\n        if (e.key.key == 'D')\n            self.movement = Vec3.add(self.movement, [1, 0, 0], []);\n        if (e.key.key == 'A')\n            self.movement = Vec3.add(self.movement, [-1, 0, 0], []);\n    }\n    this.keyup = function(e, d)\n    {\n        console.log(e);\n        if (e.key.key == 'W')\n            self.movement = Vec3.add(self.movement, [0, -1, 0], []);\n        if (e.key.key == 'S')\n            self.movement = Vec3.add(self.movement, [0, 1, 0], []);\n        if (e.key.key == 'D')\n            self.movement = Vec3.add(self.movement, [-1, 0, 0], []);\n        if (e.key.key == 'A')\n            self.movement = Vec3.add(self.movement, [1, 0, 0], []);\n    }\n\n    this.Scene.bind('pointerMove', this.mousemove,this);\n    this.Scene.bind('pointerDown', this.mousepress,this);\n    this.Scene.bind('pointerUp', this.mouseup,this);\n    this.Scene.bind('pointerWheel', this.mousewheel,this);\n    this.Scene.bind('keyDown', this.keydown,this);\n    this.Scene.bind('keyUp', this.keyup,this);\n    //This function was created for you by the system. \n    //The scene is now completely loaded. This will fire on each client when the client joins, so it`s not a great place to create objects",
             "parameters": []
         },
         "rotateCam": {
@@ -27,18 +93,18 @@
                 "type": "nodeid"
             }
         },
-        "___sourceAssetTimestamp": "Thu Nov 12 2015 17:46:05 GMT-0500 (Eastern Standard Time)",
+        "___sourceAssetTimestamp": "Tue May 24 2016 13:46:55 GMT-0400 (Eastern Daylight Time)",
         "last_x": 0,
         "last_y": 0,
         "mousedown": 0,
         "movement": [0, 0, 0],
         "objectToLookAt": "sphere2-vwf-Nb10184b3",
         "offset": [1, 0, 0],
-        "owner": "Rob",
+        "owner": "Anonymous_r1peHPMzEUkgn8YkAAAG",
         "quaternion": [-0.168120741844177, 0.0131280934438109, -0.0767349526286125, 0.982687532901764],
         "rotation": [-0.90743362903595, 0.0708590298891068, -0.414177775382996, 21.3538246154785],
         "scale": [1.00000011920929, 0.998998463153839, 0.999000251293182],
-        "transform": [0.10942590236663818, -0.9929879307746887, -0.0014035310596227646, 0, 0.8903104066848755, 0.09873290359973907, -0.4400036633014679, 0, 0.4366176724433899, 0.04685108736157417, 0.8939720392227173, 0, -3, 0, 3.25, 1],
+        "transform": [0.10942590236663818, -0.9929879307746887, -0.0014035310596227646, 0, 0.8903104066848755, 0.09873290359973907, -0.4400036633014679, 0, 0.4366176724433899, 0.04685108736157417, 0.8939720392227173, 0, 0.6554557681083679, -0.7388161420822144, 0.01832047663629055, 1],
         "translation": [-4.97808504104614, -9.80616760253906, 1.45953845977783],
         "zoom": 1
     },

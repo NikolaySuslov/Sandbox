@@ -295,10 +295,12 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 
 	function GetPick(evt)
 	{
+		if(!evt)
+			return null;
 		var ray = _Editor.GetWorldPickRay(evt.originalEvent);
 		var o = _Editor.getCameraPosition();
 		var hit = _SceneManager.CPUPick(o, ray, {
-			ignore: [_Editor.GetMoveGizmo()]
+			ignore: [_Editor.GetMoveGizmo().getGizmoHead()]
 		});
 
 		if(hit)
@@ -309,7 +311,10 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			return object.vwfID;
 		}
 		else
+		{
+			debugger;
 			return null;
+		}
 	}
 
 	function toGMat(threemat)
@@ -527,6 +532,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 		else if (data.type == 'child')
 		{
 			var ID = GetPick(evt);
+			if(!ID) ID = _Editor.GetSelectedVWFID();
 			if (ID) {
 				$.getJSON(data.url, function(proto) {
 					//very important to clean the node! Might have accidently left a name or id in the libarary
@@ -552,9 +558,11 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 		else if (data.type == 'material')
 		{
 			var ID = GetPick(evt);
+			if(!ID) ID = _Editor.GetSelectedVWFID();
 			if (ID) {
 				$.getJSON(data.url, function(proto) {
 					proto.sourceAssetId = data.sourceAssetId;
+					_UndoManager.recordSetProperty(ID, 'materialDef', proto);
 					_PrimitiveEditor.setProperty(ID, 'materialDef', proto);
 				})
 			}
@@ -562,6 +570,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 		else if( data.type === 'texture' )
 		{
 			var ID = GetPick(evt);
+			if(!ID) ID = _Editor.GetSelectedVWFID();
 			if(ID){
 				var mat = {
 					"color": {"r": 1,"g": 1,"b": 1},
@@ -581,6 +590,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 					}],
 					"type": "phong"
 				};
+				_UndoManager.recordSetProperty(ID, 'materialDef', proto);
 				_PrimitiveEditor.setProperty(ID, 'materialDef', mat);
 			}
 		}
@@ -588,7 +598,10 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			$.getJSON(data.url, function(proto) {
 				_UndoManager.startCompoundEvent();
 				for (var i in proto.properties)
+				{
+					_UndoManager.recordSetProperty(Engine.application(), i, proto.properties[i]);
 					_PrimitiveEditor.setProperty(Engine.application(), i, proto.properties[i]);
+				}
 				for (var i in proto.children)
 					_Editor.createChild(Engine.application(), GUID(), proto.children[i]);
 				_UndoManager.stopCompoundEvent();

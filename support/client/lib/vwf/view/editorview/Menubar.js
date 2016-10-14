@@ -39,12 +39,17 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			$scope.worldIsNotLaunchable = !($scope.worldIsPersistent && $scope.userIsOwner) || $scope.worldIsSinglePlayer || $scope.isExample;
 			$scope.worldHasTerrain = !!window._dTerrain;
 			$scope.hasContinuesFlag = /[?&]allowContinues/.test(window.location.search);
+			$scope.allowPlayPause = instanceData.allowPlayPause;
 
 			//console.log('UserIsOwner:', $scope.userIsOwner);
 		});
 
 		$scope.lookUpHandler = function(e){
 			$('#ddsmoothmenu li').trigger('mouseleave');
+			//we used to use pointer-events:none in the css, but that is causing some problems with mouseover. 
+			//now using application logic to reject clicks
+			if($(e.currentTarget).parent().hasClass('disabled'))
+			  return;
 			handlers[e.currentTarget.id](e);
 		}
 	}]);
@@ -52,6 +57,9 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 	app.service('MenuHandlers', function(){
 		var handlers =
 		{
+			MenuLogOut:function(e){
+				window.location = "/";
+			},
 			// hook up assets menu
 			MenuManageAssets: function(e){
 				$('#manageAssetsDialog').dialog('open');
@@ -172,15 +180,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 
 			},
 
-			MenuLogOut: function(e) {
-				if ($('#MenuLogOut').attr('disabled') == 'disabled') return;
-
-				var path = window.location.pathname;
-
-				if(path.indexOf('example_blank') > 0) window.location = '/adl/sandbox/demos';
-				else if(path.indexOf('example_') > 0) window.location = '/adl/sandbox/examples';
-				else window.location = path.replace('/sandbox/', '/sandbox/world/');
-			},
+			
 			MenuSelectPick: function(e) {
 				_Editor.SetSelectMode('Pick');
 			},
@@ -328,13 +328,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				_Editor.CreateModifier('lathe', _UserManager.GetCurrentUserName(), true);
 			},
 			MenuCreateTaper: function(e) {
-				_Editor.CreateModifier('taper', _UserManager.GetCurrentUserName());
+				_Editor.CreateModifier('taper', _UserManager.GetCurrentUserName(),true);
 			},
 			MenuCreateBend: function(e) {
-				_Editor.CreateModifier('bend', _UserManager.GetCurrentUserName());
+				_Editor.CreateModifier('bend', _UserManager.GetCurrentUserName(),true);
 			},
 			MenuCreateTwist: function(e) {
-				_Editor.CreateModifier('twist', _UserManager.GetCurrentUserName());
+				_Editor.CreateModifier('twist', _UserManager.GetCurrentUserName(),true);
 			},
 
 			MenuCreateUVMap: function(e) {
@@ -347,13 +347,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				_Editor.CreateModifier('perlinnoise', _UserManager.GetCurrentUserName());
 			},
 			MenuCreateSimplexNoise: function(e) {
-				_Editor.CreateModifier('simplexnoise', _UserManager.GetCurrentUserName());
+				_Editor.CreateModifier('simplexnoise', _UserManager.GetCurrentUserName(),true);
 			},
 			MenuCreateOffset: function(e) {
-				_Editor.CreateModifier('offset', _UserManager.GetCurrentUserName());
+				_Editor.CreateModifier('offset', _UserManager.GetCurrentUserName(),true);
 			},
 			MenuCreateStretch: function(e) {
-				_Editor.CreateModifier('stretch', _UserManager.GetCurrentUserName());
+				_Editor.CreateModifier('stretch', _UserManager.GetCurrentUserName(),true);
 			},
 
 			MenuCreateBehaviorRotator: function(e) {
@@ -464,10 +464,10 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				_SceneManager.setShowRegions(!_SceneManager.getShowRegions());
 			},
 			MenuViewStats: function(e) {
-				if (window.stats.domElement.style.display == 'none')
-					window.stats.domElement.style.display = 'block';
+				if (_PerformanceManager.isOpen())
+					_PerformanceManager.hide()
 				else
-					window.stats.domElement.style.display = 'none';
+					_PerformanceManager.show()
 			},
 			MenuViewShadows: function(e) {
 				var val = !_Editor.findscene().children[1].castShadows;
@@ -706,6 +706,9 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuCreateTSection: function(e) {
 				_Editor.CreatePrim('tsection', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
 			},
+			MenuCreateTurtle: function(e) {
+				_Editor.CreateTurtle('turtle', _Editor.GetInsertPoint(), [1, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
+			},
 			MenuCreateTerrain: function(e) {
 				if (!window._dTerrain)
 					_Editor.CreatePrim('terrain', [0, 0, 0], [1, 1, 1], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
@@ -735,8 +738,10 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			MenuAssets3DRUpload: function(e) {
 				_ModelLibrary.showUpload();
 			},
-
-
+			MenuConsole:function()
+			{
+				logger.open();
+			},
 			MenuUndo: function(e) {
 				_UndoManager.undo();
 			},
@@ -760,11 +765,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 									_Editor.loadMesh(val, 'subDriver/threejs/asset/vnd.gltf+json');
 								if (type == 'Three.js Native JSON')
 									_Editor.loadMesh(val, 'subDriver/threejs/asset/vnd.three.js+json');
+								if (type == 'Wavefront OBJ (.obj)')
+									_Editor.loadMesh(val, 'subDriver/threejs/asset/vnd.wavefront-obj');
 							}
 						}, 'http://');
 					}
 
-				}, ["Collada", "3DR JSON (http://3dr.adlnet.gov)", "glTF (v0.6) JSON", 'Three.js Native JSON'])
+				}, ["Collada", "3DR JSON (http://3dr.adlnet.gov)", "glTF (v0.6) JSON", 'Three.js Native JSON','Wavefront OBJ (.obj)'])
 
 			},
 
@@ -792,6 +799,9 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			},
 			MenuCreatePlane: function(e) {
 				_Editor.CreatePrim('plane', _Editor.GetInsertPoint(), [1, 1, 5], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
+			},
+			MenuCreateText2D: function(e) {
+				_Editor.CreatePrim('text2D', _Editor.GetInsertPoint(), [1, 1, 5], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
 			},
 			MenuCreateCylinder: function(e) {
 				_Editor.CreatePrim('cylinder', _Editor.GetInsertPoint(), [1, .5, .5], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
@@ -890,10 +900,12 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			},
 
 			TestSettings: function(e) {
+				if(window._Publisher)
 				_Publisher.show();
 			},
 
 			TestLaunch: function(e) {
+				if(window._Publisher)
 				_Publisher.testPublish();
 			},
 			MenuViewTabletDemo: function(e) {

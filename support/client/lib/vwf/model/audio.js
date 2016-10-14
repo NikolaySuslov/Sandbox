@@ -3,7 +3,7 @@
  * WebRTC.js : Behaves as a wrapper for vwf/view/rtcObject
  * Maps simple 1:1 signal model to a broadcast model using target and sender ids
  */
-define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, model, buzz)
+define(["module", "vwf/model", "vwf/model/buzz/buzz.min","vwf/utility/eventSource"], function(module, model, buzz,eventSource)
 {
     //a simple structure to hold the BUZZ sound reference and position data
     function SoundSource()
@@ -66,7 +66,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
     //note: the 3D driver must keep track of this
     SoundSource.prototype.updateSourcePosition = function()
     {
-        this.position = Engine.getProperty(this.id, 'worldPosition');
+        this.position = Engine.getPropertyFast(this.id, 'worldPosition');
     }
     //use inverse falloff, adjust the range parameters of the falloff curve by the "volume"
     //since HTML cant actually play it louder, but we can make it 'carry' farther
@@ -84,6 +84,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
     {
         initialize: function()
         {
+            eventSource.call(this,"Audio");
             this.buzz = buzz;
             window._buzz = this.buzz;
             this.sounds = {};
@@ -114,11 +115,14 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
         {
             this.callingMethod('index-vwf', 'playSound', [url, false, volume]);
         },
-        callingMethod: function(id, name, params)
+        callingMethod: function(always_application, name, params)
         {
+
+           
             //if the scene played the sound, it has no position and just plays at full volume
-            if (name == 'playSound' && id == 'index-vwf' && this._playMode)
+            if (name == 'playSound' && params[0] == 'index-vwf' && this._playMode)
             {
+                 var id = params.shift();
                 var url = params[0];
                 var loop = params[1] || false;
                 var restart = params[3];
@@ -158,6 +162,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
             //Nodes that are not the scene use their position to adjust the volume
             else if (name == 'playSound' && this._playMode)
             {
+                 var id = params.shift();
                 var url = params[0];
                 var loop = params[1] || false;
                 var vol = params[2] || 1;
@@ -167,7 +172,9 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
                 var soundid = id + url;
                 var Sound = this.soundSources[soundid];
                 var campos = [_dView.getCamera().matrixWorld.elements[12], _dView.getCamera().matrixWorld.elements[13], _dView.getCamera().matrixWorld.elements[14]];
-                var dist = MATH.distanceVec3(campos, Engine.getProperty(id, "worldPosition"));
+                var sourcepos = Engine.getPropertyFast(id, "worldPosition");
+                if(!sourcepos) return;
+                var dist = MATH.distanceVec3(campos, sourcepos);
                 if(loop) //no speed of sound sim for looping sounds
                     dist = 0;
               //  window.setTimeout(function()
@@ -215,6 +222,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
             }
             if (name == 'getSounds')
             {
+                 var id = params.shift();
                 var list = [];
                 for (var i in this.soundSources)
                 {
@@ -225,6 +233,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
             }
             if (name == 'getSound')
             {
+                 var id = params.shift();
                 for (var i in this.soundSources)
                 {
                     if (i == id + params[0])
@@ -233,6 +242,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
             }
             if (name == 'isPlaying')
             {
+                 var id = params.shift();
                 for (var i in this.soundSources)
                 {
                     if (i == id + params[0])
@@ -245,6 +255,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
             //pause the sound
             if (name == 'pauseSound')
             {
+                 var id = params.shift();
                 var url = params[0];
                 var soundid = id + url;
                 var Sound = this.soundSources[soundid];
@@ -254,6 +265,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
             //stop the sound
             if (name == 'stopSound')
             {
+                 var id = params.shift();
                 var url = params[0];
                 var soundid = id + url;
                 var Sound = this.soundSources[soundid];
@@ -267,6 +279,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
             //delete the sound completely - only use this if you sure the sound will not play again anytime soon.
             if (name == 'deleteSound')
             {
+                 var id = params.shift();
                 var url = params[0];
                 var soundid = id + url;
                 var Sound = this.soundSources[soundid];
@@ -281,6 +294,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
         //Update the sound volume based on the position of the camera and the position of the object
         ticking: function()
         {
+            this.trigger("tickStart")
             try
             {
                 var campos = [_dView.getCamera().matrixWorld.elements[12], _dView.getCamera().matrixWorld.elements[13], _dView.getCamera().matrixWorld.elements[14]];
@@ -292,6 +306,7 @@ define(["module", "vwf/model", "vwf/model/buzz/buzz.min"], function(module, mode
             }
             catch (e)
             {}
+            this.trigger("tickEnd");
         },
         deletingNode: function(id)
         {

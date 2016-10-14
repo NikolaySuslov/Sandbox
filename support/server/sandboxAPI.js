@@ -5,7 +5,9 @@ var libpath = require('path'),
 	mime = require('mime'),
 	sio = require('socket.io'),
 	YAML = require('js-yaml'),
-	sass = require('node-sass');
+	
+	async = require('async'),
+	imgSize = require('image-size');
 
 require('./hash.js');
 var _3DR_proxy = require('./3dr_proxy.js');
@@ -873,22 +875,28 @@ function Publish(URL, SID, publishdata, response)
 		var publishSettings = null;
 		//The settings  for the published state. 
 		//have to handle these in the client side code, with some enforcement at the server
-		logger.debug(publishdata, 2);
+		logger.info(publishdata, 2);
 		if (publishdata)
 		{
-			var singlePlayer = publishdata.SinglePlayer;
+			var singlePlayer = publishdata.singlePlayer;
 			var camera = publishdata.camera;
 			var allowAnonymous = publishdata.allowAnonymous;
 			var createAvatar = publishdata.createAvatar;
 			var allowTools = publishdata.allowTools;
+			var hidden = publishdata.hidden;
 			var persistence = publishdata.persistence;
+			var startPaused = publishdata.startPaused;
+			var allowPlayPause = publishdata.allowPlayPause;
 			publishSettings = {
 				singlePlayer: singlePlayer,
 				camera: camera,
 				allowAnonymous: allowAnonymous,
 				createAvatar: createAvatar,
 				allowTools: allowTools,
+				hidden: hidden,
 				persistence: persistence,
+				allowPlayPause:allowPlayPause,
+				startPaused:startPaused
 			};
 		}
 		require('./reflector.js').closeInstance(SID);
@@ -911,8 +919,10 @@ function Publish(URL, SID, publishdata, response)
 				}
 				if (publishdata)
 				{
-					statedata.title = publishdata.title;
-					statedata.description = publishdata.description;
+					if(publishdata.title)
+						statedata.title = publishdata.title;
+					if(publishdata.description)
+						statedata.description = publishdata.description;
 					//Should not need to check permission again
 					DAL.updateInstance(newId, statedata, function()
 					{
@@ -1382,6 +1392,7 @@ function createState(URL, data, response)
 		var id = "/adl/sandbox".replace(/\//g, "_") + '_' + makeid() + '_';
 		DAL.createInstance(id, statedata, function()
 		{
+			console.log(statedata);
 			var displayID = id.replace("_adl_sandbox",global.configuration.appPath.replace(/\//g,"_"));
 			respond(response, 200, displayID);
 			mailTools.newWorld(URL.loginData.UID, data.title, displayID);
@@ -1423,7 +1434,7 @@ function getState(SID, cb)
 		{
 			if (exists)
 			{
-				fs.readFile(statefile, 'utf8', function(err, file)
+				fs.readFile(statefile, 'binary', function(err, file)
 				{
 					var data;
 					try
@@ -1568,6 +1579,13 @@ function serve(request, response)
 						UpdatePassword(URL, response);
 					}
 					break;
+				case "configuration":
+					{ 
+						//eventually should read some configuration data from the DB.
+						//possilby merge this with world setting information
+						ServeJSON({}, response, URL);
+					}
+					break;	
 				case "forgotpassword":
 					{
 						passwordUtils.ResetPassword(UID, response);
@@ -1779,31 +1797,118 @@ function serve(request, response)
 					break;
 				case "textures":
 					{
+						// sort function
+						function azFolderFile(a, b)
+						{
+							function isFolder(x){
+								return !!x.name && !!x.contents;
+							}
+
+							if( isFolder(a) === isFolder(b) ){
+								return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+							}
+							else if( isFolder(a) && !isFolder(b) ){
+								return -1;
+							}
+							else if( !isFolder(a) && isFolder(b) ){
+								return 1;
+							}
+							else {
+								return 0;
+							}
+						}
+
+						// enumerate folder contents recursively
+						function getFiles(path, callback)
+						{
+							// get direct dir contents
+							fs.readdir(path, function(err, files)
+							{
+								// if it's actually a texture, return
+								if(err && err.code === 'ENOTDIR' && /\.(?:bmp|jpg|png|gif|dds|tiff)$/.test(path))
+								{
+									var UID = libpath.relative(libpath.join(basedir, 'Textures'), path);
+									var ret = {
+										name: libpath.basename(path),
+										url: './vwfdatamanager.svc/texture?UID='+UID
+									};
+
+									fs.stat( libpath.join(basedir,'Thumbnails',UID), function(err){
+										if(!err){
+											ret.thumbnail = './vwfdatamanager.svc/texturethumbnail?UID='+UID;
+										}
+										else {
+											ret.thumbnail = null;
+										}
+
+										if(ret.width !== undefined && ret.height !== undefined)
+											callback(null, ret);
+									});
+
+									imgSize(path, function(err, dimensions)
+									{
+										if(!err && dimensions){
+											ret.width = dimensions.width;
+											ret.height = dimensions.height;
+										}
+										else {
+											ret.width = ret.height = null;
+										}
+
+										if(ret.thumbnail !== undefined)
+											callback(null, ret);
+									});
+								}
+								// if it's some other error, return
+								else if(err){
+									callback(err);
+								}
+								// if it's a dir
+								else
+								{
+									var ret = {name: libpath.basename(path), contents: []};
+									var childrenFinished = 0; // keep track of how many children are still pending
+
+									// loop over children
+									for(var i=0; i<files.length; i++)
+									{
+										// recurse
+										getFiles(libpath.join(path, files[i]), function(err, item)
+										{
+											// fail silently, append result to parent otherwise
+											if(!err){
+												ret.contents.push(item);
+											}
+
+											// call callback when last child finishes
+											if(++childrenFinished === files.length){
+												ret.contents.sort(azFolderFile);
+												callback(null, ret);
+											}
+										});
+									}
+								}
+							});
+						}
+
 						if (global.textures)
 						{
 							ServeJSON(global.textures, response, URL);
-							return;
 						}
-						fs.readdir(basedir + "Textures" + libpath.sep, function(err, files)
+						else
 						{
-							RecurseDirs(basedir + "Textures" + libpath.sep, "", files);
-							files.sort(function(a, b)
+							getFiles( libpath.join(basedir, 'Textures'), function(err, files)
 							{
-								if (typeof a == "string" && typeof b == "string") return (a < b ? -1 : 1);
-								if (typeof a == "object" && typeof b == "string") return 1;
-								if (typeof a == "string" && typeof b == "object") return -1;
-								return -1;
+								if(err){
+									console.error(err);
+								}
+								else {
+									global.textures = files.contents;
+									ServeJSON(files.contents, response, URL);
+								}
 							});
-							var o = {};
-							o.GetTexturesResult = JSON.stringify(
-								{
-									root: files
-								})
-								.replace(/\\\\/g, "\\")
-								.replace(/\/\//g, '/');
-							global.textures = o;
-							ServeJSON(o, response, URL);
-						});
+						}
+
 					}
 					break;
 				case "globalassets":
@@ -1843,25 +1948,38 @@ function serve(request, response)
 					break;
 				case "geteditorcss":
 					{
-						sass.render({
-							file: libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/Editorview.scss'),
-							includePaths: [libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/')],
-							sourceComments: true,
-							functions: {
-								'getImgPath()': function(){
-									return new sass.types.String('../vwf/view/editorview');
+						var sass = null;
+						try{
+							sass = require('node-sass');
+						}catch(e)
+						{
+							console.warn("sass not installed, serving locally");
+						}
+						
+						if(sass)
+						{
+							sass.render({
+								file: libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/Editorview.scss'),
+								includePaths: [libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/')],
+								sourceComments: true,
+								functions: {
+									'getImgPath()': function(){
+										return new sass.types.String('../vwf/view/editorview');
+									}
 								}
-							}
-						}, function(err,result){
-							if(err){
-								logger.error('Error compiling sass:', err);
-								response.sendStatus(500);
-							}
-							else {
-								response.set('Content-Type', 'text/css');
-								response.send(result.css);
-							}
-						});
+							}, function(err,result){
+								if(err){
+									logger.error('Error compiling sass:', err);
+									response.sendStatus(500);
+								}
+								else {
+									response.set('Content-Type', 'text/css');
+									response.send(result.css);
+								}
+							});
+						}else{
+							FileCache.ServeFile(request,libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/built.css'),response,URL)
+						}
 					}
 					break;
 				default:
