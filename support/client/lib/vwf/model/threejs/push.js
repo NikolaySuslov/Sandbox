@@ -1,12 +1,17 @@
-(function(){
+(function()
+{
 		function modifier(childID, childSource, childName)
 		{
 			this.amount = 0;
 			this.outputType = "Primitive";
         	this.inputType = "Primitive";
+		this.active = true;
 			this.updateSelf = function()
 			{
-				
+			if (!this.active)
+			{
+				return;
+			}
 				var mesh = this.GetMesh();
 				var geo = mesh.geometry;
 				for(var i = 0; i < geo.faces.length; i++)
@@ -22,11 +27,8 @@
 						var vertd = geo.vertices[geo.faces[i].d];
 						vertd = vertd.sub(geo.faces[i].vertexNormals[3].clone().setLength(this.amount));
 					}
-					
-					
 				}
 				geo.verticesNeedUpdate = true;
-				
 			}
 			this.settingProperty = function(prop,val)
 			{
@@ -35,7 +37,6 @@
 					this.amount = val;
 					this.dirtyStack();
 				}
-				
 			}
 			this.gettingProperty = function(prop)
 			{
@@ -50,8 +51,17 @@
 				if(prop == 'EditorData')
 				{
 					return {
-						_active:{displayname : 'Active',property:'active',type:'check',min:-10,max:10,step:.01},
-						amount:{
+					_active:
+					{
+						displayname: 'Active',
+						property: 'active',
+						type: 'check',
+						min: -10,
+						max: 10,
+						step: .01
+					},
+					amount:
+					{
 								displayname : 'Amount',
 								property:'amount',
 								type:'slider',
@@ -62,14 +72,18 @@
 					}
 				}
 			}
+		this.deletingNode = function()
+		{
+			this.active = false;
+			this.dirtyStack();
+		}
 			this.inherits = ['vwf/model/threejs/modifier.js'];
 		}
-		
 		//default factory code
-        return function(childID, childSource, childName) {
+	return function(childID, childSource, childName)
+	{
 			//name of the node constructor
             return new modifier(childID, childSource, childName);
         }
 })();
-
 //@ sourceURL=threejs.subdriver.push

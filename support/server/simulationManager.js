@@ -128,10 +128,10 @@ var simulationManager = function(world)
     }
     this.distributeToClient = function(sandboxClient,newClient)
     {
-       
+        //what's going on here. Need to figure out why this was removed
         if (this.clientCount() == 1) // a new client joined, who is logged in , and all others are observers
         {
-            //this.startScene();
+            this.startScene();
             return;
         }
         var average = this.clientAverageLoad();

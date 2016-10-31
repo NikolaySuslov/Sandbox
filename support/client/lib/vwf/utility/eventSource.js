@@ -19,7 +19,14 @@ function eventSource(symbol)
 	{
 		if (!this.__events[name]) return;
 		for (var i = 0; i < this.__events[name].length; i++)
-			this.__events[name][i].apply(this, [e]);
+		{
+			try{
+				this.__events[name][i].apply(this, [e]);
+			}catch(e)
+			{
+				console.error(e);
+			}
+		}
 	}
 	this.bind = this.on;
 	this.unbind = this.removeListener;

@@ -3,7 +3,7 @@ function DesertTerrainAlgorithm()
 	this.init = function(data)
 	{
 		console.log(data);
-		importScripts('simplexNoise.js');
+		this.importScript('terrain/simplexNoise.js');
 		importScripts('Rc4Random.js');
 	}
 	//This can generate data on the main thread, and it will be passed to the coppies in the thread pool

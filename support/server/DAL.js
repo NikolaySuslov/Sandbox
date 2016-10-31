@@ -489,7 +489,7 @@ function normalizePublishSettings(doc)
                 doc.publishSettings.camera = null;
 
             if (doc.publishSettings.createAvatar === undefined)
-                doc.publishSettings.createAvatar = true;
+                doc.publishSettings.createAvatar = false;
 
             if (doc.publishSettings.allowTools === undefined)
                 doc.publishSettings.allowTools = true;
@@ -1684,7 +1684,8 @@ function startup(callback)
     async.series([
         function(cb)
         {
-            console.log(global.configuration.DB_driver);
+
+            console.log("Database Driver is " + global.configuration.DB_driver);
             require(global.configuration.DB_driver)
                 .new(DBTablePath, function(_DB)
                 {

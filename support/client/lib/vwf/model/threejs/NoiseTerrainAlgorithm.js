@@ -6,7 +6,7 @@ function NoiseTerrainAlgorithm()
 	{
 		
 		console.log(data);
-		this.importScript('simplexNoise.js');
+		this.importScript('terrain/simplexNoise.js');
 		this.importScript('Rc4Random.js');
 	}
 	//This can generate data on the main thread, and it will be passed to the coppies in the thread pool

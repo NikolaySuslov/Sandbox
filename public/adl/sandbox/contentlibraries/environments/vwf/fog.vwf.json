@@ -18,7 +18,7 @@
         "skyApexColor": [0.741176470588235, 0.901960784313726, 1],
         "skyHorizonColor": [1, 1, 1],
         "vAtmosphereDensity": 0.0005,
-        "playMode": "stop",
+        
         "materialDef": {
             "shininess": 4,
             "alpha": 1,

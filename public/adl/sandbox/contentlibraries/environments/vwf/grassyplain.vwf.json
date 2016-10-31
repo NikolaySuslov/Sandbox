@@ -18,7 +18,7 @@
         "skyApexColor": [0.305882352941176, 0.603921568627451, 0.949019607843137, 1],
         "skyHorizonColor": [0.792156862745098, 0.949019607843137, 0.988235294117647, 1],
         "vAtmosphereDensity": 0.0005,
-        "playMode": "stop",
+        
         "octreeObjects": 5,
         "octreeDepth": 16,
         "octreeExtents": 640,

@@ -96,6 +96,7 @@ color: lightgray;
 		}
 		this.renderExplanation = function(div)
 		{
+			return; // this does not work all that well.
 			//this.explanation = $("<div class='explanation'></div>").appendTo(div);
 			//$(this.explanation).text(explanations[this.key]);
 			$(div).prop('title',explanations[this.key])

@@ -37,7 +37,7 @@ function messageCompress()
                     if (message.length > 5 && message.length < 25 && message.indexOf('\n') == -1)
                     {
                         this.learnedMappings[message] = '';
-                        console.log('learning mapping for ' + message);
+                       // console.log('learning mapping for ' + message);
                     }
                     return message;
                 }

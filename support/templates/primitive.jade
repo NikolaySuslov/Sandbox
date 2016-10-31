@@ -10,7 +10,7 @@ block content
 		#otherprops.accordian-flags		
 			div(ng-repeat="flag in ::flags")
 				label.inline(for="{{::flag}}") {{::flag}}
-					input(type="text" ng-show="$index == 0" ng-model="node.properties[flagProps[0]]" ng-model-options="{updateOn: 'change blur'}")
+					input(type="text" ng-show="$index == 0" ng-model="node.properties[flagProps[0]]" ng-model-options="{debounce: 150,updateOn: 'change blur'}")
 					input(type="checkbox" ng-hide="$index == 0" name="{{::flag}}" ng-model="node.properties[flagProps[$index]]")
 				
 		h3
@@ -18,13 +18,13 @@ block content
 		.accordian-transforms
 			.EditorLabel Translation
 			#Translation.vector-input.vMargin
-				input(type="number", ng-model="transform.translation[$index]", ng-repeat="pos in transform.translation track by $index", ng-model-options="{updateOn: 'blur click change'}")
+				input(type="number", ng-model="transform.translation[$index]", ng-repeat="pos in transform.translation track by $index", ng-model-options="{debounce: 150,updateOn: 'blur click change'}")
 			.EditorLabel Rotation
 			#Rotation.vector-input.vMargin
-				input(type="number", ng-model="transform.rotation[$index]", ng-repeat="rot in transform.rotation track by $index", ng-model-options="{updateOn: 'blur click change'}")
+				input(type="number", ng-model="transform.rotation[$index]", ng-repeat="rot in transform.rotation track by $index", ng-model-options="{debounce: 150,updateOn: 'blur click change'}")
 			.EditorLabel Scale
 			#Scale.vector-input.vMargin
-				input(type="number", ng-model="transform.scale[$index]", min=".0001", step=".05", ng-repeat="scale in transform.scale track by $index", ng-model-options="{updateOn: 'blur click change'}")
+				input(type="number", ng-model="transform.scale[$index]", min=".0001", step=".05", ng-repeat="scale in transform.scale track by $index", ng-model-options="{debounce: 150,updateOn: 'blur click change'}")
 				
 		h3(ng-repeat-start="data in allEditorData") 
 			a(href="#") {{data.type}}: {{data.name}}
@@ -73,19 +73,19 @@ block content
 	#vwf-template-vector(ng-non-bindable, style='display: none;')
 		label {{displayname}}: 
 		div.vector-input.vMargin
-			input(type='number', step='{{step || 1}}', ng-change='onChange()', ng-model='vwfNode.properties[vwfProp.property][$index]', ng-model-options='{updateOn: "click blur change"}', ng-repeat='component in vwfNode.properties[vwfProp.property] track by $index')
+			input(type='number', step='{{step || 1}}', ng-change='onChange()', ng-model='vwfNode.properties[vwfProp.property][$index]', ng-model-options='{debounce: 150,updateOn: "click blur change"}', ng-repeat='component in vwfNode.properties[vwfProp.property] track by $index')
 	
 	#vwf-template-rangevector(ng-non-bindable, style='display: none;')
 		label.vMargin 
 			div {{displayname}}
 			.vector-input.vMargin min:
-				input(type='number', step='{{step || 1}}', ng-change='onChange(0)', ng-repeat='min in vwfNode.properties[vwfProp.property[0]] track by $index', ng-model='vwfNode.properties[vwfProp.property[0]][$index]', ng-model-options="{updateOn: 'blur change'}")
+				input(type='number', step='{{step || 1}}', ng-change='onChange(0)', ng-repeat='min in vwfNode.properties[vwfProp.property[0]] track by $index', ng-model='vwfNode.properties[vwfProp.property[0]][$index]', ng-model-options="{debounce: 150,updateOn: 'blur change'}")
 			.vector-input.vMargin max:
-				input(type='number', step='{{step || 1}}', ng-change='onChange(1)', ng-repeat='max in vwfNode.properties[vwfProp.property[1]] track by $index', ng-model='vwfNode.properties[vwfProp.property[1]][$index]', ng-model-options="{updateOn: 'blur change'}")
+				input(type='number', step='{{step || 1}}', ng-change='onChange(1)', ng-repeat='max in vwfNode.properties[vwfProp.property[1]] track by $index', ng-model='vwfNode.properties[vwfProp.property[1]][$index]', ng-model-options="{debounce: 150,updateOn: 'blur change'}")
 	
 	#vwf-template-text(ng-non-bindable, style='display: none;')
 		label.inline {{displayname}}: 
-			input(ng-model='vwfNode.properties[vwfProp.property]', type='text', placeholder='{{displayname}}', ng-change='onChange()', ng-model-options="{updateOn: 'blur change'}")
+			input(ng-model='vwfNode.properties[vwfProp.property]', type='text', placeholder='{{displayname}}', ng-change='onChange()', ng-model-options="{debounce: 150,updateOn: 'blur change'}")
 				
 	#vwf-template-choice(ng-non-bindable, style='display: none;')
 		label.inline {{displayname}}:
@@ -99,7 +99,7 @@ block content
 	#vwf-template-nodeid(ng-non-bindable, style='display: none;')
 		label.vMargin {{displayname}}: 
 			br
-			input(ng-model='vwfNode.properties[vwfProp.property]', type='text', placeholder='{{displayname}}', ng-change='onChange()', ng-model-options="{updateOn: 'blur change'}")
+			input(ng-model='vwfNode.properties[vwfProp.property]', type='text', placeholder='{{displayname}}', ng-change='onChange()', ng-model-options="{debounce: 150,updateOn: 'blur change'}")
 			button(ng-click='pickNode(vwfNode, vwfProp)') Choose Node
 		
 	#vwf-template-sectionTitle(ng-non-bindable, style='display: none;')
@@ -115,7 +115,7 @@ block content
 
 	#vwf-template-assetPreloaderText(ng-non-bindable, style='display: none;')
 		label.inline {{displayname}}:
-			input(ng-model='vwfNode.properties[vwfProp.property]', type='text', placeholder='{{displayname}}', ng-change='onChange()', ng-model-options="{updateOn: 'blur change'}")
+			input(ng-model='vwfNode.properties[vwfProp.property]', type='text', placeholder='{{displayname}}', ng-change='onChange()', ng-model-options="{debounce: 150,updateOn: 'blur change'}")
 
 	#vwf-template-assetPreloaderChoice(ng-non-bindable, style='display: none;')
 		label.inline {{displayname}}:

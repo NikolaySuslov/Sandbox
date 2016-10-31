@@ -48,21 +48,21 @@
 $spritePath: getImgPath();
 
 #playButton {
-	background-image: url(#{$spritePath}/images/icons/sprites.svg) !important;
+	background-image: url(/adl/sandbox/vwf/view/editorview/images/icons/sprites.svg) !important;
 	background-origin: content-box !important;
 	background-position: -212px -56px;
 	background-size: 646px;
 }
 
 #pauseButton {
-	background-image: url(#{$spritePath}/images/icons/sprites.svg) !important;
+	background-image: url(/adl/sandbox/vwf/view/editorview/images/icons/sprites.svg) !important;
 	background-origin: content-box !important;
 	background-position: -262px -56px;
 	background-size: 645px;
 }
 
 #stopButton {
-	background-image: url(#{$spritePath}/images/icons/sprites.svg) !important;
+	background-image: url(/adl/sandbox/vwf/view/editorview/images/icons/sprites.svg) !important;
 	background-origin: content-box !important;
 	background-position: -349px -65px;
 	background-size: 718px;

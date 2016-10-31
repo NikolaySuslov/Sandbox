@@ -148,14 +148,14 @@ define(["vwf/view/threejs/screenAlignedQuad",'vwf/utility/eventSource'], functio
 			this.renderer.context.enable(this.renderer.context.DEPTH_TEST)
 			this.renderer.context.disable(this.renderer.context.CULL_FACE);
 			if(_Editor.GetMoveGizmo())
-				this.renderObject(_Editor.GetMoveGizmo().getGizmoHead(), scene, camera);
+				this.renderObject(_Editor.GetMoveGizmo().getGizmoHead(), scene, camera,null,true);
 		}
-		this.flattenObject = function(object)
+		this.flattenObject = function(object,useVisible)
 		{
 			var list = [];
 			object.traverse(function(o)
 			{
-				if (o instanceof THREE.Mesh)
+				if (o instanceof THREE.Mesh && (!useVisible || (useVisible && o.visible)))
 					list.push(o);
 			});
 			return list;
@@ -170,13 +170,13 @@ define(["vwf/view/threejs/screenAlignedQuad",'vwf/utility/eventSource'], functio
 			if (index > -1)
 				this.hilightObjects.splice(index, 1);
 		}
-		this.renderObject = function(object, scene, camera, material)
+		this.renderObject = function(object, scene, camera, material,useVisible)
 		{
 			if (!object) return;
 			if (object instanceof THREE.Scene) return;
 			var lights = scene.__lights;
 			var fog = scene.fog;
-			var objects = this.flattenObject(object);
+			var objects = this.flattenObject(object,useVisible);
 			if(!scene.__webglObjects) return;
 			var keys = Object.keys(scene.__webglObjects)
 			for (var k = 0; k < keys.length; k++)

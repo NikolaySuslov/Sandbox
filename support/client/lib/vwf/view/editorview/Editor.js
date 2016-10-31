@@ -129,9 +129,9 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         var CurrentZ = [0, 0, 1];
         var CurrentY = [0, 1, 0];
         var CurrentX = [1, 0, 0];
-        var RotateSnap = 5 * 0.0174532925;
-        var MoveSnap = .25;
-        var ScaleSnap = .15;
+        var RotateSnap = .005 * 0.0174532925;
+        var MoveSnap = .0025;
+        var ScaleSnap = .0015;
         var oldxrot = 0;
         var oldyrot = 0;
         var oldzrot = 0;
@@ -290,6 +290,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             $('#ContextMenuName').html((dispName || vwfnode || "{none selected}").escape());
             $('#ContextMenuName').attr('VWFID', vwfnode);
             $('#ContextMenu').show();
+            _RenderManager.flashHilight(findviewnode(vwfnode));
             $('#ContextMenu').css('z-index', '1000000');
             $('#ContextMenu').css('left', e.clientX + 'px');
             $('#ContextMenu').css('top', e.clientY + 'px');
@@ -1668,10 +1669,19 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         }
         this.Duplicate = function() {
             for (var i = 0; i < SelectedVWFNodes.length; i++)
+            {
+
+
                 if (Engine.prototype(SelectedVWFNodes[i].id) == 'character-vwf') {
                     _Notifier.alert('Avatars cannot be copied');
                     return
                 }
+                var _node = SelectedVWFNodes[i];
+                if (_node && _node.type == "link_existing/threejs") {
+                    _Notifier.alert("Nodes which are links into the heirarchy of an asset cannot be duplicated");
+                    return;
+                }
+            }
             var newnames = [];
             for (var i = 0; i < SelectedVWFNodes.length; i++) {
                 var proto = _DataManager.getCleanNodePrototype(SelectedVWFNodes[i].id);
@@ -1705,10 +1715,17 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             _CopiedNodes = [];
 
             for (var i = 0; i < SelectedVWFNodes.length; i++)
+            {
                 if (Engine.prototype(SelectedVWFNodes[i].id) == 'character-vwf') {
                     _Notifier.alert('Avatars cannot be copied');
                     return
                 }
+                var _node = SelectedVWFNodes[i];
+                if (_node && _node.type == "link_existing/threejs") {
+                    _Notifier.alert("Nodes which are links into the heirarchy of an asset cannot be duplicated");
+                    return;
+                }
+            }
 
             var tocopy = SelectedVWFNodes;
             if (nodes) tocopy = nodes;
@@ -2313,9 +2330,17 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
 
         }
         this.RemoveParent = function() {
+
                 _UndoManager.startCompoundEvent();
                 var newnames = [];
                 for (var i = 0; i < this.getSelectionCount(); i++) {
+
+                    var _node = Engine.getNode(this.GetSelectedVWFID(i));
+                    if (_node && _node.type == "link_existing/threejs") {
+                        _Notifier.alert("Nodes which are links into the heirarchy of an asset cannot be unlinked");
+                        return;
+                    }
+
                     var id = this.GetSelectedVWFNode(i).id;
                     _RenderManager.flashHilight(findviewnode(Engine.parent(id)));
                     var node = _DataManager.getCleanNodePrototype(id);
@@ -2405,6 +2430,12 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 // _Notifier.alert('You must be the owner of all objects to group them.');
                 // return;
                 // }
+                var node = Engine.getNode(this.GetSelectedVWFID(i));
+                if (node && node.type == "link_existing/threejs") {
+                    _Notifier.alert("Nodes which are links into the heirarchy of an asset cannot be grouped");
+                    return;
+                }
+
                 var childmat = toGMat(this.findviewnode(this.GetSelectedVWFNode(i).id).matrixWorld);
                 if (!pos) pos = [childmat[3], childmat[7], childmat[11]];
                 else pos = MATH.addVec3(pos, [childmat[3], childmat[7], childmat[11]]);
@@ -3018,12 +3049,12 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         }
         this.disableDueToWorldState =function()
         {
-            if(_DataManager.getInstanceData().publishSettings.allowPlayPause)
+            if(_DataManager.getInstanceData().publishSettings.allowPlayPause == true || _DataManager.getInstanceData().publishSettings.allowPlayPause == undefined)
             {
                 if (Engine.getProperty(Engine.application(), 'playMode') == 'play')
                     return true;
             }
-            false;
+            return false;
         }
         this.mouseup = function(e) {
             if (!toolsOpen()) return;
@@ -3043,9 +3074,24 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         this.mousemove = function(e) {
             if (!toolsOpen()) return;
             if (_Editor.disableDueToWorldState()) return;
-            if (this.activeTool && this.activeTool.mousemove) this.activeTool.mousemove(e);
+            if (this.activeTool && this.activeTool.mousemove)
+            {
+                //we really need to throttle mouse move updates, because it creates huge amounts of traffic
+                if(!this.lastMouseMove)
+                    this.lastMouseMove = performance.now();
+
+                //throttle to 20hz
+                if(performance.now() - this.lastMouseMove > 50)
+                {
+                    this.lastMouseMove = performance.now();
+                    this.activeTool.mousemove(e);      
+                }    
+
+                
+            } 
         }
         this.mousewheel = function(e) {
+            return;
             if (!toolsOpen()) return;
             if (_Editor.disableDueToWorldState()) return;
             if (this.activeTool && this.activeTool.mousewheel) this.activeTool.mousewheel(e);

@@ -260,6 +260,8 @@ MATH.toUnitVec4=function(a) {
 * @param {Array} a the vector to be measured
 */
 MATH.lengthVec3=function(a) {
+    if(isNaN(a[0]) || isNaN(a[1]) || isNaN(a[2]))
+       return 0;
     return Math.pow(a[0]*a[0]+a[1]*a[1]+a[2]*a[2],0.5);
 };
 

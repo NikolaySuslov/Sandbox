@@ -225,7 +225,7 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
         executing: function( nodeID, scriptText, scriptType ) {
         },
 
-        makeGrammar(nodeID, propertyValue, propertyName) {
+        makeGrammar:function(nodeID, propertyValue, propertyName) {
             
             var lng = new OhmLang();
             lng.makeLng(propertyValue);
@@ -240,7 +240,7 @@ define( [ "module", "vwf/model", "ohm/ohm.min"], function( module, model, ohm) {
 
         },
 
-        initGrammar(nodeID, lngName) {
+        initGrammar:function(nodeID, lngName) {
 
             var methodN = 'initGrammar'+lngName;
             var methods = Engine.getMethods(nodeID);

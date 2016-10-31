@@ -19,7 +19,14 @@ var totalMessagesDecoded = 0;
 var totalMessagesEncoded = 0;
 var totalEncodeTime = 0;
 var totalDecodeTime = 0;
-
+if(!self.performance)
+{
+	var performance = {
+		now:function(){
+			return Date.now();
+		}
+	}
+}
 
 //generate the ticks locally, but not on the main thread - which will suspend the timer if the window minimizes
 var EngineProxy = {
@@ -75,10 +82,10 @@ function socketMonitorInterval()
 	socketBytesSent = 0;
 	socketBytesReceivedLast = socketBytesReceived;
 	socketBytesReceived = 0;
-	log(socketBytesSentLast / 10000 + 'KBps up' + socketBytesReceivedLast / 10000 + 'KBps down');
-	log("Encode Average Time: " + (totalEncodeTime / totalMessagesEncoded));
-	log("Decode Average Time: " + (totalDecodeTime / totalMessagesDecoded));
-	log("Message Compression Load: " + ((totalDecodeTime + totalEncodeTime)/10000).toFixed(4) + "%");
+	//log(socketBytesSentLast / 10000 + 'KBps up' + socketBytesReceivedLast / 10000 + 'KBps down');
+	//log("Encode Average Time: " + (totalEncodeTime / totalMessagesEncoded));
+	//log("Decode Average Time: " + (totalDecodeTime / totalMessagesDecoded));
+	//log("Message Compression Load: " + ((totalDecodeTime + totalEncodeTime)/10000).toFixed(4) + "%");
 
 	(totalEncodeTime / totalMessagesEncoded)
 	if (totalMessagesDecoded + totalMessagesEncoded > 100)
@@ -121,7 +128,7 @@ onmessage = function(e)
 		socket.on('compress',function(e)
 		{
 			messageCompress.applyLearnedMappings(e)
-			log(e)
+			//log(e)
 		})
 		socket.on("m", function(e)
 		{
@@ -168,15 +175,19 @@ onmessage = function(e)
 	if (message.type == SEND)
 	{
 		// Send the message.
+		var compressedMessage;
 		if (message.message.constructor !== String)
 		{
 			var now = performance.now();
-			message.message = messageCompress.pack(message.message);
+			compressedMessage = messageCompress.pack(message.message);
 			totalEncodeTime += performance.now() - now;
 			totalMessagesEncoded++
 		}
-		socketBytesSent += 34 + getUTF8Length(message.message);
-		socket.emit('m',message.message)
+		socketBytesSent += 34 + getUTF8Length(compressedMessage);
+		socket.emit('m',compressedMessage)
+		//LOOPBACK for client side prediction, moved out of main thread for performance reasons
+
+		onEvent("message", message.message);
 	}
 	if (message.type == EVENT)
 	{

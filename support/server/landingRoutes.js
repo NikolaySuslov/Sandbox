@@ -14,7 +14,7 @@ var sessions = require('./sessions');
 exports.init = function() {
     root = global.appPath,
     console.log(root);
-    fs.readdir(__dirname + '/../../public' + '/adl/sandbox' + '/views/help', function(err, files) {
+    fs.readdir(__dirname +  '/views/help', function(err, files) {
         var tempArr = [];
 
         for (var i = 0; i < files.length; i++) {
@@ -548,7 +548,7 @@ function NotHidden(inst){
 
     if(inst.publishSettings !== undefined)
        if(inst.publishSettings !== null) 
-            if(inst.publishSettings.hidden)
+            if(inst.publishSettings.hidden == true || inst.publishSettings.hidden == "true")
             return false
     return true
 };
@@ -656,7 +656,12 @@ function ShowSearchPage(mode, req, res, next) {
                     inst.id = i;
                     inst.shortid = i.substr("/adl/sandbox".length + 1, 16)
                     if (NotHidden(inst))
+                    {
                         results.push(inst);
+                    }else
+                    {
+                        console.log("world hidden")
+                    }
                 }
                 results.sort(function(a, b) {
                     return Date.parse(b.created || b.lastUpdate) - Date.parse(a.created || a.lastUpdate);
@@ -732,7 +737,12 @@ function ShowSearchPage(mode, req, res, next) {
         if (mode == "all" || mode == "new" || mode == "active")
             DAL.getStates(foundStates)
         if (mode == "my")
-            DAL.searchStatesByUser(sessionData.UID, foundStates)
+        {
+            if(sessionData)
+                DAL.searchStatesByUser(sessionData.UID, foundStates)
+            else
+                res.redirect("/");
+        }
         if (mode == "hidden")
             DAL.getStates(foundStates)
         if (mode == "search")
@@ -1021,7 +1031,7 @@ exports.handlePostRequest = function(req, res, next) {
                 delete data.hotState;
                 delete data.editVisible;
                 delete data.isVisible;
-
+                console.log(worldId,data);
                 DAL.updateInstance(worldId, data, function(e) {
                     res.end(e ? "done" : "error");
                 });

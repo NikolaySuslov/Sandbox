@@ -30,7 +30,7 @@ function heightmapTerrainAlgorithm() {
         console.log('from thread: min is ' + this.min);
         //this.type = 'bt';
         this.heightScale = data.heightScale || 1;
-        this.importScript('simplexNoise.js');
+        this.importScript('terrain/simplexNoise.js');
         this.importScript('Rc4Random.js');
         this.SimplexNoise = new SimplexNoise((new Rc4Random(1 + "")).random);
     }

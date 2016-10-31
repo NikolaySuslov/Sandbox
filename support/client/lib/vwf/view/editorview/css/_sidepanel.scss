@@ -61,7 +61,8 @@
 		width: 100%;
 		//max-height: 400px;
 		//overflow: hidden;
-
+		display: block;
+		
 		.title
 		{
 			padding: 3px 4px;
@@ -75,6 +76,7 @@
 			@include flex-grow(1);
 			color: white;
 			background: url(vwf/view/editorview/css/images/ui-bg_hexagon_5_111111_12x10.png) 50% 50% repeat rgb(36, 32, 32);
+			display:block;
 		}
 
 		.ui-accordion .ui-accordion-content {

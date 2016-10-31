@@ -1,10 +1,15 @@
 var defaultPrimMaterial = new THREE.MeshPhongMaterial();
 (function() {
     function prim(childID, childSource, childName) {
+        this.___ready = false;
         this.callingMethod = function(methodName, args) {
             args = args || [];
             if (methodName == 'GetMesh') {
                 return this.GetMesh();
+            }
+            if (methodName == 'ready') {
+                this.___ready = true;
+                this.dirtyStack(true,false);
             }
             if (methodName == 'dirtyStack') {
                 return this.dirtyStack(args[0],args[1],args[2]);
@@ -48,15 +53,17 @@ var defaultPrimMaterial = new THREE.MeshPhongMaterial();
                 this.GetMesh().geometry.dirtyMesh = true;
 
         }
-
-        this.dirtyStack = function(rebuild, cache) {
+        //note this is only possible since we no longer require determinism.
+        this.dirtyStack = debounce(function(rebuild, cache) {
             
+            if(!this.___ready) return;
+
             //the the parent knows how to update the stack, let the parent deal with is. otherwise, start the update cascade here
             var parentHandled = Engine.callMethod(Engine.parent(this.ID), 'dirtyStack',[rebuild, cache]);
             if(!parentHandled)
                 this.updateStack(rebuild, cache);
             return true;
-        }
+        },200)
         this.gettingProperty = function(propertyName) {
             if (propertyName == 'type') {
                 return 'Primitive';
@@ -75,7 +82,8 @@ var defaultPrimMaterial = new THREE.MeshPhongMaterial();
         }
         this.updateStack = function(rebuild, cache) {
 
-          
+            
+
             this.updateSelf(rebuild, cache && !this.hasModifiers());
 
             var children = Engine.children(this.ID);
@@ -158,8 +166,10 @@ var defaultPrimMaterial = new THREE.MeshPhongMaterial();
             var mat;
             if (this.rootnode.children[0])
                 mat = this.rootnode.children[0].material;
-            else
-                mat = defaultPrimMaterial;
+            else{
+                
+                mat = _MaterialCache.getMaterialbyDef(null,Engine.getProperty(this.ID,"materialDef")) || defaultPrimMaterial;
+            }
 
             if (this.mesh) {
                 this.rootnode.remove(this.mesh);

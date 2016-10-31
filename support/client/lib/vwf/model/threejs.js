@@ -295,17 +295,14 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                     //we need to mark this node - because the VWF node is layered onto a GLGE node loaded from the art asset, deleteing the VWF node should not
                     //delete the GLGE node. This should probably undo any changes made to the GLGE node by the Engine. This is tricky. I'm going to backup the matrix, and reset it
                     //when deleting the VWF node.
-                    if (node.threeObject) {
+                  
                         node.threeObject.initializedFromAsset = true;
                         node.threeObject.backupMatrix = [];
                         node.threeObject.vwfID = node.ID;
+                        node.threeObject.originalVisible = node.threeObject.visible;
                         for (var u = 0; u < 16; u++)
                             node.threeObject.backupMatrix.push(node.threeObject.matrix.elements[u]);
-                    } else {
-                        console.log("failed to find view node for " + childSource);
-                        node.threeObject = new THREE.Object3D();
-                        node.threeObject.vwfID = node.ID;
-                    }
+                    
                     callback(true);
                 }
                 //use a pluggable model for createing nodes. This should make it easier to develop a driver that is not one long
@@ -355,7 +352,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
                     node.threeObject.add(node.getRoot());
                     threeParent.add(node.threeObject);
                 } 
-                else if (childType == "subDriver/threejs/asset/vnd.raw-morphttarget" ||childType == "subDriver/threejs/asset/vnd.collada+xml" || childType == "subDriver/threejs/asset/vnd.osgjs+json+compressed" || childType == "subDriver/threejs/asset/vnd.collada+xml+optimized" || childType == "subDriver/threejs/asset/vnd.gltf+json" || childType == "subDriver/threejs/asset/vnd.three.js+json" || childType == "subDriver/threejs/asset/vnd.rmx+json") {
+                else if (childType == 'subDriver/threejs/asset/vnd.wavefront-obj' || childType == "subDriver/threejs/asset/vnd.raw-morphttarget" ||childType == "subDriver/threejs/asset/vnd.collada+xml" || childType == "subDriver/threejs/asset/vnd.osgjs+json+compressed" || childType == "subDriver/threejs/asset/vnd.collada+xml+optimized" || childType == "subDriver/threejs/asset/vnd.gltf+json" || childType == "subDriver/threejs/asset/vnd.three.js+json" || childType == "subDriver/threejs/asset/vnd.rmx+json") {
 
                     node = this.state.nodes[childID] = this.subDriverFactory.createNode(childID, 'vwf/model/threejs/asset.js', childName, childType, childSource, callback);
 
@@ -1245,7 +1242,8 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
     //will look into nodes that don't match.... this might not be desirable
     function FindChildByName(obj, childName, childType) {
 
-
+        if(!obj)
+            return null;
         if (obj.name == childName) {
             return obj;
         } else if (obj.children && obj.children.length > 0) {
@@ -1767,6 +1765,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
             node.material = node.originalMaterial;
         if (node.backupMatrix)
             node.matrix.elements = node.backupMatrix;
+        node.visible = node.originalVisible;
 
         geometry.verticesNeedUpdate = true;
         geometry.normalsNeedUpdate = true;
@@ -1782,6 +1781,7 @@ define(["module", "vwf/model", "vwf/utility", "vwf/utility/color", "vwf/model/th
         delete node.originalUV2;
         delete node.originalMaterial;
         delete node.backupMatrix;
+        delete node.originalVisible;
 
         if (node.geometry)
             restoreObject(geometry);

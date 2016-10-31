@@ -190,6 +190,7 @@ var STATUS = {
 
 function sandboxWorld(id, metadata)
 {
+   
     this.id = id;
     this.clients = {};
     this._time = 0.0;
@@ -471,9 +472,9 @@ function sandboxWorld(id, metadata)
                         member: "null",
                         parameters: self.simulationStateUpdates,
                         time:self.time()
-                    }
-                    self.messageClients(simMessage, true, false, 'm', false);
                 }
+                    self.messageClients(simMessage, true, false, 'm', false);
+            }
                 self.simulationStateUpdates = {};
                
             }
@@ -625,8 +626,8 @@ function sandboxWorld(id, metadata)
                     self.state.createAvatar(client.loginData.UID, client.id, function(avatarID)
                     {
                         self.simulationManager.nodeCreated(avatarID, client);
-                    });
-                }
+            });
+        }
             });
         }
         //this client is not the first, we need to get the state and mark it pending
@@ -640,12 +641,12 @@ function sandboxWorld(id, metadata)
 
             function setupAvatar()
             {
-                var needAvatar = this.state.metadata.publishSettings.createAvatar;
-                if (!this.state.metadata.publishSettings.allowAnonymous && client.loginData.anonymous)
-                    needAvatar = false;
-                if (needAvatar)
-                {
-                    if (!this.state.getAvatarForClient(client.loginData.UID))
+            var needAvatar = this.state.metadata.publishSettings.createAvatar;
+            if (!this.state.metadata.publishSettings.allowAnonymous && client.loginData.anonymous)
+                needAvatar = false;
+            if (needAvatar)
+            {
+                if (!this.state.getAvatarForClient(client.loginData.UID))
                     {
                         var self = this;
                         this.state.createAvatar(client.loginData.UID, client.id, function(avatarID)
@@ -653,18 +654,18 @@ function sandboxWorld(id, metadata)
                             self.simulationManager.nodeCreated(avatarID, client);
                         });
                     }
-                    else
-                    {
-                        //note that we only do this for the second client, because it's impossible to have 2 clients 
-                        //control one avatar if there is only one client
-                        var avatar = this.state.getAvatarForClient(client.loginData.UID);
-                        var controller = avatar.properties.ownerClientID;
-                        controller.push(client.id);
+                else
+                {
+                    //note that we only do this for the second client, because it's impossible to have 2 clients 
+                    //control one avatar if there is only one client
+                    var avatar = this.state.getAvatarForClient(client.loginData.UID);
+                    var controller = avatar.properties.ownerClientID;
+                    controller.push(client.id);
 
-                        this.state.setProperty(avatar.id, 'ownerClientID', controller);
-                    }
+                    this.state.setProperty(avatar.id, 'ownerClientID', controller);
                 }
             }
+        }
             if (this.status == STATUS.DEFAULT)
             {
                 //this.requestState();
@@ -674,7 +675,7 @@ function sandboxWorld(id, metadata)
                     self.simulationManager.addClient(client);
                     //this.removeListener('stateSent', distributeSim);
                     setupAvatar.apply(self);
-                }
+    }
                 //this.on('stateSent', distributeSim)
                     //loadClient.pending = true;
                 client.emit('m', this.messageCompress.pack(JSON.stringify(
@@ -757,14 +758,14 @@ function sandboxWorld(id, metadata)
             this.dispatch();
         }
         else
-        {
+            {
             var lasttime = now();
             this.process_message_sync(message, sendingclient);
             this.messageTotalProcessTime += (now() - lasttime);
-        }
+            }
     }
     this.dispatch = function()
-    {
+            {
         if (this.queue.length > 0 && this.ready === 0)
         {
             var lasttime = now();
@@ -780,7 +781,7 @@ function sandboxWorld(id, metadata)
                 self.dispatch();
                 //})
             });
-        }
+            }
     }
     this.process_message_sync = function(message, sendingclient)
     {
@@ -855,8 +856,9 @@ function sandboxWorld(id, metadata)
                 //send the message to the sender and to the receiver
                 if (textmessage.receiver)
                     self.clients[textmessage.receiver].emit('m', self.messageCompress.pack(message));
-                if (textmessage.sender)
-                    self.clients[textmessage.sender].emit('m', self.messageCompress.pack(message));
+              //this is no longer necessary, because the client predicts its own response
+              //  if (textmessage.sender)
+                //    self.clients[textmessage.sender].emit('m', self.messageCompress.pack(message));
                 internals.doReflect = false;
                 cb2(internals);
                 return internals;
@@ -904,7 +906,7 @@ function sandboxWorld(id, metadata)
                     this.setPropertyTime(message.node,message.member,message.time);
                    // if(this.simulationStateUpdates[message.node])
                    //     delete this.simulationStateUpdates[message.node][message.member];
-                    this.state.satProperty(message.node, message.member, message.parameters[0]);
+                this.state.satProperty(message.node, message.member, message.parameters[0]);
                 }else
                 {
                     internals.doReflect = false;
@@ -1030,46 +1032,46 @@ function sandboxWorld(id, metadata)
 
         var lasttime = now();
         var compressedMessage = self.messageCompress.pack(message);
-        //distribute message to all clients on given instance
+                //distribute message to all clients on given instance
         //for now, we need better filtering of messages. 
         //var concernedClients = self.simulationManager.getClientsForMessage(message, sendingclient)
         for (var i in self.clients)
-        {
-            var client = self.clients[i];
-            //if the message was get state, then fire all the pending messages after firing the setState
-            if (message.action == "getState" && client.pending == true)
             {
+            var client = self.clients[i];
+                //if the message was get state, then fire all the pending messages after firing the setState
+                if (message.action == "getState" && client.pending == true)
+                {
                 self.Log('Got State', 2);
                 if (self.requestTimer)
                     self.requestTimer.deleteMe();
-                var state = message.result;
+                    var state = message.result;
                 self.status = STATUS.DEFAULT;
                 self.state.setVWFDef(JSON.parse(JSON.stringify(state)));
                 self.messageClient(client,
-                {
-                    "action": "status",
-                    "parameters": ["State Received, Transmitting"],
+                    {
+                        "action": "status",
+                        "parameters": ["State Received, Transmitting"],
                     "time": self.getStateTime
-                }, false, false)
+                    }, false, false)
                 self.messageClient(client,
-                {
-                    "action": "setState",
-                    "parameters": [state],
+                    {
+                        "action": "setState",
+                        "parameters": [state],
                     "time": self.getStateTime
-                }, true, true)
+                    }, true, true)
                 client.pending = false;
                 self.trigger('stateSent');
-            }
+                }
             else
-            {
+                {
                 if(message.member == "latencyTest" && client == sendingclient)
-                {
+                    {
                     self.messageClient(client, compressedMessage, false, false);   
-                }
+                        }
                 else if (client == sendingclient && ( message.action == "createChild" || message.action == "deleteNode" ||  message.action == "setProperty" || message.action == "dispatchEvent" || message.action == "callMethod" || message.action == "fireEvent"))
-                {
+                        {
                 //    client has already processed own inputs - dont' send back to sender;
-                }
+                        }
                 else
                 {
                     self.messageClient(client, compressedMessage, false, false);
@@ -1118,60 +1120,60 @@ function sandboxWorld(id, metadata)
         }
         else
         {
-            var loginData = client.loginData;
-            logger.debug(client.id, loginData, 2)
+                var loginData = client.loginData;
+                logger.debug(client.id, loginData, 2)
                 //thisInstance.clients[socket.id] = null;
                 //if it's the last client, delete the data and the timer
                 //message to each user the join of the new client. Queue it up for the new guy, since he should not send it until after getstate
-            this.messageDisconnection(client.id, client.loginData ? client.loginData.Username : null);
+                this.messageDisconnection(client.id, client.loginData ? client.loginData.Username : null);
             this.simulationManager.removeClient(client)
-            if (loginData && loginData.clients)
-            {
-                //console.log("Disconnect. Deleting node for user avatar " + loginData.UID);
-                //only delete the avatar if this is the last client owned by the user
-                if (this.clientCountForUser(loginData.UID) == 0)
+                if (loginData && loginData.clients)
                 {
-                    var avatarID = 'character-vwf-' + loginData.UID;
-                    this.state.deletedNode(avatarID);
+                //console.log("Disconnect. Deleting node for user avatar " + loginData.UID);
+                    //only delete the avatar if this is the last client owned by the user
+                    if (this.clientCountForUser(loginData.UID) == 0)
+                    {
+                        var avatarID = 'character-vwf-' + loginData.UID;
+                        this.state.deletedNode(avatarID);
                     this.simulationManager.nodeDeleted(avatarID);
+                        this.messageClients(
+                        {
+                            "action": "deleteNode",
+                            "node": avatarID,
+                        "time": this.time()
+                        });
+                    }
                     this.messageClients(
                     {
-                        "action": "deleteNode",
-                        "node": avatarID,
-                        "time": this.time()
+                        "action": "callMethod",
+                        "node": 'index-vwf',
+                        member: 'cameraBroadcastEnd',
+                    "time": this.time(),
+                        client: client.id
                     });
+                    this.messageClients(
+                    {
+                        "action": "callMethod",
+                        "node": 'index-vwf',
+                        member: 'PeerSelection',
+                        parameters: [
+                            [[]]
+                        ],
+                    "time": this.time(),
+                        client: client.id
+                    });
+                    this.state.deletedNode(avatarID);
+                this.simulationManager.nodeDeleted(avatarID);
                 }
                 this.messageClients(
                 {
-                    "action": "callMethod",
-                    "node": 'index-vwf',
-                    member: 'cameraBroadcastEnd',
-                    "time": this.time(),
-                    client: client.id
+                    "action": "status",
+                    "parameters": ["Peer disconnected: " + (loginData ? loginData.UID : "Unknown")],
+                    "time": this.getStateTime
                 });
-                this.messageClients(
-                {
-                    "action": "callMethod",
-                    "node": 'index-vwf',
-                    member: 'PeerSelection',
-                    parameters: [
-                        []
-                    ],
-                    "time": this.time(),
-                    client: client.id
-                });
-                this.state.deletedNode(avatarID);
-                this.simulationManager.nodeDeleted(avatarID);
-            }
-            this.messageClients(
-            {
-                "action": "status",
-                "parameters": ["Peer disconnected: " + (loginData ? loginData.UID : "Unknown")],
-                "time": this.getStateTime
-            });
             //console.log('clientcount is ' + this.clientCount());
             //console.log(this.getClientList());
+            }
+            }
         }
-    }
-}
 exports.sandboxWorld = sandboxWorld;

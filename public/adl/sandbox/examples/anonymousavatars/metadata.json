@@ -6,7 +6,9 @@
         "allowTools": true, 
         "createAvatar": true, 
         "published": true, 
-        "singlePlayer": true
+        "singlePlayer": false,
+        "allowPlayPause": false,
+        "startPaused": false
     }, 
     "title": "Example Scene"
 }

@@ -11,7 +11,16 @@ define([], function() {
         }
     }
 
-
+    function merge(o1,o2,id)
+    {
+        var r = {};
+        for(var i in o1)
+            r[i] = o1[i];
+        for(var i in o2)
+            if(!(i in o1))
+                r[i] = Engine.getProperty(Engine.prototype(id),i);
+        return r;
+    }
     function initialize() {
 
         // Represents the three buttons; Play, Pause, and Stop that control the simulation
@@ -234,11 +243,13 @@ define([], function() {
                     }
                     if (exists) {
                         //set all the props of this node
-                        for (var j in node.children[i].properties) {
+                        var testProps = merge( node.children[i].properties,exists.properties,node.children[i].id)
+                        for (var j in testProps) {
+
                             var currentprop = Engine.getProperty(node.children[i].id, j);
                             //dont set props that have not changed, as this can be a lot of work for nothign
-                            if (JSON.stringify(currentprop) !== JSON.stringify(node.children[i].properties[j]))
-                                Engine.setProperty(node.children[i].id, j, node.children[i].properties[j]);
+                            if (JSON.stringify(currentprop) !== JSON.stringify(testProps[j]))
+                                Engine.setProperty(node.children[i].id, j, testProps[j]);
                         }
                         //create or set props of the child
                         walk(node.children[i], eachSeriesCallback)
@@ -260,12 +271,15 @@ define([], function() {
             walk(s, function() {
 
                 //set all the properties on the root scene
-                for (var j in s.properties) {
+                var testProps = s.properties;
+
+                for (var j in testProps) {
                     var currentprop = Engine.getProperty(s.id, j);
                     //dont set props that have not changed, as this can be a lot of work for nothing
-                    if (JSON.stringify(currentprop) !== JSON.stringify(s.properties[j]) && j !== 'clients')
-                        Engine.setProperty(s.id, j, s.properties[j]);
+                    if (JSON.stringify(currentprop) !== JSON.stringify(testProps[j]) && j !== 'clients')
+                        Engine.setProperty(s.id, j, testProps[j]);
                 }
+
                 //synchronous walk of graph to find children that exist in the current state but not the old one. Delete nodes that were created
                 var walk2 = function(node) {
                     //don't delete avatars
@@ -330,10 +344,12 @@ define([], function() {
             }
             var currentState = Engine.getProperty(Engine.application(), 'playMode');
             if (currentState === 'stop') return;
+           
+            vwf_view.kernel.callMethod(Engine.application(), 'preWorldStop');
+            vwf_view.kernel.setProperty(Engine.application(), 'playMode', 'stop');
             this.restoreState();
             this.stateBackup = null;
-            vwf_view.kernel.callMethod(Engine.application(), 'preWorldStop');
-            vwf_view.kernel.setProperty(Engine.application(), 'playMode', 'stop')
+             vwf_view.kernel.callMethod(Engine.application(), 'postWorldStop');
 
         }
 

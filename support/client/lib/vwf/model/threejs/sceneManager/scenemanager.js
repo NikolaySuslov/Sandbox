@@ -71,20 +71,29 @@ SceneManager.prototype.traverse = function(cb, node)
         }
     }
 }
-SceneManager.tempmat = new THREE.Matrix4();
-SceneManager.prototype.preRender = function(camera)
+var CULLSCALE = 20; //pixels
+function needsCull(FOV,dist,size,ww)
 {
+    var visualFOV_in_degrees = Math.atan(size/dist)*57.2958;
+    var degree_to_pix = ww/FOV;
+    var vfovo = visualFOV_in_degrees*degree_to_pix;
+    if(vfovo < CULLSCALE) return true;
+        return false;
 
+}
+
+SceneManager.tempmat = new THREE.Matrix4();
+SceneManager.prototype.preRender = function(camera,ww)
+{
+    return; //some objects still cull incorrectly.
     this.trigger('cullStart');
-    var fov_adj = camera.fov/60;
+   
     var cameraPos = [camera.matrixWorld.elements[12],camera.matrixWorld.elements[13],camera.matrixWorld.elements[14]]
     //do culling, LOD work
     this.traverse(function(region)
     {
-        var cullDistance = region.r * 2;
-        cullDistance *= SceneManager.cullScale;
-        cullDistance *= fov_adj;
-        if (MATH.distanceVec3(region.c, cameraPos) > cullDistance)
+      
+        if (needsCull(camera.fov,MATH.distanceVec3(region.c, cameraPos),region.r*2,ww))
         {
             //traverse this region, hide everything
             this.traverse(function(region){
@@ -106,15 +115,14 @@ SceneManager.prototype.preRender = function(camera)
         for (var i in region.childObjects)
         {
             var o = region.childObjects[i];
-            if (!o.boundsCache)
-                o.boundsCache = o.GetBoundingBox(true).transformBy(o.getModelMatrix(SceneManager.tempmat));
+            //if (!o.boundsCache)
+                o.boundsCache = o.GetBoundingBox(false).transformBy(o.getModelMatrix(SceneManager.tempmat));
             if(o.visible && o.frustumCulled)
             {
-                var cullDistance = MATH.distanceVec3(o.boundsCache.min,o.boundsCache.max);
-                cullDistance *= SceneManager.cullScale;
-                cullDistance *= fov_adj;
+                var size = MATH.distanceVec3(o.boundsCache.min,o.boundsCache.max);
+              
                 var objectCenter = [o.matrixWorld.elements[12], o.matrixWorld.elements[13], o.matrixWorld.elements[14]];
-                if (MATH.distanceVec3(MATH.addVec3(objectCenter,o.boundsCache.center), cameraPos) > cullDistance)
+                if (needsCull(camera.fov,MATH.distanceVec3(o.boundsCache.center, cameraPos) ,size,ww))
                 {
                     o.visible = false;
                     this.cullList.push(o);

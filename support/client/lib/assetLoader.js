@@ -3,7 +3,7 @@
 //Note that the sim can go forward before the textures are loaded - the scene manager just fills them with blue 
 //textures and replaces them when loaded. So, we don't have to cache texture here, but we do let the scenemanager know to fire up
 //and start loading, just to give the textures a head start.
-define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify", "vwf/model/threejs/BufferGeometryUtils", 'vwf/model/threejs/ColladaLoaderOptimized','progressScreen','vwf/model/threejs/scenemanager/sceneManager'],
+define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.js-0.3.9/src/alertify", "vwf/model/threejs/BufferGeometryUtils", 'vwf/model/threejs/ColladaLoaderOptimized','progressScreen','vwf/model/threejs/scenemanager/sceneManager','vwf/model/threejs/OBJMTLLoader','vwf/model/threejs/MTLLoader'],
         function(backgroundLoader,alertify,BufferGeometryUtils,ColladaLoaderOptimized,progressScreen)
         {
             var assetLoader = {};
@@ -391,6 +391,31 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                             cb2();
                         });
                     },
+                    this.loadOBJMTL = function(url, cb2)
+                    {
+                        var time = performance.now();
+                        var loader = new THREE.OBJMTLLoader();
+                        loader.load(url,url.replace(".obj",".mtl"),
+                        function(asset)
+                        {
+                            asset = {scene:asset};
+                            //console.log(url, performance.now() - time);
+                            assetLoader.cleanThreeJSMesh(asset.scene);
+                            assetLoader.BuildCollisionData(asset.scene, function(cb3)
+                            {
+                                //console.log(url, performance.now() - time);
+                                cb2(asset);
+                            });
+                        }, 
+                        function(progress)
+                        {
+
+                        },
+                        function(err)
+                        {
+                            cb2();
+                        });
+                    },
                     this.loadUTf8JsonOptimized = function(url, cb2)
                     {
                         var time = performance.now();
@@ -639,6 +664,7 @@ define(["vwf/model/threejs/backgroundLoader", "vwf/view/editorview/lib/alertify.
                     this.addType('subDriver/threejs/asset/vnd.raw-animation', this.loadglTFAnimation);
                     this.addType('subDriver/threejs/asset/vnd.osgjs+json+compressed+optimized', this.loadUTf8JsonOptimized);
                     this.addType('subDriver/threejs/asset/vnd.raw-morphttarget', this.loadMorph);
+                    this.addType('subDriver/threejs/asset/vnd.wavefront-obj', this.loadOBJMTL);
                     this.addType('terrain', this.loadTerrain);
                     this.addType('texture', this.loadTexture);
                     this.addType('subDriver/threejs', this.loadSubDriver);

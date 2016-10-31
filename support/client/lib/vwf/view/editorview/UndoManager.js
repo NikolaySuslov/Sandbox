@@ -333,7 +333,11 @@ define(function ()
 		}
 		this.recordSelection = function(selection)
 		{
-			this.pushEvent(new SelectionEvent(selection));
+			//this seems to cause more trouble than it is worth. We keep getting large stacks of 
+			//selections that don't change the current selection set. Until we have some way to know that the 
+			//operation creates some visible change - IE it does not set the selection set to the save set as it already is
+			//lets just not do it.
+			//this.pushEvent(new SelectionEvent(selection));
 		}
 		this.startCompoundEvent = function()
 		{

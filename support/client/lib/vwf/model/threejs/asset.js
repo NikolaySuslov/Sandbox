@@ -47,10 +47,11 @@
                 //somehow this is not called by the loaders 
                 this.getRoot().updateMatrixWorld(true);
                 //the parent is an asset object
-                if (true)
+                if (this.parentNode && this.parentNode.type != 'scene')
                 {
                     
                     var parentRoot = null;
+
                     if (this.parentNode && this.parentNode.getRoot) //if the parent internal driver object is just the scene, it does not have a getRoot function
                         parentRoot = this.parentNode.getRoot();
                     var skeleton = null;
@@ -374,10 +375,7 @@
                 if (threeObject instanceof THREE.Mesh)
                 {
                     list.push(threeObject);
-                    for (var i = 0; i < threeObject.children.length; i++)
-                    {
-                        this.GetAllLeafMeshes(threeObject.children[i], list);
-                    }
+                   
                 }
                 if (threeObject && threeObject.children)
                 {

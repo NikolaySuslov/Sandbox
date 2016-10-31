@@ -18,7 +18,7 @@ define(function ()
     {
        
         this.defaults = {
-            shadows:true,
+            shadows:false,
             useSimpleMaterials:false,
             resolutionScale: 1,
             filtering:true,
@@ -26,7 +26,7 @@ define(function ()
             normalMapTerrain:true,
             triPlanerMapTerrain:false,
             disableWebGL:false,
-            antialias:true,
+            antialias:false,
             reflections:true
         }
         this.readQueryString = function()

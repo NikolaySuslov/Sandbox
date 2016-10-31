@@ -29,10 +29,16 @@
 
 			&.disabled
 			{
-				pointer-events: none;
+				
 
 				a {
 					color: grey;
+				}
+
+				&:hover
+				{
+					background:#333;
+    				color:grey;
 				}
 			}
 

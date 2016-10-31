@@ -345,7 +345,7 @@ function _FileCache() {
             if (request.headers['if-none-match'] === file.hash) {
                 response.writeHead(304, {
                     "Content-Type": type,
-                    "Last-Modified": file.stats.mtime,
+                    "Last-Modified": encodeURIComponent(file.stats.mtime),
                     "ETag": file.hash,
                     "Cache-Control": "public; max-age=31536000",
 
@@ -358,7 +358,7 @@ function _FileCache() {
             if (request.headers['accept-encoding'] && request.headers['accept-encoding'].indexOf('gzip') >= 0 && !global.configuration.disableGZip) {
                 response.writeHead(200, {
                     "Content-Type": type,
-                    "Last-Modified": file.stats.mtime,
+                    "Last-Modified": encodeURIComponent(file.stats.mtime),
                     "ETag": file.hash,
                     "Cache-Control": "public; max-age=31536000",
                     'Content-Encoding': 'gzip',
@@ -374,7 +374,7 @@ function _FileCache() {
                     response.writeHead(200, {
                         "Content-Type": type,
                         "x-vwf-length": (file.contentlength + ''),
-                        "Last-Modified": file.stats.mtime,
+                        "Last-Modified": encodeURIComponent(file.stats.mtime),
                         "ETag": file.hash,
                         "Cache-Control": "public; max-age=31536000"
 
@@ -394,7 +394,7 @@ function _FileCache() {
                     response.writeHead(206, {
                         "Content-Type": type,
                         "Content-Length": (end - start) + 1,
-                        "Last-Modified": file.stats.mtime,
+                        "Last-Modified": encodeURIComponent(file.stats.mtime),
                         "ETag": file.hash,
                         "Cache-Control": "public; max-age=31536000",
                         "Accept-Ranges": "bytes",

@@ -121,9 +121,9 @@ var transformTool = function()
         this.allChildren.push(this.BuildBox([.30, 5, 5], [-5, 0, 0], red)); //scale uniform
         this.allChildren.push(this.BuildBox([5, .30, 5], [0, -5, 0], green)); //scale uniform
         this.allChildren.push(this.BuildBox([5, 5, .30], [0, 0, -5], blue)); //scale uniform        
-        this.allChildren[0].name = 'XRotation';
-        this.allChildren[1].name = 'YRotation';
-        this.allChildren[2].name = 'ZRotation';
+        this.allChildren[0].name = 'XMovement';
+        this.allChildren[1].name = 'YMovement';
+        this.allChildren[2].name = 'ZMovement';
         this.allChildren[3].name = 'XMovement';
         this.allChildren[4].name = 'YMovement';
         this.allChildren[5].name = 'ZMovement';
@@ -181,10 +181,13 @@ var transformTool = function()
     }
     this.show = function()
     {
+        this.hidden = false;
         this.SetGizmoMode(this.GizmoMode)
     }
+    this.hidden = false;
     this.hide = function()
     {
+        this.hidden = true;
         while (this.getGizmoBody().children.length)
         {
             this.getGizmoBody().remove(this.getGizmoBody().children[this.getGizmoBody().children.length - 1])
@@ -192,7 +195,9 @@ var transformTool = function()
     }
     this.SetGizmoMode = function(type)
     {
+
         this.GizmoMode = type;
+        if(this.hidden) return;
         if (type == Move)
         {
             $('#StatusTransform').text('Move');
@@ -371,6 +376,11 @@ var transformTool = function()
     }
     this.updateSize = function()
     {
+        if(isNaN(this.getGizmoBody().matrix.elements[0]))
+        {
+            this.getGizmoBody().matrix.copy(new THREE.Matrix4());
+        }
+        var pixelRatio = window.devicePixelRatio || 1;
         var tgizpos = [0, 0, 0];
         var tgizpos2 = [0, 0, 0];
         var transposeTemp = [];
@@ -381,6 +391,7 @@ var transformTool = function()
         tgizpos[2] = this.getGizmoHead().matrixWorld.elements[14];
         var campos = _Editor.getCameraPosition();
         var dist = MATH.lengthVec3(Vec3.subtract(tgizpos, campos, tempvec1));
+        dist = Math.max(dist,.0001); //prevent 0 dist thus 0 scale thus NANs in matrix
         var cam = _Editor.findcamera();
         cam.updateMatrixWorld(true);
         var fovadj = cam.fov / 75;
@@ -393,8 +404,8 @@ var transformTool = function()
         var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
         var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 
-        var windowXadj = 1600.0 / w;
-        var windowYadj = 1200.0 / h;
+        var windowXadj = 1600.0 / (w*pixelRatio);
+        var windowYadj = 1200.0 / (h*pixelRatio);
         var winadj = Math.max(windowXadj, windowYadj);
         this.getGizmoBody().matrix.scale(new THREE.Vector3(dist * winadj * fovadj, dist * winadj * fovadj, dist * winadj * fovadj));
         tempcammatinverse.getInverse(this.getGizmoHead().matrixWorld);
@@ -402,6 +413,107 @@ var transformTool = function()
         //document.title = tcamposGizSpace[0];
         this.getGizmoBody().matrix.scale(new THREE.Vector3(tcamposGizSpace[0] > 0 ? 1 : -1, tcamposGizSpace[1] > 0 ? 1 : -1, tcamposGizSpace[2] > 0 ? 1 : -1));
         this.getGizmoBody().updateMatrixWorld(true);
+        this.updateHandleVisiblity(MATH.toUnitVec3( MATH.subVec3(tgizpos,campos)));
+    }
+   
+    this.updateHandleVisiblity = function(camvec)
+    {
+         function testDot(vec,vec1)
+        {
+            if(Math.abs(MATH.dotVec3(vec,vec1)) < .995)
+                return true;
+            return false;
+        }
+        function hide(obj)
+        {
+            obj.visible = false;
+            obj.InvisibleToCPUPick = true;
+            for(var i =0; i < obj.children.length; i++)
+                hide(obj.children[i])
+        }
+        function show(obj)
+        {
+            obj.visible = true;
+            obj.InvisibleToCPUPick = false;
+            for(var i =0; i < obj.children.length; i++)
+                show(obj.children[i])
+        }
+
+        var gizmoHead = this.getGizmoBody();
+        var camRay = camvec;
+        var elements = gizmoHead.matrixWorld.elements;
+        var gizWorldX = MATH.toUnitVec3([elements[0],elements[1],elements[2]]);
+        var gizWorldY = MATH.toUnitVec3([elements[4],elements[5],elements[6]]);
+        var gizWorldZ = MATH.toUnitVec3([elements[8],elements[9],elements[10]]);
+
+        var objects = this.getGizmoBody().children;
+        for(var i =0; i < objects.length; i++ )
+        {
+            if(objects[i].name == "XMovement")
+            {
+                if(testDot(gizWorldX,camRay))
+                    show(objects[i])
+                else
+                    hide(objects[i])
+            }
+            else if(objects[i].name == "YMovement")
+            {
+                if(testDot(gizWorldY,camRay))
+                    show(objects[i])
+                else
+                    hide(objects[i]);
+            }
+            else if(objects[i].name == "ZMovement")
+            {
+                if(testDot(gizWorldZ,camRay))
+                    show(objects[i])
+                else
+                    hide(objects[i])
+            }
+            else if(objects[i].name == "XYMove")
+            {
+                if(testDot(gizWorldX,camRay) && testDot(gizWorldY,camRay))
+                    show(objects[i])
+                else
+                    hide(objects[i])
+            }
+            else if(objects[i].name == "ZXMove")
+            {
+                if(testDot(gizWorldY,camRay) && testDot(gizWorldZ,camRay))
+                    show(objects[i])
+                else
+                    hide(objects[i])
+            }
+            else if(objects[i].name == "YZMove")
+            {
+                if(testDot(gizWorldX,camRay) && testDot(gizWorldZ,camRay))
+                    show(objects[i])
+                else
+                    hide(objects[i])
+            }
+            else if(objects[i].name == "XRotate")
+            {
+                if(Math.abs(MATH.dotVec3(gizWorldX,camRay)) < .15) 
+                    hide(objects[i])
+                else
+                    show(objects[i])
+            }
+            else if(objects[i].name == "YRotate")
+            {
+                if(Math.abs(MATH.dotVec3(gizWorldY,camRay)) < .15) 
+                    hide(objects[i])
+                else
+                    show(objects[i])
+            }
+            else if(objects[i].name == "ZRotate")
+            {
+                if(Math.abs(MATH.dotVec3(gizWorldZ,camRay)) < .15) 
+                    hide(objects[i])
+                else
+                    show(objects[i])
+            }
+
+        }
     }
     this.mouseLeave = function(e)
     {
@@ -427,7 +539,7 @@ var transformTool = function()
             for (var i = 0; i < _Editor.getSelectionCount(); i++)
             {
                 var undo = new _UndoManager.SetPropertyEvent(_Editor.GetSelectedVWFID(i), 'transform', Engine.getProperty(_Editor.GetSelectedVWFID(i), 'transform'));
-                undo.oldval = this.mouseDownTransforms[_Editor.GetSelectedVWFID(i)];
+                undo.oldval = this.mouseDownRawTransforms[_Editor.GetSelectedVWFID(i)];
                 this.masterUndoRecord.push(undo);
             }
             _UndoManager.pushEvent(this.masterUndoRecord);
@@ -452,6 +564,7 @@ var transformTool = function()
             this.masterUndoRecord = new _UndoManager.CompoundEvent();
             this.mouseDownCoordSystem = this.coordSystem.clone();
             this.mouseDownTransforms = {};
+            this.mouseDownRawTransforms = {};
             this.mouseDownWorldTransforms = {};
             this.mouseDownGizScale = MATH.lengthVec3([this.getGizmoBody().matrix.elements[0], this.getGizmoBody().matrix.elements[1], this.getGizmoBody().matrix.elements[2]])
             for (var i = 0; i < _Editor.getSelectionCount(); i++)
@@ -461,6 +574,7 @@ var transformTool = function()
                 var translation = [transform[12], transform[13], transform[14]]
                 this.mouseDownOffsets[ID] = MATH.subVec3(this.getPosition(), translation)
                 this.mouseDownTransforms[ID] = _Editor.getTransformCallback(ID)
+                this.mouseDownRawTransforms[ID] = Engine.getProperty(ID, 'transform');
                 this.mouseDownWorldTransforms[ID] = Engine.getProperty(ID, 'worldTransform');
                 this.mouseDownWorldTransforms[findviewnode(ID).parent.uuid] = matCpy(findviewnode(ID).parent.matrixWorld.elements)
             }
@@ -573,11 +687,9 @@ var transformTool = function()
         var thisOff = MATH.subVec3(offset, mouseDownOffset);
         thisOff = MATH.subVec3(thisOff, worldTranslation)
         thisOff = this.maskOffset(this.axisToPlane(this.axisSelected), thisOff);
-        var snapped;
-        if (!TESTING)
-            snapped = _Editor.snapPosition([worldTranslation[0] + thisOff[0], worldTranslation[1] + thisOff[1], worldTranslation[2] + thisOff[2]])
-        else
-            snapped = [worldTranslation[0] + thisOff[0], worldTranslation[1] + thisOff[1], worldTranslation[2] + thisOff[2]];
+        _Editor.snapPosition(thisOff);
+        var snapped = [worldTranslation[0] + thisOff[0], worldTranslation[1] + thisOff[1], worldTranslation[2] + thisOff[2]]
+    
         var finalpos = new THREE.Vector3(snapped[0], snapped[1], snapped[2]);
         if (finalpos.length() < .0001) return false;
         wtmat.setPosition(finalpos);
@@ -655,6 +767,7 @@ var transformTool = function()
     }
     this.applyTransform = function(offset, deltas)
     {
+
         for (var i = 0; i < _Editor.getSelectionCount(); i++)
         {
             var ID = _Editor.GetSelectedVWFID(i)
@@ -671,6 +784,7 @@ var transformTool = function()
             var wtmat = new THREE.Matrix4();
             wtmat.elements.set(wt);
             var changed = false;
+            
             if (this.axisToTransformType(this.axisSelected) == 'move')
                 changed = this.applyMove(wtmat, offset, mouseDownOffset, ID);
             if (this.axisToTransformType(this.axisSelected) == 'rotate')
@@ -682,10 +796,15 @@ var transformTool = function()
                 var newLocalmat = new THREE.Matrix4();
                 newLocalmat.multiplyMatrices(ptmatInv, wtmat);
                 var newt = newLocalmat.elements;
+                //really need to swap this from float32array to js array
+                var newta = [];
+                for(var j =0; j<16; j++)
+                    newta[j] = newt[j];
+
                 if (TESTING)
                     Engine.setProperty(_Editor.GetSelectedVWFID(i), 'transform', newt);
                 else
-                    var ok = _Editor.setTransformCallback(_Editor.GetSelectedVWFID(i), newt);
+                    var ok = _Editor.setTransformCallback(_Editor.GetSelectedVWFID(i), newta);
                // _dView.setViewTransformOverride(_Editor.GetSelectedVWFID(i), newt);
             }
         }

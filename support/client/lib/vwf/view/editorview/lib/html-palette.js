@@ -262,7 +262,8 @@
 			}
 
 			oneaxis.ondragstart = function(evt){
-				evt.dataTransfer.setDragImage(document.createElement('div'),0,0);
+				if(evt.dataTransfer.setDragImage)
+					evt.dataTransfer.setDragImage(document.createElement('div'),0,0);
 			}
 
 			oneaxis.ondrag = oneaxis.onmousedown = function(evt){
@@ -272,7 +273,8 @@
 			}
 
 			alpha.ondragstart = function(evt){
-				evt.dataTransfer.setDragImage(document.createElement('div'),0,0);
+				if(evt.dataTransfer.setDragImage)
+					evt.dataTransfer.setDragImage(document.createElement('div'),0,0);
 			}
 
 			alpha.ondrag = alpha.onmousedown = function(evt){
@@ -295,7 +297,8 @@
 					initialValue = Math.round(self.selection[channel]*255);
 					initialMouse = evt.offsetY;
 					evt.dataTransfer.effectAllowed = 'none';
-					evt.dataTransfer.setDragImage(document.createElement('div'),0,0);
+					if(evt.dataTransfer.setDragImage)
+						evt.dataTransfer.setDragImage(document.createElement('div'),0,0);
 				}
 
 				e.ondrag = function(evt){

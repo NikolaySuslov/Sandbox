@@ -45,6 +45,10 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 
 		$scope.lookUpHandler = function(e){
 			$('#ddsmoothmenu li').trigger('mouseleave');
+			//we used to use pointer-events:none in the css, but that is causing some problems with mouseover. 
+			//now using application logic to reject clicks
+			if($(e.currentTarget).parent().hasClass('disabled'))
+			  return;
 			handlers[e.currentTarget.id](e);
 		}
 	}]);
@@ -52,6 +56,9 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 	app.service('MenuHandlers', function(){
 		var handlers =
 		{
+			MenuLogOut:function(e){
+				window.location = "/";
+			},
 			// hook up assets menu
 			MenuManageAssets: function(e){
 				$('#manageAssetsDialog').dialog('open');
@@ -320,13 +327,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				_Editor.CreateModifier('lathe', _UserManager.GetCurrentUserName(), true);
 			},
 			MenuCreateTaper: function(e) {
-				_Editor.CreateModifier('taper', _UserManager.GetCurrentUserName());
+				_Editor.CreateModifier('taper', _UserManager.GetCurrentUserName(),true);
 			},
 			MenuCreateBend: function(e) {
-				_Editor.CreateModifier('bend', _UserManager.GetCurrentUserName());
+				_Editor.CreateModifier('bend', _UserManager.GetCurrentUserName(),true);
 			},
 			MenuCreateTwist: function(e) {
-				_Editor.CreateModifier('twist', _UserManager.GetCurrentUserName());
+				_Editor.CreateModifier('twist', _UserManager.GetCurrentUserName(),true);
 			},
 
 			MenuCreateUVMap: function(e) {
@@ -339,13 +346,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				_Editor.CreateModifier('perlinnoise', _UserManager.GetCurrentUserName());
 			},
 			MenuCreateSimplexNoise: function(e) {
-				_Editor.CreateModifier('simplexnoise', _UserManager.GetCurrentUserName());
+				_Editor.CreateModifier('simplexnoise', _UserManager.GetCurrentUserName(),true);
 			},
 			MenuCreateOffset: function(e) {
-				_Editor.CreateModifier('offset', _UserManager.GetCurrentUserName());
+				_Editor.CreateModifier('offset', _UserManager.GetCurrentUserName(),true);
 			},
 			MenuCreateStretch: function(e) {
-				_Editor.CreateModifier('stretch', _UserManager.GetCurrentUserName());
+				_Editor.CreateModifier('stretch', _UserManager.GetCurrentUserName(),true);
 			},
 
 			MenuCreateBehaviorRotator: function(e) {
@@ -757,11 +764,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 									_Editor.loadMesh(val, 'subDriver/threejs/asset/vnd.gltf+json');
 								if (type == 'Three.js Native JSON')
 									_Editor.loadMesh(val, 'subDriver/threejs/asset/vnd.three.js+json');
+								if (type == 'Wavefront OBJ (.obj)')
+									_Editor.loadMesh(val, 'subDriver/threejs/asset/vnd.wavefront-obj');
 							}
 						}, 'http://');
 					}
 
-				}, ["Collada", "3DR JSON (http://3dr.adlnet.gov)", "glTF (v0.6) JSON", 'Three.js Native JSON'])
+				}, ["Collada", "3DR JSON (http://3dr.adlnet.gov)", "glTF (v0.6) JSON", 'Three.js Native JSON','Wavefront OBJ (.obj)'])
 
 			},
 
@@ -789,6 +798,9 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			},
 			MenuCreatePlane: function(e) {
 				_Editor.CreatePrim('plane', _Editor.GetInsertPoint(), [1, 1, 5], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
+			},
+			MenuCreateText2D: function(e) {
+				_Editor.CreatePrim('text2D', _Editor.GetInsertPoint(), [1, 1, 5], 'checker.jpg', _UserManager.GetCurrentUserName(), '');
 			},
 			MenuCreateCylinder: function(e) {
 				_Editor.CreatePrim('cylinder', _Editor.GetInsertPoint(), [1, .5, .5], 'checker.jpg', _UserManager.GetCurrentUserName(), '');

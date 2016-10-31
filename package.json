@@ -36,6 +36,7 @@
     "method-override": "~2.3.1",
     "mime": "~1.2.11",
     "mkdirp": "~0.3.5",
+    "mongodb": "^2.2.9",
     "morgan": "~1.5.1",
     "multer": "~0.1.7",
     "nedb": "~0.10.2",

@@ -46,7 +46,7 @@ define({
 		});
 		$('#index-vwf').keydown(function(e){
 			
-			if(Engine.getProperty(Engine.application(),'playMode') == 'play') return;
+			if(window._Editor && _Editor.disableDueToWorldState() ) return;
 			try{
 			_Editor.keydown(e)
 			if(e.keyCode == 32 && e.shiftKey)

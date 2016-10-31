@@ -48,6 +48,14 @@ define(["./lib/ace/ace.js"],
 					}
 				}
 				$('#JSONLoadInput')[0].addEventListener('change', handleFileSelect, false);
+				$('#JSONViewButtonBarCancel').bind('click', function()
+					{
+						self.hide();
+					})
+					$('#JSONViewButtonBarSave').bind('click', function()
+					{
+						download('Object.json', self.itemViewer.getValue());
+					});
 				this.prompt = function(item, ok)
 				{
 					$('#JSONViewButtonBarOk').unbind('click')
@@ -57,14 +65,7 @@ define(["./lib/ace/ace.js"],
 							ok(self.itemViewer.getValue());
 						self.hide();
 					})
-					$('#JSONViewButtonBarCancel').bind('click', function()
-					{
-						self.hide();
-					})
-					$('#JSONViewButtonBarSave').bind('click', function()
-					{
-						download('Object.json', self.itemViewer.getValue());
-					});
+					
 					$('#JSONPrompt').dialog('open');
 					if (item instanceof Object && item.construtor !== String)
 					{

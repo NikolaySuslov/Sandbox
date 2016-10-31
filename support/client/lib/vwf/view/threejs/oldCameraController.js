@@ -596,6 +596,19 @@
          this.camera.matrix.elements[14] = oldz;
          // console.log(e.alpha,e.beta,e.gamma);
      }
+     this.clampRoty = function()
+     {
+        
+             if (this.y_rot < .6)
+             {
+               
+                this.y_rot = .601;
+             } 
+            if (this.y_rot > .93 && (this.cameramode != 'Free' && this.cameramode != 'Fly')) this.y_rot = .929;
+             if (this.y_rot > .93 && (this.cameramode == 'Free' || this.cameramode == 'Fly')) this.y_rot = .929;
+
+           
+     }
      this.updateCamera = function()
      {
          if(!this.active) return
@@ -606,7 +619,7 @@
          {
              return;
          }
-
+         this.clampRoty ();
         this.last_y_rot += this.y_rot/5;
         this.last_x_rot += this.x_rot/5;
         this.last_zoom += (this.zoom - this.last_zoom) * .094;
@@ -635,9 +648,9 @@
              var offset = MATH.mulMat4Vec3(xmatrix, XAXIS, toffset);
              offset = Vec3.scale(offset, 1 / MATH.lengthVec3(offset), offset);
              tside = Vec3.cross([0, 0, 1], offset, tside);
-             if (this.last_y_rot < .479) this.last_y_rot = .479;
-             if (this.last_y_rot > .783 && (this.cameramode != 'Free' && this.cameramode != 'Fly')) this.last_y_rot = .783;
-             if (this.last_y_rot > .783 && (this.cameramode == 'Free' || this.cameramode == 'Fly')) this.last_y_rot = .783;
+             
+             this.clampRoty();
+
              var crossmatrix = MATH.angleAxis(this.last_y_rot * 10, tside, tcrossmatrix);
              var stage2offset = MATH.mulMat4Vec3(crossmatrix, offset, tstage2offset);
              stage2offset = Vec3.scale(stage2offset, 1 / MATH.lengthVec3(stage2offset), stage2offset);

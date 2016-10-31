@@ -48,7 +48,7 @@ mixin scripteditor_body
 							.glyphicon.glyphicon-text-size(title='Default font size', ng-click='defaultFont()')
 							.glyphicon.glyphicon-menu-up(title='Increase font size', ng-click='increaseFont()')
 
-						ace-code-editor.content(disabled='fields.selectedNode.id==="index-vwf" || !guiState.openTab || !currentList.selected'
+						ace-code-editor.content(id="thisistheone" ng-disabled='fields.selectedNode.id==="index-vwf" || !guiState.openTab || !currentList.selected'
 							ng-class='{"dirty": dirty[selectedField.id]}')
 						.buttonPanel.horizontalLayout
 							input#save(type='button', value='Save {{getSingular(guiState.openTab)}}'

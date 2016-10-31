@@ -51,7 +51,8 @@ mixin manageAssets_body
 						select(ng-model='selected.type', ng-options='prettifyType(v) for v in knownTypes')
 							option(value='') */*
 
-					input#fileInput(type='file', disabled='disabled', onchange='getFileData(this.files)')
+					form
+						input#fileInput(type='file', disabled='disabled', onchange='getFileData(this.files)')
 
 				div(ng-show='selected.type === "model/vnd.gltf+json"')
 					hr

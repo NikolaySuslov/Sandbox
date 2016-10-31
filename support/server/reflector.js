@@ -144,8 +144,9 @@ function ServeSinglePlayer(socket, namespace, instancedata)
             {}));
 
 
-            if (!instancedata.publishSettings || instancedata.publishSettings.createAvatar)
+            if (instancedata.publishSettings && instancedata.publishSettings.createAvatar)
             {
+               
                 tempState.getAvatarDef(socket.loginData.UID, socket.id, function(avatar)
                 {
                     var createAvatarMessage = {

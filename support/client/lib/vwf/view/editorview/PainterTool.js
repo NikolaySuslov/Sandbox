@@ -40,23 +40,29 @@ function PainterTool() {
     this.display.material.opacity = .25;
     this.display.material.transparent = true;
     this.lastNames = [];
-    
+    var self = this;
     $('#PainterToolGUIChooseBlock').click(function() {
-        _MapBrowser.setTexturePickedCallback(function(e) {
-            this.nodeProto.properties.materialDef.layers[0].src = e;
-            $('#PainterToolGUITexture').attr('src', e);
-            this.display.material.map = _SceneManager.getTexture(e);
-            _MapBrowser.hide();
-        }.bind(this));
-        _MapBrowser.show();
+
+        require(['vwf/view/editorview/mapbrowser'],function(browseTexture)
+            {
+                browseTexture(function(e) {
+                    self.nodeProto.properties.materialDef.layers[0].src = e;
+                    $('#PainterToolGUITexture').attr('src', e);
+                    self.display.material.map = _SceneManager.getTexture(e);
+                
+                });
+            });
+   
+        
 
     }.bind(this));
     $('#PainterToolGUIActivteTool').change(function(e) {
 
-        var checked = ($(this).next().attr('aria-pressed'));
-        if(!this.display.material.map)
-            this.display.material.map = _SceneManager.getTexture('./vwfDataManager.svc/texture?UID=checker.jpg');
-        if (checked == 'true') {
+       
+        var checked = $("#PainterToolGUIActivteTool").is(":checked")
+        if(!self.display.material.map)
+            self.display.material.map = _SceneManager.getTexture('./vwfDataManager.svc/texture?UID=checker.jpg');
+        if (checked == true) {
             $(this).next().children().css('background-color', 'red');
             _Editor.addTool('Painter', _PainterTool);
             _Editor.setActiveTool('Painter');

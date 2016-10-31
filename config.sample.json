@@ -64,7 +64,9 @@
 	"assetSessionHeader": "X-Session-Cookie",
 
     //service setup for loadbalancer
-    "host" : "http://localhost:3000" // the address of this server
-    "loadBalancerAddress" : "http://localhost:3001" // the address of the load balancer server
+    "host" : "http://localhost:3000", // the address of this server
+    "loadBalancerAddress" : "http://localhost:3001", // the address of the load balancer server
+    "DB_driver":"./DB_nedb.js", //the database driver to use. Defaults to Node Embeded Database. Use ./DB_mongo.js for production scale deployments
+    "DB_connection_string":"mongodb://localhost/ADLSandbox" //the connection to use for database drivers that talk to an external server (mongo)
 
 }

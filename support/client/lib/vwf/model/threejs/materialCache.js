@@ -1204,14 +1204,15 @@ function MaterialCache() {
                 value.color.r = parseFloat(currentmat.color.r.toFixed(3));
                 value.color.g = parseFloat(currentmat.color.g.toFixed(3));
                 value.color.b = parseFloat(currentmat.color.b.toFixed(3));
-                value.ambient = {r:0,g:0,b:0};
+                value.ambient = {r:value.color.r,g:value.color.g,b:value.color.b};
 
+                /*
                 if(currentmat.ambient)
                 {
                     value.ambient.r =parseFloat( currentmat.ambient.r.toFixed(3));
                     value.ambient.g = parseFloat(currentmat.ambient.g.toFixed(3));
                     value.ambient.b = parseFloat(currentmat.ambient.b.toFixed(3));
-                }
+                }*/
                 value.emit = {r:0,g:0,b:0};
                 if(currentmat instanceof THREE.MeshBasicMaterial)
                     value.emit = {r:1,g:1,b:1};

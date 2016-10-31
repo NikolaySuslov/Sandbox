@@ -186,6 +186,15 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/strToBytes', 'vw
 	{
 		window._AssetManager = $scope;
 
+		var input = $('#manageAssetsDialog #fileInput');
+		input.on('dragover',function(e){
+			    e.stopPropagation();
+            e.preventDefault();
+		})
+		input.on('drop',function(e){
+			  
+		})
+
 		var fileData = {};
 		$scope.assets = assets;
 		$scope.selectedAsset = null;

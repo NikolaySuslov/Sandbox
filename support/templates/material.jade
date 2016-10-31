@@ -27,14 +27,14 @@ block content
 			div(ng-show='materialDef.type === "phong" || materialDef.type === "mix" || !materialDef')
 
 				label.inline Base color:
-					html-palette(color='materialDef.color', color-profile='rgba', throttle-apply='100', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', use-alpha=true, css='extrawide toplevel')
+					html-palette(color='materialDef.color', color-profile='rgba', throttle-apply='100', ng-disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', use-alpha=true, css='extrawide toplevel')
 
 				.inline Ambient color:
 					.verticalLayout(style='align-items: flex-end;')
 						label Linked to base
 							input(type='checkbox', ng-model='ambientLinked', ng-disabled='!materialDef')
 						//color-picker(color-obj='materialDef.ambient', disabled='!materialDef', ng-hide='ambientLinked', sliding='suppressUndo')
-						html-palette(ng-hide='ambientLinked', color-profile='rgb', throttle-apply='100', color='materialDef.ambient', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', css='toplevel')
+						html-palette(ng-hide='ambientLinked', color-profile='rgb', throttle-apply='100', color='materialDef.ambient', ng-disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', css='toplevel')
 
 				label Shininess:
 					br
@@ -42,7 +42,7 @@ block content
 
 				label.inline Specular color:
 					//color-picker(color-obj='materialDef.specularColor', disabled='!materialDef', sliding='suppressUndo')
-					html-palette(color='materialDef.specularColor', color-profile='rgba', throttle-apply='100', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', use-alpha=true, css='extrawide toplevel')
+					html-palette(color='materialDef.specularColor', color-profile='rgba', throttle-apply='100', ng-disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', use-alpha=true, css='extrawide toplevel')
 
 				//label Specular intensity:
 					br
@@ -50,7 +50,7 @@ block content
 
 				label.inline Emissive color:
 					//color-picker(color-obj='materialDef.emit', disabled='!materialDef', sliding='suppressUndo')
-					html-palette(color='materialDef.emit', color-profile='rgb', throttle-apply='100', disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', css='toplevel')
+					html-palette(color='materialDef.emit', color-profile='rgb', throttle-apply='100', ng-disabled='!materialDef', popup-edge='w', update-trigger-bg=true, radial='true', css='toplevel')
 
 				label Skybox factor:
 					br
@@ -89,25 +89,25 @@ block content
 
 			div
 				label
-					input(type='checkbox', ng-model='materialDef.fog', ng-disabled='!materialDef')
+					input(type='checkbox', ng-model='materialDef.fog', ng-model-options='{ debounce: 150 }', ng-disabled='!materialDef')
 					|  Fog Enabled
 				label
-					input(type='checkbox', ng-model='materialDef.shading', ng-disabled='!materialDef')
+					input(type='checkbox', ng-model='materialDef.shading', ng-model-options='{ debounce: 150 }',ng-disabled='!materialDef')
 					|  Shading Enabled
 				label
-					input(type='checkbox', ng-model='materialDef.metal', ng-disabled='!materialDef')
+					input(type='checkbox', ng-model='materialDef.wireframe',ng-model-options='{ debounce: 150 }', ng-disabled='!materialDef')
 					|  Metal
 				label
 					input(type='checkbox', ng-model='materialDef.wireframe', ng-disabled='!materialDef')
 					|  Wireframe
 				label
-					input(type='checkbox', ng-model='materialDef.depthtest', ng-disabled='!materialDef')
+					input(type='checkbox', ng-model='materialDef.depthtest',ng-model-options='{ debounce: 150 }', ng-disabled='!materialDef')
 					|  Depth Test
 				label
-					input(type='checkbox', ng-model='materialDef.depthwrite', ng-disabled='!materialDef')
+					input(type='checkbox', ng-model='materialDef.depthwrite', ng-model-options='{ debounce: 150 }',ng-disabled='!materialDef')
 					|  Depth Write
 				label
-					input(type='checkbox', ng-model='materialDef.vertexColors', ng-disabled='!materialDef')
+					input(type='checkbox', ng-model='materialDef.vertexColors',ng-model-options='{ debounce: 150 }', ng-disabled='!materialDef')
 					|  Vertex Colors
 
 		h3(ng-repeat-start='layer in materialDef.layers track by $index')
@@ -119,7 +119,7 @@ block content
 				img(ng-src='{{layer.src}}', ng-click='browseForTexture($index)')
 				span.url {{layer.src}}
 
-			label Alpha:
+			label Effect Intensity:
 				br
 				slider(min=0, max=1, step=0.01, value='layer.alpha', sliding='suppressUndo')
 			label Scale (x axis):

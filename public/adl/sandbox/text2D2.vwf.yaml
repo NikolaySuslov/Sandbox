@@ -1,0 +1,128 @@
+# Copyright 2012 United States Government, as represented by the Secretary of Defense, Under
+# Secretary of Defense (Personnel & Readiness).
+# 
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+# in compliance with the License. You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software distributed under the License
+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied. See the License for the specific language governing permissions and limitations under
+# the License.
+---
+
+extends: prim2.vwf
+properties:
+  _length: 1
+  width: 1
+  resolutionX: 100
+  resolutionY: 100
+  text: "hey"
+  font: "Arial"
+  fontSize: 40
+  bold: true
+  italic: false
+  fontURL: null
+  lineSpacing: 0
+  startX: 10
+  startY: 50
+  justified : "left"
+  transparent: true
+  forecolor: [ 1, 1, 1, 1]
+  backcolor: [ 0, 0, 0, 0]
+  EditorData:
+    _length: 
+      displayname: "Length"
+      property: "_length"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    width: 
+      displayname: "Height"
+      property: "width"
+      type: "slider"
+      min: 0
+      max: 10
+      step: 0.01
+    fontSize: 
+      displayname: "fontSize (px)"
+      property: "fontSize"
+      type: "slider"
+      min: 0
+      max: 1000
+      step: 1  
+    lineSpacing: 
+      displayname: "lineSpacing (px)"
+      property: "lineSpacing"
+      type: "slider"
+      min: 0
+      max: 1000
+      step: 1    
+    resX: 
+      displayname: "Resolution X"
+      property: "resolutionX"
+      type: "slider"
+      min: 0
+      max: 1000
+      step: 10  
+    resY: 
+      displayname: "Resolution Y"
+      property: "resolutionY"
+      type: "slider"
+      min: 0
+      max: 1000
+      step: 10
+    startx: 
+      displayname: "Offset X"
+      property: "startX"
+      type: "slider"
+      min: -100
+      max: 100
+      step: 1  
+    starty: 
+      displayname: "Offset Y"
+      property: "startY"
+      type: "slider"
+      min: -100
+      max: 100
+      step: 1        
+    text: 
+      displayname: "text"
+      property: "text"
+      type: "text"
+    font: 
+      displayname: "font"
+      property: "font"
+      type: "text"
+    fontURL: 
+      displayname: "URL of Font"
+      property: "fontURL"
+      type: "text"  
+    transparent: 
+      displayname: "transparent"
+      property: "transparent"
+      type: "check"
+    italic: 
+      displayname: "italic"
+      property: "italic"
+      type: "check" 
+    bold: 
+      displayname: "bold"
+      property: "bold"
+      type: "check"   
+    forecolor: 
+      displayname: "forecolor"
+      property: "forecolor"
+      type: "color"
+    backcolor: 
+      displayname: "backcolor"
+      property: "backcolor"
+      type: "color"
+    justified: 
+      displayname: "justified"
+      property: "justified"
+      type: "choice"
+      values: ["left","right","center"]
+      labels: ["left","right","center"]                    

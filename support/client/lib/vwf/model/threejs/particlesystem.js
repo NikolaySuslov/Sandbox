@@ -525,7 +525,7 @@
         this.totaltime = 0;
 
         this._emitterPosition = new THREE.Vector3(0, 0, 0);
-    	this._previousEmitterPosition = new THREE.Vector3(0,0,0);
+        this._previousEmitterPosition = new THREE.Vector3(0,0,0);
 
         //Setup some defaults
         this.setParticleCount(1000);
@@ -660,7 +660,7 @@
         particle.age += step_dist;
         particle.setAge(particle.age + step_dist);
 
-		if(particle.waitForRegen)
+        if(particle.waitForRegen)
         {
             particle.setSize(0);
             return;

@@ -174,7 +174,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 					buildTree(threenode);
 					$scope.threeMaps[nodeId] = threeMap[threenode.uuid];
 				}
-				else {
+				else if($scope.threeMaps[node.parent]){
 					$scope.threeMaps[nodeId] = $scope.threeMaps[node.parent].map[threenode.uuid];
 				}
 			}
@@ -431,52 +431,14 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 		$scope.makeBounds = function(node)
 		{
 			if(node)
-			{
-				if (selectionBounds != null) {
-					selectionBounds.parent.remove(selectionBounds);
-					selectionBounds = null;
-				}
-
-				var box = node.GetBoundingBox(true);
-				box.max[0] += .05;
-				box.max[1] += .05;
-				box.max[2] += .05;
-				box.min[0] -= .05;
-				box.min[1] -= .05;
-				box.min[2] -= .05;
-				var mat = new THREE.Matrix4();
-				mat.copy(node.matrixWorld);
-
-				selectionBounds = _Editor.BuildWireBox(
-					[
-						box.max[0] - box.min[0],
-						box.max[1] - box.min[1],
-						box.max[2] - box.min[2]
-					],
-					[
-						box.min[0] + (box.max[0] - box.min[0]) / 2,
-						box.min[1] + (box.max[1] - box.min[1]) / 2,
-						box.min[2] + (box.max[2] - box.min[2]) / 2
-					],
-					[0, 1, 0.5, 1]
-				);
-				selectionBounds.matrixAutoUpdate = false;
-				selectionBounds.matrix = mat;
-				selectionBounds.updateMatrixWorld(true);
-				selectionBounds.material = new THREE.LineBasicMaterial();
-				selectionBounds.material.color.r = 0;
-				selectionBounds.material.color.g = 1;
-				selectionBounds.material.color.b = .5;
-				selectionBounds.material.wireframe = true;
-				selectionBounds.renderDepth = 10000 - 3;
-				selectionBounds.material.depthTest = true;
-				selectionBounds.material.depthWrite = false;
-				selectionBounds.PickPriority = -1;
-				_Editor.findscene().add(selectionBounds);
+			{	
+				_RenderManager.removeHilightObject(selectionBounds);
+				_RenderManager.addHilightObject(node);
+				selectionBounds = node;
 			}
 			else if( selectionBounds != null )
 			{
-				selectionBounds.parent.remove(selectionBounds);
+				_RenderManager.removeHilightObject(selectionBounds);
 				selectionBounds = null;
 			}
 		}
@@ -535,7 +497,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/SidePanel', 'vwf
 						owner: document.PlayerNumber,
 						type: '3DR Object',
 						DisplayName: childname,
-						transform: mat
+						transform: mat.elements
 					}
 				};
 				var newname = GUID();

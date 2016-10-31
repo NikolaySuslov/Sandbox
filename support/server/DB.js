@@ -63,7 +63,9 @@ exports.new = function(DBTablePath,cb)
             },
             
         };
-        DB = nStore.new(DBTablePath,function(){
+        DB = nStore.new(DBTablePath,function(err){
+            if(err)
+                console.log(err)
             cb(proxy);
         });
         return proxy;

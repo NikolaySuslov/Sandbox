@@ -7,7 +7,7 @@ define({
                 var elem = toTranslateElements[i].firstChild;
                 if (elem != null) {
                     if (elem.nextSibling != null) {
-                        if (elem.nextSibling.className.includes('glyphicon') == true) {
+                        if (elem.nextSibling.className.indexOf('glyphicon') !== -1) {
                             if (elem.nextSibling.nextSibling != null) {
                                 if (elem.nextSibling.nextSibling.nodeType == 3) {
                                     elem.nextSibling.nextSibling.nodeValue = i18n.t(elem.nextSibling.nextSibling.nodeValue);

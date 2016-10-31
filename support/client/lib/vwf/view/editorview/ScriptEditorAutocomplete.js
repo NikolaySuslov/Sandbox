@@ -77,7 +77,7 @@ define(['./angular-app'], function(app)
             //append the div and create it
             $(document.body).append("<form id='AutoComplete' tabindex=890483 />");
             //bind up events
-            $('#AutoComplete').on('command', function(e, key)
+            $('#AutoComplete').on('command', debounce(function(e, key)
             {
                 //enter or dot will accept the suggestion
                 if (key == "enter")
@@ -148,7 +148,7 @@ define(['./angular-app'], function(app)
                     //do nothing for shift
                 }
                 return false;
-            });
+            },150));
         }
         var self = this;
 
@@ -336,6 +336,15 @@ define(['./angular-app'], function(app)
                     {
                         return a[0] > b[0] ? 1 : -1;
                     })
+
+                   
+                    self.keys = self.keys.filter(function(i){
+                            if(i && i[0] == filter)
+                                return false;
+                            return true;
+
+                    })
+                    console.log(chr, line, filter);
                     return self.keys;
                 }
             }
@@ -408,25 +417,28 @@ define(['./angular-app'], function(app)
         //hide or show the function top based on the inputs
         this.methodEditor.on('change', function(e)
         {
-            self.autoComplete(self.methodEditor);
+            
+           self.autoComplete(self.methodEditor);
             self.triggerFunctionTip(self.methodEditor);
 
             if(e.data) e = e.data;
 
+            if(!e.lines[0] || e.lines[0].length > 1)
+                return;
             //hide if removing an open paren
-            if (e.action == "removeText")
+            if (e.action == "remove")
             {
-                if (e.text.indexOf('(') != -1)
+                if (e.lines[0].indexOf('(') != -1)
                     $('#FunctionTip').hide();
-                if (/[\.\[]/.exec(e.text))
+                if (/[^a-zA-Z0-9_\.\$]/.exec(e.lines[0]))
                     $('#AutoComplete').hide();
             }
             //hide if inserting a close paren
-            if (e.action == "insertText")
+            if (e.action == "insert")
             {
-                if (e.text.indexOf(')') != -1)
+                if (e.lines[0].indexOf(')') != -1)
                     $('#FunctionTip').hide();
-                if (/[^a-zA-Z0-9_\.\[$]/.exec(e.text))
+                if (/[^a-zA-Z0-9_\.\[\$]/.exec(e.lines[0]))
                     $('#AutoComplete').hide();
             }
             var cur = self.methodEditor.getCursorPosition();
@@ -448,9 +460,16 @@ define(['./angular-app'], function(app)
                 {
                     $('#AutoComplete').trigger('command', 'enter');
                 }
+                else if (!/[_a-zA-Z$0-9]/.test(text) && $('#AutoComplete').is(":visible"))
+                {
+                    //$('#AutoComplete').trigger('command', 'enter');
+                    $('#AutoComplete').hide();
+                    this.origOnTextInput(text);
+                }
                 else if (text == "." && $('#AutoComplete').is(":visible"))
                 {
                     //$('#AutoComplete').trigger('command', 'enter');
+                    $('#AutoComplete').hide();
                     this.origOnTextInput(text);
                 }
                 else

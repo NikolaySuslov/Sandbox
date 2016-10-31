@@ -565,7 +565,7 @@ define(["module", "vwf/view"], function(module, view)
             {
                 if (propertyName == 'text')
                 {
-                    $('#guioverlay_' + node.id + ' span').html((propertyValue + '').escape());
+                    $('#guioverlay_' + node.id ).html((propertyValue + '').escape());
                 }
             }
             else if (this.isLabel(node.type))

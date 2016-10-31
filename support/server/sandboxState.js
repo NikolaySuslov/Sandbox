@@ -210,7 +210,7 @@ var sandboxState = function(id, metadata, world)
     {
         this.metadata.publishSettings = {
             allowAnonymous: false,
-            createAvatar: true,
+            createAvatar: false,
             singlePlayer: false,
             persistence: true,
             camera: null

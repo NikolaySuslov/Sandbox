@@ -5,7 +5,7 @@ var libpath = require('path'),
 	mime = require('mime'),
 	sio = require('socket.io'),
 	YAML = require('js-yaml'),
-	sass = require('node-sass'),
+	
 	async = require('async'),
 	imgSize = require('image-size');
 
@@ -1392,6 +1392,7 @@ function createState(URL, data, response)
 		var id = "/adl/sandbox".replace(/\//g, "_") + '_' + makeid() + '_';
 		DAL.createInstance(id, statedata, function()
 		{
+			console.log(statedata);
 			var displayID = id.replace("_adl_sandbox",global.configuration.appPath.replace(/\//g,"_"));
 			respond(response, 200, displayID);
 			mailTools.newWorld(URL.loginData.UID, data.title, displayID);
@@ -1433,7 +1434,7 @@ function getState(SID, cb)
 		{
 			if (exists)
 			{
-				fs.readFile(statefile, 'utf8', function(err, file)
+				fs.readFile(statefile, 'binary', function(err, file)
 				{
 					var data;
 					try

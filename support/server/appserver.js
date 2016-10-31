@@ -342,7 +342,8 @@ function routeToAPI(request, response, next) {
         SandboxAPI.serve(request, response);
         return;
     }else if(URL.pathname.toLowerCase().indexOf('/datafiles/') == 0){
-         request.url=request.url.replace("/datafiles/","/vwfdatamanager.svc/datafile/");
+         request.url=request.url.replace( /\/datafiles\//i ,"/vwfdatamanager.svc/datafile/");
+
         SandboxAPI.serve(request, response);
         return;
     }else

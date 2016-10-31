@@ -35,10 +35,17 @@ function matset(newv, old) {
     return newv;
 }
 
+function disregardMouseInputsToSim() {
+    if (window._Editor && (window._Editor.GetSelectMode() == 'Pick' || window._Editor.GetSelectMode() == 'TempPick')) {
+        return true;
+    }
+    return false;
+}
+
 
 var pfx = ["webkit", "moz", "ms", "o", ""];
 
-define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNode", "vwf/model/threejs/OculusRiftEffect", "vwf/model/threejs/ThermalCamEffect", "vwf/model/threejs/VRRenderer", "vwf/view/threejs/editorCameraController", "vwf/view/threejs/SandboxRenderer"], function(module, view,eventSource,viewNode) {
+define(["module", "vwf/view", 'vwf/utility/eventSource', "vwf/view/threejs/viewNode", "vwf/model/threejs/OculusRiftEffect", "vwf/model/threejs/ThermalCamEffect", "vwf/model/threejs/VRRenderer", "vwf/view/threejs/editorCameraController", "vwf/view/threejs/SandboxRenderer"], function(module, view, eventSource, viewNode) {
     var stats;
     var NORMALRENDER = 0;
     var STEREORENDER = 1;
@@ -161,12 +168,12 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
             $('#glyphOverlay').append(newdiv);
             $(newdiv).disableSelection();
             $(newdiv).mousedown(function(e) {
-				console.log('glyph mousedown');
+                console.log('glyph mousedown');
                 $('#index-vwf').focus();
                 if (_Editor.GetSelectMode() == "None" || e.which != 1) $('#index-vwf').trigger(e)
             });
             $(newdiv).mouseup(function(e) {
-				console.log('glyph mouseup');
+                console.log('glyph mouseup');
                 $('#index-vwf').focus();
                 $('#index-vwf').trigger(e)
             });
@@ -174,7 +181,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
                 $('#index-vwf').trigger(e)
             });
             $(newdiv).click(function(e) {
-				console.log('glyph click');
+                console.log('glyph click');
                 $('#index-vwf').focus();
                 if (_Editor.GetSelectMode() != "None") _Editor.SelectObjectPublic(id)
             });
@@ -207,7 +214,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
         },
         updateGlyphs: function(e, viewprojection, wh, ww) {
 
-            if(Engine.getPropertyFast(Engine.application(),'playMode') == 'play') return;
+            if (Engine.getPropertyFast(Engine.application(), 'playMode') == 'play' && (_DataManager.getInstanceData().publishSettings.allowPlayPause === true || _DataManager.getInstanceData().publishSettings.allowPlayPause === undefined)) return;
             for (var i = 0; i < this.glyphs.length; i++) {
                 if (Engine.getPropertyFast(this.glyphs[i], 'showGlyph') == false) continue;
                 var div = $('#glyph' + ToSafeID(this.glyphs[i]))[0];
@@ -271,8 +278,8 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
         },
         initialize: function(rootSelector) {
 
-            
-            eventSource.call(this,'View');
+
+            eventSource.call(this, 'View');
             this.initHMD();
 
             rootSelector = {
@@ -328,7 +335,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
             this.leftover = 0;
             this.future = 0;
 
-           
+
 
         },
         lerp: function(a, b, l, c) {
@@ -418,59 +425,50 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
 
             return nqm;
         },
-        viewTransformOverrides:{},
-        setViewTransformOverride : function(nodeID,transform)
-        {
-            if(transform)
-            {
+        viewTransformOverrides: {},
+        setViewTransformOverride: function(nodeID, transform) {
+            if (transform) {
                 this.viewTransformOverrides[nodeID] = {
-                    override:transform,
-                    original:null,
+                    override: transform,
+                    original: null,
                 };
-            }else
-            {
+            } else {
                 delete this.viewTransformOverrides[nodeID];
             }
 
         },
-        applyViewTransformOverrides: function()
-        {
-            for( var i in this.viewTransformOverrides)
-            {
+        applyViewTransformOverrides: function() {
+            for (var i in this.viewTransformOverrides) {
                 var node = findviewnode(i);
-                if(node)
-                {
+                if (node) {
                     var original = (new THREE.Matrix4()).copy(node.matrix);
                     this.viewTransformOverrides[i].original = original;
-                    node.matrix.elements = (this.viewTransformOverrides[i].override)   
+                    node.matrix.elements = (this.viewTransformOverrides[i].override)
                     node.updateMatrixWorld(true);
                 }
             }
         },
-        restoreViewTransformOverrides: function()
-        {
-            for( var i in this.viewTransformOverrides)
-            {
+        restoreViewTransformOverrides: function() {
+            for (var i in this.viewTransformOverrides) {
                 var node = findviewnode(i);
-                if(node)
-                {
+                if (node) {
                     node.matrix.copy(this.viewTransformOverrides[i].original)
                     node.updateMatrixWorld(true);
                 }
             }
         },
-        
+
         setInterpolatedTransforms: function(deltaTime) {
-  			
+
             this.trigger('interpStart');
-  			var keys = Object.keys(this.nodes);
+            var keys = Object.keys(this.nodes);
             var now = performance.now();
-            var playmode = Engine.getPropertyFast(Engine.application(),'playmode');
+            var playmode = Engine.getPropertyFast(Engine.application(), 'playmode');
             for (var j = 0; j < keys.length; j++) {
                 var i = keys[j];
                 var node = this.nodes[i];
-                if(!node) continue;
-                node.interpolate(now,playmode);
+                if (!node) continue;
+                node.interpolate(now, playmode);
             }
             _dScene.updateMatrixWorld();
             this.trigger('interpEnd');
@@ -493,7 +491,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
             for (var j = 0; j < keys.length; j++) {
                 var i = keys[j];
                 var node = this.nodes[i];
-                if(!node) return;
+                if (!node) return;
                 node.restore();
             }
             _dScene.updateMatrixWorld();
@@ -526,7 +524,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
             for (var j = 0; j < keys.length; j++) {
                 var i = keys[j];
                 var node = this.nodes[i];
-                if(!node) return;
+                if (!node) return;
                 node.tick();
             }
         },
@@ -543,7 +541,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
             childSource, childType, childURI, childName, callback /* ( ready ) */ ) {
 
             if (childID != 'http-vwf-example-com-camera-vwf-camera')
-                this.nodes[childID] = new viewNode(childID,childExtendsID,this.state.nodes[childID],Engine.isSimulating(childID));
+                this.nodes[childID] = new viewNode(childID, childExtendsID, this.state.nodes[childID], Engine.isSimulating(childID));
 
             /*{
                     id: childID,
@@ -575,16 +573,16 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
 
 
                 //this.canvasQuery = jQuery(this.rootSelector["application-root"]).append("<canvas id='" + 'index-vwf' + "' width='" + this.width + "' height='" + this.height + "' class='vwf-scene'/>").children(":last");
-				this.canvasQuery = jQuery('canvas#index-vwf');
+                this.canvasQuery = jQuery('canvas#index-vwf');
                 this.canvasQuery.css('display', 'none');
                 this.canvasQuery.css('box-sizing', 'border-box');
                 initScene.call(this, this.state.scenes[childID]);
                 require("vwf/view/threejs/editorCameraController").initialize(this.editorCamera);
 
                 var instanceData = _DataManager.getInstanceData();
-                var    publishSettings = instanceData.publishSettings;
-                if(publishSettings)
-                this.cameraID = publishSettings.camera;
+                var publishSettings = instanceData.publishSettings;
+                if (publishSettings)
+                    this.cameraID = publishSettings.camera;
                 this.setCamera(this.cameraID);
             }
         },
@@ -645,7 +643,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
                 var i = keys[j];
                 if (this.nodes[i].extends == 'SandboxCamera-vwf') {
                     idlist.push(i);
-                    namelist.push(Engine.getProperty(i, 'DisplayName') + "   (" + namelist.length +')');
+                    namelist.push(Engine.getProperty(i, 'DisplayName') + "   (" + namelist.length + ')');
                 }
             }
 
@@ -680,9 +678,8 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
 
         },
         setCamera: function(camID) {
-            vwf_view.kernel.callMethod(Engine.application(), 'setClientCamera', [Engine.moniker(), camID]);
-            if(camID)
-            {
+            Engine.emit.callMethod(Engine.application(), 'setClientCamera', [Engine.moniker(), camID]);
+            if (camID) {
                 Engine.requestControl(camID);
             }
         },
@@ -694,19 +691,19 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
 
             if (publishSettings) defaultCameraID = publishSettings.camera;
 
-            this.cameraID = camID  || defaultCameraID;
+            this.cameraID = camID || defaultCameraID;
 
             //allow the default 
-            if(publishSettings)
-            if(!camID && publishSettings.allowTools)
-                this.cameraID = null;
+            if (publishSettings)
+                if (!camID && publishSettings.allowTools)
+                    this.cameraID = null;
 
             var cam = this.editorCamera;
 
             if (camID === 'top')
                 cam = this.topCamera;
             if (this.cameraID) {
-                
+
                 cam = null;
                 if (this.state.nodes[this.cameraID])
                     if (this.state.nodes[this.cameraID].getRoot && this.state.nodes[this.cameraID].getRoot()) {
@@ -741,12 +738,12 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
                 }
             }
             if (method == 'startSimulatingNode') {
-               if(this.nodes[args])
-                 this.nodes[args].setSim(true);
+                if (this.nodes[args])
+                    this.nodes[args].setSim(true);
             }
             if (method == 'stopSimulatingNode') {
-               if(this.nodes[args])
-                 this.nodes[args].setSim(false);
+                if (this.nodes[args])
+                    this.nodes[args].setSim(false);
             }
             if (id == Engine.application() && method == 'cameraShareInfo') {
                 if (this.receiveSharedCamera) {
@@ -794,7 +791,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
             if (this.nodes)
                 this.nodes[nodeID].setProperty(propertyName, propertyValue);
 
-            
+
 
             node[propertyName] = propertyValue;
 
@@ -819,7 +816,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
                     this.hideGlyph(nodeID);
             }
             if (node && threeObject && propertyValue !== undefined) {
-               
+
             }
 
 
@@ -843,7 +840,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
                     this.renderTargetPasses.splice(i, 1);
             }
         },
-        
+
 
 
         // -- gotProperty ------------------------------------------------------------------------------
@@ -987,10 +984,10 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
         function renderScene(time) {
 
 
-        	self.trigger('preFrame');	
+            self.trigger('preFrame');
             requestAnimFrame(renderScene);
-            
-            
+
+
             //lets not render when the quere is not ready. This prevents rendering of meshes that must have their children
             //loaded before they can render
             if (!window._dRenderer) {
@@ -1059,8 +1056,8 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
 
             self.trigger('prerender', vpargs);
             self.updateGlyphs(null, vp, wh, ww);
-            if(window._SceneManager)
-                _SceneManager.preRender(cam);
+            if (window._SceneManager)
+                _SceneManager.preRender(cam,ww);
             var keys = Object.keys(Engine.models[0].model.nodes);
             for (var j = 0; j < keys.length; j++) {
                 var i = keys[j];
@@ -1079,21 +1076,21 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
 
                 sceneNode.frameCount = 0;
 
-                self.trigger('pickStart');	
+                self.trigger('pickStart');
                 var newPick = ThreeJSPick.call(self, sceneNode, cam, ww, wh);
 
                 var newPickId = newPick ? getPickObjectID.call(view, newPick.object) : view.state.sceneRootID;
-                self.trigger('pickEnd');	
+                self.trigger('pickEnd');
 
                 if (self.lastPickId != newPickId && self.lastEventData) {
 
                     if (self.lastPickId) {
-                        view.kernel.dispatchEvent(self.lastPickId, "pointerOut", self.lastEventData.eventData, self.lastEventData.eventNodeData);
+                        Engine.emit.dispatchEvent(self.lastPickId, "pointerOut", self.lastEventData.eventData, self.lastEventData.eventNodeData);
 
                     }
 
                     if (newPickId) {
-                        view.kernel.dispatchEvent(newPickId, "pointerOver", self.lastEventData.eventData, self.lastEventData.eventNodeData);
+                        Engine.emit.dispatchEvent(newPickId, "pointerOver", self.lastEventData.eventData, self.lastEventData.eventNodeData);
 
                     }
 
@@ -1259,9 +1256,9 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
                     h = parseInt($('#index-vwf').attr('height') / 3);
 
                     var dpr = _dRenderer.devicePixelRatio;
-                    renderer.setViewport(0, 0, w/dpr, w/dpr);
+                    renderer.setViewport(0, 0, w / dpr, w / dpr);
                     _Editor.hideMoveGizmo();
-                    _dRenderer.setScissor(0, 0, w/dpr, w/dpr);
+                    _dRenderer.setScissor(0, 0, w / dpr, w / dpr);
                     renderer.enableScissorTest(true);
 
 
@@ -1275,15 +1272,15 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
                     insetvp = MATH.transposeMat4(_viewProjectionMatrix.toArray(temparray));
 
 
-                    self.trigger('postprerender', [insetvp, w/dpr, w/dpr]);
+                    self.trigger('postprerender', [insetvp, w / dpr, w / dpr]);
 
                     renderer.clear(true, true, true);
                     renderer.render(scene, selcam);
 
                     self.cameraID = camback;
                     _Editor.showMoveGizmo();
-                    _dRenderer.setViewport(0, 0, parseInt($('#index-vwf').attr('width'))/dpr, parseInt($('#index-vwf').attr('height'))/dpr);
-                    _dRenderer.setScissor(0, 0, parseInt($('#index-vwf').attr('width'))/dpr, parseInt($('#index-vwf').attr('height'))/dpr);
+                    _dRenderer.setViewport(0, 0, parseInt($('#index-vwf').attr('width')) / dpr, parseInt($('#index-vwf').attr('height')) / dpr);
+                    _dRenderer.setScissor(0, 0, parseInt($('#index-vwf').attr('width')) / dpr, parseInt($('#index-vwf').attr('height')) / dpr);
                     renderer.enableScissorTest(false);
                     selcam.aspect = oldaspect;
                     selcam.updateProjectionMatrix();
@@ -1298,7 +1295,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
                 self.trigger('glyphRender', vpargs);
             }
 
-             if(window._SceneManager)
+            if (window._SceneManager)
                 _SceneManager.postRender();
 
             if (stats.domElement.style.display == 'block')
@@ -1306,6 +1303,8 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
 
             if (self.interpolateTransforms)
                 self.restoreTransforms();
+            else
+                _dScene.updateMatrixWorld();
 
             self.restoreViewTransformOverrides(timepassed);
 
@@ -1577,7 +1576,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
         }
     }
 
-    
+
     // -- initInputEvents ------------------------------------------------------------------------
 
 
@@ -1745,9 +1744,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
 
         canvas.onmousedown = function(e) {
 
-            if (window._Editor && (window._Editor.GetSelectMode() == 'Pick' || window._Editor.GetSelectMode() == 'TempPick') && e.button == 0) {
-                return;
-            }
+            if (disregardMouseInputsToSim()) return;
 
             switch (e.button) {
                 case 2:
@@ -1762,7 +1759,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
             };
 
             e.preventDefault();
-            
+
             var event = getEventData(e, false);
             if (event) {
                 pointerDownID = pointerPickID ? pointerPickID : sceneID;
@@ -1771,6 +1768,9 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
         }
 
         canvas.onmouseup = function(e) {
+
+            if (disregardMouseInputsToSim()) return;
+
             var ctrlDown = e.ctrlKey;
             var atlDown = e.altKey;
             var ctrlAndAltDown = ctrlDown && atlDown;
@@ -1810,6 +1810,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
         }
 
         canvas.onmouseover = function(e) {
+            if (disregardMouseInputsToSim()) return;
             self.mouseOverCanvas = true;
             var eData = getEventData(e, false);
             if (eData) {
@@ -1820,37 +1821,37 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
         var lastpoll = performance.now();
         canvas.onmousemove = function(e) {
 
-           
+
 
             //can we bail out of this before calling getEventData? this might have a small performance boost
             if (mouseLeftDown || mouseRightDown || mouseMiddleDown) {
-                    // lets begin filtering this - it should be possible to only send the data when the change is greater than some value
-                    if (pointerDownID) {
+                // lets begin filtering this - it should be possible to only send the data when the change is greater than some value
+                if (pointerDownID) {
 
-                        var now = performance.now();
-                        var timediff = (now - lastpoll);
-                        if (timediff < 50) //condition for filter
-                        {
-                            return;
-                        }
+                    var now = performance.now();
+                    var timediff = (now - lastpoll);
+                    if (timediff < 50) //condition for filter
+                    {
+                        return;
                     }
+                }
             }
             lastpoll = now;
-             var eData = getEventData(e, false);
+            var eData = getEventData(e, false);
 
-
+            if (disregardMouseInputsToSim()) return;
             if (eData) {
                 if (mouseLeftDown || mouseRightDown || mouseMiddleDown) {
                     // lets begin filtering this - it should be possible to only send the data when the change is greater than some value
-                    if (pointerDownID && pointerDownID != vwf.application()) {  //don't allow sending of mouse motion on whole scene
+                    if (pointerDownID && pointerDownID != vwf.application()) { //don't allow sending of mouse motion on whole scene
                         //this is too much data, and can't be efficiently routed by the server since the scene is co-simulated
 
-                        
-                            
-                            sceneView.lastData = eData;
-                            sceneView.kernel.dispatchEvent(pointerDownID, "pointerMove", eData.eventData, eData.eventNodeData);
-                           
-                        
+
+
+                        sceneView.lastData = eData;
+                        sceneView.kernel.dispatchEvent(pointerDownID, "pointerMove", eData.eventData, eData.eventNodeData);
+
+
                     }
                 } else {
                     if (pointerPickID) {
@@ -1879,6 +1880,7 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
         }
 
         canvas.onmouseout = function(e) {
+            if (disregardMouseInputsToSim()) return;
             if (pointerOverID) {
                 sceneView.kernel.dispatchEvent(pointerOverID, "pointerLeave");
                 pointerOverID = undefined;
@@ -1923,24 +1925,22 @@ define(["module", "vwf/view",'vwf/utility/eventSource',"vwf/view/threejs/viewNod
         };
         window.document.getElementById('index-vwf').onblur = function() {
 
-            for (var i in sceneView.keyStates.keysDown) {
-
-                var key = sceneView.keyStates.keysDown[i];
-                delete sceneView.keyStates.keysDown[i];
-                sceneView.keyStates.keysUp[key.key] = key;
-                sceneView.keyStates.key = key;
-                if (sceneNode) sceneView.kernel.dispatchEvent(getClientFocusNode(Engine.moniker()), "keyUp", [sceneView.keyStates]);
-            }
             var sceneNode = sceneView.state.scenes[sceneView.state.sceneRootID];
             if (sceneNode) {
-                //var params = JSON.stringify( sceneView.keyStates );
+                for (var i in sceneView.keyStates.keysDown) {
 
+                    var key = sceneView.keyStates.keysDown[i];
+                    delete sceneView.keyStates.keysDown[i];
+                    sceneView.keyStates.keysUp[key.key] = key;
+                    sceneView.keyStates.key = key;
+                    if (sceneNode) sceneView.kernel.dispatchEvent(getClientFocusNode(Engine.moniker()), "keyUp", [sceneView.keyStates]);
+                }
 
-            }
-            for (var i in sceneView.keyStates.keysUp) {
+                for (var i in sceneView.keyStates.keysUp) {
 
-                delete sceneView.keyStates.keysUp[i];
+                    delete sceneView.keyStates.keysUp[i];
 
+                }
             }
 
         }

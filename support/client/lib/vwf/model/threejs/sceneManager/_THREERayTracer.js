@@ -172,11 +172,16 @@ var intersectRaySphere = function(origin, direction, center, radius)
         return Math.max(d1, d2);
     }
     //The basic representation of a face
-function face(v0, v1, v2)
+function face(_v0, _v1, _v2)
 {
-    this.v0 = v0;
-    this.v1 = v1;
-    this.v2 = v2;
+   
+
+   
+
+    this.v0 = _v0;
+    this.v1 = _v1;
+    this.v2 = _v2;
+
     //Find the face center
     //NOTE: no longer used. profiling shows rejecting face bounding sphere too slow.
     this.c = [0, 0, 0];
@@ -185,8 +190,8 @@ function face(v0, v1, v2)
     this.c[2] = (this.v0[2] + this.v1[2] + this.v2[2]) / 3.0;
     this.r = Math.max(MATH.distanceVec3(this.v0, this.c), MATH.distanceVec3(this.v1, this.c), MATH.distanceVec3(this.v2, this.c));
     //precomp some values used in intersection
-    var s1 = MATH.subVec3(v1, v0);
-    var s2 = MATH.subVec3(v2, v0);
+    var s1 = MATH.subVec3(this.v1, this.v0);
+    var s2 = MATH.subVec3(this.v2, this.v0);
     this.area = (MATH.lengthVec3(s1) * MATH.lengthVec3(s2)) / 2.0
     s1 = MATH.scaleVec3(s1, 1.0 / MATH.lengthVec3(s1));
     s2 = MATH.scaleVec3(s2, 1.0 / MATH.lengthVec3(s2));
@@ -921,8 +926,11 @@ function OctreeRegion(min, max, depth)
     this.faces = [];
     this.depth = depth;
     this.facesNotDistributed = [];
-    if (this.depth > 10)
+    
+    if (this.depth > OCTMaxDepth)
+    {
         this.facesNotDistributed = this.faces;
+    }
     this.min = min;
     this.max = max;
     this.c = [0, 0, 0]
@@ -1363,14 +1371,32 @@ function comparefaces(f1, f2)
 //The base ray trace accleration structure
 function OctreeRTAS(faces, verts, min, max)
 {
+   
     //first, put the faces in a list
     this.faces = [];
     //build the list of faces from the vert list
+
     for (var i = 0; i < faces.length - 2; i += 3)
     {
-        this.faces.push(new face([verts[faces[i] * 3 + 0], verts[faces[i] * 3 + 1], verts[faces[i] * 3 + 2]], [verts[faces[i + 1] * 3 + 0], verts[faces[i + 1] * 3 + 1], verts[faces[i + 1] * 3 + 2]], [verts[faces[i + 2] * 3 + 0], verts[faces[i + 2] * 3 + 1], verts[faces[i + 2] * 3 + 2]]));
+        var x0 = faces[i] * 3 + 0;
+        var x1 = faces[i + 1] * 3 + 0;
+        var x2 = faces[i + 2] * 3 + 0;
+
+        var y0 = x0 + 1;
+        var y1 = x1 + 1;
+        var y2 = x2 + 1;
+
+        var z0 = x0 + 2;
+        var z1 = x1 + 2;
+        var z2 = x2 + 2;
+
+        var v1 = [verts[x0], verts[y0], verts[z0]];
+        var v2 = [verts[x1], verts[y1], verts[z1]];
+        var v3 = [verts[x2], verts[y2], verts[z2]];
+        this.faces.push(new face(v1, v2, v3));
     }
     //Then, create a root bound
+   
     this.root = new OctreeRegion(min, max, 0);
     for (var i = 0; i < this.faces.length; i++)
         this.root.addFace(this.faces[i]);
@@ -1423,6 +1449,7 @@ THREE.Geometry.prototype.BuildRayTraceAccelerationStructure = function()
         return;
     }
     var positions = [];
+   
     for (var i = 0; i < this.vertices.length; i++)
     {
         positions.push(this.vertices[i].x);
@@ -1431,6 +1458,7 @@ THREE.Geometry.prototype.BuildRayTraceAccelerationStructure = function()
     }
     //decompose the face3 and face4 data from the THREEjs faces into a list of tri indexes
     var facedata = [];
+    
     for (var i = 0; i < this.faces.length; i++)
     {
         var face = this.faces[i];
@@ -1452,12 +1480,16 @@ THREE.Geometry.prototype.BuildRayTraceAccelerationStructure = function()
     }
     if (this.faces.length > OCTMaxFaces)
     {
+     
+
         this.RayTraceAccelerationStructure = new OctreeRTAS(facedata, positions, this.BoundingBox.min, this.BoundingBox.max);
     }
     else
     {
+      
         this.RayTraceAccelerationStructure = new SimpleFaceListRTAS(facedata, positions);
     }
+    
 }
 THREE.Geometry.prototype.clone_internal = THREE.Geometry.prototype.clone;
 THREE.Geometry.prototype.clone = function()
@@ -1471,7 +1503,9 @@ THREE.Geometry.prototype.GetBoundingBox = function()
     {
         if (!this.BoundingSphere || !this.BoundingBox || this.dirtyMesh)
         {
-            this.GenerateBounds();
+            this.dirtyMesh = false;
+             this.GenerateBounds();
+            this.BuildRayTraceAccelerationStructure();
         }
         return this.BoundingBox.clone();
     }
@@ -1500,7 +1534,9 @@ THREE.Geometry.prototype.CPUPick = function(origin, direction, options, collisio
         //if for some reason dont have good bounds, generate	 
         if (!this.BoundingSphere || !this.BoundingBox || this.dirtyMesh)
         {
+            this.dirtyMesh = false;
             this.GenerateBounds();
+            this.BuildRayTraceAccelerationStructure();
         }
         //try to reject based on bounding sphere
         //*** profiling shows reject based on bounding sphere function is way too slow.

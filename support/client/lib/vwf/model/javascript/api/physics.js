@@ -19,7 +19,7 @@ define([], function()
 		}
 		this.wake = function()
 		{
-			this.___physics_activation_state = 1;
+			return jsDriverSelf.getTopContext().setProperty(this.id, "___physics_activation_state", 1);
 		}
 		this.addTorque = function(x, y, z, coords)
 		{

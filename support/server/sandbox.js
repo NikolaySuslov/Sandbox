@@ -155,8 +155,7 @@ function startVWF() {
                 datapath = libpath.resolve(datapath,'.');
                 global.datapath = datapath;
                 global.configuration.datapath = datapath;
-                console.log(datapath);
-                logger.initFileOutput(datapath);
+               
 
                 p = process.argv.indexOf('-ls');
                 global.latencySim = p >= 0 ? parseInt(process.argv[p + 1]) : (global.configuration.latencySim ? global.configuration.latencySim : 0);
@@ -359,13 +358,16 @@ function startVWF() {
 
                         if(sass)
                         {
+
+                           
+
     						sass.render({
     							file: libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/Editorview.scss'),
     							includePaths: [libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/')],
     							outputStyle: 'compressed',
     							functions: {
     								'getImgPath()': function(){
-    									return new sass.types.String('vwf/view/editorview');
+    									return new sass.types.String('../vwf/view/editorview');
     								}
     							}
     						}, function(err,result){
@@ -665,6 +667,16 @@ function startVWF() {
                     logger.warn("Building CSS. SASS is installed, so the CSS will be rebuilt on each request");
                     sass.render(
                     {
+
+                        /*file: libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/Editorview.scss'),
+                                includePaths: [libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/')],
+                                sourceComments: true,
+                                functions: {
+                                    'getImgPath()': function(){
+                                        return new sass.types.String('../vwf/view/editorview');
+                                    }
+                                }*/
+
                         file: libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/Editorview.scss'),
                         includePaths: [libpath.join(__dirname, '../client/lib/vwf/view/editorview/css/')],
                         outputStyle: 'compressed',
@@ -672,7 +684,7 @@ function startVWF() {
                         {
                             'getImgPath()': function()
                             {
-                                return new sass.types.String('vwf/view/editorview');
+                                return new sass.types.String('./vwf/view/editorview');
                             }
                         }
                     }, function(err, result)
@@ -700,7 +712,13 @@ function startVWF() {
                 logger.info('DAL Startup');
                 DAL.startup(cb);
             },
+            function startLogging(cb)
+            {
+                logger.initFileOutput(global.configuration.datapath);
+                cb();
+            },
             function setSession(cb) {
+                
                 logger.info('Session Startup');
                 require('./sessions.js').sessionStartup(cb);
             },
@@ -725,7 +743,7 @@ function startVWF() {
                     return;
                 }
                 app.set('layout', 'layout');
-                app.set('views', __dirname + '/../../public/adl/sandbox/views');
+                app.set('views', __dirname + '/views');
                 app.set('view engine', 'html');
                 app.engine('.html', require('hogan-express'));
 
@@ -773,7 +791,6 @@ function startVWF() {
                     
                     secret: global.configuration.sessionSecret ? global.configuration.sessionSecret : 'unsecure cookie secret',
                     cookie: {
-                        maxAge: global.configuration.sessionTimeoutMs ? global.configuration.sessionTimeoutMs : 10000000,
                         httpOnly: !!global.configuration.hostAssets
                     },
                      cookieName: 'session', // cookie name dictates the key name added to the request object
@@ -781,6 +798,24 @@ function startVWF() {
                      duration: 24 * 60 * 60 * 1000, // how long the session will stay valid in ms
                      activeDuration: 24*60*60*1000 //
                 }));
+
+
+                //Wow... so this is amazing. The session middleware we use has some un-documented features. 
+                //We've been messing with the maxage of the cookie and the duration flags above, and still 
+                //always seem to have strange behavior where we are logged out. 
+                //Turns out that there is some interaction between the duration and maxage. Not setting the max age 
+                //is better. Also, the session cookie will not be reset or resent unless you leave max-age blank and 
+                //touch the session. The code below will resend the cookie with a new 24 hour window if the previous request is
+                //more than half an hour old. This should help keep people logged in properly.
+                //previous behavior created a fixed window that never updated, so no matter how long the timeout was, you would
+                //eventually hit it, even when activly using the site.
+                app.use(function(req,res,next){
+                    if(!req.session.lastRequest)
+                        req.session.lastRequest = parseInt(Date.now().toString());
+                    if(parseInt(Date.now().toString()) - req.session.lastRequest > 1000*60*30)
+                        req.session.lastRequest = parseInt(Date.now().toString());
+                    next();
+                });
 
                 app.use(passport.initialize());
                 app.use(passport.session());

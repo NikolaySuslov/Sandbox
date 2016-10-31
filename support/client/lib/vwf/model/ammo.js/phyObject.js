@@ -227,7 +227,7 @@ phyObject.prototype.setAngularFactor = function(vec)
 phyObject.prototype.startSimulating = function()
 {
     if (this.simulating == true) return;
-    this.wake();
+    //this.wake();
     this.simulating = true;
     this.setMass(this.mass, true);
     this.markRootBodyCollisionDirty();

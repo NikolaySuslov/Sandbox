@@ -133,7 +133,11 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 			template: '<pre></pre>',
 			link: function($scope,elem,attrs)
 			{
+				console.error(elem);
 				var editor = ace.edit(elem.children()[0]);
+
+
+
 				editor.setTheme("ace/theme/monokai");
 				editor.setShowPrintMargin(false);
 				editor.resize();
@@ -204,7 +208,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 					}
 					else if( $scope.guiState.openTab === 'properties' ){
 
-						if (item.name.includes('ohm') == true) {
+						if (item.name.indexOf('ohm') !== -1) {
 							newBody = item.value;
 						} else { 
 							newBody = angular.toJson(item.value, 4); 
@@ -232,6 +236,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 
 				$('textarea.ace_text-input', elem).keydown(function(e)
 				{
+					
 					// implement ctrl-s to save
 					if((e.key === 's' || e.which == 83) && e.ctrlKey == true)
 					{
@@ -559,7 +564,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 							return true;
 			}
 
-				if (fieldName.includes('ohm') == true) {
+				if (fieldName.indexOf('ohm') !== -1) {
 					return true;
 				}
 
@@ -625,7 +630,7 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 				{
 					try {
 
-						if (fieldName.includes('ohm') == true) {
+						if (fieldName.indexOf('ohm') !== -1) {
 							var val = rawtext;
 
 						} else {
@@ -774,8 +779,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 			$('#vwf-root').hide();
 			$('#ScriptEditor').addClass('maximized');
 
+			try{
 			var evt = new Event('viewportresize');
-			document.dispatchEvent(evt);
+				document.dispatchEvent(evt);
+			}catch(e)
+			{
+				$(document).trigger('viewportresize');
+			}
 
 			$scope.maximized = true;
 		}
@@ -783,8 +793,13 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/HierarchyManager
 			$('#vwf-root').show();
 			$('#ScriptEditor').removeClass('maximized');
 
+			try{
 			var evt = new Event('viewportresize');
-			document.dispatchEvent(evt);
+				document.dispatchEvent(evt);
+			}catch(e)
+			{
+				$(document).trigger('viewportresize');
+			}
 
 			$scope.maximized = false;
 		}
