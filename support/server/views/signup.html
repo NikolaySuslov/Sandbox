@@ -46,13 +46,13 @@
 		function validatePassword(password)
 		{
 			if (password.length < 8)
-			  return 'Password must contain at least 8 characters.'
+			  return '{{#translate}}Password must contain at least 8 characters{{/translate}}.'
 			var hasUpperCase = /[A-Z]/.test(password);
 			var hasLowerCase = /[a-z]/.test(password);
 			var hasNumbers = /\d/.test(password);
 			var hasNonalphas = /\W/.test(password);
 			if (hasUpperCase + hasLowerCase + hasNumbers !== 3)
-			  return 'Password must contain a number, a lower case and an upper case letter.'
+			  return '{{#translate}}Password must contain a number, a lower case and an upper case letter{{/translate}}.'
 			return true;
 		}
 		function validateUsername(password)
@@ -80,7 +80,7 @@
 			if(password != password2 )
 			{
 
-				vwfPortalModel.errorText("Passwords do not match");	
+				vwfPortalModel.errorText("{{#translate}}Passwords do not match{{/translate}}");	
 				return;
 			}
 
@@ -98,7 +98,7 @@
 
 			if(!validateEmail(email))
 			{
-				vwfPortalModel.errorText("Invalid Email");	
+				vwfPortalModel.errorText("{{#translate}}Invalid Email{{/translate}}");	
 				return;
 			}
 
