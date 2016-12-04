@@ -310,7 +310,10 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 			return object.vwfID;
 		}
 		else
+		{
+			debugger;
 			return null;
+		}
 	}
 
 	function toGMat(threemat)

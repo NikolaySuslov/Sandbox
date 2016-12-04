@@ -564,11 +564,22 @@ define(['vwf/view/editorview/angular-app', 'vwf/view/editorview/manageAssets'], 
 				var ray = _Editor.GetCameraCenterRay();
 				var dxy = _Editor.intersectLinePlane(ray, campos, [0, 0, 0], _Editor.WorldZ);
 				var newintersectxy = MATH.addVec3(campos, MATH.scaleVec3(ray, dxy));
-				require("vwf/view/threejs/editorCameraController").getController('Orbit').orbitPoint(newintersectxy);
+				//require("vwf/view/threejs/editorCameraController").getController('Orbit').orbitPoint(newintersectxy);
 				require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
 				require("vwf/view/threejs/editorCameraController").updateCamera();
 			},
-
+			MenuCameraTop:function(e)
+			{
+				require("vwf/view/threejs/editorCameraController").setCameraMode('Top');
+			},
+			MenuCameraLeft:function(e)
+			{
+				require("vwf/view/threejs/editorCameraController").setCameraMode('Left');
+			},
+			MenuCameraFront:function(e)
+			{
+				require("vwf/view/threejs/editorCameraController").setCameraMode('Front');
+			},
 			MenuCameraNavigate: function(e) {
 				_dView.setCameraDefault();
 				require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');

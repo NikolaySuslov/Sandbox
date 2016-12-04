@@ -58,9 +58,15 @@
          //  this.PickOptions = new MATH.CPUPickOptions();
          //  this.PickOptions.UserRenderBatches = true;
      }
+     this.getCamera = function()
+     {
+        return this.camera;
+     }
      this.activate = function()
      {
         this.active = true;
+        this.last_y = null;
+        this.last_x = null;
      }
      this.deactivate = function()
      {
@@ -312,6 +318,12 @@
              this.middledown = false;
          }
      }
+     this.focus= function(point,extents)
+     {
+        this.orbitPoint(point);
+        if(extents)
+            this.zoom = extents;
+     }
      this.localpointerDown = function(parms, pickInfo)
      {
          if (!_dView.inDefaultCamera()) return;
@@ -525,7 +537,7 @@
              var move = MATH.addVec3(MATH.scaleVec3(up,this.rel_x),MATH.scaleVec3(side,-this.rel_y));
 
 
-             var panfactor = 1;
+             var panfactor = 5;
              if (this.cameramode == 'Free')
                  panfactor = 50;
              ////console.log(this.zoom);
@@ -705,6 +717,7 @@
      }
      this.setCameraMode = function(mode)
      {
+
          this.cameramode = mode;
          if (this.cameramode == 'Orbit')
              this.followObject(null);
@@ -717,7 +730,10 @@
          }
      }
      this.orbitPoint = function(point)
-     {
+     {  
+        
+        if(!point) return;
+        if(isNaN(point[0])) return;
          this.setCameraMode('Orbit');
          var campos = [this.camera.position.x, this.camera.position.y, this.camera.position.z];
          var diff = MATH.subVec3(campos, point);
@@ -801,8 +817,10 @@
      this.prerender = function()
      {
          var now = performance.now();
-         this.totalTime += now - (this.lastTime ? this.lastTime : now);
+         if( this.active)
+            this.totalTime += now - (this.lastTime ? this.lastTime : now);
          this.lastTime = now;
+        this.totalTime = Math.min( this.totalTime,300);       
          while(this.totalTime > 0)
          {
             this.totalTime -= 16;

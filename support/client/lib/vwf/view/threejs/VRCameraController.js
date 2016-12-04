@@ -18,6 +18,10 @@ var VRCameraController = function()
         this.angle = 0;
         this.rot.setFromAxisAngle(new THREE.Vector3(0,0,1),this.angle);
     }
+    this.getCamera = function()
+    {
+        return this.camera;
+    }
     this.localTouchStart = function(event) {}
     this.localTouchEnd = function(event) {}
     this.localTouchMove = function(event) {}

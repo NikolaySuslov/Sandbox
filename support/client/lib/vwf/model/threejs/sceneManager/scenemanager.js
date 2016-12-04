@@ -23,7 +23,7 @@ function SceneManager(scene) {
     eventSource.call(this,'SceneManager');
 }
 
-SceneManager.cullScale = 30;
+SceneManager.cullScale = 70;
 
 function GetAllLeafMeshes(threeObject, list) {
     if (threeObject instanceof THREE.Mesh || threeObject instanceof THREE.Line) {

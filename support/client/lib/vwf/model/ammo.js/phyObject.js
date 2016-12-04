@@ -221,7 +221,8 @@ phyObject.prototype.setAngularFactor = function(vec)
     this.angularFactor = vec;
     if (this.initialized === true)
     {
-        //this.body.getAngularFactor().setValue(vec[0], vec[1], vec[2]);
+        var localInertia = new Ammo.btVector3(vec[0], vec[1], vec[2]);
+        this.body.setAngularFactor(localInertia);
     }
 }
 phyObject.prototype.startSimulating = function()

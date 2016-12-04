@@ -160,7 +160,7 @@ VectorQueue.prototype.push = function(val)
 	this.yQueue.push(val[1]);
 	this.zQueue.push(val[2]);
 	this.setCount++;
-	return oldval;
+	return [];
 }
 
 function QuaternionQueue(length, id)

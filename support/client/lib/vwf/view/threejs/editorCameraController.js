@@ -1,14 +1,30 @@
-define(["vwf/view/threejs/oldCameraController", "vwf/view/threejs/AvatarCameraController", "vwf/view/threejs/VRCameraController"], function(oldCameraController, avatarCameraController, VRCameraController)
+define(["vwf/view/threejs/oldCameraController", "vwf/view/threejs/AvatarCameraController", "vwf/view/threejs/VRCameraController", "vwf/view/threejs/orthoCameraController"], function(oldCameraController, avatarCameraController, VRCameraController,orthoCameraController)
 {
     function editorCameraController()
-    {}
-    editorCameraController.prototype.initialize = function(camera)
     {
-        this.camera = camera;
+        this.cameraType = "perspective";
+    }
+    editorCameraController.prototype.setCameraType = function(v)
+    {
+        this.cameraType = v;
+    }
+    editorCameraController.prototype.getCamera = function()
+    {
+        if(!this.cameraControllers) return this.defaultcamera;
+        if (!this.cameraControllers[this.cameramode]) return this.defaultcamera;
+        else return this.cameraControllers[this.cameramode].getCamera();
+
+    }
+    editorCameraController.prototype.initialize = function()
+    {
+        var defaultcamera = new THREE.PerspectiveCamera(35, $(document).width() / $(document).height(), .01, 10000);
+        
+        this.camera = defaultcamera;
         this.cameraControllers = {};
         oldCameraController.initialize(this.camera);
         avatarCameraController.initialize(this.camera);
         VRCameraController.initialize(this.camera);
+        orthoCameraController.initialize(this.camera);
         this.addController('Orbit', oldCameraController);
         this.addController('Navigate', oldCameraController);
         this.addController('Free', oldCameraController);
@@ -17,6 +33,11 @@ define(["vwf/view/threejs/oldCameraController", "vwf/view/threejs/AvatarCameraCo
         this.addController('FirstPerson', oldCameraController);
         this.addController('DeviceOrientation', oldCameraController);
         this.addController('VR', VRCameraController);
+
+        this.addController('Top', orthoCameraController);
+        this.addController('Front', orthoCameraController);
+        this.addController('Left', orthoCameraController);
+    
 
 
         this.setCameraMode('Orbit');
@@ -76,6 +97,8 @@ define(["vwf/view/threejs/oldCameraController", "vwf/view/threejs/AvatarCameraCo
         this.postrendercallback = this.postrender.bind(this);
         _dView.bind('postrender', this.postrendercallback);
         this.updateCamera();
+        window.editorCameraController = this;
+        return  this.camera;
     }
     editorCameraController.prototype.addController = function(name, controller)
     {
@@ -88,9 +111,10 @@ define(["vwf/view/threejs/oldCameraController", "vwf/view/threejs/AvatarCameraCo
     editorCameraController.prototype.prerender = function(e, vp, h, w)
     {
         if (!this.cameraControllers[this.cameramode]) return;
-        this.cameraControllers[this.cameramode].prerender(e)
+        this.cameraControllers[this.cameramode].prerender(e, vp, h, w)
             //lets construct a screenspace rect of the selection region
 
+        
         return; //below code needs to be faster to be useful
         var top = 0;
         var left = 0
@@ -220,7 +244,13 @@ define(["vwf/view/threejs/oldCameraController", "vwf/view/threejs/AvatarCameraCo
     editorCameraController.prototype.updateCamera = function(e)
     {
         if (!this.cameraControllers[this.cameramode]) return;
-        this.cameraControllers[this.cameramode].updateCamera(e)
+        this.cameraControllers[this.cameramode].updateCamera(e)  
+    }
+    editorCameraController.prototype.focus = function(point,extents)
+    {
+        if (!this.cameraControllers[this.cameramode]) return;
+        if(this.cameraControllers[this.cameramode].focus)
+            this.cameraControllers[this.cameramode].focus(point,extents) 
     }
     editorCameraController.prototype.orientationEvent = function(e)
     {

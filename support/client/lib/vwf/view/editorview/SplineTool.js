@@ -130,6 +130,7 @@ function SplineTool() {
         _Editor.setScaleCallback = self.setScale;
 
         _Editor.getTransformCallback = self.getTransform;
+        _Editor.getWorldTransformCallback = self.getWorldTransform;
         _Editor.getTranslationCallback = self.getTranslation;
         _Editor.getScaleCallback = self.getScale;
         self.selectedID = _Editor.GetSelectedVWFID();
@@ -220,6 +221,7 @@ function SplineTool() {
         _Editor.setScaleCallback = _Editor.setScale;
 
         _Editor.getTransformCallback = _Editor.getTransform;
+        _Editor.getWorldTransformCallback = _Editor.getWorldTransform;
         _Editor.getTranslationCallback = _Editor.getTranslation;
         _Editor.getScaleCallback = _Editor.getScale;
         _Editor.updateGizmoLocation();
@@ -391,6 +393,23 @@ function SplineTool() {
         trans = selfT.multiply(trans);
         return trans.elements;
     }
+    self.getWorldTransform = function(id) {
+
+        if (self.selectedIndex < 0 || self.selectedIndex >= self.points.length)
+            return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+
+        var trans = new THREE.Matrix4();
+        trans.elements[12] = self.points[self.selectedIndex][0];
+        trans.elements[13] = self.points[self.selectedIndex][1];
+        trans.elements[14] = self.points[self.selectedIndex][2];
+
+        var transform = self.transform.slice(0);
+        var selfT = new THREE.Matrix4();
+        selfT.elements = transform;
+
+        trans = selfT.multiply(trans);
+        return trans.elements;
+    }
     self.getTranslation = function(id) {
         var mat = self.getTransform(id);
         return [mat[12], mat[13], mat[14]];
@@ -408,7 +427,7 @@ function SplineTool() {
         var ray = _Editor.GetWorldPickRay(e);
         var campos = [_Editor.findcamera().position.x, _Editor.findcamera().position.y, _Editor.findcamera().position.z];
 
-        debugger;
+      
         var hits = _Editor.findviewnode(self.selectedID).children[0].CPUPick(campos, ray, {});
         if (hits && hits.length > 0) {
             var v1 = hits[0].vertindex;

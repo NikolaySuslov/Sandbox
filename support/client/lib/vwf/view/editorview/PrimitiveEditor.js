@@ -116,7 +116,7 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
             scale: [1, 1, 1]
         };
 
-        $scope.$watch('node.properties.transform', debounce(updateTransform,5000), true);
+        $scope.$watch('node.properties.transform', updateTransform, true);
         $scope.$watch('transform', setTransform, true);
 
         $scope.allEditorData = [];
@@ -239,27 +239,35 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
             }
         }
 
-
+        function clamp(val,min,max)
+        {
+            if(val < min ) return min;
+            if(val > max) return max;
+            return val;
+        }
         function setTransform(transform, oldTransform) {
             if(transform != oldTransform && !transformFromVWF){
                 var val = [0, 0, 0];
                 var scale = [1, 1, 1];
                 var pos = [0, 0, 0];
 
+                transform.rotation[0] = clamp(transform.rotation[0],-180,180);
+                transform.rotation[1] = clamp(transform.rotation[1],-90,90);
+                transform.rotation[2] = clamp(transform.rotation[2],-180,180);
                 for(var i = 0; i < 3; i++){
                     val[i] = isNum(transform.rotation[i]) ? transform.rotation[i] : 0;
                     scale[i] = isNum(transform.scale[i]) ? parseFloat(transform.scale[i]) : 1;
                     pos[i] = isNum(transform.translation[i]) ? parseFloat(transform.translation[i]) : 0;
                 }
 
-                var rotmat = makeRotMat(parseFloat(val[0]) , parseFloat(val[1]) , parseFloat(val[2]) );
-                rotmat = goog.vec.Mat4.scale(rotmat, scale[0], scale[1], scale[2]);
-
-                pos = goog.vec.Mat4.translate(goog.vec.Mat4.createIdentity(), pos[0], pos[1], pos[2])
-                var vwfTransform = goog.vec.Mat4.multMat(pos, rotmat, []);
-
-                pushUndoEvent($scope.node, 'transform', vwfTransform);
-                setProperty($scope.node, 'transform', vwfTransform);
+                var m = new THREE.Matrix4();
+                m.makeRotationFromEuler(new THREE.Euler(val[0]/  57.2957795,val[1]/  57.2957795,val[2]/  57.2957795));
+                m.scale(new THREE.Vector3(scale[0],scale[1],scale[2]))
+                m.elements[12] = pos[0];
+                m.elements[13] = pos[1];
+                m.elements[14] = pos[2];
+                pushUndoEvent($scope.node, 'transform', m.elements);
+                setProperty($scope.node, 'transform', m.elements);
             }
 
             transformFromVWF = false;
@@ -271,7 +279,7 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
 
         function rotationMatrix_2_XYZ(m) {
             var mat = new THREE.Matrix4();
-            mat.set.apply(mat,m);
+            mat.elements = m;
 
             var rotmat = new THREE.Matrix4();
             rotmat.extractRotation(mat)
@@ -675,7 +683,7 @@ define(['./angular-app', './panelEditor', './EntityLibrary', './MaterialEditor']
             _Notifier.notify('You must log in to participate');
             return;
         }
-        else if (node && node.id && node.id != 'selection') {
+        else if (node && node.id && _Editor.getSelectionCount() == 1) {
             if (_PermissionsManager.getPermission(_UserManager.GetCurrentUserName(), node.id) == 0) {
                 _Notifier.notify('You do not have permission to edit this object');
                 return;

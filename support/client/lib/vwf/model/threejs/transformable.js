@@ -112,6 +112,7 @@ function getAllDrawables(threeObject, list) {
                 //    threeObject.skin.updateMatrixWorld(true);
 
                 if (sceneManagerUpdate) {
+                    threeObject.updateMatrixWorld(true); //at this point, in order to sort properly, we really do need to update
                     var allMeshes = getAllDrawables(threeObject);
                     for (var k = 0; k < allMeshes.length; k++)
                         _SceneManager.setDirty(allMeshes[k]);

@@ -245,7 +245,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             e.preventDefault();
             e.stopPropagation();
             var ray = this.GetWorldPickRay(e);
-            var campos = this.getCameraPosition();
+            var campos = this.GetWorldPickOrigin(e)
             var pickopts = new THREE.CPUPickOptions();
             pickopts.OneHitPerMesh = true;
 
@@ -430,10 +430,32 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     var h = this.mouseUpScreenPoint[1] - this.mouseDownScreenPoint[1];
                     var picksize = Math.sqrt(w * w + h * h);
                     if (picksize < 10) {
-                        if (Engine.views[0].lastPickId && Engine.views[0].lastPickId != 'index-vwf') {
+                        
+
+                          var ray = this.GetWorldPickRay(e);
+                            var campos = this.GetWorldPickOrigin(e)
+                            console.log(campos,ray);
+                            var pickopts = new THREE.CPUPickOptions();
+                            pickopts.OneHitPerMesh = true;
+
+                            var pick = this.ThreeJSPick(campos, ray, {
+                                OneHitPerMesh: false, ignore:[this.GetMoveGizmo().getGizmoBody()]
+                            });
+
+                            var vwfnode;
+                            while (pick && pick.object && !pick.object.vwfID) pick.object = pick.object.parent;
+                            if (pick && pick.object) vwfnode = pick.object.vwfID;
+
+                          
+
+
+
+
+
+                        if (vwfnode &&vwfnode != 'index-vwf') {
                             //implement some logic on the pick - select top level node, unless the current selection is
                             // in the hierarchy of the new selection
-                            var newselection = Engine.views[0].lastPickId;
+                            var newselection = vwfnode;
 
                             newselection = this.mouseDownSelectFilter(newselection);
                             this.SelectObject(_Editor.getNode(newselection), this.PickMod);
@@ -461,7 +483,15 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                             clientX: left,
                             clientY: top
                         });
+                        var TopLeftRayOrigin = this.GetWorldPickOrigin({
+                            clientX: left,
+                            clientY: top
+                        });
                         var TopRightRay = this.GetWorldPickRay({
+                            clientX: right,
+                            clientY: top
+                        });
+                        var TopRightRayOrigin = this.GetWorldPickOrigin({
                             clientX: right,
                             clientY: top
                         });
@@ -469,23 +499,48 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                             clientX: left,
                             clientY: bottom
                         });
+                        var BottomLeftRayOrigin = this.GetWorldPickOrigin({
+                            clientX: left,
+                            clientY: bottom
+                        });
                         var BottomRighttRay = this.GetWorldPickRay({
+                            clientX: right,
+                            clientY: bottom
+                        });
+                         var BottomRightRayOrigin = this.GetWorldPickOrigin({
                             clientX: right,
                             clientY: bottom
                         });
 
                         //now we build a frustum from the screenspace rect and the camera
-                        var campos = this.getCameraPosition();
-                        var ntl = MATH.addVec3(campos, TopLeftRay);
-                        var ntr = MATH.addVec3(campos, TopRightRay);
-                        var nbl = MATH.addVec3(campos, BottomLeftRay);
-                        var nbr = MATH.addVec3(campos, BottomRighttRay);
-                        var ftl = MATH.addVec3(campos, MATH.scaleVec3(TopLeftRay, 10000));
-                        var ftr = MATH.addVec3(campos, MATH.scaleVec3(TopRightRay, 10000));
-                        var fbl = MATH.addVec3(campos, MATH.scaleVec3(BottomLeftRay, 10000));
-                        var fbr = MATH.addVec3(campos, MATH.scaleVec3(BottomRighttRay, 10000));
+                        
+                        var ntl = MATH.addVec3(TopLeftRayOrigin, TopLeftRay);
+                        var ntr = MATH.addVec3(TopRightRayOrigin, TopRightRay);
+                        var nbl = MATH.addVec3(BottomLeftRayOrigin, BottomLeftRay);
+                        var nbr = MATH.addVec3(BottomRightRayOrigin, BottomRighttRay);
+                        var ftl = MATH.addVec3(TopLeftRayOrigin, MATH.scaleVec3(TopLeftRay, 10000));
+                        var ftr = MATH.addVec3(TopRightRayOrigin, MATH.scaleVec3(TopRightRay, 10000));
+                        var fbl = MATH.addVec3(BottomLeftRayOrigin, MATH.scaleVec3(BottomLeftRay, 10000));
+                        var fbr = MATH.addVec3(BottomRightRayOrigin, MATH.scaleVec3(BottomRighttRay, 10000));
                         var frustrum = new Frustrum(ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr);
 
+                        if(_dView.getCamera() instanceof THREE.OrthographicCamera)
+                        {
+                            var t1 = ntl;
+                            var t2 = ntr;
+                            var t3 = nbl;
+                            var t4 = nbr;
+
+                            ntl = ftl;
+                            ntr = ftr;
+                            nbl = fbl;
+                            nbr = fbr;
+
+                            ftl = t1;
+                            ftr = t2;
+                            fbl = t3;
+                            fbr = t4;
+                        }
                         //get all the objects intersected
                         var hits = _SceneManager.FrustrumCast(frustrum, {
                             OneHitPerMesh: true
@@ -530,7 +585,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 if (SelectMode == 'PointPick') {
                     if (this.TempPickCallback) {
                         var ray;
-                        var campos = this.getCameraPosition();
+                        var campos = this.GetWorldPickOrigin(e);
                         ray = this.GetWorldPickRay(e);
 
                         var pick = this.ThreeJSPick(campos, ray, {
@@ -902,19 +957,94 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             //return intersect;
         }.bind(this);
         this.GetCameraCenterRay = function(e) {
-            screenmousepos = [0, 0, 0, 1];
-            var worldmousepos = MATH.mulMat4Vec4(MATH.inverseMat4(self.getViewProjection()), screenmousepos);
-            worldmousepos[0] /= worldmousepos[3];
-            worldmousepos[1] /= worldmousepos[3];
-            worldmousepos[2] /= worldmousepos[3];
-            var campos = this.getCameraPosition();
-            var ray = MATH.subVec3(worldmousepos, campos);
-            var dist = MATH.lengthVec3(ray);
-            ray = MATH.scaleVec3(ray, 1.0 / MATH.lengthVec3(ray));
-            return ray;
+            
+            var cam = _dView.getCamera();
+
+            if(cam instanceof THREE.PerspectiveCamera)
+            {
+                screenmousepos = [0, 0, 0, 1];
+                var worldmousepos = MATH.mulMat4Vec4(MATH.inverseMat4(self.getViewProjection()), screenmousepos);
+                worldmousepos[0] /= worldmousepos[3];
+                worldmousepos[1] /= worldmousepos[3];
+                worldmousepos[2] /= worldmousepos[3];
+                var campos = this.getCameraPosition();
+                var ray = MATH.subVec3(worldmousepos, campos);
+                var dist = MATH.lengthVec3(ray);
+                ray = MATH.scaleVec3(ray, 1.0 / MATH.lengthVec3(ray));
+                return ray;
+            }
+            else 
+            if(cam instanceof THREE.OrthographicCamera)
+            {
+                var campos = this.getCameraPosition();
+                var viewspaceDelta = new THREE.Vector3(0,0,-1);
+            
+                viewspaceDelta.applyMatrix4(cam.matrixWorld);
+                return [viewspaceDelta.x - campos[0],viewspaceDelta.y - campos[1],viewspaceDelta.z - campos[2]];
+            }
+
         }.bind(this);
+        this.GetWorldPickOrigin = function(e) {
+            var cam = _dView.getCamera();
+
+            if(cam instanceof THREE.PerspectiveCamera)
+            {
+                var pos = new THREE.Vector3();
+                pos.x = cam.matrixWorld.elements[12];
+                pos.y = cam.matrixWorld.elements[13];
+                pos.z = cam.matrixWorld.elements[14];
+                return [pos.x,pos.y,pos.z];
+            }else 
+            if(cam instanceof THREE.OrthographicCamera)
+            {
+               
+                var pos = new THREE.Vector3();
+                pos.x = 0;//cam.matrixWorld.elements[12];
+                pos.y = 0;//cam.matrixWorld.elements[13];
+                pos.z = 0;//cam.matrixWorld.elements[14];
+                
+                if(e)
+                {
+                var OldX = e.clientX - $('#index-vwf').offset().left;
+                var OldY = e.clientY - $('#index-vwf').offset().top;
+                var screenmousepos = [OldX / document.getElementById('index-vwf').clientWidth, OldY / document.getElementById('index-vwf').clientHeight, 0, 1];
+                screenmousepos[0] *= 2;
+                screenmousepos[1] *= 2;
+                screenmousepos[0] -= 1;
+                screenmousepos[1] -= 1;
+                screenmousepos[1] *= -1;   
+                }else
+                {
+                    var screenmousepos = [0,0,0,1];
+                }
+
+                var x = screenmousepos[0];
+                x = x * Math.abs(cam.left);
+
+                var y = screenmousepos[1];
+                y = y * Math.abs(cam.top);
+                var viewspaceDelta = new THREE.Vector3(x,y,100);
+            
+                viewspaceDelta.applyMatrix4(cam.matrixWorld);
+
+                pos.x = viewspaceDelta.x;
+                pos.y = viewspaceDelta.y;
+                pos.z = viewspaceDelta.z;
+
+             
+                return [pos.x,pos.y,pos.z];
+            }
+        }
         this.GetWorldPickRay = function(e) {
-            var OldX = e.clientX - $('#index-vwf').offset().left;
+
+
+          
+
+            var cam = _dView.getCamera();
+
+            if(cam instanceof THREE.PerspectiveCamera)
+            {
+                  var OldX = e.clientX - $('#index-vwf').offset().left;
             var OldY = e.clientY - $('#index-vwf').offset().top;
             var screenmousepos = [OldX / document.getElementById('index-vwf').clientWidth, OldY / document.getElementById('index-vwf').clientHeight, 0, 1];
             screenmousepos[0] *= 2;
@@ -922,15 +1052,36 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             screenmousepos[0] -= 1;
             screenmousepos[1] -= 1;
             screenmousepos[1] *= -1;
-            var worldmousepos = MATH.mulMat4Vec4(MATH.inverseMat4(self.getViewProjection()), screenmousepos);
-            worldmousepos[0] /= worldmousepos[3];
-            worldmousepos[1] /= worldmousepos[3];
-            worldmousepos[2] /= worldmousepos[3];
-            var campos = this.getCameraPosition();
-            var ray = MATH.subVec3(worldmousepos, campos);
-            var dist = MATH.lengthVec3(ray);
-            ray = MATH.scaleVec3(ray, 1.0 / MATH.lengthVec3(ray));
-            return ray;
+
+                var worldmousepos = MATH.mulMat4Vec4(MATH.inverseMat4(self.getViewProjection()), screenmousepos);
+                worldmousepos[0] /= worldmousepos[3];
+                worldmousepos[1] /= worldmousepos[3];
+                worldmousepos[2] /= worldmousepos[3];
+                var campos = this.getCameraPosition();
+                var ray = MATH.subVec3(worldmousepos, campos);
+                var dist = MATH.lengthVec3(ray);
+                ray = MATH.scaleVec3(ray, 1.0 / MATH.lengthVec3(ray));
+                return ray;
+            }else if(cam instanceof THREE.OrthographicCamera)
+            {
+
+                
+              
+            
+                var viewspaceDelta = new THREE.Vector3(0,0,-1);
+            
+                viewspaceDelta.applyMatrix4(cam.matrixWorld);
+
+                viewspaceDelta.x -= cam.matrixWorld.elements[12];
+                viewspaceDelta.y -= cam.matrixWorld.elements[13];
+                viewspaceDelta.z -= cam.matrixWorld.elements[14];
+
+             
+                return [viewspaceDelta.x,viewspaceDelta.y,viewspaceDelta.z];
+
+                
+
+            }
         }.bind(this);
         //quick function to initialize a blank matrix array
         this.Matrix = function() {
@@ -1189,12 +1340,14 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
 
 
         this.GetInsertPoint = function(e) {
-            var campos = this.getCameraPosition();
+            
             if (e) {
+                var campos = this.GetWorldPickOrigin(e);
+
                 var ray;
                 ray = this.GetWorldPickRay(e);
 
-                var pick = this.ThreeJSPick(campos, ray, {
+                var pick = this.ThreeJSPick(this.GetWorldPickOrigin(e), ray, {
                     filter: function(o) {
                         return !(o.isAvatar === true)
                     },ignore:[self.GetMoveGizmo().getGizmoBody()]
@@ -1214,6 +1367,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
             } else {
 
                 var ray = self.GetCameraCenterRay();
+                var campos = this.GetWorldPickOrigin(e);
                 var pick = this.ThreeJSPick(campos, ray, {
                     filter: function(o) {
                         return !(o.isAvatar === true)
@@ -1764,7 +1918,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
 
                 //if the object is the type which can have transforms, update them to be relative to the current paste point, or the center of the screen
                 if (t.properties && t.properties.transform) {
-                    var campos = this.getCameraPosition();
+                    var campos = this.GetWorldPickOrigin(this.ContextShowEvent);
                     var newintersectxy;
 
                     if (!useMousePoint) newintersectxy = self.GetInsertPoint();
@@ -1824,6 +1978,12 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                 return Mat4.createIdentity();
             return mat;
         }
+        this.getWorldTransform = function(id) {
+            var mat = Engine.getProperty(id, 'worldTransform');
+            if(!mat)
+                return Mat4.createIdentity();
+            return mat;
+        }
         this.getTranslation = function(id) {
             var mat = Engine.getProperty(id, 'worldTransform');
             if(!mat) return [0,0,0];
@@ -1865,6 +2025,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
 
         this.getScaleCallback = this.getScale;
         this.getTransformCallback = this.getTransform;
+        this.getWorldTransformCallback = this.getWorldTransform;
         this.getTranslationCallback = this.getTranslation;
 
         this.updateGizmoOrientation = function() {
@@ -2558,16 +2719,7 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
         this.SetSelectMode = function(e) {
             SelectMode = e;
             $('#StatusPickMode').html(('Pick: ' + e).escape());
-            if (e == 'Pick') {
-                //$('#MenuSelectPickicon').addClass('iconselected')
-                $('#glyphOverlay').show();
-
-            } else {
-
-                //$('#MenuSelectPickicon').removeClass('iconselected')
-                $('#glyphOverlay').hide();
-
-            }
+           
             if (SelectMode == 'TempPick') {
                 $('#index-vwf').css('cursor', 'crosshair');
 
@@ -2977,10 +3129,9 @@ define(["vwf/view/editorview/log", "vwf/view/editorview/progressbar", "vwf/view/
                     else
                         dist = 3;
 
-                    require("vwf/view/threejs/editorCameraController").getController('Orbit').orbitPoint(gizpos);
-                    require("vwf/view/threejs/editorCameraController").getController('Orbit').zoom = dist;
-                    require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
-                    require("vwf/view/threejs/editorCameraController").updateCamera();
+
+                    require("vwf/view/threejs/editorCameraController").focus(gizpos,dist);
+                  
                     box.release();
 
                 }

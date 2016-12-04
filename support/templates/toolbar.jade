@@ -45,12 +45,14 @@ mixin toolbar_body
 		.icon.unlink(title='Unlink', ng-click='triggerMenu("MenuRemoveParent",$event)', ng-class='{"icondisabled": !fields.selectedNode}')
 		.separator
 
-		.icon.camera(title='Orbit Camera', ng-click='triggerMenu("MenuCameraOrbit",$event)', toolbar-select='cameraSelected = "orbit"'
-			ng-class='{"iconselected": cameraSelected === "orbit"}')
-		.icon.firstperson(title='First Person Camera', ng-click='triggerMenu("MenuCamera3RDPerson",$event)', toolbar-select='cameraSelected = "firstperson"'
-			ng-class='{"iconselected": cameraSelected === "firstperson"}')
-		.icon.navigate(title='Navigation Camera', ng-click='triggerMenu("MenuCameraNavigate",$event)', toolbar-select='cameraSelected = "navigate"'
-			ng-class='{"iconselected": cameraSelected === "navigate"}')
+		.icon.camera(title='Orbit Camera', ng-click='triggerMenu("MenuCameraOrbit",$event)', toolbar-select='cameraSelected == "Orbit"'
+			ng-class='{"iconselected": cameraSelected === "Orbit"}')
+		.icon.plane(title='Top Camera', ng-click='triggerMenu("MenuCameraTop",$event)', toolbar-select='cameraSelected == "Top"'
+			ng-class='{"iconselected": cameraSelected === "Top"}' )
+		.icon.plane(title='Left Camera', ng-click='triggerMenu("MenuCameraLeft",$event)', toolbar-select='cameraSelected == "Left"'
+			ng-class='{"iconselected": cameraSelected === "Left"}' style="transform: rotateY(-62deg);")
+		.icon.plane(title='Front Camera', ng-click='triggerMenu("MenuCameraFront",$event)', toolbar-select='cameraSelected == "Front"'
+			ng-class='{"iconselected": cameraSelected === "Front"}' style="transform: rotateX(-62deg);")
 		.icon.free(title='Free Camera', ng-click='triggerMenu("MenuCameraFree",$event)', toolbar-select='cameraSelected = "free"'
 			ng-class='{"iconselected": cameraSelected === "free"}')
 		.separator

@@ -53,6 +53,15 @@
 	function scene(childID, childSource, childName)
 	{
 		//the node constructor
+		this.getFog = function()
+		{
+			if(!this.properties['fogType'])
+				return null;
+			if(this.properties['fogType'] == 'linear')
+				return new THREE.Fog();
+			if(this.properties['fogType'] == 'exp')
+				return new THREE.FogExp2();
+		}
 		this.settingProperty = function(propertyName, propertyValue)
 		{
 			this.properties[propertyName] = propertyValue;
@@ -90,7 +99,9 @@
 			if (propertyName == 'skyApexColor')
 			{
 				if (!this.getRoot().fog)
-					this.getRoot().fog = new THREE.Fog();
+					this.getRoot().fog = this.getFog()
+				if (!this.getRoot().fog) return;
+
 				if (!this.getRoot().fog.vApexColor)
 					this.getRoot().fog.vApexColor = new THREE.Color();
 				this.getRoot().fog.vApexColor.r = propertyValue[0];
@@ -100,7 +111,9 @@
 			if (propertyName == 'skyHorizonColor')
 			{
 				if (!this.getRoot().fog)
-					this.getRoot().fog = new THREE.Fog();
+					this.getRoot().fog = this.getFog()
+				if (!this.getRoot().fog) return;
+
 				if (!this.getRoot().fog.vHorizonColor)
 					this.getRoot().fog.vHorizonColor = new THREE.Color();
 				this.getRoot().fog.vHorizonColor.r = propertyValue[0];
@@ -110,7 +123,9 @@
 			if (propertyName == 'skyAtmosphereDensity')
 			{
 				if (!this.getRoot().fog)
-					this.getRoot().fog = new THREE.Fog();
+					this.getRoot().fog = this.getFog()
+				if (!this.getRoot().fog) return;
+
 				this.getRoot().fog.vAtmosphereDensity = propertyValue / 500;
 			}
 			if (propertyName == 'fogType')
@@ -124,7 +139,7 @@
 				{
 					newfog = new THREE.Fog();
 				}
-				if (propertyValue == 'none')
+				if (propertyValue == 'none' || propertyValue == '' || propertyValue == null || propertyValue == 0)
 				{
 					newfog = null;
 				}
@@ -140,7 +155,7 @@
 					newfog.vFalloff = this.properties["fogVFalloff"] || 1;
 					newfog.vFalloffStart = this.properties["fogVFalloffStart"] || 0;
 					newfog.vAtmosphereDensity = (this.properties["skyAtmosphereDensity"] || 0) / 500;
-					if (!this.getRoot().fog) this.getRoot().fog = newfog;
+					this.getRoot().fog = newfog;
 					this.getRoot().fog.vHorizonColor = new THREE.Color();
 					this.getRoot().fog.vHorizonColor.r = this.properties["skyApexColor"] ? this.properties["skyHorizonColor"][0] : 1;
 					this.getRoot().fog.vHorizonColor.g = this.properties["skyApexColor"] ? this.properties["skyHorizonColor"][1] : 1;
@@ -156,7 +171,9 @@
 			if (propertyName == 'fogColor')
 			{
 				if (!this.getRoot().fog)
-					this.getRoot().fog = new THREE.Fog();
+					this.getRoot().fog = this.getFog();
+				if(!this.getRoot().fog) return;
+
 				this.getRoot().fog.color.r = propertyValue[0];
 				this.getRoot().fog.color.g = propertyValue[1];
 				this.getRoot().fog.color.b = propertyValue[2];
@@ -165,35 +182,45 @@
 			if (propertyName == 'fogNear')
 			{
 				if (!this.getRoot().fog)
-					this.getRoot().fog = new THREE.Fog();
+					this.getRoot().fog = this.getFog();
+				if(!this.getRoot().fog) return;
+
 				this.getRoot().fog.near = propertyValue;
 				rebuildAllMaterials.call(this, this.getRoot());
 			}
 			if (propertyName == 'fogDensity')
 			{
 				if (!this.getRoot().fog)
-					this.getRoot().fog = new THREE.Fog();
+					this.getRoot().fog = this.getFog();
+				if(!this.getRoot().fog) return;
+
 				this.getRoot().fog.density = propertyValue;
 				rebuildAllMaterials.call(this, this.getRoot());
 			}
 			if (propertyName == 'fogVFalloff')
 			{
 				if (!this.getRoot().fog)
-					this.getRoot().fog = new THREE.Fog();
+					this.getRoot().fog = this.getFog();
+				if(!this.getRoot().fog) return;
+
 				this.getRoot().fog.vFalloff = propertyValue;
 				rebuildAllMaterials.call(this, this.getRoot());
 			}
 			if (propertyName == 'fogVFalloffStart')
 			{
 				if (!this.getRoot().fog)
-					this.getRoot().fog = new THREE.Fog();
+					this.getRoot().fog = this.getFog();
+				if(!this.getRoot().fog) return;
+
 				this.getRoot().fog.vFalloffStart = propertyValue;
 				rebuildAllMaterials.call(this, this.getRoot());
 			}
 			if (propertyName == 'fogFar')
 			{
 				if (!this.getRoot().fog)
-					this.getRoot().fog = new THREE.Fog();
+					this.getRoot().fog = this.getFog();
+				if(!this.getRoot().fog) return;
+
 				this.getRoot().fog.far = propertyValue;
 				rebuildAllMaterials.call(this, this.getRoot());
 			}
@@ -497,6 +524,10 @@
 			{
 				return this.groundplane;
 			}
+			else if (methodName == "getSkyMat")
+			{
+				return this.skymaterial;
+			}
 		}
 		this.getRoot = function()
 		{
@@ -504,6 +535,8 @@
 		}
 		this.properties = {};
 		this.rootnode = new THREE.Scene();
+		this.rootnode.fog = null;
+		
 		this.camera = {};
 		this.camera.ID = undefined;
 		this.camera.defaultCamID = "http-vwf-example-com-camera-vwf-camera";

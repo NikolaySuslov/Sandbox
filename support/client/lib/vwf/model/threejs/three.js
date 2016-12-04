@@ -17751,13 +17751,15 @@ THREE.ShaderLib = {
             "varying vec3 vFogPosition;\n" +
             "varying float vFar;" +
             "void main() {\n" +
+ 
 
-
-        "float near   = projectionMatrix[3][2]/(projectionMatrix[2][2]-1.0);" +
+            "float near   = projectionMatrix[3][2]/(projectionMatrix[2][2]-1.0);" +
             "float far    = projectionMatrix[3][2]/(projectionMatrix[2][2]+1.0);" +
-            "vFar = far * 10.0;" +
-            " vec3 nposition = (position * ((near+far)/2.0 + near)) + cameraPosition;\n" +
-            " vec4 mvPosition = viewMatrix * vec4( nposition, 1.0 );\n" +
+            "float far2    = 1.0/(projectionMatrix[0][0]);\n"+
+            
+            " vec3 nposition = (position * ((near+max(abs(far2*2.5),far))/2.0 + near)) + cameraPosition;\n" +
+            " vec4 mvPosition = viewMatrix *  vec4( nposition, 1.0 );\n" +
+            " if (projectionMatrix[3][2] == 0.0) mvPosition.z = max(-0.99,min(mvPosition.z,min(far2,far)));\n"+
             " pos = position;" +
             "   gl_Position = projectionMatrix * mvPosition;\n" +
             "vFogPosition = position.xyz; \n" +

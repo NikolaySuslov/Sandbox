@@ -394,26 +394,50 @@ var transformTool = function()
         dist = Math.max(dist,.0001); //prevent 0 dist thus 0 scale thus NANs in matrix
         var cam = _Editor.findcamera();
         cam.updateMatrixWorld(true);
-        var fovadj = cam.fov / 75;
-        cam.matrixWorldInverse.getInverse(cam.matrixWorld);
-        tgizpos2 = MATH.mulMat4Vec3(MATH.transposeMat4(cam.matrixWorldInverse.elements, transposeTemp), tgizpos, tgizpos2);
-        dist = -tgizpos2[2] / 65;
-        var oldscale = [this.getGizmoBody().matrix.elements[0], this.getGizmoBody().matrix.elements[5], this.getGizmoBody().matrix.elements[10]];
-        this.getGizmoBody().matrix.scale(new THREE.Vector3(1 / oldscale[0], 1 / oldscale[1], 1 / oldscale[2]));
 
-        var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
-        var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+        if(cam instanceof THREE.OrthographicCamera)
+        {
+            dist = Math.min(Math.abs(cam.top-cam.bottom),Math.abs(cam.left-cam.right));
+            var oldscale = [this.getGizmoBody().matrix.elements[0], this.getGizmoBody().matrix.elements[5], this.getGizmoBody().matrix.elements[10]];
+            this.getGizmoBody().matrix.scale(new THREE.Vector3(1 / oldscale[0], 1 / oldscale[1], 1 / oldscale[2]));
 
-        var windowXadj = 1600.0 / (w*pixelRatio);
-        var windowYadj = 1200.0 / (h*pixelRatio);
-        var winadj = Math.max(windowXadj, windowYadj);
-        this.getGizmoBody().matrix.scale(new THREE.Vector3(dist * winadj * fovadj, dist * winadj * fovadj, dist * winadj * fovadj));
-        tempcammatinverse.getInverse(this.getGizmoHead().matrixWorld);
-        tcamposGizSpace = MATH.mulMat4Vec3(MATH.transposeMat4(tempcammatinverse.elements, transposeTemp), campos, tcamposGizSpace);
-        //document.title = tcamposGizSpace[0];
-        this.getGizmoBody().matrix.scale(new THREE.Vector3(tcamposGizSpace[0] > 0 ? 1 : -1, tcamposGizSpace[1] > 0 ? 1 : -1, tcamposGizSpace[2] > 0 ? 1 : -1));
+            var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+            var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+
+            var windowXadj = 16.0 / (w*pixelRatio);
+            var windowYadj = 12.0 / (h*pixelRatio);
+            var winadj = Math.max(windowXadj, windowYadj);
+            this.getGizmoBody().matrix.scale(new THREE.Vector3(dist * winadj , dist * winadj , dist * winadj ));
+            //document.title = tcamposGizSpace[0];
+            //this.getGizmoBody().matrix.scale(new THREE.Vector3(tcamposGizSpace[0] > 0 ? 1 : -1, tcamposGizSpace[1] > 0 ? 1 : -1, tcamposGizSpace[2] > 0 ? 1 : -1));
+            this.updateHandleVisiblity(_Editor.GetWorldPickRay({clientX:0,clientY:0}));
+
+        } else
+        {
+            var fovadj = cam.fov / 75;
+            cam.matrixWorldInverse.getInverse(cam.matrixWorld);
+            tgizpos2 = MATH.mulMat4Vec3(MATH.transposeMat4(cam.matrixWorldInverse.elements, transposeTemp), tgizpos, tgizpos2);
+            dist = -tgizpos2[2] / 65;
+            var oldscale = [this.getGizmoBody().matrix.elements[0], this.getGizmoBody().matrix.elements[5], this.getGizmoBody().matrix.elements[10]];
+            this.getGizmoBody().matrix.scale(new THREE.Vector3(1 / oldscale[0], 1 / oldscale[1], 1 / oldscale[2]));
+
+            var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+            var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+
+            var windowXadj = 1600.0 / (w*pixelRatio);
+            var windowYadj = 1200.0 / (h*pixelRatio);
+            var winadj = Math.max(windowXadj, windowYadj);
+            this.getGizmoBody().matrix.scale(new THREE.Vector3(dist * winadj * fovadj, dist * winadj * fovadj, dist * winadj * fovadj));
+            tempcammatinverse.getInverse(this.getGizmoHead().matrixWorld);
+            tcamposGizSpace = MATH.mulMat4Vec3(MATH.transposeMat4(tempcammatinverse.elements, transposeTemp), campos, tcamposGizSpace);
+            //document.title = tcamposGizSpace[0];
+            this.getGizmoBody().matrix.scale(new THREE.Vector3(tcamposGizSpace[0] > 0 ? 1 : -1, tcamposGizSpace[1] > 0 ? 1 : -1, tcamposGizSpace[2] > 0 ? 1 : -1));
+              this.updateHandleVisiblity(MATH.toUnitVec3( MATH.subVec3(tgizpos,campos)));
+        }
+       
         this.getGizmoBody().updateMatrixWorld(true);
-        this.updateHandleVisiblity(MATH.toUnitVec3( MATH.subVec3(tgizpos,campos)));
+
+      
     }
    
     this.updateHandleVisiblity = function(camvec)
@@ -570,7 +594,7 @@ var transformTool = function()
             for (var i = 0; i < _Editor.getSelectionCount(); i++)
             {
                 var ID = _Editor.GetSelectedVWFID(i);
-                var transform = Engine.getProperty(ID, 'worldTransform');
+                var transform = _Editor.getWorldTransformCallback(ID)
                 var translation = [transform[12], transform[13], transform[14]]
                 this.mouseDownOffsets[ID] = MATH.subVec3(this.getPosition(), translation)
                 this.mouseDownTransforms[ID] = _Editor.getTransformCallback(ID)
@@ -580,7 +604,7 @@ var transformTool = function()
             }
             var worldRay = _Editor.GetWorldPickRay(e);
             this.mouseDownOrigin = this.getPosition();
-            this.mouseDownIntersects = this.intersectPlanes(worldRay, _Editor.getCameraPosition());
+            this.mouseDownIntersects = this.intersectPlanes(worldRay, _Editor.GetWorldPickOrigin(e));
             this.mouseDownIntersects.xy = MATH.subVec3(this.mouseDownIntersects.xy, this.getPosition())
             this.mouseDownIntersects.yz = MATH.subVec3(this.mouseDownIntersects.yz, this.getPosition())
             this.mouseDownIntersects.zx = MATH.subVec3(this.mouseDownIntersects.zx, this.getPosition())
@@ -861,9 +885,9 @@ var transformTool = function()
             return;
         }
         var worldRay = _Editor.GetWorldPickRay(e);
-        var intersections = this.intersectPlanes(worldRay, _Editor.getCameraPosition());
+        var intersections = this.intersectPlanes(worldRay, _Editor.GetWorldPickOrigin(e));
         var deltas = this.subIntersects(intersections, this.mouseDownIntersects);
-        var offset = deltas[this.bestPlane(this.axisToPlane(this.axisSelected), _Editor.getCameraPosition())]
+        var offset = deltas[this.bestPlane(this.axisToPlane(this.axisSelected), _Editor.GetWorldPickOrigin(e))]
         this.applyTransform(offset, deltas);
     }
     this.axisToPlane = function(axis)

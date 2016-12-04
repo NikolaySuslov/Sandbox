@@ -327,6 +327,7 @@ define(['vwf/model/threejs/sceneManager/_THREERayTracer'], function()
     {
         //dynamic objects currently should not belong to the octree
         //we really should  try to not get here in the first place. Because when we set
+        
         this.boundsCache = this.GetBoundingBox(true).transformBy(this.getModelMatrix(tempmat));
         if (this.isDynamic()) return;
         for (var i = 0; i < this.children.length; i++)

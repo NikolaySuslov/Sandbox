@@ -1,16 +1,82 @@
 {
+    "children": {
+        "Na1dfd868": {
+            "extends": "sphere2.vwf",
+            "properties": {
+                "DisplayName": "sphere1",
+                "___physics_activation_state": 1,
+                "___physics_deactivation_time": 0,
+                "___physics_velocity_angular": [0, 0, 0],
+                "___physics_velocity_linear": [0, 0, 0],
+                "materialDef": {
+                    "alpha": 1,
+                    "ambient": {
+                        "b": 1,
+                        "g": 1,
+                        "r": 1
+                    },
+                    "blendMode": 1,
+                    "color": {
+                        "a": 1,
+                        "b": 1,
+                        "g": 1,
+                        "r": 1
+                    },
+                    "depthtest": true,
+                    "depthwrite": true,
+                    "emit": {
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fog": true,
+                    "layers": [],
+                    "metal": false,
+                    "reflect": 0,
+                    "shadeless": false,
+                    "shading": true,
+                    "shadow": true,
+                    "shininess": 15,
+                    "side": 0,
+                    "specularColor": {
+                        "a": 1,
+                        "b": 0.577350269189626,
+                        "g": 0.577350269189626,
+                        "r": 0.577350269189626
+                    },
+                    "specularLevel": 1,
+                    "type": "phong",
+                    "vertexColors": false,
+                    "wireframe": false
+                },
+                "owner": "Anonymous_UG5cIm4rxKG5DApGAAAB",
+                "transform": [1, 0, 0, 0, 0, 1.0010000467300415, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+                "type": "Primitive",
+                "visible": false
+            },
+            "random": {
+                "c": 1,
+                "s0": 0.392552908044308,
+                "s1": 0.0623373405542225,
+                "s2": 0.160686046583578
+            },
+            "sequence": 0,
+            "source": "vwf/model/threejs/sphere.js",
+            "type": "subDriver/threejs"
+        }
+    },
     "extends": "SandboxCamera.vwf",
     "methods": {
         "deinitialize": {
-            "body": "\n  this.Scene.unbind('keyUp', this.keyUp);\n      //This function was created for you by the system. \n      //Deinitialize is called when the object is being destroyed.\n      // Clean up here if your object allocated any resources manually during initialize.\n",
+            "body": "this.Scene.unbind('keyUp', this._keyUp);\n    this.Scene.unbind('keyDown', this._keyDown);\n    this.Scene.unbind('pointerMove', this.pointermoved);\n    this.Scene.unbind('pointerDown', this.pointerdown);\n    this.Scene.unbind('pointerUp', this.pointerup);\n    //This function was created for you by the system. \n    //Deinitialize is called when the object is being destroyed.\n    // Clean up here if your object allocated any resources manually during initialize.",
             "parameters": []
         },
         "handleMovement": {
-            "body": "var maxV = 1.3;\n    this.velocity[0] = 0;\n    this.velocity[1] = 0;\n\n    if (this.key.D)\n        this.velocity[0] = maxV;\n    if (this.key.A)\n        this.velocity[0] = -maxV;\n    if (this.key.W)\n        this.velocity[1] = maxV;\n    if (this.key.S)\n        this.velocity[1] = -maxV;\n\n    if (!(this.velocity[0] == 0 && this.velocity[1] == 0))\n    {\n        console.log(\"Key pressed on free camera\", e, this.velocity, this.acceleration);\n        this.transformAPI.move(this.velocity[0], this.velocity[1], 0, this.transformAPI.COORDINATES.LOCAL);\n    }",
+            "body": "var maxV = 1.3;\n    this.velocity[0] = 0;\n    this.velocity[1] = 0;\n\n    if (this.key.D)\n        this.velocity[0] = maxV;\n    if (this.key.A)\n        this.velocity[0] = -maxV;\n    if (this.key.W)\n        this.velocity[1] = maxV;\n    if (this.key.S)\n        this.velocity[1] = -maxV;\n\n    if (!(this.velocity[0] == 0 && this.velocity[1] == 0))\n    {\n        \n        this.transformAPI.move(this.velocity[0], this.velocity[1], 0, this.transformAPI.COORDINATES.LOCAL);\n    }",
             "parameters": []
         },
         "ready": {
-            "body": "this.Scene.unbind('keyUp', this._keyUp);\n    this.Scene.unbind('keyDown', this._keyDown);\n    this.Scene.unbind('pointerMove', this.pointermoved);\n    this.Scene.unbind('pointerDown', this.pointerdown);\n    this.Scene.unbind('pointerUp', this.pointerup);\n\n    var self = this;\n    this.key = {\n        W: false,\n        A: false,\n        S: false,\n        D: false\n    };\n    this.pointer = false;\n    this.velocity = [0, 0];\n\n    this.pointermoved = function(event)\n    {\n        self.relX = self.lastX - event.position[0];\n        self.relY = self.lastY - event.position[1];\n        self.lastX = event.position[0];\n        self.lastY = event.position[1];\n\n        console.log(\"Pointer moved\", self.relX);\n    }\n    this.pointerdown = function(event)\n    {\n        self.pointer = true;\n        self.lastX = event.position[0];\n        self.lastY = event.position[1];\n\n        console.log(\"Pointer down\", self.relX);\n    }\n    this.pointerup = function(event)\n    {\n        self.pointer = false;\n    }\n\n    this._keyDown = function(e, d)\n    {\n        console.log(\"Key down\");\n        if (e.key.key in self.key) self.key[e.key.key] = true;\n    }\n\n    this._keyUp = function(e, d)\n    {\n        if (e.key.key in self.key) self.key[e.key.key] = false;\n    };\n\n    this.Scene.bind('keyUp', this._keyUp);\n    this.Scene.bind('keyDown', this._keyDown);\n    this.Scene.bind('pointerMove', this.pointermoved);\n    this.Scene.bind('pointerDown', this.pointerdown);\n    this.Scene.bind('pointerUp', this.pointerup);\n    //This function was created for you by the system. \n    //The scene is now completely loaded. This will fire on each client when the client joins, so it`s not a great place to create objects",
+            "body": "this.Scene.unbind('keyUp', this._keyUp);\n    this.Scene.unbind('keyDown', this._keyDown);\n    this.Scene.unbind('pointerMove', this.pointermoved);\n    this.Scene.unbind('pointerDown', this.pointerdown);\n    this.Scene.unbind('pointerUp', this.pointerup);\n\n    var self = this;\n    this.key = {\n        W: false,\n        A: false,\n        S: false,\n        D: false\n    };\n    this.pointer = false;\n    this.velocity = [0, 0];\n\n    this.pointermoved = function(event)\n    {\n        self.relX = self.lastX - event.position[0];\n        self.relY = self.lastY - event.position[1];\n        self.lastX = event.position[0];\n        self.lastY = event.position[1];\n\n        console.log(\"Pointer moved\", self.relX);\n    }\n    this.pointerdown = function(event)\n    {\n        self.pointer = true;\n        self.lastX = event.position[0];\n        self.lastY = event.position[1];\n\n        console.log(\"Pointer down\", self.relX);\n    }\n    this.pointerup = function(event)\n    {\n        self.pointer = false;\n    }\n\n    this._keyDown = function(e, d)\n    {\n        console.log(\"Key down\");\n        if (e.key.key in self.key) self.key[e.key.key] = true;\n    }\n\n    this._keyUp = function(e, d)\n    {\n        if (e.key.key in self.key) self.key[e.key.key] = false;\n    };\n\n    this.Scene.bind('keyUp', this._keyUp, this);\n    this.Scene.bind('keyDown', this._keyDown, this);\n    this.Scene.bind('pointerMove', this.pointermoved, this);\n    this.Scene.bind('pointerDown', this.pointerdown, this);\n    this.Scene.bind('pointerUp', this.pointerup, this);\n    //This function was created for you by the system. \n    //The scene is now completely loaded. This will fire on each client when the client joins, so it`s not a great place to create objects",
             "parameters": []
         },
         "tick": {
@@ -39,17 +105,16 @@
                 "type": "vector"
             }
         },
-        "___sourceAssetTimestamp": "Wed Nov 04 2015 16:02:47 GMT-0500 (Eastern Standard Time)",
+        "___sourceAssetTimestamp": "Tue May 24 2016 13:33:44 GMT-0400 (Eastern Daylight Time)",
         "acceleration": 0.1,
         "lastX": 0.410759493670886,
         "lastY": 0.90927624872579,
-        "owner": "ADLteam",
+        "owner": "Anonymous_UG5cIm4rxKG5DApGAAAB",
         "relX": 0,
         "relY": 0,
-        "sourceAssetId": "4f23110d",
-        "transform": [1, 0, 0, 0, 0, 0.9990000128746033, 0, 0, 0, 0, 1, 0, 3.3910000324249268, 0.46000000834465027, 3, 1],
+        "transform": [1, 0, 0, 0, 0, 0.9990000128746033, 0, 0, 0, 0, 1, 0, -0.5, -0.5, 1.25, 1],
         "velocity": [0, 0],
-        "worldTransform": [1, 0, 0, 0, 0, 0.9990000128746033, 0, 0, 0, 0, 1, 0, 3.3910000324249268, 0.46000000834465027, 3, 1]
+        "worldTransform": [1, 0, 0, 0, 0, 0.9990000128746033, 0, 0, 0, 0, 1, 0, -0.5, -0.5, 1.25, 1]
     },
     "random": {
         "c": 1,

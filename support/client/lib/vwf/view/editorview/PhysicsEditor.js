@@ -107,7 +107,7 @@ define(["vwf/view/editorview/panelEditor"], function() {
        
         this.setProperty = function(id, propertyName, propertyValue) {
             //the prim editor will always set properties for all selected objects
-            id = 'selection';
+           
             _PrimitiveEditor.setProperty(id, propertyName, propertyValue);
         }
       
@@ -353,6 +353,8 @@ define(["vwf/view/editorview/panelEditor"], function() {
             //find and select the current value in the dropdown
 
             var selectedindex = values.indexOf(Engine.getProperty(nodeid, propertyName));
+            if(selectedindex == -1)
+                selectedindex = 0;
             var selectedLabel = labels[selectedindex];
             $("select option").filter(function() {
                 //may want to use $.trim in here
@@ -382,8 +384,9 @@ define(["vwf/view/editorview/panelEditor"], function() {
         this.clearPreview = function() {
             //release all held memory
             this.dispose(this.physicsPreviewRoot);
-            for (var i in this.physicsPreviewRoot.children) {
-                this.physicsPreviewRoot.remove(this.physicsPreviewRoot.children[i]);
+            var len = this.physicsPreviewRoot.children.length;
+            for (var i =0; i < len ; i++) {
+                this.physicsPreviewRoot.remove(this.physicsPreviewRoot.children[0]);
             }
         }
         this.clearWorldPreview = function() {

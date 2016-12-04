@@ -63,7 +63,7 @@ define(["module", "vwf/view", 'vwf/utility/eventSource', "vwf/view/threejs/viewN
         vrHMDSensor: null,
         vrHMD: null,
         vrRenderer: null,
-        editorCamera: new THREE.PerspectiveCamera(35, $(document).width() / $(document).height(), .01, 10000),
+        editorCamera: null,
         shareCamera: false,
         receiveSharedCamera: false,
         cameraShareLoop: function() {
@@ -577,7 +577,7 @@ define(["module", "vwf/view", 'vwf/utility/eventSource', "vwf/view/threejs/viewN
                 this.canvasQuery.css('display', 'none');
                 this.canvasQuery.css('box-sizing', 'border-box');
                 initScene.call(this, this.state.scenes[childID]);
-                require("vwf/view/threejs/editorCameraController").initialize(this.editorCamera);
+                this.editorCamera = require("vwf/view/threejs/editorCameraController").initialize();
 
                 var instanceData = _DataManager.getInstanceData();
                 var publishSettings = instanceData.publishSettings;
@@ -615,7 +615,7 @@ define(["module", "vwf/view", 'vwf/utility/eventSource', "vwf/view/threejs/viewN
         // -- satProperty ------------------------------------------------------------------------------
         getCamera: function() {
             if (!this.activeCamera)
-                return this.editorCamera;
+                return require("vwf/view/threejs/editorCameraController").getCamera();
             return this.activeCamera;
         },
         getCameraList: function() {
@@ -698,10 +698,8 @@ define(["module", "vwf/view", 'vwf/utility/eventSource', "vwf/view/threejs/viewN
                 if (!camID && publishSettings.allowTools)
                     this.cameraID = null;
 
-            var cam = this.editorCamera;
+            var cam = null;//this.editorCamera;
 
-            if (camID === 'top')
-                cam = this.topCamera;
             if (this.cameraID) {
 
                 cam = null;
@@ -710,13 +708,7 @@ define(["module", "vwf/view", 'vwf/utility/eventSource', "vwf/view/threejs/viewN
                         cam = this.state.nodes[this.cameraID].getRoot();
                     }
             }
-            if (camID === 'top')
-                cam = this.topCamera;
-            if (camID === 'left')
-                cam = this.leftCamera;
-            if (camID === 'front')
-                cam = this.frontCamera;
-
+        
             if (cam) {
                 var aspect = $('#index-vwf').width() / $('#index-vwf').height();
                 cam.aspect = aspect;
@@ -737,15 +729,20 @@ define(["module", "vwf/view", 'vwf/utility/eventSource', "vwf/view/threejs/viewN
                     this.setCamera_internal(args[1]);
                 }
             }
-            if (method == 'startSimulatingNode') {
+            else if (method == 'ready' || method == 'reset_interp') {
+                var node = this.nodes[id];
+                if (!node) return;
+                node.reset_interp();
+            }
+            else if (method == 'startSimulatingNode') {
                 if (this.nodes[args])
                     this.nodes[args].setSim(true);
             }
-            if (method == 'stopSimulatingNode') {
+            else if (method == 'stopSimulatingNode') {
                 if (this.nodes[args])
                     this.nodes[args].setSim(false);
             }
-            if (id == Engine.application() && method == 'cameraShareInfo') {
+            else if (id == Engine.application() && method == 'cameraShareInfo') {
                 if (this.receiveSharedCamera) {
                     this.setCamera();
                     this.getCamera().matrixAutoUpdate = false;
@@ -754,7 +751,7 @@ define(["module", "vwf/view", 'vwf/utility/eventSource', "vwf/view/threejs/viewN
 
                 }
             }
-            if (id == Engine.application() && method == 'startCameraShare') {
+            else if (id == Engine.application() && method == 'startCameraShare') {
                 if (!this.receiveSharedCamera && Engine.moniker() !== args[0]) {
                     var self = this;
                     alertify.confirm('A user would like to share their camera view. Accept?', function(ok) {
@@ -764,7 +761,7 @@ define(["module", "vwf/view", 'vwf/utility/eventSource', "vwf/view/threejs/viewN
                     })
                 }
             }
-            if (id == Engine.application() && method == 'stopCameraShare') {
+            else if (id == Engine.application() && method == 'stopCameraShare') {
                 this.receiveSharedCamera = false;
                 //   require("vwf/view/threejs/editorCameraController").getController('Orbit').orbitPoint(newintersectxy);
                 require("vwf/view/threejs/editorCameraController").setCameraMode('Orbit');
@@ -2083,23 +2080,55 @@ define(["module", "vwf/view", 'vwf/utility/eventSource', "vwf/view/threejs/viewN
         if (!this.projector) this.projector = new THREE.Projector();
         if (!this.directionVector) this.directionVector = new THREE.Vector3();
 
+        if(cam instanceof THREE.PerspectiveCamera)
+        {
+            var x = (this.lastEventData.eventData[0].screenPosition[0] / SCREEN_WIDTH) * 2 - 1;
+            var y = -(this.lastEventData.eventData[0].screenPosition[1] / SCREEN_HEIGHT) * 2 + 1;
 
-        var x = (this.lastEventData.eventData[0].screenPosition[0] / SCREEN_WIDTH) * 2 - 1;
-        var y = -(this.lastEventData.eventData[0].screenPosition[1] / SCREEN_HEIGHT) * 2 + 1;
 
+            this.directionVector.set(x, y, .5);
 
-        this.directionVector.set(x, y, .5);
+            this.projector.unprojectVector(this.directionVector, threeCam);
+            var pos = new THREE.Vector3();
+            var pos2 = new THREE.Vector3();
+            pos2.x = threeCam.matrixWorld.elements[12];
+            pos2.y = threeCam.matrixWorld.elements[13];
+            pos2.z = threeCam.matrixWorld.elements[14];
+            pos.copy(pos2);
+            this.directionVector.sub(pos);
+            this.directionVector.normalize();
+        }else if (cam instanceof THREE.OrthographicCamera)
+        {
+            var pos = new THREE.Vector3();
+            pos.x = 0;// threeCam.matrixWorld.elements[12];
+            pos.y = 0;//threeCam.matrixWorld.elements[13];
+            pos.z = 0;//threeCam.matrixWorld.elements[14];
+            
+            var x = (this.lastEventData.eventData[0].screenPosition[0] / SCREEN_WIDTH)  * 2 - 1;
+            x = x * Math.abs(cam.left);
 
-        this.projector.unprojectVector(this.directionVector, threeCam);
-        var pos = new THREE.Vector3();
-        var pos2 = new THREE.Vector3();
-        pos2.x = threeCam.matrixWorld.elements[12];
-        pos2.y = threeCam.matrixWorld.elements[13];
-        pos2.z = threeCam.matrixWorld.elements[14];
-        pos.copy(pos2);
-        this.directionVector.sub(pos);
-        this.directionVector.normalize();
+            var y = (this.lastEventData.eventData[0].screenPosition[1] / SCREEN_HEIGHT)  * 2 - 1;
+            y = y * Math.abs(cam.top);
 
+            var viewspaceDelta = new THREE.Vector3(x,-y,100);
+            var viewspaceCenter = new THREE.Vector3(0,0,-1);
+
+            viewspaceDelta.applyMatrix4(cam.matrixWorld);
+            viewspaceCenter.applyMatrix4(cam.matrixWorld);
+
+            viewspaceCenter.x -= cam.matrixWorld.elements[12];
+            viewspaceCenter.y -= cam.matrixWorld.elements[13];
+            viewspaceCenter.z -= cam.matrixWorld.elements[14];
+
+            pos.x = viewspaceDelta.x ;
+            pos.y = viewspaceDelta.y  ;
+            pos.z = viewspaceDelta.z  ;
+
+          
+            this.directionVector.x = viewspaceCenter.x;
+            this.directionVector.y = viewspaceCenter.y;
+            this.directionVector.z = viewspaceCenter.z;
+        }
 
         var intersects;
         if (!sceneNode.threeScene.CPUPick || !_SceneManager) {

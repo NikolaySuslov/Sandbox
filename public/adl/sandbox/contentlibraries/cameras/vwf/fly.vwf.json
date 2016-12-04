@@ -1,4 +1,70 @@
 {
+    "children": {
+        "N8478bb89": {
+            "extends": "sphere2.vwf",
+            "properties": {
+                "DisplayName": "sphere1",
+                "___physics_activation_state": 1,
+                "___physics_deactivation_time": 0,
+                "___physics_velocity_angular": [0, 0, 0],
+                "___physics_velocity_linear": [0, 0, 0],
+                "materialDef": {
+                    "alpha": 1,
+                    "ambient": {
+                        "b": 1,
+                        "g": 1,
+                        "r": 1
+                    },
+                    "blendMode": 1,
+                    "color": {
+                        "a": 1,
+                        "b": 1,
+                        "g": 1,
+                        "r": 1
+                    },
+                    "depthtest": true,
+                    "depthwrite": true,
+                    "emit": {
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fog": true,
+                    "layers": [],
+                    "metal": false,
+                    "reflect": 0,
+                    "shadeless": false,
+                    "shading": true,
+                    "shadow": true,
+                    "shininess": 15,
+                    "side": 0,
+                    "specularColor": {
+                        "a": 1,
+                        "b": 0.577350269189626,
+                        "g": 0.577350269189626,
+                        "r": 0.577350269189626
+                    },
+                    "specularLevel": 1,
+                    "type": "phong",
+                    "vertexColors": false,
+                    "wireframe": false
+                },
+                "owner": "Anonymous_9-EjjRuviST_loH2AAAF",
+                "transform": [0.7419494390487671, 0.6679074764251709, -0.03757176175713539, 0, -0.6680542826652527, 0.7426957488059998, 0.010368719696998596, 0, 0.03486459702253342, 0.017424333840608597, 0.9982393980026245, 0, 0, 0, 0, 1],
+                "type": "Primitive",
+                "visible": false
+            },
+            "random": {
+                "c": 1,
+                "s0": 0.355993364937603,
+                "s1": 0.311061857268214,
+                "s2": 0.472638682695106
+            },
+            "sequence": 0,
+            "source": "vwf/model/threejs/sphere.js",
+            "type": "subDriver/threejs"
+        }
+    },
     "extends": "SandboxCamera.vwf",
     "methods": {
         "deinitialize": {
@@ -6,7 +72,7 @@
             "parameters": []
         },
         "ready": {
-            "body": "\n\n\n\n\n\n\n\n                this.Scene.unbind('pointerMove', this.pointermoved);\n                    this.Scene.unbind('pointerDown', this.pointerdown);\n                    var self = this;\n                    this.pointermoved = function(event)\n                    {\n                        self.relX = self.lastX - event.position[0];\n                        self.relY = self.lastY - event.position[1];\n                        //self.lastX = event.position[0];\n                        //self.lastY = event.position[1];\n                        console.log(self.relX);\n                    }\n                    this.pointerdown = function(event)\n                    {\n                        self.lastX = event.position[0];\n                        self.lastY = event.position[1];\n                    }\n                    this.Scene.bind('pointerMove', this.pointermoved);\n                    this.Scene.bind('pointerDown', this.pointerdown);\n                    //This function was created for you by the system. \n                    //The scene is now completely loaded. This will fire on each client when the client joins, so it`s not a great place to create objects\n",
+            "body": "this.Scene.unbind('pointerMove', this.pointermoved);\n    this.Scene.unbind('pointerDown', this.pointerdown);\n    var self = this;\n    this.pointermoved = function(event)\n    {\n        self.relX = self.lastX - event.position[0];\n        self.relY = self.lastY - event.position[1];\n        //self.lastX = event.position[0];\n        //self.lastY = event.position[1];\n        console.log(self.relX);\n    }\n    this.pointerdown = function(event)\n    {\n        self.lastX = event.position[0];\n        self.lastY = event.position[1];\n    }\n    this.Scene.bind('pointerMove', this.pointermoved,this);\n    this.Scene.bind('pointerDown', this.pointerdown,this);\n    //This function was created for you by the system. \n    //The scene is now completely loaded. This will fire on each client when the client joins, so it`s not a great place to create objects",
             "parameters": []
         },
         "tick": {
@@ -16,12 +82,13 @@
     },
     "properties": {
         "DisplayName": "FlyCamera",
-        "lastX": 0.4107594936708861,
+        "___sourceAssetTimestamp": "Tue May 24 2016 13:44:18 GMT-0400 (Eastern Daylight Time)",
+        "lastX": 0.410759493670886,
         "lastY": 0.90927624872579,
-        "owner": "Anonymous0",
+        "owner": "Anonymous_9-EjjRuviST_loH2AAAF",
         "relX": 0.0056962025316456,
-        "relY": -0.0050968399592252744,
-        "transform": [0.7426735162734985, -0.6686468720436096, 0.03672044724225998, 0, 0.6685550212860107, 0.7434794902801514, 0.016527870669960976, 0, -0.0383523553609848, 0.012274662032723427, 0.9991904497146606, 0, -1.1348685026168823, -0.7031089067459106, 1.8177460432052612, 1]
+        "relY": -0.00509683995922527,
+        "transform": [0.7426735162734985, -0.6686468720436096, 0.03672044724225998, 0, 0.6685550212860107, 0.7434794902801514, 0.016527870669960976, 0, -0.0383523553609848, 0.012274662032723427, 0.9991904497146606, 0, 0.48505961894989014, -0.303222119808197, 0.023245714604854584, 1]
     },
     "random": {
         "c": 1,

@@ -153,6 +153,14 @@ mixin menus_body
 						li: a#MenuCameraFly(title="Camera mode that moves forward at a set speed", ng-click='lookUpHandler($event)') Fly
 						li: a#MenuCameraDeviceOrientation(title="Camera mode that uses mobile device's sensors to control viewport, if available", ng-click='lookUpHandler($event)')
 							| DeviceOrientation
+						li
+							a#MenuDefaultCameras
+								.glyphicon.glyphicon-new-window 
+								| Orthographic Views
+							ul
+								li: a#MenuCameraTop(title="Top schematic view", ng-click='lookUpHandler($event)') Top
+								li: a#MenuCameraLeft(title="Left schematic view", ng-click='lookUpHandler($event)') Left
+								li: a#MenuCameraFront(title="Front schematic view", ng-click='lookUpHandler($event)') Front
 
 		li(ng-class='{"disabled": !selection}')
 			a#MenuHierarchy Hierarchy

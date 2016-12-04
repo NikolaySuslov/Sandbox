@@ -17,6 +17,10 @@ var AvatarCameraController = function()
         this.keysDown = {};
          this.lastpos = new THREE.Vector3(0,0,0);
     }
+    this.getCamera = function()
+    {
+        return this.camera;
+    }
     this.localTouchStart = function(event) {}
     this.localTouchEnd = function(event) {}
     this.localTouchMove = function(event) {}
